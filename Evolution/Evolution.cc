@@ -66,11 +66,17 @@ map<int,double> LHToyPDFs(double const& x, double const&)
 
 int main()
 {
+  Timer ttot;
+  ttot.start();
+
+  // =================================================================
+  // Parameters
+  // =================================================================
   // x-space grid
   const Grid g{{SubGrid{100,1e-5,3}, SubGrid{60,1e-1,3}, SubGrid{50,6e-1,3}, SubGrid{50,8e-1,3}}};
 
   // Initial scale
-  const double mu0 = sqrt(2);
+  const double mui = sqrt(2);
 
   // Vectors of masses and thresholds
   const vector<double> Masses = {0, 0, 0, sqrt(2), 4.5, 175}; // Check in the level above that they are ordered
@@ -79,78 +85,66 @@ int main()
   // Perturbative order
   const int PerturbativeOrder = 1;
 
+  // =================================================================
+  // Alpha_s
+  // =================================================================
   // Running coupling
   const double AlphaQCDRef = 0.35;
   const double MuAlphaQCDRef = sqrt(2);
   AlphaQCD a{AlphaQCDRef, MuAlphaQCDRef, Masses, PerturbativeOrder};
-  const TabulateObject<double> Alphas{a, 100, 0.9, 1001, 3};
-  const auto as = [&] (double const& mu) -> double{ return Alphas.Evaluate(mu); };
+  const TabulateObject<double> TabAlphas{a, 100, 0.9, 1001, 3};
+  const auto Alphas = [&] (double const& mu) -> double{ return TabAlphas.Evaluate(mu); };
 
+  // =================================================================
+  // Collinear PDFs
+  // =================================================================
   // Initialize QCD evolution objects
   const auto DglapObj = InitializeDglapObjectsQCD(g, Masses, Thresholds);
 
   // Construct the DGLAP object
-  auto EvolvedPDFs = BuildDglap(DglapObj, LHToyPDFs, mu0, PerturbativeOrder, as);
+  auto EvolvedPDFs = BuildDglap(DglapObj, LHToyPDFs, mui, PerturbativeOrder, Alphas);
 
   // Tabulate PDFs
-  const TabulateObject<Set<Distribution>> TabulatedPDFs{*EvolvedPDFs, 50, 1, 1000, 3};
+  const TabulateObject<Set<Distribution>> CollPDFs{*EvolvedPDFs, 50, 1, 1000, 3};
 
-  // Initialize matching functions
+  // =================================================================
+  // TMD PDFs
+  // =================================================================
+  // Initialize TMD objects.
   const auto TmdObj = InitializeTmdObjects(g, Thresholds);
 
-  // Function that returns the scale mu as function of the impact
-  // parameter b.
-  const double C0   = 2 * exp(- emc);
-  const double bmax = 1;
-  const auto Mub = [C0,bmax] (double const& b) -> double{ return C0 * sqrt( 1 + pow(b/bmax,2) ) / b; };
-
-  // Function that returns the matching functions as functions of the
-  // absolute value of the impact parameter b.
-  const auto MatchFunc = [&] (double const& b) -> Set<Operator>
+  // Function that returns the scale inital scale mu and the
+  // intermediate scale "mu0" as functions of the impact parameter b.
+  const auto Mu0b = [] (double const& b) -> double
     {
-      const double mu   = Mub(b);
-      const double Lmu  = 2 * log( b * mu / C0 );
-      const double coup = as(mu) / FourPi;
-      const double nf   = NF(mu, Thresholds);
-      return TmdObj.at(nf).MatchingFunctions.at(0) + coup * ( - Lmu * DglapObj.at(nf).SplittingFunctions.at(0) + TmdObj.at(nf).MatchingFunctions.at(1) );
+      const double C0   = 2 * exp(- emc);
+      const double bmax = 1;
+      return C0 * sqrt( 1 + pow(b/bmax,2) ) / b;
+    };
+  const auto Mub  = [Mu0b] (double const& b) -> double
+    {
+      const double Q0 = 1;
+      return Mu0b(b) + Q0;
     };
 
-  // Define non-perturbative function
-  const double Lq = 10;
-  const double L1 = 0.2;
-  const auto fNP = [Lq,L1] (double const& x, double const& b) -> double
+  // Non-perturbative function
+  const auto fNP = [] (double const& x, double const& b) -> double
     {
-      const double fact    = Lq * x * b;
+      const double Lq = 10;
+      const double L1 = 0.2;
+      const double fact = Lq * x * b;
       return exp( - fact * b / sqrt( 1 + pow( fact / L1, 2) ) );
     };
 
-  // Function that returns the PDFs times the non-perturbative
-  // function as functions of the absolute value of the impact
-  // parameter b.
-  const auto PDFsNP = [&] (double const& b) -> Set<Distribution>
-    {
-      map<int,Distribution> NonPertPDFs;
-      const map<int,Distribution> PertPDFs = TabulatedPDFs.Evaluate(Mub(b)).GetObjects();
-      for (auto const& id : PertPDFs)
-	NonPertPDFs.insert({id.first, id.second * [=] (double const& x)->double{ return fNP(x, b); }});
+  // Get evolved TMDs (assumes the zeta-prescription).
+  const auto EvolvedTMDs = BuildTmdPDFs(TmdObj,DglapObj,CollPDFs,fNP,Mu0b,Mub,PerturbativeOrder,Alphas);
 
-      return Set<Distribution>{TabulatedPDFs.Evaluate(Mub(b)).GetMap(), NonPertPDFs};
-    };
-
-  // Tabulate product of matching functions an PDFs + NP function.
-  const TabulateObject<Set<Distribution>> TabulatedTMDs{[=] (double const& b)->Set<Distribution>{ return MatchFunc(b) * PDFsNP(b); }, 50, 1, 1000, 3, Thresholds};
-
-  // Compute evolution factor for both quark and gluon distributions
-  
-
-  // Test values of the impact parameter and Bjorken x.
-  const double bT = 1;
-  const double xb = 0.2;
-
-  // Print results
-  cout << (MatchFunc(bT)*PDFsNP(bT)).at(0).Evaluate(xb) << "  "
-       << TabulatedTMDs.EvaluatexQ(0,xb,bT) << "  "
-       << TabulatedPDFs.Evaluate(Mub(bT)).at(0).Evaluate(xb) << endl;
+  // Test values
+  const double bT    = 1;
+  const double xb    = 0.2;
+  const double muf   = 100;
+  const double zetaf = muf * muf;
+  const TabulateObject<Set<Distribution>> TabulatedTMDs{[=] (double const& b)->Set<Distribution>{ return EvolvedTMDs(b,muf,zetaf); }, 50, 1, 1000, 3, Thresholds};
 
   // Performance test
   Timer t;
@@ -160,6 +154,16 @@ int main()
   for (auto i = 0; i < k; i++)
     TabulatedTMDs.EvaluatexQ(0,xb,bT);
   t.stop();
+
+  // Print results
+  cout << EvolvedTMDs(bT,muf,zetaf).at(0).Evaluate(xb) << "  "
+       << EvolvedTMDs(bT,muf,zetaf).at(1).Evaluate(xb) << "  "
+       << TabulatedTMDs.EvaluatexQ(0,xb,bT) << "  "
+       << TabulatedTMDs.EvaluatexQ(1,xb,bT) << "  "
+       << endl;
+
+  cout << "Total computation time... ";
+  ttot.stop();
 
   return 0;
 }
