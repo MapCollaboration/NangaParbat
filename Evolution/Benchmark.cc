@@ -2,7 +2,6 @@
 // APFEL++ 2017
 //
 // Authors: Valerio Bertone: valerio.bertone@cern.ch
-//          Stefano Carrazza: stefano.carrazza@cern.ch
 //
 
 #include <apfel/dglapbuilder.h>
@@ -18,124 +17,86 @@
 #include <map>
 #include <iomanip>
 
+#include "LHAPDF/LHAPDF.h"
+
 using namespace apfel;
 using namespace std;
 
-// LH Toy PDFs
-double xupv(double const& x)  { return 5.107200 * pow(x,0.8) * pow((1-x),3); }
-double xdnv(double const& x)  { return 3.064320 * pow(x,0.8) * pow((1-x),4); }
-double xglu(double const& x)  { return 1.7 * pow(x,-0.1) * pow((1-x),5); }
-double xdbar(double const& x) { return 0.1939875 * pow(x,-0.1) * pow((1-x),6); }
-double xubar(double const& x) { return xdbar(x) * (1-x); }
-double xsbar(double const& x) { return 0.2 * ( xdbar(x) + xubar(x) ); }
-map<int,double> LHToyPDFs(double const& x, double const&)
-{
-  // Call all functions once.
-  const double upv  = xupv (x);
-  const double dnv  = xdnv (x);
-  const double glu  = xglu (x);
-  const double dbar = xdbar(x);
-  const double ubar = xubar(x);
-  const double sbar = xsbar(x);
-
-  // Construct QCD evolution basis conbinations.
-  double const Gluon   = glu;
-  double const Singlet = dnv + 2 * dbar + upv + 2 * ubar + 2 * sbar;
-  double const T3      = upv + 2 * ubar - dnv - 2 * dbar;
-  double const T8      = upv + 2 * ubar + dnv + 2 * dbar - 4 * sbar;
-  double const Valence = upv + dnv;
-  double const V3      = upv - dnv;
-
-  // Fill in map in the QCD evolution basis.
-  map<int,double> QCDEvMap;
-  QCDEvMap.insert({0 , Gluon});
-  QCDEvMap.insert({1 , Singlet});
-  QCDEvMap.insert({2 , Valence});
-  QCDEvMap.insert({3 , T3});
-  QCDEvMap.insert({4 , V3});
-  QCDEvMap.insert({5 , T8});
-  QCDEvMap.insert({6 , Valence});
-  QCDEvMap.insert({7 , Singlet});
-  QCDEvMap.insert({8 , Valence});
-  QCDEvMap.insert({9 , Singlet});
-  QCDEvMap.insert({10, Valence});
-  QCDEvMap.insert({11, Singlet});
-  QCDEvMap.insert({12, Valence});
-
-  return QCDEvMap;
-}
-
 int main()
 {
-  // =================================================================
-  // Parameters
-  // =================================================================
+  // Open LHAPDF set.
+  LHAPDF::PDF* dist = LHAPDF::mkPDF("MMHT2014nnlo68cl");
+
+  // Thresholds.
+  const vector<double> Thresholds{dist->quarkThreshold(1),
+      dist->quarkThreshold(2),
+      dist->quarkThreshold(3),
+      dist->quarkThreshold(4),
+      dist->quarkThreshold(5),
+      dist->quarkThreshold(6)};
+
+  // Perturbative order.
+  const int PerturbativeOrder = dist->orderQCD();
+
+  // Tabulation limits
+  const double Qmin = dist->qMin();
+  const double Qmax = dist->qMax();
+
+  // Alpha_s
+  const auto Alphas = [&] (double const& mu) -> double{ return dist->alphasQ(mu); };
+
   // x-space grid.
   const Grid g{{SubGrid{100,1e-5,3}, SubGrid{60,1e-1,3}, SubGrid{50,6e-1,3}, SubGrid{50,8e-1,3}}};
 
-  // Initial scale for the collinear PDF evolution.
-  const double mui = sqrt(2);
+  // Rotate PDF set into the QCD evolution basis.
+  const auto RotPDFs = [=] (int const& id, double const& x, double const& mu) -> double{ return PhysToQCDEv(dist->xfxQ(x,mu)).at(id); };
 
-  // Vectors of masses and thresholds.
-  const vector<double> Masses = {0, 0, 0, sqrt(2), 4.5, 175};
-  const vector<double> Thresholds = Masses;
+  // Create function of mu that returns a set of distributions.
+  const auto EvolvedPDFs = [=,&g] (double const& mu) -> Set<Distribution>
+    {
+      // Fill in map of distributions.
+      map<int,Distribution> DistMap;
+      for (int id = 0; id < 13; id++)
+	DistMap.insert({id, Distribution{g, RotPDFs, id, mu}});
 
-  // Perturbative order.
-  const int PerturbativeOrder = 2;
+      // Return set of distributions.
+      return Set<Distribution>{EvolutionBasisQCD{NF(mu, Thresholds)}, DistMap};
+    };
 
-  // =================================================================
-  // Alpha_s
-  // =================================================================
-  // Running coupling
-  const double AlphaQCDRef = 0.35;
-  const double MuAlphaQCDRef = sqrt(2);
-  AlphaQCD a{AlphaQCDRef, MuAlphaQCDRef, Masses, PerturbativeOrder};
-  const TabulateObject<double> TabAlphas{a, 100, 1, 1000001, 3};
-  const auto Alphas = [&] (double const& mu) -> double{ return TabAlphas.Evaluate(mu); };
-
-  // =================================================================
-  // Collinear PDFs
-  // =================================================================
-  // Initialize DGLAP objects.
-  const auto DglapObj = InitializeDglapObjectsQCD(g, Masses, Thresholds);
-
-  // Construct the DGLAP evolution.
-  auto EvolvedPDFs = BuildDglap(DglapObj, LHToyPDFs, mui, PerturbativeOrder, Alphas);
-
-  // Tabulate PDFs
-  const TabulateObject<Set<Distribution>> CollPDFs{*EvolvedPDFs, 50, 1, 1000000, 3};
+  // Tabulate PDFs.
+  const TabulateObject<Set<Distribution>> CollPDFs{EvolvedPDFs, 50, Qmin, Qmax, 3, Thresholds};
 
   // =================================================================
   // TMD PDFs
   // =================================================================
-  // Initialize TMD objects.
-  const auto TmdObj = InitializeTmdObjects(g, Thresholds);
+  // Initialize TMD and DGLAP objects.
+  const auto TmdObj   = InitializeTmdObjects(g, Thresholds);
+  const auto DglapObj = InitializeDglapObjectsQCD(g, Thresholds, Thresholds);
 
   // Function that returns the scale inital scale mu and the
   // intermediate scale "mu0" as functions of the impact parameter b.
-  const auto Mu0b = [] (double const& b) -> double
+  const auto Mub = [] (double const& b) -> double
     {
       const double C0   = 2 * exp(- emc);
       const double bmax = 1;
-      return C0 * sqrt( 1 + pow(b/bmax,2) ) / b;
-    };
-  const auto Mub  = [Mu0b] (double const& b) -> double
-    {
-      const double Q0 = 1;
-      return Mu0b(b);// + Q0;
+      const double Q0   = 1;
+      return C0 * sqrt( 1 + pow(b/bmax,2) ) / b + Q0;
     };
 
   // Non-perturbative TMD function.
   const auto fNP = [] (double const& x, double const& b) -> double
     {
-      const double Lq = 10;
-      const double L1 = 0.2;
-      const double fact = Lq * x * b;
-      return exp( - fact * b / sqrt( 1 + pow( fact / L1, 2) ) );
+      //const double Lq = 10;
+      //const double L1 = 0.2;
+      //const double fact = Lq * x * b;
+      //return exp( - fact * b / sqrt( 1 + pow(fact/L1,2) ) );
+      const double L1 = 0.156;
+      const double L2 = -0.0379;
+      return exp( - L1 * b ) * ( 1 + L2 * b * b );
     };
 
   // Get evolved TMDs (this assumes the zeta-prescription).
-  const auto EvolvedTMDs = BuildTmdPDFs(TmdObj, DglapObj, CollPDFs, fNP, Mu0b, Mub, PerturbativeOrder, Alphas);
+  const auto EvolvedTMDs = BuildTmdPDFs(TmdObj, DglapObj, CollPDFs, fNP, Mub, Mub, PerturbativeOrder, Alphas);
 
   // Test values.
   const double Vs    = 8000;
@@ -150,7 +111,7 @@ int main()
   Timer ttot;
   ttot.start();
 
-  const TabulateObject<Set<Distribution>> TabulatedTMDs{[&] (double const& b)->Set<Distribution>{ return EvolvedTMDs(b, muf, zetaf); }, 100, 6e-6, 100, 3, Thresholds, 1e-7};
+  const TabulateObject<Set<Distribution>> TabulatedTMDs{[&] (double const& b)->Set<Distribution>{ return EvolvedTMDs(b, muf, zetaf); }, 100, 1, 100, 3, Thresholds, 1e-7};
 
   // Now construct the integrand of the Fourier (Hankel) tranform,
   // that is the TMD luminosity.
@@ -166,8 +127,10 @@ int main()
       for (int i = 1; i <= 6; i++)
 	lumi += QCh2[i-1] * ( TMD1[i] * TMD2[-i] + TMD1[-i] * TMD2[i] );
 
-      // Now multuply it by the bessel function j0.
-      lumi *= b * j0(b*qT) / 2; 
+      // Multuply it by the bessel function j0/2, by the Jacobian "b",
+      // and divide by x1 and x2 because the "EvolvedTMDs" function
+      // returns x times the TMDs.
+      lumi *= b * j0(b*qT) / 2 / x1 / x2; 
 
       return lumi;
     };
@@ -179,7 +142,7 @@ int main()
 
   // Zero's of the Bessel function j0.
   const vector<double> j0Zeros{
-      2.4048255576957730, 5.5200781102863115, 8.653727912911013,
+      2.4048255576957730, 5.5200781102863115, 8.6537279129110130,
       11.791534439014281, 14.930917708487787, 18.071063967910924,
       21.211636629879260, 24.352471530749302, 27.493479132040253,
       30.634606468431976, 33.775820213573570, 36.917098353664045,
@@ -206,7 +169,7 @@ int main()
   const Integrator integrand{TMDLumi};
   cout << "Integration... ";
   t.start();
-  const double TMDLumqT = integrand.integrate(0.000006, 50, j0Zeros, eps7);
+  const double TMDLumqT = integrand.integrate(1, 50, j0Zeros, eps7);
   t.stop();
 
   // Drell-Yan hard cross section
@@ -242,13 +205,21 @@ int main()
   const double aslphaem = 1. / 127.;
   const double prefactor = 4 * M_PI * pow(aslphaem,2) / 9 / Vs / Vs / Q / Q;
 
-  cout << "Cross section = " << prefactor * HardCrossSectionDY(PerturbativeOrder, Q, muf) * TMDLumqT << endl;
+  //cout << "Cross section = " << prefactor * HardCrossSectionDY(PerturbativeOrder, Q, muf) * TMDLumqT << endl;
+  cout << "Cross section = " << HardCrossSectionDY(2, Q, muf) << endl;
 
   cout << "Total computation time per point... ";
   ttot.stop();
-
-  EvolvedTMDs(1, 10, 100);
-
+  const double xt = 0.1;
+  cout << Mub(0.1) << "  " << EvolvedTMDs(0.1, 10, 100).at(1).Evaluate(xt) / xt << "  " << EvolvedTMDs(0.1, 10, 100).at(0).Evaluate(xt) / xt << endl;
+  cout << Mub(0.2) << "  " << EvolvedTMDs(0.2, 10, 100).at(1).Evaluate(xt) / xt << "  " << EvolvedTMDs(0.2, 10, 100).at(0).Evaluate(xt) / xt << endl;
+  cout << Mub(0.3) << "  " << EvolvedTMDs(0.3, 10, 100).at(1).Evaluate(xt) / xt << "  " << EvolvedTMDs(0.3, 10, 100).at(0).Evaluate(xt) / xt << endl;
+  cout << Mub(0.5) << "  " << EvolvedTMDs(0.5, 10, 100).at(1).Evaluate(xt) / xt << "  " << EvolvedTMDs(0.5, 10, 100).at(0).Evaluate(xt) / xt << endl;
+  cout << Mub(0.6) << "  " << EvolvedTMDs(0.6, 10, 100).at(1).Evaluate(xt) / xt << "  " << EvolvedTMDs(0.6, 10, 100).at(0).Evaluate(xt) / xt << endl;
+  cout << Mub(0.7) << "  " << EvolvedTMDs(0.7, 10, 100).at(1).Evaluate(xt) / xt << "  " << EvolvedTMDs(0.7, 10, 100).at(0).Evaluate(xt) / xt << endl;
+  cout << Mub(0.8) << "  " << EvolvedTMDs(0.8, 10, 100).at(1).Evaluate(xt) / xt << "  " << EvolvedTMDs(0.8, 10, 100).at(0).Evaluate(xt) / xt << endl;
+  cout << Mub(0.9) << "  " << EvolvedTMDs(0.9, 10, 100).at(1).Evaluate(xt) / xt << "  " << EvolvedTMDs(0.9, 10, 100).at(0).Evaluate(xt) / xt << endl;
+  cout << Mub(1)   << "  " << EvolvedTMDs(1,   10, 100).at(1).Evaluate(xt) / xt << "  " << EvolvedTMDs(1,   10, 100).at(0).Evaluate(xt) / xt << endl;
   return 0;
 }
 
