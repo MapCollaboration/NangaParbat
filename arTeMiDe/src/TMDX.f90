@@ -281,7 +281,8 @@ contains
     call TMDs_convergenceISlost()    
    end if
    
-  integral=integral*1.5707963267948966d0/(qT_global**2)*cutPrefactor_byUser(qT_global)
+  !integral=integral*1.5707963267948966d0/(qT_global**2)*cutPrefactor_byUser(qT_global)
+  integral=integral/(qT_global**2)
   
   
   end if
@@ -1207,10 +1208,10 @@ subroutine Xprefactor_byUser()
 	IsySymmetric=.true.
       CASE (2) !Zboson from pp (e.g.LHC) in the narrow-width approximation
 	!4 pi^2 aem/Ns/s Br(z->ee+mumu)
-	prefactor_global=HardCoefficientDY()!13.15947253478581d0*aEM/s_global*&
-	    !HardCoefficientDY()*&
-	    !0.3893379d9*&!from GeV to pb
-	    !0.03645d0!Br from PDG, ee+mumu 
+	prefactor_global=13.15947253478581d0*aEM/s_global*&
+	    HardCoefficientDY()*&
+	    0.3893379d9*&!from GeV to pb
+	    0.03645d0!Br from PDG, ee+mumu 
 	IsySymmetric=.true.
       CASE (3) !Zboson from ppbar (e.g. Tevatron)
 	!4 pi^2 aem/Ns/s Br(z->ll)
@@ -1233,6 +1234,9 @@ subroutine Xprefactor_byUser()
 	prefactor_global=1.3962634015954636d0*aEM*aEM/(s_global*Q_global**2)*&
 	    HardCoefficientDY()*&
 	    0.3893379d9!from GeV to pb
+	IsySymmetric=.false.
+      CASE (7)
+	prefactor_global=1d0
 	IsySymmetric=.false.
       CASE DEFAULT
       process_global=1
@@ -1332,6 +1336,21 @@ function XIntegrand(bt_arg)
 	 XIntegrand=2d0/9d0*(FA(2)*FB(-2)+FA(-2)*FB(2))+2d0/9d0*(FA(-2)*FB(1)+FA(2)*FB(-1))&
 	      +1d0/18d0*(FA(-1)*FB(2)+FA(1)*FB(-2))+1d0/18d0*(FA(1)*FB(-1)+FA(-1)*FB(1))&
 	      +1d0/9d0*(FA(3)*FB(-3)+FA(-3)*FB(3))
+      CASE (7) !DY->gamma
+         ! e_q^2 *F_q(A)*F_qbar(B)
+	FA5=uTMDPDF_50(xA_global,bt_arg,muHard_global,zetaA_global)
+	FB5=uTMDPDF_50(xB_global,bt_arg,muHard_global,zetaB_global)
+	
+	XIntegrand=FA5(1)*FB5(-1)/9.d0&
+	  +FA5(2)*FB5(-2)*4.d0/9.d0&
+	  +FA5(3)*FB5(-3)/9.d0&
+	  +FA5(4)*FB5(-4)*4.d0/9.d0&
+	  +FA5(5)*FB5(-5)/9.d0&
+	  +FA5(-1)*FB5(1)/9.d0&
+	  +FA5(-2)*FB5(2)*4.d0/9.d0&
+	  +FA5(-3)*FB5(3)/9.d0&
+	  +FA5(-4)*FB5(4)*4.d0/9.d0&
+	  +FA5(-5)*FB5(5)/9.d0
       CASE DEFAULT !SOMETHING WRONG
 	write(*,*) 'WARNING: the requested process does not exist.'
 	XIntegrand=0.d0
@@ -1371,11 +1390,11 @@ implicit none
 
 real*8,dimension(1:10)::xSec,pt_list,xSecMin,xSecMax
 real*8,dimension(-5:5)::tmds
-real*8,dimension(-3:3)::tmds3
-real*8 t1,t2,dum
-integer ::i
+real*8 t1,t2
+integer i,nb
+real*8 Vs,Q,y,x1,x2,muf,zetaf,bmin,bmax,bstep,b
 
-pt_list=(/5d0,10d0,15d0,20d0,20d0,20d0,20d0,20d0,20d0,20d0/)
+pt_list=(/1d0,2d0,3d0,4d0,5d0,10d0,15d0,20d0,25d0,30d0/)
 
 !initialize all at NNLO
 
@@ -1387,11 +1406,11 @@ call TMDX_SetNPParameters(1d0,0d0,(/0.156d0,-0.0379d0/))
 
 ! ATLAS cuts: $p_T>20$, $-2.4<\eta<2.4$
 
-call SetCuts(.true.,20d0,-2.4d0,2.4d0)
+call SetCuts(.false.,20d0,-2.4d0,2.4d0)
 
 ! let $Q=91$GeV and $\sqrt{s}=13$TeV, mid-rapidity, process=2.  
 
-call TMDX_XSetup(13000d0**2,91d0,0d0,1)
+call TMDX_XSetup(8000d0**2,91d0,2.5d0,7)
 
 ! Evaluate cross-section
 
@@ -1401,61 +1420,31 @@ call CalculateXsection(xSec,pt_list)
 call cpu_time(t2)
 write(6,*) "Computation time = ",t2 - t1," s"
 
+Vs    = 8000d0
+Q     = 91.2d0
+y     = 2.5d0
+x1    = Q * dexp(-y) / Vs
+x2    = Q * dexp(y) / Vs
+muf   = Q
+zetaf = Q * Q
+
+nb    = 10
+bmin  = 0.1d0
+bmax  = 1d0
+bstep = ( bmax - bmin ) / ( nb - 1 )
+
+b = bmin
+do i=1,nb
+   tmds = uTMDPDF_50(x2,b,muf,zetaf)
+   write(6,*) b,tmds(0),tmds(1) + tmds(-1) + tmds(2) + tmds(-2) + tmds(3) + tmds(-3) + tmds(4) + tmds(-4) + tmds(5) + tmds(-5)
+   b = b + bstep
+enddo
+write(6,*)
+
 do i=1,10
 write(*,*) pt_list(i), xSec(i)!, xSecMin(i)-xSec(i),xSecMax(i)-xSec(i)
 end do
-
-!TMDEvolutor(zeta,muf,mui,f)
-!uTMDPDF_30(xA_global,bt_arg,muHard_global,zetaA_global)
-!  function TMDR_full_zetaP(bT,zetaf,muf,mui,mu0,f)
-write(6,*) " "
-!write(6,*) TMDEvolutor(100d0,10d0,2.588047d0,0),TMDEvolutor(100d0,10d0,2.588047d0,1)
-!write(6,*) TMDR_full_zetaP(1d0,100d0,10d0,2.588047d0,1.588047d0,0),TMDR_full_zetaP(1d0,100d0,10d0,2.588047d0,1.588047d0,1)
-!write(6,*) TMDR_zetaP(1d0,100d0,10d0,1.588047d0,0),TMDR_zetaP(1d0,100d0,10d0,1.588047d0,1)
-!write(6,*) IgammaVq(10d0)-IgammaVq(1d0),IgammaVg(10d0)-IgammaVg(1d0)
-!write(6,*) zetaMU(10d0,1d0,0),zetaMU(10d0,1d0,1)
-!write(6,*) TMDD_boundary(1d0,10d0,0),TMDD_boundary(1d0,10d0,1)
-!write(6,*) xPDF(1d-1,1d1,0)
-tmds = uTMDPDF_50(0.1d0,0.1d0,10d0,100d0)
-write(6,*) tmds(1) + tmds(-1) + tmds(2) + tmds(-2) + tmds(3) + tmds(-3) + tmds(4) + tmds(-4) + tmds(5) + tmds(-5),tmds(0)
-tmds = uTMDPDF_50(0.1d0,0.2d0,10d0,100d0)
-write(6,*) tmds(1) + tmds(-1) + tmds(2) + tmds(-2) + tmds(3) + tmds(-3) + tmds(4) + tmds(-4) + tmds(5) + tmds(-5),tmds(0)
-tmds = uTMDPDF_50(0.1d0,0.3d0,10d0,100d0)
-write(6,*) tmds(1) + tmds(-1) + tmds(2) + tmds(-2) + tmds(3) + tmds(-3) + tmds(4) + tmds(-4) + tmds(5) + tmds(-5),tmds(0)
-tmds = uTMDPDF_50(0.1d0,0.5d0,10d0,100d0)
-write(6,*) tmds(1) + tmds(-1) + tmds(2) + tmds(-2) + tmds(3) + tmds(-3) + tmds(4) + tmds(-4) + tmds(5) + tmds(-5),tmds(0)
-tmds = uTMDPDF_50(0.1d0,0.6d0,10d0,100d0)
-write(6,*) tmds(1) + tmds(-1) + tmds(2) + tmds(-2) + tmds(3) + tmds(-3) + tmds(4) + tmds(-4) + tmds(5) + tmds(-5),tmds(0)
-tmds = uTMDPDF_50(0.1d0,0.7d0,10d0,100d0)
-write(6,*) tmds(1) + tmds(-1) + tmds(2) + tmds(-2) + tmds(3) + tmds(-3) + tmds(4) + tmds(-4) + tmds(5) + tmds(-5),tmds(0)
-tmds = uTMDPDF_50(0.1d0,0.8d0,10d0,100d0)
-write(6,*) tmds(1) + tmds(-1) + tmds(2) + tmds(-2) + tmds(3) + tmds(-3) + tmds(4) + tmds(-4) + tmds(5) + tmds(-5),tmds(0)
-tmds = uTMDPDF_50(0.1d0,0.9d0,10d0,100d0)
-write(6,*) tmds(1) + tmds(-1) + tmds(2) + tmds(-2) + tmds(3) + tmds(-3) + tmds(4) + tmds(-4) + tmds(5) + tmds(-5),tmds(0)
-tmds = uTMDPDF_50(0.1d0,1d0,10d0,100d0)
-write(6,*) tmds(1) + tmds(-1) + tmds(2) + tmds(-2) + tmds(3) + tmds(-3) + tmds(4) + tmds(-4) + tmds(5) + tmds(-5),tmds(0)
-
 write(6,*)
 
-!!$tmds3 = uTMDPDF_30(0.1d0,0.1d0,10d0,100d0)
-!!$write(6,*) tmds3(1) + tmds3(-1) + tmds3(2) + tmds3(-2) + tmds3(3) + tmds3(-3)
-!!$tmds3 = uTMDPDF_30(0.1d0,0.2d0,10d0,100d0)
-!!$write(6,*) tmds3(1) + tmds3(-1) + tmds3(2) + tmds3(-2) + tmds3(3) + tmds3(-3)
-!!$tmds3 = uTMDPDF_30(0.1d0,0.3d0,10d0,100d0)
-!!$write(6,*) tmds3(1) + tmds3(-1) + tmds3(2) + tmds3(-2) + tmds3(3) + tmds3(-3)
-!!$tmds3 = uTMDPDF_30(0.1d0,0.5d0,10d0,100d0)
-!!$write(6,*) tmds3(1) + tmds3(-1) + tmds3(2) + tmds3(-2) + tmds3(3) + tmds3(-3)
-!!$tmds3 = uTMDPDF_30(0.1d0,0.6d0,10d0,100d0)
-!!$write(6,*) tmds3(1) + tmds3(-1) + tmds3(2) + tmds3(-2) + tmds3(3) + tmds3(-3)
-!!$tmds3 = uTMDPDF_30(0.1d0,0.7d0,10d0,100d0)
-!!$write(6,*) tmds3(1) + tmds3(-1) + tmds3(2) + tmds3(-2) + tmds3(3) + tmds3(-3)
-!!$tmds3 = uTMDPDF_30(0.1d0,0.8d0,10d0,100d0)
-!!$write(6,*) tmds3(1) + tmds3(-1) + tmds3(2) + tmds3(-2) + tmds3(3) + tmds3(-3)
-!!$tmds3 = uTMDPDF_30(0.1d0,0.9d0,10d0,100d0)
-!!$write(6,*) tmds3(1) + tmds3(-1) + tmds3(2) + tmds3(-2) + tmds3(3) + tmds3(-3)
-!!$tmds3 = uTMDPDF_30(0.1d0,1d0,10d0,100d0)
-!!$write(6,*) tmds3(1) + tmds3(-1) + tmds3(2) + tmds3(-2) + tmds3(3) + tmds3(-3)
 
-
-!dum = TMDD_boundary(1d0,10d0,0)
 end program example
