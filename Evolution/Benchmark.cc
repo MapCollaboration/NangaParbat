@@ -42,28 +42,25 @@ int main()
   const double Qmin = dist->qMin();
   const double Qmax = dist->qMax();
 
+  // =================================================================
   // Alpha_s
+  // =================================================================
   const auto Alphas = [&] (double const& mu) -> double{ return dist->alphasQ(mu); };
 
+  // =================================================================
+  // Collinear PDFs
+  // =================================================================
   // x-space grid.
   const Grid g{{SubGrid{100,1e-5,3}, SubGrid{60,1e-1,3}, SubGrid{50,6e-1,3}, SubGrid{50,8e-1,3}}};
 
   // Rotate PDF set into the QCD evolution basis.
-  const auto RotPDFs = [=] (int const& id, double const& x, double const& mu) -> double{ return PhysToQCDEv(dist->xfxQ(x,mu)).at(id); };
+  const auto RotPDFs = [=] (double const& x, double const& mu) -> map<int,double>{ return PhysToQCDEv(dist->xfxQ(x,mu)); };
 
-  // Create function of mu that returns a set of distributions.
-  const auto EvolvedPDFs = [=,&g] (double const& mu) -> Set<Distribution>
-    {
-      // Fill in map of distributions.
-      map<int,Distribution> DistMap;
-      for (int id = 0; id < 13; id++)
-	DistMap.insert({id, Distribution{g, RotPDFs, id, mu}});
+  // Construct set of distributions as a function of the scale to be
+  // tabulated.
+  const auto EvolvedPDFs = [=,&g] (double const& mu) -> Set<Distribution>{ return Set<Distribution>{EvolutionBasisQCD{NF(mu, Thresholds)}, DistributionMap(g, RotPDFs, mu)}; };
 
-      // Return set of distributions.
-      return Set<Distribution>{EvolutionBasisQCD{NF(mu, Thresholds)}, DistMap};
-    };
-
-  // Tabulate PDFs.
+  // Tabulate PDFs
   const TabulateObject<Set<Distribution>> CollPDFs{EvolvedPDFs, 50, Qmin, Qmax, 3, Thresholds};
 
   // =================================================================
@@ -71,10 +68,10 @@ int main()
   // =================================================================
   // Initialize TMD and DGLAP objects.
   const auto TmdObj   = InitializeTmdObjects(g, Thresholds);
-  const auto DglapObj = InitializeDglapObjectsQCD(g, Thresholds, Thresholds);
+  const auto DglapObj = InitializeDglapObjectsQCD(g, Thresholds);
 
-  // Function that returns the scale inital scale mu and the
-  // intermediate scale "mu0" as functions of the impact parameter b.
+  // Function that returns the inital scale mu as a function of the
+  // impact parameter b.
   const auto Mub = [] (double const& b) -> double
     {
       const double C0   = 2 * exp(- emc);
@@ -86,12 +83,8 @@ int main()
   // Non-perturbative TMD function.
   const auto fNP = [] (double const& x, double const& b) -> double
     {
-      //const double Lq = 10;
-      //const double L1 = 0.2;
-      //const double fact = Lq * x * b;
-      //return exp( - fact * b / sqrt( 1 + pow(fact/L1,2) ) );
       const double L1 = 0.156;
-      const double L2 = -0.0379;
+      const double L2 = - 0.0379;
       return exp( - L1 * b ) * ( 1 + L2 * b * b );
     };
 
@@ -205,8 +198,7 @@ int main()
   const double aslphaem = 1. / 127.;
   const double prefactor = 4 * M_PI * pow(aslphaem,2) / 9 / Vs / Vs / Q / Q;
 
-  //cout << "Cross section = " << prefactor * HardCrossSectionDY(PerturbativeOrder, Q, muf) * TMDLumqT << endl;
-  cout << "Cross section = " << HardCrossSectionDY(2, Q, muf) << endl;
+  cout << "Cross section = " << prefactor * HardCrossSectionDY(PerturbativeOrder, Q, muf) * TMDLumqT << endl;
 
   cout << "Total computation time per point... ";
   ttot.stop();

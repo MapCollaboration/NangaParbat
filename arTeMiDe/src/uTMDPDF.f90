@@ -630,7 +630,7 @@ implicit none
   !! the Leading order is always zero, therefore calculation should be done only for order >=1
   CoeffReg_g_g=(/0d0,0d0,0d0,0d0,0d0,0d0,0d0,0d0,0d0,0d0,0d0,0d0/)
   if(order_global>=1) then
-    CoeffReg_g_g=CoeffReg_g_q+alpha*12.d0*Lmu*(/2.d0 , -1.d0, 1.d0,&
+    CoeffReg_g_g=CoeffReg_g_g+alpha*12.d0*Lmu*(/2.d0 , -1.d0, 1.d0,&
       0d0,0d0,0d0,0d0,0d0,0d0,0d0,0d0,0d0/)
   !------The kernels are calculated in mathematica
     if(order_global>=2) then
@@ -1760,7 +1760,7 @@ implicit none
       PDFs=FNP(z,bT_current)*xPDFVECTOR50(xCurrent/z,muCurrent)
 
       PDFsum=PDFs(-5)+PDFs(-4)+PDFs(-3)+PDFs(-2)+PDFs(-1)+PDFs(1)+PDFs(2)+PDFs(3)+PDFs(4)+PDFs(5)
-      
+
       var=(/1d0,z,z*z,z*z*z,LOG(1-z),LOG(1-z)**2,LOG(1-z)**3&
       ,LOG(z),LOG(z)**2,LOG(z)**3,LOG(1-z)*Log(z),LOG(1-z)*Log(z)**2/)
       
