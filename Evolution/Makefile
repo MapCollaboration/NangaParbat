@@ -22,12 +22,18 @@ LDFLAGS  += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS)
 CLIBS += $(LHAPDFLIBS) $(APFELLIBS) $(APFELPPLIBS)
 
 install : all
-all : Evolution Benchmark
+all : TestMatchingFunctions Benchmark CrossSection J0ZerosGenerator
 
-Evolution: Evolution.o
+TestMatchingFunctions: TestMatchingFunctions.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
 Benchmark: Benchmark.o
+	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
+
+CrossSection: CrossSection.o
+	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
+
+J0ZerosGenerator: J0ZerosGenerator.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
 .SUFFIXES : .cxx .o .f .c
@@ -39,5 +45,5 @@ Benchmark: Benchmark.o
 	$(F77)  -c $< 
 
 clean:
-	rm -rf *.lo *.o *.la Evolution Benchmark *~
+	rm -rf *.lo *.o *.la TestMatchingFunctions Benchmark CrossSection J0ZerosGenerator *~
 

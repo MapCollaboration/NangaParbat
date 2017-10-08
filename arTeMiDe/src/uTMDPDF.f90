@@ -115,7 +115,7 @@ implicit none
 	order_global=1
 	numberOfRecursion=5
       CASE ("NNLO")
-	order_global=1
+	order_global=2
 	numberOfRecursion=25
       CASE DEFAULT
 	write(*,*) 'WARNING: arTeMiDe.uTMDPDF_Initialize: unknown order for coefficient function. Switch to NLO.'

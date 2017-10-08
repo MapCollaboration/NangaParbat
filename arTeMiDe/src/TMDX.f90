@@ -281,8 +281,7 @@ contains
     call TMDs_convergenceISlost()    
    end if
    
-  !integral=integral*1.5707963267948966d0/(qT_global**2)*cutPrefactor_byUser(qT_global)
-  integral=integral/(qT_global**2)
+  integral=integral*1.5707963267948966d0/(qT_global**2)*cutPrefactor_byUser(qT_global)
   
   
   end if
@@ -1170,7 +1169,6 @@ function XIntegrandForDYwithZ5(bt_arg)
      real*8,parameter::GammaZ2=(2.5d0)**2
      FA=uTMDPDF_50(xA_global,bt_arg,muHard_global,zetaA_global)
      FB=uTMDPDF_50(xB_global,bt_arg,muHard_global,zetaB_global)
-     
      XIntegrandForDYwithZ5=&
      (4d0/9d0*FA(2)*FB(-2)+1d0/9d0*FA(1)*FB(-1)+1d0/9d0*FA(3)*FB(-3)&!gamma-part
      +4d0/9d0*FA(4)*FB(-4)+1d0/9d0*FA(5)*FB(-5)&
@@ -1189,6 +1187,18 @@ function XIntegrandForDYwithZ5(bt_arg)
      0.403213d0*FA(-2)*FB(2)+0.519741d0*FA(-1)*FB(1)+0.133702d0*FA(-3)*FB(3)&
      +0.133702d0*FA(-4)*FB(4)+0.0334255d0*FA(-5)*FB(5))*&
      0.353536d0*Q_global**2/((Q_global**2-MZ2)**2+GammaZ2*MZ2)
+     !+&!gamma-Z interference
+     !(0.00673418d0*FA(2)*FB(-2)+0.00607571d0*FA(1)*FB(-1)+0.00607571d0*FA(3)*FB(-3)&
+     !+0.00673418d0*FA(4)*FB(-4)+0.00607571d0*FA(5)*FB(-5)&
+     !+0.00673418d0*FA(-2)*FB(2)+0.00607571d0*FA(-1)*FB(1)+0.00607571d0*FA(-3)*FB(3)&
+     !+0.00673418d0*FA(-4)*FB(4)+0.00607571d0*FA(-5)*FB(5))*&
+     !2d0*(Q_global**2-MZ2)/((Q_global**2-MZ2)**2+GammaZ2*MZ2)&
+     !+&!ZZ-contributions
+     !(0.403213d0*FA(2)*FB(-2)+0.519741d0*FA(1)*FB(-1)+0.519741d0*FA(3)*FB(-3)&
+     !+0.403213d0*FA(4)*FB(-4)+0.519741d0*FA(5)*FB(-5)&
+     !+0.403213d0*FA(-2)*FB(2)+0.519741d0*FA(-1)*FB(1)+0.519741d0*FA(-3)*FB(3)&
+     !+0.403213d0*FA(-4)*FB(4)+0.519741d0*FA(-5)*FB(5))*&
+     !0.353536d0*Q_global**2/((Q_global**2-MZ2)**2+GammaZ2*MZ2)
 end function XIntegrandForDYwithZ5
  
  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1410,19 +1420,20 @@ call SetCuts(.false.,20d0,-2.4d0,2.4d0)
 
 ! let $Q=91$GeV and $\sqrt{s}=13$TeV, mid-rapidity, process=2.  
 
-call TMDX_XSetup(8000d0**2,91d0,2.5d0,7)
+call TMDX_XSetup(8000d0**2,91.2d0,0d0,5)
 
 ! Evaluate cross-section
 
 call cpu_time(t1)
 !call CalculateXsection(xSec,xSecMin,xSecMax,pt_list)
 call CalculateXsection(xSec,pt_list)
+!call CalculateXsection_Qint_Yint(xSec,pt_list,86d0,116d0,-2.4d0,2.4d0)
 call cpu_time(t2)
 write(6,*) "Computation time = ",t2 - t1," s"
 
 Vs    = 8000d0
 Q     = 91.2d0
-y     = 2.5d0
+y     = 0d0
 x1    = Q * dexp(-y) / Vs
 x2    = Q * dexp(y) / Vs
 muf   = Q
@@ -1430,13 +1441,16 @@ zetaf = Q * Q
 
 nb    = 10
 bmin  = 0.1d0
-bmax  = 1d0
+bmax  = 10d0
 bstep = ( bmax - bmin ) / ( nb - 1 )
 
 b = bmin
 do i=1,nb
    tmds = uTMDPDF_50(x2,b,muf,zetaf)
-   write(6,*) b,tmds(0),tmds(1) + tmds(-1) + tmds(2) + tmds(-2) + tmds(3) + tmds(-3) + tmds(4) + tmds(-4) + tmds(5) + tmds(-5)
+   write(6,*) b,tmds(0),&
+        tmds(1) + tmds(-1) + tmds(2) + tmds(-2) + tmds(3) + tmds(-3) + tmds(4) + tmds(-4) + tmds(5) + tmds(-5),&
+        tmds(1) - tmds(-1) + tmds(2) - tmds(-2) + tmds(3) - tmds(-3) + tmds(4) - tmds(-4) + tmds(5) - tmds(-5),&
+        tmds(2) + tmds(-2) - tmds(1) - tmds(-1)
    b = b + bstep
 enddo
 write(6,*)

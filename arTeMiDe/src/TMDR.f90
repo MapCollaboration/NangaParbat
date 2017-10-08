@@ -613,8 +613,6 @@ implicit none
       end if
       end if
       zetaMU=mu*C0_const/bT*EXP(-val)
-      !Lmu=2*LOG(mu*bt*C0_inv_const)
-      !zetaMU=C0_const*C0_const/bT/bT*EXP(Lmu/2d0-val)
   end function zetaMU
   
   !The TMD evolution kernel R at 
@@ -663,3 +661,4 @@ end module TMDR
 !   write(*,*) TMDR_zetaP(0.1d0,91d0**2,91d0,5d0,1)
 ! 
 ! end program test
+
