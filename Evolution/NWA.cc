@@ -25,6 +25,8 @@ using namespace std;
 
 int main()
 {
+  cout << __PRETTY_FUNCTION__ << "\n";
+
   // Open LHAPDF set.
   LHAPDF::PDF* dist = LHAPDF::mkPDF("MMHT2014nnlo68cl");
 
@@ -92,9 +94,14 @@ int main()
 
   // Get evolved TMDs (this assumes the zeta-prescription).
   const auto EvolvedTMDPDFs = BuildTmdPDFs(TmdObj, DglapObj, CollPDFs, fNP, Mub, Mub, PerturbativeOrder, Alphas);
+  const auto MatchedTMDPDFs = MatchTmdPDFs(TmdObj, DglapObj, CollPDFs, fNP, Mub, PerturbativeOrder, Alphas);
+  const auto EvolFactors    = EvolutionFactors(TmdObj, Mub, Mub, PerturbativeOrder, Alphas);
+
+  // Compute Drell-Yan cross section.
+  const double Vs = 8000;
+  const double y  = 0;
 
   // Relevant constants for the computation of the EW charges.
-  // (See https://arxiv.org/pdf/hep-ph/9711387.pdf)
   const double MZ         = 91.1876;
   const double MZ2        = MZ * MZ;
   const double GammaZ     = 2.4952;
@@ -108,47 +115,60 @@ int main()
   const vector<double> Aq = {AD, AU, AD, AU, AD, AU};
   const double Ve         = - 0.5 + 2 * Sin2ThetaW;
   const double Ae         = - 0.5;
+  const double alphaem    = 1. / 127.91;
+  const double alphaem2   = alphaem * alphaem;
 
-  // Actual charges.
+  // Complete charges.
   const auto fEWCharges = [=] (double const& Q) -> vector<double>
     {
-      const double Q2       = Q * Q;
-      const double PZ       = Q2 * ( Q2 -  MZ2 ) / ( pow(Q2 - MZ2,2) + MZ2 * GammaZ2 ) / ( 4 * Sin2ThetaW * ( 1 - Sin2ThetaW ) );
-      const double PZ2      = pow(Q2,2) / ( pow(Q2 - MZ2,2) + MZ2 * GammaZ2 ) / pow(4 * Sin2ThetaW * ( 1 - Sin2ThetaW ),2);
-      const double alphaem  = ( 1. / 127.91 ) / ( 1 - 0.00167092 * log(Q/MZ) );
+      const double Q2  = Q * Q;
+      const double PZ  = Q2 * ( Q2 -  MZ2 ) / ( pow(Q2 - MZ2,2) + MZ2 * GammaZ2 ) / ( 4 * Sin2ThetaW * ( 1 - Sin2ThetaW ) );
+      const double PZ2 = pow(Q2,2) / ( pow(Q2 - MZ2,2) + MZ2 * GammaZ2 ) / pow(4 * Sin2ThetaW * ( 1 - Sin2ThetaW ),2);
       vector<double> EWCharges;
       for (auto i = 0; i < (int) Thresholds.size(); i++)
 	{
 	  const double b = QCh2[i]
-	    - 2 * QCh[i] * Vq[i] * Ve* PZ
+	    - 2 * QCh[i] * Vq[i] * Ve * PZ
 	    + ( Ve * Ve + Ae * Ae ) * ( Vq[i] * Vq[i] + Aq[i] * Aq[i] ) * PZ2;
-	  EWCharges.push_back(alphaem*alphaem*b);
+	  EWCharges.push_back(alphaem2*b);
 	}
       return EWCharges;
     };
 
-  // Compute Drell-Yan cross section.
-  const double Vs = 13000;
-  const double Q  = 91.2;
-  const double y  = 2.5;
-  function<double(double const&)> TmdXsecDY = TmdCrossSectionDY(Vs, Q, y, EvolvedTMDPDFs, Alphas, fEWCharges, PerturbativeOrder, Thresholds);
+  // Narrow-width-approximation charges.
+  const auto fEWChargesNWA = [=] (double const&) -> vector<double>
+    {
+      const double PZ2 = M_PI * pow(MZ2,2) / MZ / GammaZ / pow(4 * Sin2ThetaW * ( 1 - Sin2ThetaW ),2);
+      vector<double> EWCharges;
+      for (auto i = 0; i < (int) Thresholds.size(); i++)
+	{
+	  const double b = ( Ve * Ve + Ae * Ae ) * ( Vq[i] * Vq[i] + Aq[i] * Aq[i] ) * PZ2;
+	  EWCharges.push_back(alphaem2*b);
+	}
+      return EWCharges;
+    };
 
-  const int nqt       = 1000;
-  const double qtmin  = 0.1;
-  const double qtmax  = 30;
-  const double qtstep = ( qtmax - qtmin ) / ( nqt - 1 );
+  const double dQ = 85;
 
+  // Drell-Yann cross section.
+  function<double(double const&)> TmdXsecDY    = TmdCrossSectionDY(Vs, MZ,           y,    EvolvedTMDPDFs,              Alphas, fEWChargesNWA, PerturbativeOrder, Thresholds);
+  function<double(double const&)> TmdXsecDYInt = TmdCrossSectionDY(Vs, 10, 300, y, y, MatchedTMDPDFs, EvolFactors, Alphas, fEWCharges,    PerturbativeOrder, Thresholds);
+
+  const vector<double> qT{1, 2, 3, 4, 5, 10, 15, 20, 25, 30};
   Timer t;
   t.start();
-  ofstream fout ("CrossSection.dat");
-  fout << scientific;
-  double qt = qtmin;
-  for (int iq = 0; iq < nqt; iq++)
-    {
-      fout << qt << "  " << 2 * qt * TmdXsecDY(qt) << endl;
-      qt += qtstep;
-    }
-  fout.close();
+  cout << "Computing TMD luminosity in qT space ..." << endl;
+  cout << "\n  qT [GeV]   "
+       << "   d(sigma)/dQdyd(qT^2)"
+       << endl;
+  cout << scientific;
+  for (auto const& q : qT)
+    cout << q << "  "
+	 << TmdXsecDY(q) / TmdXsecDYInt(q) << "  "
+	 << endl;
+
+  cout << "\n";
+  cout << "Integration... ";
   t.stop();
 
   return 0;

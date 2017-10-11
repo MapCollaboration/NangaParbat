@@ -22,7 +22,7 @@ LDFLAGS  += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS)
 CLIBS += $(LHAPDFLIBS) $(APFELLIBS) $(APFELPPLIBS)
 
 install : all
-all : TestMatchingFunctions Benchmark CrossSection J0ZerosGenerator
+all : TestMatchingFunctions Benchmark CrossSection J0ZerosGenerator NWA
 
 TestMatchingFunctions: TestMatchingFunctions.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
@@ -36,6 +36,9 @@ CrossSection: CrossSection.o
 J0ZerosGenerator: J0ZerosGenerator.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
+NWA: NWA.o
+	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
+
 .SUFFIXES : .cxx .o .f .c
 
 .cxx.o:	 
@@ -45,5 +48,5 @@ J0ZerosGenerator: J0ZerosGenerator.o
 	$(F77)  -c $< 
 
 clean:
-	rm -rf *.lo *.o *.la TestMatchingFunctions Benchmark CrossSection J0ZerosGenerator *~
+	rm -rf *.lo *.o *.la TestMatchingFunctions Benchmark CrossSection J0ZerosGenerator NWA *~
 

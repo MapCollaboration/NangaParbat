@@ -1426,8 +1426,8 @@ call TMDX_XSetup(8000d0**2,91.2d0,0d0,5)
 
 call cpu_time(t1)
 !call CalculateXsection(xSec,xSecMin,xSecMax,pt_list)
-call CalculateXsection(xSec,pt_list)
-!call CalculateXsection_Qint_Yint(xSec,pt_list,86d0,116d0,-2.4d0,2.4d0)
+!call CalculateXsection(xSec,pt_list)
+call CalculateXsection_Qint_Yint(xSec,pt_list,86d0,116d0,-2.4d0,2.4d0)
 call cpu_time(t2)
 write(6,*) "Computation time = ",t2 - t1," s"
 

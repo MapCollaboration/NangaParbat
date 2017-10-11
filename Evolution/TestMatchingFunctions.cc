@@ -103,7 +103,8 @@ int main()
   auto EvolvedPDFs = BuildDglap(DglapObj, LHToyPDFs, mui, PerturbativeOrder, Alphas);
 
   // Tabulate PDFs
-  const TabulateObject<Set<Distribution>> CollPDFs{*EvolvedPDFs, 50, 1, 1000000, 3};
+  const TabulateObject<Set<Distribution>> TabPDFs{*EvolvedPDFs, 50, 1, 1000000, 3};
+  const auto CollPDFs = [&] (double const& mu) -> Set<Distribution> { return TabPDFs.Evaluate(mu); };
 
   // =================================================================
   // TMD PDFs

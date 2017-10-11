@@ -64,11 +64,13 @@ int main()
   const auto EvolvedPDFs = [=,&g] (double const& mu) -> Set<Distribution>{ return Set<Distribution>{EvolutionBasisQCD{NF(mu, Thresholds)}, DistributionMap(g, RotPDFs, mu)}; };
 
   // Tabulate PDFs
-  const TabulateObject<Set<Distribution>> CollPDFs{EvolvedPDFs, 50, Qmin, Qmax, 3, Thresholds};
+  const TabulateObject<Set<Distribution>> TabPDFs{EvolvedPDFs, 50, Qmin, Qmax, 3, Thresholds};
+  const auto CollPDFs = [&] (double const& mu) -> Set<Distribution> { return TabPDFs.Evaluate(mu); };
 
   //const auto DglapObj = InitializeDglapObjectsQCD(g, Thresholds);
   //auto EvolvedPDFs = BuildDglap(DglapObj, RotPDFs, Qmin, PerturbativeOrder, Alphas);
-  //const TabulateObject<Set<Distribution>> CollPDFs{*EvolvedPDFs, 50, Qmin, Qmax, 3};
+  //const TabulateObject<Set<Distribution>> TabPDFs{*EvolvedPDFs, 50, Qmin, Qmax, 3};
+  //const auto CollPDFs = [&] (double const& mu) -> Set<Distribution> { return TabPDFs.Evaluate(mu); };
 
   // =================================================================
   // TMD PDFs
@@ -97,57 +99,20 @@ int main()
 
   // Get evolved TMDs (this assumes the zeta-prescription).
   const auto EvolvedTMDPDFs = BuildTmdPDFs(TmdObj, DglapObj, CollPDFs, fNP, Mub, Mub, PerturbativeOrder, Alphas);
+  const auto MatchedTMDPDFs = MatchTmdPDFs(TmdObj, DglapObj, CollPDFs, fNP, Mub, PerturbativeOrder, Alphas);
+  const auto EvolFactors    = EvolutionFactors(TmdObj, Mub, Mub, PerturbativeOrder, Alphas);
 
   // Compute Drell-Yan cross section.
   const double Vs = 8000;
   const double Q  = 91.2;
-  const double y  = 0;
-
-  // Relevant constants for the computation of the EW charges.
-  const double MZ         = 91.1876;
-  const double MZ2        = MZ * MZ;
-  const double GammaZ     = 2.4952;
-  const double GammaZ2    = GammaZ * GammaZ;
-  const double Sin2ThetaW = 0.23126;
-  const double VD         = - 0.5 + 2 * Sin2ThetaW / 3;
-  const double VU         = + 0.5 - 4 * Sin2ThetaW / 3;
-  const vector<double> Vq = {VD, VU, VD, VU, VD, VU};
-  const double AD         = - 0.5;
-  const double AU         = + 0.5;
-  const vector<double> Aq = {AD, AU, AD, AU, AD, AU};
-  const double Ve         = - 0.5 + 2 * Sin2ThetaW;
-  const double Ae         = - 0.5;
-  const double alphaem    = ( 1. / 127.91 ) / ( 1 - 0.00167092 * log(Q/MZ) );
-  const double alphaem2   = alphaem * alphaem;
-
-  // Actual charges.
-  const auto fEWCharges = [=] (double const& Q) -> vector<double>
-    {
-      const double Q2  = Q * Q;
-      const double PZ  = Q2 * ( Q2 -  MZ2 ) / ( pow(Q2 - MZ2,2) + MZ2 * GammaZ2 ) / ( 4 * Sin2ThetaW * ( 1 - Sin2ThetaW ) );
-      const double PZ2 = pow(Q2,2) / ( pow(Q2 - MZ2,2) + MZ2 * GammaZ2 ) / pow(4 * Sin2ThetaW * ( 1 - Sin2ThetaW ),2);
-      vector<double> EWCharges;
-      for (auto i = 0; i < (int) Thresholds.size(); i++)
-	{
-	  const double b = QCh2[i]
-	    - 2 * QCh[i] * Vq[i] * Ve * PZ
-	    + ( Ve * Ve + Ae * Ae ) * ( Vq[i] * Vq[i] + Aq[i] * Aq[i] ) * PZ2;
-	  EWCharges.push_back(alphaem2*b);
-	}
-      return EWCharges;
-    };
-
-  const double dQ = 0.01;
-  const double dy = 0.001;
-
-  // Drell-Yann cross section.
-  function<double(double const&)> TmdXsecDY = TmdCrossSectionDY(Vs, Q, y, EvolvedTMDPDFs, Alphas, fEWCharges, PerturbativeOrder, Thresholds);
-  function<double(double const&)> TmdXsecDYInt = TmdCrossSectionDY(Vs, Q-dQ, Q+dQ, y-dy, y+dy, EvolvedTMDPDFs, Alphas, fEWCharges, PerturbativeOrder, Thresholds);
+  const double y  = 2.5;
+  const double MZ = 91.1876;
+  const double Br = 0.03645;
 
   const double x2    = Q * exp(y) / Vs;
   const double muf   = Q;
   const double zetaf = Q * Q;
-  const int nb       = 10;
+  const int nb       = 100;
   const double bmin  = 0.1;
   const double bmax  = 10;
   const double bstep = ( bmax - bmin ) / ( nb - 1 );
@@ -155,6 +120,8 @@ int main()
   cout << scientific << "\n";
   cout << " b [1/GeV]    "
        << " Mu(b) [GeV]  "
+       << " Ev. (gluon)  "
+       << " Ev. (sigma)  "
        << "TMPDF(gluon)  "
        << "TMPDF(sigma)  "
        << " TMPDF(val.)  "
@@ -163,7 +130,10 @@ int main()
   double b = bmin;
   for (int ib = 0; ib < nb; ib++)
     {
+      //const auto EvTMDs = EvolFactors(b, muf, zetaf) * MatchedTMDPDFs(b);
       cout << b << "  " << Mub(b) << "  "
+	   << EvolFactors(b, muf, zetaf)[0] << "  "
+	   << EvolFactors(b, muf, zetaf)[1] << "  "
 	   << EvolvedTMDPDFs(b, muf, zetaf).at(0).Evaluate(x2) / x2 << "  "
 	   << EvolvedTMDPDFs(b, muf, zetaf).at(1).Evaluate(x2) / x2 << "  "
 	   << EvolvedTMDPDFs(b, muf, zetaf).at(2).Evaluate(x2) / x2 << "  "
@@ -173,22 +143,36 @@ int main()
     }
   cout << "\n";
 
-  const vector<double> qT{1, 2, 3, 4, 5, 10, 15, 20, 25, 30};
+  // Relevant constants for the computation of the EW charges.
+  const double paramD = 0.51974146748459;
+  const double paramU = 0.40321312240043;
+  const double paramS = 0.13370219088667;
+  const double paramC = 0.53480876354668;
+  const double paramB = 0.13370219088667;
+  const double paramT = 0.53480876354668;
+
+  // Actual charges.
+  const auto fEWCharges = [=] (double const&) -> vector<double>{ return {paramD, paramU, paramS, paramC, paramB, paramT}; };
+
+  // Electromagnetic charge
+  const double alphaem  = ( 1. / 127.91 ) / ( 1 - 0.00167092 * log(Q/MZ) );
+
+  // Drell-Yann cross section.
+  function<double(double const&)> TmdXsecDY = TmdCrossSectionDY(Vs, Q, y, EvolvedTMDPDFs, Alphas, fEWCharges, PerturbativeOrder, Thresholds);
+
+  const vector<double> qT{1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+      11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+      21, 22, 23, 24, 25, 26, 27, 28, 29, 30};
   Timer t;
   t.start();
   cout << "Computing TMD luminosity in qT space ..." << endl;
   cout << "\n  qT [GeV]   "
-       << "   d(sigma)/dQdyd(qT^2)"
+       << "   d(sigma)/dyd(qT^2)"
        << endl;
   for (auto const& q : qT)
     cout << q << "  "
-	 << TmdXsecDY(q) << "  "
-	 << TmdXsecDYInt(q) / dQ / dy / 4 << "  "
+	 <<  3 * M_PI * alphaem * Br * TmdXsecDY(q) * MZ * MZ << "  "
 	 << endl;
-
-  cout << "\n";
-  cout << "Integration... ";
-  t.stop();
 
   return 0;
 }
