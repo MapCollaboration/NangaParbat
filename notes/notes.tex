@@ -26,25 +26,43 @@
 
 Let us start from Eq.~(2.6) of Ref.~\cite{Scimemi:2017etj}, that is
 the fully differential cross section for lepton-pair production in the
-region in which the TMD factorisation applies, $i.e.$ $q_T \ll Q$. It
-reads:
+region in which the TMD factorisation applies, $i.e.$ $q_T \ll
+Q$. After some minor manipulations, it reads:
 \begin{equation}\label{eq:crosssection}
-\frac{d\sigma}{dQ^2 dy dq_T^2} =
-\frac{4\pi\alpha^2(Q)\mathcal{P}}{3N_c Q^4} H(Q,\mu) \sum_q C_q(Q)
-\int\frac{d^2\mathbf{b}}{4\pi} e^{i \mathbf{b}\cdot \mathbf{q}_T} x_1F_q(x_1,\mathbf{b};\mu,\zeta) x_2F_{\bar{q}}(x_2,\mathbf{b};\mu,\zeta)\,.
+\frac{d\sigma}{dQ dy dq_T} =
+\frac{16\pi\alpha^2(Q)q_T\mathcal{P}(q_T,Q)}{3N_c Q^3} H(Q,\mu) \sum_q C_q(Q)
+\int\frac{d^2\mathbf{b}}{4\pi} e^{i \mathbf{b}\cdot \mathbf{q}_T} x_1F_q(x_1,\mathbf{b};\mu,\zeta) x_2F_{\bar{q}}(x_2,\mathbf{b};\mu,\zeta)\,,
 \end{equation}
+where $Q$, $y$, and $q_T$ are the invariant mass, the rapidity, and
+the transverse momentum of the lepton pair, respectively, while
+$N_c=3$ is the number of colours, $\alpha$ is the electromagnetic
+coupling, $H$ is the appropriate QCD form factor that can be
+perturbatively computed, and $C_q$ are the effective electroweak
+charges. In addition, the variables $x_1$ and $x_2$ are functions of
+$Q$ and $y$ and are given by:
+\begin{equation}\label{eq:Bjorkenx12}
+  x_{1,2} = \frac{Q}{\sqrt{s}}e^{\pm y}\,,
+\end{equation}
+being $\sqrt{s}$ the centre-of-mass energy of the collision. The
+kinematic factor $\mathcal{P}$ takes into account the reduction of the
+integration leptonic phase space due to possible cuts on the leptons
+and thus it depends on $q_T$, $y$, and $Q$ as well as on the numerical
+values of the cut parameters. Finally, the scales $\mu$ and $\zeta$
+are introduced through TMD factorisation to factorise collinear and
+rapidity divergences. As usual, despite they are arbitrary scales,
+they are typically chosen $\mu=\sqrt{\zeta}=Q$. Therefore, for all
+practical purposes their presence is fictitious.
 
-Setting aside the unimportant factors, the interesting part has the
+The computation-intensive part of eq.(\ref{eq:crosssection}) has the
 form of the integral:
 \begin{equation}\label{eq:integral}
 I_{ij}(x_1,x_2,q_T;\mu,\zeta)=\int\frac{d^2\mathbf{b}}{4\pi} e^{i \mathbf{b}\cdot \mathbf{q}_T} x_1F_i(x_1,\mathbf{b};\mu,\zeta) x_2F_{j}(x_2,\mathbf{b};\mu,\zeta)\,.
 \end{equation}
-where $F_{i(j)}$ are the evolved TMD PDFs and:
-\begin{equation}
-x_{1,2} = \frac{Q}{\sqrt{s}}e^{\pm y}\,,
-\end{equation}
-being $\sqrt{s}$ the centre-of-mass energy of the collision. In
-actual fact, $F_{i(j)}$ only depend of the absolute value of
+where $F_{i(j)}$ are combinations of evolved TMD PDFs. At this stage,
+for convenience, $i$ and $j$ do not coincide with $q$ and $\bar{q}$
+but they are linked through a simple linear transformation. The
+integral over the bidimensional impact parameter \textbf{b} has to be
+taken. However, $F_{i(j)}$ only depend on the absolute value of
 \textbf{b}, therefore eq.~(\ref{eq:integral}) can be written as:
 \begin{equation}\label{eq:integral2}
 I_{ij}(x_1,x_2,q_T;\mu,\zeta)=\frac12\int_0^\infty db\,b J_0(bq_T)  x_1
@@ -55,16 +73,16 @@ whose integral representation is:
 \begin{equation}
 J_0(x) = \frac1{2\pi}\int_0^{2\pi} d\theta e^{ix\cos(\theta)}\,.
 \end{equation}
-The single evolved TMD PDF at the final scales $\mu$ and $\zeta$
-$F_i$, with $i=q,\bar{q}$(\footnote{Note that in
-  eq.~(\ref{eq:crosssection}) the gluon TMD PDF $F_g$ is not
-  involved.}), is obtained by multiplying the same TMD PDF at the
-initial scales $\mu_0$ and $\zeta_0$ by a single evolution factor
-$R_q(\mu_0,\zeta_0\rightarrow \mu,\zeta;b)$ (no convolutions and no
-mixing), that is:
+The single evolved TMD PDF $F_i$ at the final scales $\mu$ and $\zeta$
+is obtained by multiplying the same TMD PDF at the initial scales
+$\mu_0$ and $\zeta_0$ by a single evolution factor
+$R_q$(\footnote{Note that in eq.~(\ref{eq:crosssection}) the gluon TMD
+  PDF $F_g$ is not involved. If also the gluon TMD PDF was involved,
+  it would evolve by means of a different evolution factor $R_g$.}),
+that is:
 \begin{equation}
-xF_i(x,b;\mu,\zeta) = R_q(\mu_0,\zeta_0\rightarrow \mu,\zeta;b)
-xF_i(x,b;\mu_0,\zeta_0)\,\quad\mbox{with }i = g,q(=\bar{q})\,.
+  xF_i(x,b;\mu,\zeta) = R_q(\mu_0,\zeta_0\rightarrow \mu,\zeta;b)
+  xF_i(x,b;\mu_0,\zeta_0)\,.
 \end{equation}
 so that eq.~(\ref{eq:integral2}) becomes:
 \begin{equation}\label{eq:integral3}
@@ -72,7 +90,7 @@ I_{ij}(x_1,x_2,q_T;\mu,\zeta)=\frac12\int_0^\infty db\,b J_0(bq_T)
 \left[R_q(\mu_0,\zeta_0\rightarrow \mu,\zeta;b)\right]^2 x_1 F_i(x_1,b;\mu_0,\zeta_0) x_2F_{j}(x_2,b;\mu_0,\zeta_0)\,.
 \end{equation}
 
-The initial scale TMD PDFs at LO in the OPE expansion, that is for
+The initial scale TMD PDFs at LO in the OPE region, that is for
 $b\ll B$ where $B$ is an unknown non-perturbative parameter that
 represents the intrinsic hadron scale (see eq.~(2.27) of
 Ref.~\cite{Scimemi:2017etj}), can be written as:
@@ -103,7 +121,7 @@ while in the second way $f_{\rm NP}$ is associated to the matching
 operators, that is:
 \begin{equation}\label{eq:LOconvNP3}
 xF_i(x,b;\mu_0,\zeta_0) \rightarrow
-\sum_{j=g,q(\bar{q})}x\int_x^1\frac{dy}{y}\left[f_{\rm
+\sum_{j}x\int_x^1\frac{dy}{y}\left[f_{\rm
     NP}\left(y,b\right) C_{ij}(y;\mu_0,\zeta_0)\right]  f_j\left(\frac{x}{y},\mu_0\right)\,.
 \end{equation}
 
@@ -164,37 +182,178 @@ dependence of the function $F_i$ on $b$. This can be done using the
 same interpolation technique. In particular, we write:
 \begin{equation}
   x_\alpha F_i(x_{\alpha},b)
-  x_\beta F_j(x_\beta,b) = \sum_\tau
+  x_\beta F_j(x_\beta,b) = 
   \widetilde{w}_{\tau}(b) \hat{F}_{i,\alpha}^\tau \hat{F}_{j,\beta}^\tau
-  = \sum_\tau \widetilde{w}_{\tau}(b) \hat{C}_{ik,\alpha\gamma}^\tau
-  \hat{C}_{jl,\beta\delta}^\tau \hat{f}_{k,\gamma}^\tau \hat{f}_{l,\delta}^\tau\,.
+  = \widetilde{w}_{\tau}(b) \hat{C}_{ik,\alpha\gamma}^\tau
+  \hat{C}_{jl,\beta\delta}^\tau \hat{f}_{k,\gamma}^\tau \hat{f}_{l,\delta}^\tau\,,
 \end{equation}
-Keeping in mind that $\mu_0$ and $\zeta_0$ are functions of the impact
-parameter $b$, eq.~(\ref{eq:integral3}) takes the form:
+where a sum over $\tau$ is understood. Keeping in mind that $\mu_0$
+and $\zeta_0$ are functions of the impact parameter $b$ and that
+$\mu=\sqrt{\zeta} =Q$, eq.~(\ref{eq:integral3}) takes the form:
 \begin{equation}\label{eq:lumiInter}
-I_{ij}(x_\alpha,x_\beta,q_T;\mu,\zeta)=\sum_\tau K_\tau(\mu,\zeta;q_T)\hat{C}_{ik,\alpha\gamma}^\tau
-\hat{C}_{jl,\beta\delta}^\tau \hat{f}_{k,\gamma}^\tau \hat{f}_{l,\delta}^\tau\,,
+  I_{ij}(x_\alpha,x_\beta,q_T;Q)= K_\tau(Q;q_T)\hat{C}_{ik,\alpha\gamma}^\tau
+  \hat{C}_{jl,\beta\delta}^\tau \hat{f}_{k,\gamma}^\tau \hat{f}_{l,\delta}^\tau\,,
 \end{equation}
 where we have defined:
 \begin{equation}\label{eq:Kcoeff}
-  K_\tau(\mu,\zeta;q_T)\equiv\frac12\int_0^\infty db\,b J_0(bq_T)
-  \left[R_q(\mu,\zeta;b)\right]^2 \widetilde{w}_{\tau}(b)\,.
+  K_\tau(Q;q_T)\equiv\frac12\int_0^\infty db\,b J_0(bq_T)
+  \left[R_q(Q;b)\right]^2 \widetilde{w}_{\tau}(b)\,,
 \end{equation}
-Since the final scales $\mu$ and $\zeta$ are usually functions of the
-kinematics (the typical choice is $\mu=\sqrt{\zeta}=Q$), the factors
-$K_\tau$ can be precomputed for any given experiment. It should also
-be noted that the function $\widetilde{w}_{\tau}(b)$ is typically
+being $R_q(Q;b)\equiv R_q(\mu_0,\zeta_0\rightarrow \mu,\zeta;b)$. It
+should be noticed that $\widetilde{w}_{\tau}$ is a piecewise function
 different from zero only over a finite interval in $b$, say
-$\widetilde{w}_{\tau}(b)\neq 0\quad\forall\,b \in[a_\tau,b_\tau]$,
-therefore the integral in eq.~(\ref{eq:Kcoeff}) reduces to:
+$[c_\tau,d_\tau]$. In practice, $\widetilde{w}_{\tau}$ extends over
+$k+1$ intervals on the grid in $b$, being $k$ the interpolation
+degree, around the node $b_\tau$ so that, typically
+$c_\tau=b_{\tau-k}$ and $d_\tau=b_{\tau+1}$. Therefore the integral in
+eq.~(\ref{eq:Kcoeff}) reduces to:
 \begin{equation}\label{eq:Kcoeff1}
-  K_\tau(\mu,\zeta;q_T)\equiv\frac12\int_{a_\tau}^{b_\tau} db\,b J_0(bq_T)
-  \left[R_q(\mu,\zeta;b)\right]^2 \widetilde{w}_{\tau}(b)\,,
+  K_\tau(Q;q_T)\equiv\frac12\int_{c_\tau}^{d_\tau} db\,b J_0(bq_T)
+  \left[R_q(Q;b)\right]^2 \widetilde{w}_{\tau}(b)\,,
 \end{equation}
 and the sum over $\tau$ in eq.~(\ref{eq:lumiInter}), that is supposed
 to run over an infinite number of nodes, has to be truncated.
 
+As customary in QCD, the most convenient flavour basis, that is the
+one that minimises the mixing between operators, is the so-called
+``evolution'' basis (\textit{i.e.} $\Sigma$, $V$, $T_3$, $V_3$,
+etc.). In fact, in this basis the operators matrix $C_{ij}$ is almost
+diagonal with the only exception of crossing terms that couple the
+gluon and the singlet $\Sigma$ distributions. This greatly simplifies
+the sums over $k$ and $l$ in eq.~(\ref{eq:lumiInter}). On the other
+hand, given that the TMDs that appear in eq.~(\ref{eq:crosssection})
+are in the so-called ``physical'' basis (\textit{i.e.} $d$, $\bar{d}$,
+$u$, $\bar{u}$, etc.), we need to rotate the quantity in
+eq.~(\ref{eq:lumiInter}) from the evolution basis, over which the
+indices $i$ and $j$ run, to the physical basis. This is done by means
+of an appropriate constant matrix $T$, so that:
+\begin{equation}\label{eq:lumiInterRot}
+I_{q\bar{q}}(x_\alpha,x_\beta,q_T;Q)= \underbrace{\left[T_{qi}T_{\bar{q}j} K_\tau(Q;q_T)\hat{C}_{ik,\alpha\gamma}^\tau
+  \hat{C}_{jl,\beta\delta}^\tau \right]}_{W_{q\bar{q},kl}^{\tau,\alpha\beta,\gamma\delta}} \hat{f}_{k,\gamma}^\tau \hat{f}_{l,\delta}^\tau\,.
+\end{equation}
+Once the ${W}$ factors in eq.~(\ref{eq:lumiInterRot}) have been
+pre-computed, the computation of $I_{q\bar{q}}$ for a generic $x_1$
+and $x_2$ is achieved by interpolation as:
+\begin{equation}\label{eq:x1x2inter}
+  I_{q\bar{q}}(x_1,x_2,q_T;Q) =
+  w_\alpha(x_1)w_\beta(x_2)I_{q\bar{q}}(x_\alpha,x_\beta,q_T;Q)
+  = \underbrace{\left[w_\alpha(x_1)w_\beta(x_2){W}_{q\bar{q},kl}^{\tau,\alpha\beta,\gamma\delta}\right]}_{\overline{W}_{q\bar{q},kl}^{\tau,\gamma\delta}(x_1,x_2,q_T;Q)}\hat{f}_{k,\gamma}^\tau \hat{f}_{l,\delta}^\tau\,,
+\end{equation}
+where the sum over $\alpha$ and $\beta$ is understood. In
+addition, $x_1$ and $x_2$ are such that $x_1x_2=Q^2/s$. Therefore, the
+dependence on $Q$ of the expression above is redundant and one can
+simply write:
+\begin{equation}\label{eq:finalres}
+  I_{q\bar{q}}(x_1,x_2,q_T) \equiv I_{q\bar{q}}(Q, y, q_T) =
+\overline{W}_{q\bar{q},kl}^{\tau,\gamma\delta}(x_1,x_2,q_T)\hat{f}_{k,\gamma}^\tau \hat{f}_{l,\delta}^\tau\equiv
+\overline{W}_{q\bar{q},kl}^{\tau,\gamma\delta}(Q,y,q_T)\hat{f}_{k,\gamma}^\tau
+\hat{f}_{l,\delta}^\tau\,.
+\end{equation}
+This equation emphasises that $I_{q\bar{q}}$ is a function of three
+independent variables $x_1$, $x_2$, and $q_T$ or alternatively $Q$,
+$y$, and $q_T$. This is relevant when integrating the cross section
+over the experimental bins as we will discuss in the next
+section. With eq.~(\ref{eq:finalres}) at hand,
+eq.~(\ref{eq:crosssection}) can be written as:
+\begin{equation}
+  \frac{d\sigma}{dQ dy dq_T} =\left[
+    \frac{16\pi\alpha^2(Q)q_T\mathcal{P}(q_T,Q)}{3N_c Q^3} H(Q) \sum_q C_q(Q)
+    \overline{W}_{q\bar{q},ij}^{\tau,\alpha\beta}(Q,y,q_T)\right]\hat{f}_{i,\alpha}^{\tau}
+  \hat{f}_{j,\beta}^{\tau}\,.
+\end{equation}
+Crucially, the quantity inside the squared brackets is fully
+determined by the kinematics and the perturbative component of the
+process, while the non-perturbative part is fully factorised in
+$\hat{f}_{i,\alpha}^{\tau}$ and $\hat{f}_{j,\beta}^{\tau}$. Clearly,
+this is extremely useful if one wants to fit the non-perturbative
+components to data. Interestingly, the quantity inside the squared
+brackets has a form that reminds that of an FK table with only
+exception of the additional index $\tau$ that essentially accounts for
+the $b$ dependence of the transverse non-perturbative function.
 
+\section{Integrating over the final-state kinematic variables}
+
+Despite eq.~(\ref{eq:lumiInterRot}) provides a powerful tool for a
+fast computation of cross sections, it is often not sufficient to
+allow for a direct comparison to experimental data. The reason is that
+experimental measurements of differential distributions are usually
+delivered integrated over finite regions of the final-state kinematic
+phase space. In other words, experiments measure quantities like:
+\begin{equation}\label{eq:Intcrosssection}
+\widetilde{\sigma}=\int_{Q_{\rm min}}^{Q_{\rm max}}dQ \int_{y_{\rm min}}^{y_{\rm max}}dy \int_{q_{T,\rm min}}^{q_{T,\rm max}}dq_T\left[\frac{d\sigma}{dQ dy dq_T} \right]\,.
+\end{equation}
+As a consequence, in order to guarantee performance, we need to
+include the integrations above in the precomputed factors.
+
+\subsection{Integrating over $q_T$}
+
+The integration over $q_T$ is relatively simple to implement because
+the full dependence on $q_T$ in eq.~(\ref{eq:Kcoeff1}) is given by the
+factors $q_T$, $\mathcal{P}$, and $K_\tau$. Therefore, integrating
+over $q_T$ simply amounts of computing the integrals:
+\begin{equation}\label{eq:KcoeffInt}
+  \widetilde{K}_\tau(Q)\equiv \int_{q_{T,\rm min}}^{q_{T,\rm max}}dq_T\,q_T\mathcal{P}(q_T,Q) K_\tau(Q;q_T)
+\end{equation}
+
+\subsection{Integrating over $y$}
+
+The dependence on $y$ of the cross section in
+eq.~(\ref{eq:crosssection}) exclusively happens through the variables
+$x_1$ and $x_2$ defined in eq.~(\ref{eq:Bjorkenx12}). Since this
+dependence is reconstructed through interpolation in
+eq.~(\ref{eq:x1x2inter}), what we need to do is computing the
+following integrals:
+\begin{equation}
+u_{\alpha\beta}(Q)\equiv\int_{y_{\rm min}}^{y_{\rm max}}dy\,
+w_\alpha(x_1)w_\beta(x_2) = \int_{y_{\rm min}}^{y_{\rm max}}dy\,w_\alpha\left(\frac{Q}{\sqrt{s}}e^y\right)w_\beta\left(\frac{Q}{\sqrt{s}}e^{-y}\right)
+\end{equation}
+and replace $w_\alpha(x_1)w_\beta(x_2)$ in eq.~(\ref{eq:x1x2inter})
+with $u_{\alpha\beta}(Q)$.
+
+\subsection{Integrating over $Q$}
+
+The integration of $Q$ has finally to be done by brute force because
+the dependence on $Q$ of the expression we are considering is not
+localised and involves essentially all the ingredients (we remind that
+we are assuming $\mu=\sqrt{\zeta}=Q$). One alternative is to use the
+so-called narrow-width approximation (NWA) in which one assumes that
+the width of the $Z$ boson $\Gamma_Z$ is much smaller that its mass
+$M_Z$. This way one can approximate the peaked behaviour of the
+couplings $C_q(Q)$ around $Q=M_Z$ with a $\delta$-function,
+\textit{i.e.} $C_q(Q)\sim \delta(Q^2-M_Z^2)$, so that the integration
+over $Q$ can be done analytically essentially setting $Q=M_Z$
+everywhere in the expressions. This approximation, though, is usable
+only for data around the $Z$ peak and, of course, it is only an
+approximation and thus might lead to substantial
+inaccuracies. Therefore, it is useful to be able to carry out the
+integration over $Q$ explicitly. To this end, we start by writing
+explicitly the cross section integrated over $q_T$ and $y$ making use
+of the definitions given in the previous subsections:
+\begin{equation}
+  \frac{d\sigma}{dQ} =\frac{16\pi}{3N_c}\left[\sum_q\left(
+    \frac{\alpha^2(Q)}{Q^3} H(Q) u_{\alpha\beta}(Q)
+    \widetilde{K}_\tau(Q) C_q(Q)\right)
+    T_{qi}T_{\bar{q}j}
+    \hat{C}_{ik,\alpha\gamma}^\tau \hat{C}_{jl,\beta\delta}^\tau 
+  \right]\hat{f}_{k,\gamma}^{\tau}
+  \hat{f}_{l,\delta}^{\tau}\,,
+\end{equation}
+where we have purposely enclosed between round brakets the
+$Q$-dependant factors. Therefore, if we define:
+\begin{equation}
+S_{q}^{\alpha\beta,\tau}\equiv \frac{16\pi}{3N_c}\int_{Q_{\rm min}}^{Q_{\rm max}}dQ\,
+    \frac{\alpha^2(Q)}{Q^3} H(Q) u_{\alpha\beta}(Q)
+    \widetilde{K}_\tau(Q) C_q(Q)\,,
+\end{equation}
+we have that:
+\begin{equation}
+  \widetilde{\sigma} =\sum_{k,l}\sum_{\gamma,\delta}\sum_\tau \left[\sum_q \sum_{i,j} \sum_{\alpha,\beta}
+    T_{qi}T_{\bar{q}j} S_{q}^{\alpha\beta,\tau}
+    \hat{C}_{ik,\alpha\gamma}^\tau \hat{C}_{jl,\beta\delta}^\tau 
+  \right]\hat{f}_{k,\gamma}^{\tau}
+  \hat{f}_{l,\delta}^{\tau}\equiv \sum_{k,l}\sum_{\gamma,\delta}\sum_\tau M^\tau_{kl,\gamma\delta}\hat{f}_{k,\gamma}^{\tau}
+  \hat{f}_{l,\delta}^{\tau} \,.
+\end{equation}
 
 \begin{thebibliography}{alp}
 
