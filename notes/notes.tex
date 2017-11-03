@@ -195,25 +195,26 @@ of an appropriate constant matrix $T$, so that:
 I_{q\bar{q}}(x_\alpha,x_\beta,q_T;Q)= \sum_\tau \sum_{kl} \sum_{\gamma\delta}\sum_{ij}K_\tau(Q;q_T) T_{qi}T_{\bar{q}j}\hat{C}_{ik,\alpha\gamma}^\tau
   \hat{C}_{jl,\beta\delta}^\tau \hat{f}_{k,\gamma}^\tau \hat{f}_{l,\delta}^\tau\,.
 \end{equation}
-We can now make use of the solution of the DGLAP evolution equation to
-express the collinear PDFs $\hat{f}_{l,\delta}^\tau$ at the scale
-$\mu_0(b_\tau)$ in terms of PDFs at some fixed scale $Q_0$. This is
-done by convoluting the PDFs at $Q_0$ with the evolution operator
-$\Gamma$ that evolves PDFs from $Q_0$ to $\mu_0(b_\tau)$:
-\begin{equation}\label{eq:PDFevol}
-\hat{f}_{i,\alpha}^\tau = \sum_j \sum_\beta
-\Gamma_{ij,\alpha\beta}^\tau \hat{f}_{j,\beta}^0\,,
-\end{equation}
-with:
-\begin{equation}
-\hat{f}_{j,\beta}^0 = x_\beta f_j(x_\beta,Q_0)\,.
-\end{equation}
-Making use of eq.~(\ref{eq:PDFevol}) one can write
-eq.~(\ref{eq:lumiInterRot}) in terms of $f^0$ as:
-\begin{equation}
-  I_{q\bar{q}}(x_\alpha,x_\beta,q_T;Q)= \sum_\tau \sum_{mn}\sum_{\mu\nu}\sum_{kl} \sum_{\gamma\delta} \sum_{ij}K_\tau(Q;q_T) T_{qi}T_{\bar{q}j}\hat{C}_{ik,\alpha\gamma}^\tau \hat{C}_{jl,\beta\delta}^\tau\Gamma_{km,\gamma\mu}^\tau\Gamma_{ln,\delta\nu}^\tau\hat{f}_{m,\mu}^0 \hat{f}_{n,\nu}^0\,.
-\end{equation}
 
+In order account for higher orders in the OPE and non-perturbative
+effects where the OPE is not valid, one usually introduces a
+phenomenological non-perturbative function $f_{\rm NP}$ that modifies
+the convolution in eq.~(\ref{eq:LOconv}) The way how $f_{\rm NP}(x,b)$
+is introduced in not unique. Here we choose to follow the most
+traditional approach in which TMDs get corrected by a multiplicative
+function, that is to say:
+\begin{equation}\label{eq:LOconvNP1}
+  xF_i(x,b) \rightarrow f_{\rm NP}(x,b) xF_i(x,b)\,.
+\end{equation}
+This can be easily introduced in eq.~(\ref{eq:x1x2inter}) by defining:
+\begin{equation}
+f_{{\rm NP},\alpha}^\tau \equiv f_{\rm NP}(x_\alpha,b_\tau)\,,
+\end{equation}
+so that:
+\begin{equation}\label{eq:lumiInterRotNP}
+I_{q\bar{q}}(x_\alpha,x_\beta,q_T;Q)= \sum_\tau \sum_{kl} \sum_{\gamma\delta}\sum_{ij}K_\tau(Q;q_T) T_{qi}T_{\bar{q}j}\hat{C}_{ik,\alpha\gamma}^\tau
+  \hat{C}_{jl,\beta\delta}^\tau \hat{f}_{k,\gamma}^\tau \hat{f}_{l,\delta}^\tau f_{{\rm NP},\alpha}^\tau f_{{\rm NP},\beta}^\tau\,.
+\end{equation}
 The computation of $I_{q\bar{q}}$ for a generic $x_1$ and $x_2$ is
 achieved by interpolation as:
 \begin{equation}\label{eq:x1x2inter}
@@ -222,72 +223,30 @@ achieved by interpolation as:
   \sum_{\alpha\beta}w_\alpha(x_1)w_\beta(x_2)I_{q\bar{q}}(x_\alpha,x_\beta,q_T;Q)
   =\\
 \\
-\displaystyle \sum_\tau \sum_{mn}\sum_{\mu\nu}\sum_{kl} \sum_{\gamma\delta} \sum_{ij}\sum_{\alpha\beta} K_\tau(Q;q_T) w_\alpha(x_1)w_\beta(x_2) T_{qi}T_{\bar{q}j}\hat{C}_{ik,\alpha\gamma}^\tau \hat{C}_{jl,\beta\delta}^\tau\Gamma_{km,\gamma\mu}^\tau\Gamma_{ln,\delta\nu}^\tau\hat{f}_{m,\mu}^0 \hat{f}_{n,\nu}^0\,.
+\displaystyle \sum_\tau\sum_{\alpha\beta} \sum_{kl} \sum_{\gamma\delta}\sum_{ij}K_\tau(Q;q_T)w_\alpha(x_1)w_\beta(x_2) T_{qi}T_{\bar{q}j}\hat{C}_{ik,\alpha\gamma}^\tau
+  \hat{C}_{jl,\beta\delta}^\tau \hat{f}_{k,\gamma}^\tau \hat{f}_{l,\delta}^\tau f_{{\rm NP},\alpha}^\tau f_{{\rm NP},\beta}^\tau\,.
 \end{array}
 \end{equation}
-
-In order account for higher orders in the OPE and non-perturbative
-effects where the OPE is not valid, one usually introduces a
-phenomenological non-perturbative function $f_{\rm NP}(x,b)$ that
-modifies the convolution in eq.~(\ref{eq:LOconv}) The way how
-$f_{\rm NP}(x,b)$ is introduced in not unique. Here we choose to
-follow the most traditional approach in which TMDs get corrected by a
-multiplicative function, that is to say:
-\begin{equation}\label{eq:LOconvNP1}
-xF_i(x,b) \rightarrow f_{\rm NP}(x,b) xF_i(x,b)\,.
-\end{equation}
-This can be easily introduced in eq.~(\ref{eq:x1x2inter}) by defining:
-\begin{equation}
-f_{\rm NP}^\tau(x) \equiv f_{\rm NP}(x,b_\tau)\,,
-\end{equation}
-so that:
-\begin{equation}
-\begin{array}{c}
-  \displaystyle I_{q\bar{q}}(x_1,x_2,q_T;Q) =\\
-  \\
-  \displaystyle \displaystyle \sum_\tau \sum_{mn}\sum_{\mu\nu} W_{q\bar{q},mn}^{\tau,\mu\nu}(x_1,x_2,q_T;Q) f_{\rm NP}^\tau(x_1) f_{\rm NP}^\tau(x_2)\hat{f}_{m,\mu}^0 \hat{f}_{n,\nu}^0\,.
-\end{array}
-\end{equation}
-where we have defined:
-\begin{equation}
-W_{q\bar{q},mn}^{\tau,\mu\nu}(x_1,x_2,q_T;Q) = \sum_{kl} \sum_{\gamma\delta} \sum_{ij}\sum_{\alpha\beta} K_\tau(Q;q_T) w_\alpha(x_1)w_\beta(x_2) T_{qi}T_{\bar{q}j}\hat{C}_{ik,\alpha\gamma}^\tau \hat{C}_{jl,\beta\delta}^\tau\Gamma_{km,\gamma\mu}^\tau\Gamma_{ln,\delta\nu}^\tau
-\end{equation}
-
-% Indeed, one can either multiply eq.~(\ref{eq:LOconv}) by this
-% function, that is:
-% \begin{equation}\label{eq:LOconvNP1}
-% xF_i(x,b;\mu_0,\zeta_0) \rightarrow  \sum_{j=g,q(\bar{q})}xf_{\rm NP}(x,b)\int_x^1\frac{dy}{y}C_{ij}(y;\mu_0,\zeta_0)f_j\left(\frac{x}{y},\mu_0\right)\,.
-% \end{equation}
-% or this function can be inserted in the convolution integral. This can
-% be done in two ways: in the first way one ``associates'' $f_{\rm NP}$ to
-% the collinear PDFs so that eq.~(\ref{eq:LOconv}) becomes:
-% \begin{equation}\label{eq:LOconvNP2}
-% xF_i(x,b;\mu_0,\zeta_0) \rightarrow  \sum_{j=g,q(\bar{q})}x\int_x^1\frac{dy}{y}C_{ij}(y;\mu_0,\zeta_0) \left[f_{\rm NP}\left(\frac{x}{y},b\right) f_j\left(\frac{x}{y},\mu_0\right)\right]\,,
-% \end{equation}
-% while in the second way $f_{\rm NP}$ is associated to the matching
-% operators, that is:
-% \begin{equation}\label{eq:LOconvNP3}
-% xF_i(x,b;\mu_0,\zeta_0) \rightarrow
-% \sum_{j}x\int_x^1\frac{dy}{y}\left[f_{\rm
-%     NP}\left(y,b\right) C_{ij}(y;\mu_0,\zeta_0)\right]  f_j\left(\frac{x}{y},\mu_0\right)\,.
-% \end{equation}
-
-% While eqs.~(\ref{eq:LOconvNP1}) and~(\ref{eq:LOconvNP2}) appear to be
-% valid alternatives, eq.~(\ref{eq:LOconvNP3}) looks unnatural because
-% it modifies the structure of the matching coefficients that are
-% computable quantities (as a matter of fact this is also problematic to
-% implement due to the presence of plus-prescripted and
-% $\delta$-function terms in $C_{ij}$). Nevertheless, this seems to be
-% the approach taken (perhaps inadvertently) in
-% Ref.~\cite{Scimemi:2017etj}.
-
 
 Keeping in mind eq.~(\ref{eq:Bjorkenx12}), one realises that the
 variables $x_1$ and $x_2$ are functions of $Q$ and $y$ and thus one
 can simply write:
 \begin{equation}\label{eq:finalres}
   I_{q\bar{q}}(Q, y, q_T) =
-  \sum_\tau \sum_{mn}\sum_{\mu\nu} W_{q\bar{q},mn}^{\tau,\mu\nu}(Q,y,q_T) f_{\rm NP}^\tau\left(\frac{Q}{\sqrt{s}}e^{y}\right) f_{\rm NP}^\tau\left(\frac{Q}{\sqrt{s}}e^{-y}\right)\hat{f}_{m,\mu}^0 \hat{f}_{n,\nu}^0\,.
+  \sum_\tau \sum_{\alpha\beta} W_{q\bar{q},\alpha\beta}^{\tau}(Q,y,q_T) f_{{\rm NP},\alpha}^\tau f_{{\rm NP},\beta}^\tau\,,
+\end{equation}
+where we have defined:
+\begin{equation}
+W_{q\bar{q},\alpha\beta}^{\tau}(Q,y,q_T)\equiv \sum_{kl} \sum_{\gamma\delta}\sum_{ij}K_\tau(Q;q_T)w_\alpha(x_1)w_\beta(x_2) T_{qi}T_{\bar{q}j}\hat{C}_{ik,\alpha\gamma}^\tau
+  \hat{C}_{jl,\beta\delta}^\tau \hat{f}_{k,\gamma}^\tau \hat{f}_{l,\delta}^\tau\,.
+\end{equation}
+Unsurprisingly, the $W$ factors can be factorised as:
+\begin{equation}
+  W_{q\bar{q},\alpha\beta}^{\tau}(Q,y,q_T)\equiv
+  K_\tau(Q;q_T)w_\alpha(x_1)w_\beta(x_2) \left(\sum_{i} T_{qi}\sum_{k} \sum_{\gamma}\hat{C}_{ik,\alpha\gamma}^\tau
+    \hat{f}_{k,\gamma}^\tau\right)
+  \left(\sum_{j} T_{\bar{q}j}\sum_{l} \sum_{\delta}
+    \hat{C}_{jl,\beta\delta}^\tau \hat{f}_{l,\delta}^\tau\right)\,.
 \end{equation}
 
 This equation emphasises that $I_{q\bar{q}}$ is a function of three
@@ -296,25 +255,15 @@ when integrating the cross section over the experimental bins as we
 will discuss in the next section. With eq.~(\ref{eq:finalres}) at
 hand, eq.~(\ref{eq:crosssection}) can be written as:
 \begin{equation}
-\begin{array}{c}
-\displaystyle   \frac{d\sigma}{dQ dy dq_T} =\sum_q\sum_\tau \sum_{mn}\sum_{\mu\nu}\left[
+\frac{d\sigma}{dQ dy dq_T} =\sum_\tau \sum_{\alpha\beta}\left[
   \frac{16\pi\alpha^2(Q)q_T\mathcal{P}(q_T,Q)}{3N_c Q^3} H(Q) 
-  C_q(Q) W_{q\bar{q},mn}^{\tau,\mu\nu}(Q,y,q_T)\right]\times\\
-\\
-\displaystyle f_{\rm NP}^\tau\left(\frac{Q}{\sqrt{s}}e^{y}\right)
-  f_{\rm
-  NP}^\tau\left(\frac{Q}{\sqrt{s}}e^{-y}\right)\hat{f}_{m,\mu}^0
-  \hat{f}_{n,\nu}^0\,.
-\end{array}
+  C_q(Q) W_{q\bar{q},\alpha\beta}^{\tau}(Q,y,q_T) \right]f_{{\rm NP},\alpha}^\tau f_{{\rm NP},\beta}^\tau\,.
 \end{equation}
 Crucially, the quantity inside the squared brackets is fully
-determined by the kinematics and the perturbative component of the
+determined by the kinematics and the leading-twist component of the
 process, while the non-perturbative part is fully factorised. Clearly,
 this is extremely useful if one wants to fit the non-perturbative
-components to data. Interestingly, the quantity inside the squared
-brackets has a form that reminds that of an FK table with only
-exception of the additional index $\tau$ that essentially accounts for
-the $b$ dependence of the transverse non-perturbative function.
+component to data.
 
 \section{Integrating over the final-state kinematic variables}
 
@@ -371,34 +320,36 @@ everywhere in the expressions. This approximation, though, is usable
 only for data around the $Z$ peak and, of course, it is only an
 approximation and thus might lead to substantial
 inaccuracies. Therefore, it is useful to be able to carry out the
-integration over $Q$ explicitly. To this end, we start by writing
-explicitly the cross section integrated over $q_T$ and $y$ making use
-of the definitions given in the previous subsections:
-\begin{equation}
-  \frac{d\sigma}{dQ} =\frac{16\pi}{3N_c}\left[\sum_q\left(
-    \frac{\alpha^2(Q)}{Q^3} H(Q) u_{\alpha\beta}(Q)
-    \widetilde{K}_\tau(Q) C_q(Q)\right)
-    T_{qi}T_{\bar{q}j}
-    \hat{C}_{ik,\alpha\gamma}^\tau \hat{C}_{jl,\beta\delta}^\tau 
-  \right]\hat{f}_{k,\gamma}^{\tau}
-  \hat{f}_{l,\delta}^{\tau}\,,
-\end{equation}
-where we have purposely enclosed between round brakets the
-$Q$-dependant factors. Therefore, if we define:
-\begin{equation}
-S_{q}^{\alpha\beta,\tau}\equiv \frac{16\pi}{3N_c}\int_{Q_{\rm min}}^{Q_{\rm max}}dQ\,
-    \frac{\alpha^2(Q)}{Q^3} H(Q) u_{\alpha\beta}(Q)
-    \widetilde{K}_\tau(Q) C_q(Q)\,,
-\end{equation}
-we have that:
-\begin{equation}
-  \widetilde{\sigma} =\sum_{k,l}\sum_{\gamma,\delta}\sum_\tau \left[\sum_q \sum_{i,j} \sum_{\alpha,\beta}
-    T_{qi}T_{\bar{q}j} S_{q}^{\alpha\beta,\tau}
-    \hat{C}_{ik,\alpha\gamma}^\tau \hat{C}_{jl,\beta\delta}^\tau 
-  \right]\hat{f}_{k,\gamma}^{\tau}
-  \hat{f}_{l,\delta}^{\tau}\equiv \sum_{k,l}\sum_{\gamma,\delta}\sum_\tau M^\tau_{kl,\gamma\delta}\hat{f}_{k,\gamma}^{\tau}
-  \hat{f}_{l,\delta}^{\tau} \,.
-\end{equation}
+integration over $Q$ explicitly.
+
+% To this end, we start by writing explicitly the cross section
+% integrated over $q_T$ and $y$ making use of the definitions given in
+% the previous subsections:
+% \begin{equation}
+%   \frac{d\sigma}{dQ} =\frac{16\pi}{3N_c}\left[\sum_q\left(
+%     \frac{\alpha^2(Q)}{Q^3} H(Q) u_{\alpha\beta}(Q)
+%     \widetilde{K}_\tau(Q) C_q(Q)\right)
+%     T_{qi}T_{\bar{q}j}
+%     \hat{C}_{ik,\alpha\gamma}^\tau \hat{C}_{jl,\beta\delta}^\tau 
+%   \right]\hat{f}_{k,\gamma}^{\tau}
+%   \hat{f}_{l,\delta}^{\tau}\,,
+% \end{equation}
+% where we have purposely enclosed between round brakets the
+% $Q$-dependant factors. Therefore, if we define:
+% \begin{equation}
+% S_{q}^{\alpha\beta,\tau}\equiv \frac{16\pi}{3N_c}\int_{Q_{\rm min}}^{Q_{\rm max}}dQ\,
+%     \frac{\alpha^2(Q)}{Q^3} H(Q) u_{\alpha\beta}(Q)
+%     \widetilde{K}_\tau(Q) C_q(Q)\,,
+% \end{equation}
+% we have that:
+% \begin{equation}
+%   \widetilde{\sigma} =\sum_{k,l}\sum_{\gamma,\delta}\sum_\tau \left[\sum_q \sum_{i,j} \sum_{\alpha,\beta}
+%     T_{qi}T_{\bar{q}j} S_{q}^{\alpha\beta,\tau}
+%     \hat{C}_{ik,\alpha\gamma}^\tau \hat{C}_{jl,\beta\delta}^\tau 
+%   \right]\hat{f}_{k,\gamma}^{\tau}
+%   \hat{f}_{l,\delta}^{\tau}\equiv \sum_{k,l}\sum_{\gamma,\delta}\sum_\tau M^\tau_{kl,\gamma\delta}\hat{f}_{k,\gamma}^{\tau}
+%   \hat{f}_{l,\delta}^{\tau} \,.
+% \end{equation}
 
 \begin{thebibliography}{alp}
 
