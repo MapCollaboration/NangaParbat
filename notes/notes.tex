@@ -237,13 +237,13 @@ can simply write:
 \end{equation}
 where we have defined:
 \begin{equation}
-W_{q\bar{q},\alpha\beta}^{\tau}(Q,y,q_T)\equiv \sum_{kl} \sum_{\gamma\delta}\sum_{ij}K_\tau(Q;q_T)w_\alpha(x_1)w_\beta(x_2) T_{qi}T_{\bar{q}j}\hat{C}_{ik,\alpha\gamma}^\tau
+W_{q\bar{q},\alpha\beta}^{\tau}(Q,y,q_T)\equiv \sum_{kl} \sum_{\gamma\delta}\sum_{ij}K_\tau(Q;q_T) w_\alpha\left(\frac{Q}{\sqrt{s}}e^y\right)w_\beta\left(\frac{Q}{\sqrt{s}}e^{-y}\right) T_{qi}T_{\bar{q}j}\hat{C}_{ik,\alpha\gamma}^\tau
   \hat{C}_{jl,\beta\delta}^\tau \hat{f}_{k,\gamma}^\tau \hat{f}_{l,\delta}^\tau\,.
 \end{equation}
 Unsurprisingly, the $W$ factors can be factorised as:
 \begin{equation}
   W_{q\bar{q},\alpha\beta}^{\tau}(Q,y,q_T)\equiv
-  K_\tau(Q;q_T)w_\alpha(x_1)w_\beta(x_2) \left(\sum_{i} T_{qi}\sum_{k} \sum_{\gamma}\hat{C}_{ik,\alpha\gamma}^\tau
+  K_\tau(Q;q_T) w_\alpha\left(\frac{Q}{\sqrt{s}}e^y\right)w_\beta\left(\frac{Q}{\sqrt{s}}e^{-y}\right) \left(\sum_{i} T_{qi}\sum_{k} \sum_{\gamma}\hat{C}_{ik,\alpha\gamma}^\tau
     \hat{f}_{k,\gamma}^\tau\right)
   \left(\sum_{j} T_{\bar{q}j}\sum_{l} \sum_{\delta}
     \hat{C}_{jl,\beta\delta}^\tau \hat{f}_{l,\delta}^\tau\right)\,.
@@ -298,27 +298,26 @@ dependence is reconstructed through interpolation in
 eq.~(\ref{eq:x1x2inter}), what we need to do is computing the
 following integrals:
 \begin{equation}
-u_{\alpha\beta}(Q)\equiv\int_{y_{\rm min}}^{y_{\rm max}}dy\,
-w_\alpha(x_1)w_\beta(x_2) = \int_{y_{\rm min}}^{y_{\rm max}}dy\,w_\alpha\left(\frac{Q}{\sqrt{s}}e^y\right)w_\beta\left(\frac{Q}{\sqrt{s}}e^{-y}\right)
+u_{\alpha\beta}(Q)\equiv \int_{y_{\rm min}}^{y_{\rm max}}dy\,w_\alpha\left(\frac{Q}{\sqrt{s}}e^y\right)w_\beta\left(\frac{Q}{\sqrt{s}}e^{-y}\right)
 \end{equation}
 and replace $w_\alpha(x_1)w_\beta(x_2)$ in eq.~(\ref{eq:x1x2inter})
 with $u_{\alpha\beta}(Q)$.
 
 \subsection{Integrating over $Q$}
 
-The integration of $Q$ has finally to be done by brute force because
-the dependence on $Q$ of the expression we are considering is not
-localised and involves essentially all the ingredients (we remind that
-we are assuming $\mu=\sqrt{\zeta}=Q$). One alternative is to use the
-so-called narrow-width approximation (NWA) in which one assumes that
-the width of the $Z$ boson $\Gamma_Z$ is much smaller that its mass
-$M_Z$. This way one can approximate the peaked behaviour of the
-couplings $C_q(Q)$ around $Q=M_Z$ with a $\delta$-function,
-\textit{i.e.} $C_q(Q)\sim \delta(Q^2-M_Z^2)$, so that the integration
-over $Q$ can be done analytically essentially setting $Q=M_Z$
-everywhere in the expressions. This approximation, though, is usable
-only for data around the $Z$ peak and, of course, it is only an
-approximation and thus might lead to substantial
+The integration over $Q$ has finally to be done by brute force due to
+the fact that the dependence on $Q$ of the expression we are
+considering is not localised and involves essentially all ingredients
+(we remind that we are assuming $\mu=\sqrt{\zeta}=Q$). One alternative
+solution is to use the so-called narrow-width approximation (NWA) in
+which one assumes that the width of the $Z$ boson $\Gamma_Z$ is much
+smaller that its mass $M_Z$. This way one can approximate the peaked
+behaviour of the couplings $C_q(Q)$ around $Q=M_Z$ with a
+$\delta$-function, \textit{i.e.} $C_q(Q)\sim \delta(Q^2-M_Z^2)$, so
+that the integration over $Q$ can be done analytically essentially
+setting $Q=M_Z$ everywhere in the expression. This approximation,
+though, is usable only for data around the $Z$ peak and, of course, it
+is only an approximation and thus might lead to substantial
 inaccuracies. Therefore, it is useful to be able to carry out the
 integration over $Q$ explicitly.
 
