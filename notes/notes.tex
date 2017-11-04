@@ -321,34 +321,60 @@ is only an approximation and thus might lead to substantial
 inaccuracies. Therefore, it is useful to be able to carry out the
 integration over $Q$ explicitly.
 
-% To this end, we start by writing explicitly the cross section
-% integrated over $q_T$ and $y$ making use of the definitions given in
-% the previous subsections:
-% \begin{equation}
-%   \frac{d\sigma}{dQ} =\frac{16\pi}{3N_c}\left[\sum_q\left(
-%     \frac{\alpha^2(Q)}{Q^3} H(Q) u_{\alpha\beta}(Q)
-%     \widetilde{K}_\tau(Q) C_q(Q)\right)
-%     T_{qi}T_{\bar{q}j}
-%     \hat{C}_{ik,\alpha\gamma}^\tau \hat{C}_{jl,\beta\delta}^\tau 
-%   \right]\hat{f}_{k,\gamma}^{\tau}
-%   \hat{f}_{l,\delta}^{\tau}\,,
-% \end{equation}
-% where we have purposely enclosed between round brakets the
-% $Q$-dependant factors. Therefore, if we define:
-% \begin{equation}
-% S_{q}^{\alpha\beta,\tau}\equiv \frac{16\pi}{3N_c}\int_{Q_{\rm min}}^{Q_{\rm max}}dQ\,
-%     \frac{\alpha^2(Q)}{Q^3} H(Q) u_{\alpha\beta}(Q)
-%     \widetilde{K}_\tau(Q) C_q(Q)\,,
-% \end{equation}
-% we have that:
-% \begin{equation}
-%   \widetilde{\sigma} =\sum_{k,l}\sum_{\gamma,\delta}\sum_\tau \left[\sum_q \sum_{i,j} \sum_{\alpha,\beta}
-%     T_{qi}T_{\bar{q}j} S_{q}^{\alpha\beta,\tau}
-%     \hat{C}_{ik,\alpha\gamma}^\tau \hat{C}_{jl,\beta\delta}^\tau 
-%   \right]\hat{f}_{k,\gamma}^{\tau}
-%   \hat{f}_{l,\delta}^{\tau}\equiv \sum_{k,l}\sum_{\gamma,\delta}\sum_\tau M^\tau_{kl,\gamma\delta}\hat{f}_{k,\gamma}^{\tau}
-%   \hat{f}_{l,\delta}^{\tau} \,.
-% \end{equation}
+To this end, we start by writing explicitly the cross section
+integrated over $q_T$ and $y$ making use of the definitions given in
+the previous subsections:
+\begin{equation}
+  \frac{d\sigma}{dQ} =\sum_\tau \sum_{\alpha\beta}\left[\frac{16\pi}{3N_c}\sum_{kl} \sum_{\gamma\delta}\sum_{ij}\sum_q
+    \left(\frac{\alpha^2(Q)}{Q^3} H(Q) u_{\alpha\beta}(Q)
+    \widetilde{K}_\tau(Q) C_q(Q)\right)
+    T_{qi}T_{\bar{q}j}
+    \hat{C}_{ik,\alpha\gamma}^\tau \hat{C}_{jl,\beta\delta}^\tau 
+  \hat{f}_{k,\gamma}^{\tau}
+  \hat{f}_{l,\delta}^{\tau}\right]f_{{\rm NP},\alpha}^\tau f_{{\rm NP},\beta}^\tau\,,
+\end{equation}
+where we have purposely enclosed between round brakets the
+$Q$-dependant factors. In fact, if we define:
+\begin{equation}
+S_{q,\alpha\beta}^{\tau}\equiv \frac{16\pi}{3N_c}\int_{Q_{\rm min}}^{Q_{\rm max}}dQ\,
+    \frac{\alpha^2(Q)}{Q^3} H(Q) \widetilde{K}_\tau(Q) u_{\alpha\beta}(Q)
+    C_q(Q)\,,
+\end{equation}
+we have that:
+\begin{equation}\label{eq:FullInt}
+  \widetilde{\sigma} =\sum_\tau \sum_{\alpha\beta}\left[ \sum_q
+    S_{q,\alpha\beta}^{\tau} \left(\sum_{i}
+    T_{qi}\sum_{k} \sum_{\gamma}
+    \hat{C}_{ik,\alpha\gamma}^\tau 
+  \hat{f}_{k,\gamma}^{\tau}\right)
+\left(\sum_{j}
+    T_{\bar{q}j}\sum_{l} \sum_{\delta}
+    \hat{C}_{jl,\beta\delta}^\tau 
+  \hat{f}_{l,\delta}^{\tau}\right)
+\right]f_{{\rm NP},\alpha}^\tau f_{{\rm NP},\beta}^\tau\,.
+\end{equation}
+so that, defining:
+\begin{equation}
+  \overline{F}_{q(\bar{q}),\alpha}^\tau \equiv \sum_{i}
+  T_{q(\bar{q})i}\sum_{k} \sum_{\gamma}
+  \hat{C}_{ik,\alpha\gamma}^\tau 
+  \hat{f}_{k,\gamma}^{\tau}\,,
+\end{equation}
+eq.~(\ref{eq:FullInt}) can be readily written as:
+\begin{equation}
+  \widetilde{\sigma} =\sum_\tau \sum_{\alpha\beta}\left[ \sum_q
+    S_{q,\alpha\beta}^{\tau}\overline{F}_{q,\alpha}^\tau
+    \overline{F}_{\bar{q},\beta}^\tau \right]f_{{\rm NP},\alpha}^\tau
+  f_{{\rm NP},\beta}^\tau=\sum_\tau
+  \sum_{\alpha\beta}M_{\alpha\beta}^\tau f_{{\rm NP},\alpha}^\tau f_{{\rm NP},\beta}^\tau\,,
+\end{equation}
+with:
+\begin{equation}
+M_{\alpha\beta}^\tau\equiv \sum_q S_{q,\alpha\beta}^{\tau}\overline{F}_{q,\alpha}^\tau
+\overline{F}_{\bar{q},\beta}^\tau\,.
+\end{equation}
+
+
 
 \begin{thebibliography}{alp}
 

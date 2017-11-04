@@ -7,6 +7,7 @@
 #include <apfel/dglapbuilder.h>
 #include <apfel/grid.h>
 #include <apfel/timer.h>
+#include <apfel/constants.h>
 #include <apfel/tools.h>
 #include <apfel/alphaqcd.h>
 #include <apfel/tabulateobject.h>
@@ -84,17 +85,34 @@ int main()
   const auto Mub = [] (double const& b) -> double
     {
       const double C0   = 2 * exp(- emc);
-      const double bmax = 1;
-      const double Q0   = 1;
-      return C0 * sqrt( 1 + pow(b/bmax,2) ) / b + Q0;
+      return C0 / b + 2;
+      //const double bmax = 1;
+      //const double Q0   = 1;
+      //return C0 * sqrt( 1 + pow(b/bmax,2) ) / b + Q0;
     };
 
   // Non-perturbative TMD function.
-  const auto fNP = [] (double const& x, double const& b) -> double
+  const auto fNP = [] (double const& x, double const& bT) -> double
     {
-      const double L1 = 0.156;
-      const double L2 = - 0.0379;
-      return exp( - L1 * b ) * ( 1 + L2 * b * b );
+      const double L1 = 0.2442;
+      //const double L2 = 0;
+      const double L3 = 0.3070;
+
+      const double a = L3 / L1 / 2;
+      const double b = L1 / 2;
+      if (a == 0 || b == 0)
+	return 0;
+      else
+	if ((a + b) * bT > 200)
+	  if (a > b)
+	    return exp( - L1 * bT );
+	  else
+	    return exp( - 2 * a * bT );
+	else
+	  return cosh( ( a - b ) * bT ) / cosh( ( a + b ) * bT );
+      //const double L1 = 0.156;
+      //const double L2 = - 0.0379;
+      //return exp( - L1 * b ) * ( 1 + L2 * b * b );
     };
 
   // Get evolved TMDs (this assumes the zeta-prescription).
@@ -112,6 +130,7 @@ int main()
   const double x2    = Q * exp(y) / Vs;
   const double muf   = Q;
   const double zetaf = Q * Q;
+
   const int nb       = 100;
   const double bmin  = 0.1;
   const double bmax  = 10;
@@ -134,6 +153,15 @@ int main()
       cout << b << "  " << Mub(b) << "  "
 	   << EvolFactors(b, muf, zetaf)[0] << "  "
 	   << EvolFactors(b, muf, zetaf)[1] << "  "
+	   << endl;
+      b += bstep;
+    }
+  cout << "\n\n";
+  b = bmin;
+  for (int ib = 0; ib < nb; ib++)
+    {
+      //const auto EvTMDs = EvolFactors(b, muf, zetaf) * MatchedTMDPDFs(b);
+      cout << b << "  " << Mub(b) << "  "
 	   << EvolvedTMDPDFs(b, muf, zetaf).at(0).Evaluate(x2) / x2 << "  "
 	   << EvolvedTMDPDFs(b, muf, zetaf).at(1).Evaluate(x2) / x2 << "  "
 	   << EvolvedTMDPDFs(b, muf, zetaf).at(2).Evaluate(x2) / x2 << "  "
@@ -141,15 +169,15 @@ int main()
 	   << endl;
       b += bstep;
     }
-  cout << "\n";
+  cout << "\n\n";
 
   // Relevant constants for the computation of the EW charges.
   const double paramD = 0.51974146748459;
   const double paramU = 0.40321312240043;
-  const double paramS = 0.13370219088667;
-  const double paramC = 0.53480876354668;
-  const double paramB = 0.13370219088667;
-  const double paramT = 0.53480876354668;
+  const double paramS = 0.51974146748459;
+  const double paramC = 0.40321312240043;
+  const double paramB = 0.51974146748459;
+  const double paramT = 0.40321312240043;
 
   // Actual charges.
   const auto fEWCharges = [=] (double const&) -> vector<double>{ return {paramD, paramU, paramS, paramC, paramB, paramT}; };

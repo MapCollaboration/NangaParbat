@@ -7,6 +7,7 @@
 #include <apfel/dglapbuilder.h>
 #include <apfel/grid.h>
 #include <apfel/timer.h>
+#include <apfel/constants.h>
 #include <apfel/tools.h>
 #include <apfel/alphaqcd.h>
 #include <apfel/tabulateobject.h>

@@ -7,6 +7,7 @@
 #include <apfel/dglapbuilder.h>
 #include <apfel/grid.h>
 #include <apfel/timer.h>
+#include <apfel/constants.h>
 #include <apfel/tools.h>
 #include <apfel/alphaqcd.h>
 #include <apfel/tabulateobject.h>
@@ -192,7 +193,7 @@ int main()
   for (auto const& q : qT)
     cout << q << "  "
 	 << TmdXsecDY(q) << "  "
-	 << TmdXsecDYInt(q) / dQ / dy / 4 << "  "
+	 << TmdXsecDYInt(q) / dQ / dy / 8 / Q << "  "
 	 << endl;
 
   cout << "\n";

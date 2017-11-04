@@ -7,6 +7,7 @@
 #include <apfel/dglapbuilder.h>
 #include <apfel/grid.h>
 #include <apfel/timer.h>
+#include <apfel/constants.h>
 #include <apfel/tools.h>
 #include <apfel/alphaqcd.h>
 #include <apfel/tabulateobject.h>
@@ -25,6 +26,7 @@ using namespace std;
 
 int main()
 {
+  SetVerbosityLevel(0);
   cout << __PRETTY_FUNCTION__ << "\n";
 
   // Open LHAPDF set.
@@ -117,6 +119,7 @@ int main()
   const double Ae         = - 0.5;
   const double alphaem    = 1. / 127.91;
   const double alphaem2   = alphaem * alphaem;
+  const double Br         = 0.03645;
 
   // Complete charges.
   const auto fEWCharges = [=] (double const& Q) -> vector<double>
@@ -135,10 +138,23 @@ int main()
       return EWCharges;
     };
 
-  // Narrow-width-approximation charges.
-  const auto fEWChargesNWA = [=] (double const&) -> vector<double>
+  // Charges gamma-gamma.
+  const auto fEWChargesGG = [=] (double const& Q) -> vector<double>
     {
-      const double PZ2 = M_PI * pow(MZ2,2) / MZ / GammaZ / pow(4 * Sin2ThetaW * ( 1 - Sin2ThetaW ),2);
+      vector<double> EWCharges;
+      for (auto i = 0; i < (int) Thresholds.size(); i++)
+	{
+	  const double b = QCh2[i];
+	  EWCharges.push_back(alphaem2*b);
+	}
+      return EWCharges;
+    };
+
+  // Charges ZZ.
+  const auto fEWChargesZZ = [=] (double const& Q) -> vector<double>
+    {
+      const double Q2  = Q * Q;
+      const double PZ2 = pow(Q2,2) / ( pow(Q2 - MZ2,2) + MZ2 * GammaZ2 ) / pow(4 * Sin2ThetaW * ( 1 - Sin2ThetaW ),2);
       vector<double> EWCharges;
       for (auto i = 0; i < (int) Thresholds.size(); i++)
 	{
@@ -148,11 +164,53 @@ int main()
       return EWCharges;
     };
 
-  const double dQ = 85;
+  // Charges gamma-Z.
+  const auto fEWChargesGZ = [=] (double const& Q) -> vector<double>
+    {
+      const double Q2  = Q * Q;
+      const double PZ  = Q2 * ( Q2 -  MZ2 ) / ( pow(Q2 - MZ2,2) + MZ2 * GammaZ2 ) / ( 4 * Sin2ThetaW * ( 1 - Sin2ThetaW ) );
+      vector<double> EWCharges;
+      for (auto i = 0; i < (int) Thresholds.size(); i++)
+	{
+	  const double b = - 2 * QCh[i] * Vq[i] * Ve * PZ;
+	  EWCharges.push_back(alphaem2*b);
+	}
+      return EWCharges;
+    };
+
+  // Narrow-width-approximation charges.
+  const auto fEWChargesNWA = [=] (double const&) -> vector<double>
+    {
+      vector<double> EWCharges;
+      for (auto i = 0; i < (int) Thresholds.size(); i++)
+	EWCharges.push_back((Vq[i] * Vq[i] + Aq[i] * Aq[i]) / 4 / Sin2ThetaW / ( 1 - Sin2ThetaW ));
+      return EWCharges;
+    };
 
   // Drell-Yann cross section.
-  function<double(double const&)> TmdXsecDY    = TmdCrossSectionDY(Vs, MZ,           y,    EvolvedTMDPDFs,              Alphas, fEWChargesNWA, PerturbativeOrder, Thresholds);
-  function<double(double const&)> TmdXsecDYInt = TmdCrossSectionDY(Vs, 10, 300, y, y, MatchedTMDPDFs, EvolFactors, Alphas, fEWCharges,    PerturbativeOrder, Thresholds);
+  function<double(double const&)> TmdXsecDY    = TmdCrossSectionDY(Vs, MZ,      y,    EvolvedTMDPDFs,              Alphas, fEWChargesNWA, PerturbativeOrder, Thresholds);
+  function<double(double const&)> TmdXsecDYInt = TmdCrossSectionDY(Vs, 66, 116, y, y, MatchedTMDPDFs, EvolFactors, Alphas, fEWCharges,    PerturbativeOrder, Thresholds);
+
+  const int nQ       = 1000;
+  const double qmin  = 20;
+  const double qmax  = 200;
+  const double Qstep = ( qmax - qmin ) / ( nQ - 1 );
+  double Q = qmin;
+  cout << scientific;
+  for (int iQ = 0; iQ < nQ; iQ++)
+    {
+      function<double(double const&)> xsec   = TmdCrossSectionDY(Vs, Q, y, EvolvedTMDPDFs, Alphas, fEWCharges,   PerturbativeOrder, Thresholds);
+      function<double(double const&)> xsecgg = TmdCrossSectionDY(Vs, Q, y, EvolvedTMDPDFs, Alphas, fEWChargesGG, PerturbativeOrder, Thresholds);
+      function<double(double const&)> xseczz = TmdCrossSectionDY(Vs, Q, y, EvolvedTMDPDFs, Alphas, fEWChargesZZ, PerturbativeOrder, Thresholds);
+      function<double(double const&)> xsecgz = TmdCrossSectionDY(Vs, Q, y, EvolvedTMDPDFs, Alphas, fEWChargesGZ, PerturbativeOrder, Thresholds);
+      cout << Q << "  "
+	   << 2 * Q * xsec(5)   << "  "
+	   << 2 * Q * xsecgg(5) << "  "
+	   << 2 * Q * xseczz(5) << "  "
+	   << 2 * Q * xsecgz(5) << "  "
+	   << endl;
+      Q += Qstep;
+    }
 
   const vector<double> qT{1, 2, 3, 4, 5, 10, 15, 20, 25, 30};
   Timer t;
@@ -161,10 +219,9 @@ int main()
   cout << "\n  qT [GeV]   "
        << "   d(sigma)/dQdyd(qT^2)"
        << endl;
-  cout << scientific;
   for (auto const& q : qT)
     cout << q << "  "
-	 << TmdXsecDY(q) / TmdXsecDYInt(q) << "  "
+	 << 3 * M_PI * alphaem * Br * MZ2 * TmdXsecDY(q) / TmdXsecDYInt(q) << "  "
 	 << endl;
 
   cout << "\n";
