@@ -117,7 +117,7 @@ int main()
 
   // Get evolved TMDs (this assumes the zeta-prescription).
   const auto EvolvedTMDPDFs = BuildTmdPDFs(TmdObj, DglapObj, CollPDFs, fNP, Mub, Mub, PerturbativeOrder, Alphas);
-  const auto MatchedTMDPDFs = MatchTmdPDFs(TmdObj, DglapObj, CollPDFs, fNP, Mub, PerturbativeOrder, Alphas);
+  const auto MatchedTMDPDFs = MatchTmdPDFs(TmdObj, DglapObj, CollPDFs, Mub, PerturbativeOrder, Alphas);
   const auto EvolFactors    = EvolutionFactors(TmdObj, Mub, Mub, PerturbativeOrder, Alphas);
 
   // Compute Drell-Yan cross section.

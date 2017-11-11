@@ -96,7 +96,7 @@ int main()
 
   // Get evolved TMDs (this assumes the zeta-prescription).
   const auto EvolvedTMDPDFs = BuildTmdPDFs(TmdObj, DglapObj, CollPDFs, fNP, Mub, Mub, PerturbativeOrder, Alphas);
-  const auto MatchedTMDPDFs = MatchTmdPDFs(TmdObj, DglapObj, CollPDFs, fNP, Mub, PerturbativeOrder, Alphas);
+  const auto MatchedTMDPDFs = MatchTmdPDFs(TmdObj, DglapObj, CollPDFs, Mub, PerturbativeOrder, Alphas);
   const auto EvolFactors    = EvolutionFactors(TmdObj, Mub, Mub, PerturbativeOrder, Alphas);
 
   // Compute Drell-Yan cross section.
@@ -187,10 +187,6 @@ int main()
       return EWCharges;
     };
 
-  // Drell-Yann cross section.
-  function<double(double const&)> TmdXsecDY    = TmdCrossSectionDY(Vs, MZ,      y,    EvolvedTMDPDFs,              Alphas, fEWChargesNWA, PerturbativeOrder, Thresholds);
-  function<double(double const&)> TmdXsecDYInt = TmdCrossSectionDY(Vs, 66, 116, y, y, MatchedTMDPDFs, EvolFactors, Alphas, fEWCharges,    PerturbativeOrder, Thresholds);
-
   const int nQ       = 1000;
   const double qmin  = 20;
   const double qmax  = 200;
@@ -212,6 +208,11 @@ int main()
       Q += Qstep;
     }
 
+/*
+  // Drell-Yann cross section.
+  function<double(double const&)> TmdXsecDY    = TmdCrossSectionDY(Vs, MZ,      y,    EvolvedTMDPDFs,              Alphas, fEWChargesNWA, PerturbativeOrder, Thresholds);
+  function<double(double const&)> TmdXsecDYInt = TmdCrossSectionDY(Vs, 66, 116, y, y, MatchedTMDPDFs, EvolFactors, Alphas, fEWCharges,    PerturbativeOrder, Thresholds);
+
   const vector<double> qT{1, 2, 3, 4, 5, 10, 15, 20, 25, 30};
   Timer t;
   t.start();
@@ -227,7 +228,7 @@ int main()
   cout << "\n";
   cout << "Integration... ";
   t.stop();
-
+*/
   return 0;
 }
 

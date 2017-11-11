@@ -128,6 +128,21 @@ int main()
       return EWCharges;
     };
 
+  const int    nq = 1000;
+  const double qmin = 50;
+  const double qmax = 200;
+  const double qstp = ( qmax - qmin ) / ( nq - 1 );
+  double q = qmin;
+  for (int iq = 0; iq < nq; iq++)
+    {
+      const vector<double> ch = fEWCharges(q);
+      cout << scientific << q << "  "
+	   << ch[0] << "  "
+	   << ch[1] << "  "
+	   << endl;
+      q += qstp;
+    }
+
   // Compute Drell-Yan cross section.
   const double Vs = 13000;
   const double Q  = 91.2;
