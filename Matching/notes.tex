@@ -136,7 +136,7 @@ $\mathcal{O}(a_s^2)$ that is the order we need. Now, using the RGE:
 \end{equation}
 whose solution is:
 \begin{equation}
-a_s(\mu) = \frac{a_s(Q)}{1+a_s(Q)\beta_0\ln(\mu^2/Q^2)}\simeq a_s(Q)\left[1+a_s(Q)\beta_0\ln(Q^2/\mu^2)+\mathcal{O}(a_s^2)\right]\,,
+a_s(\mu) = \frac{a_s(Q)}{1-a_s(Q)\beta_0\ln(\mu^2/Q^2)}\simeq a_s(Q)\left[1+a_s(Q)\beta_0\ln(Q^2/\mu^2)+\mathcal{O}(a_s^2)\right]\,,
 \end{equation}
 we write every instance of $a_s$ appearing in Eq.~(\ref{eq:expexp}) in
 terms of $a_s(Q)$ and finally retain only terms up to $a_s^2(Q)$:
@@ -254,9 +254,9 @@ structure:
 \begin{equation}
 \begin{array}{rcl}
   \displaystyle B_{ij} &=& \displaystyle
-                           H(Q)\,F_i(x,b;Q)\,zD_j(z,b;Q)
+                           H(Q)\,F_i(x,b;Q)\,D_j(z,b;Q)
                            =H(Q)\,\left[R(Q,\mathcal{L})\right]^2
-                           \,F_i\left(x,b;\frac{C_0}{b}\right)\,zD_j\left(z,b;\frac{C_0}{b}\right)\\
+                           \,F_i\left(x,b;\frac{C_0}{b}\right)\,D_j\left(z,b;\frac{C_0}{b}\right)\\
 \\
 &=& \displaystyle H(Q)\,\left[R(Q,\mathcal{L})\right]^2
                            \left[\sum_{k}
@@ -526,7 +526,7 @@ $\hat{B}_{ij,kl}^{(1)}$ in $q_T$ space without the $\delta(q_T)$ term:
 \end{array}
 \end{equation}
 so that:
-\begin{equation}
+\begin{equation}\label{eq:asymptfromres}
 \begin{array}{rcl}
 B_{ij}(x,z;q_T) &=&\displaystyle a_s(Q) \sum_{kl}\hat{B}_{ij,kl}^{(1)}\mathop{\otimes}_x
   f_k(x,Q)\mathop{\otimes}_zd_l(z,Q)+\mathcal{O}(a_s^2)\\
@@ -537,9 +537,148 @@ B_{ij}(x,z;q_T) &=&\displaystyle a_s(Q) \sum_{kl}\hat{B}_{ij,kl}^{(1)}\mathop{\o
   f_k(x,Q)\right)d_j(z,Q) + f_i(x,Q)\left(\sum_l\mathbb{P}_{jl}^{(1)}(z) \mathop{\otimes}_zd_l(z,Q)\right) +\mathcal{O}(a_s^2)\,.
 \end{array}
 \end{equation}
-This result nicely agrees with that of, \textit{e.g.},
-Refs.~\cite{Meng:1995yn,Collins:2016hqq}.
+This result, up to som pre-factor and to selecting the right flavour
+combinations,\footnote{We have purposely left the flavour indices $i$
+  and $j$ unspecified because they do not necessarily run over the
+  quark flavours $u$, $d$, etc. In fact, it turns out to be useful to
+  adopt a different basis (usual referred to as evolution basis) that
+  simplifies the structure of the products between, for example,
+  PDFs/FFs and splitting functions.} nicely agrees with that of,
+\textit{e.g.},
+Refs.~\cite{Meng:1995yn,Nadolsky:1999kb,Collins:2016hqq}.
 
+In order to check that the matching is actually removing the double
+counting terms, it is instructive to derive
+Eq.~(\ref{eq:asymptfromres}) extracting the asymptote from the
+fixed-order computation at $\mathcal{O}(a_s)$. We take the expressions
+for the coefficient functions from Eqs.~(106)-(109) of Appendix B of
+Ref.~\cite{Nadolsky:1999kb} or from Eqs.~(4.6)-(4.20) of
+Ref.~\cite{Bacchetta:2008xw}.Referring to the second reference, some
+simplifications apply. First, we consider cross sections with
+unpolarised projectiles ($\lambda_e=0$) over unpolarised targets
+($S_\perp^\mu = 0$) and integrated over the azimuthal angles $\phi_H$
+and $\phi_S$. By doing so and after a simple manipulation, the cross
+section simplifies greatly and can be written in terms of structure
+functions as:
+\begin{equation}
+  \frac{d\sigma}{dx dy dz dq_T^2} = \frac{2\pi\alpha^2}{xyQ^2}\left[Y_+ F_{UU,T}+2(1-y)F_{UU,L}\right]=\frac{2\pi\alpha^2}{xyQ^2}Y_+\left[F_{UU,2}-\frac{y^2}{Y_+}F_{UU,L}\right]\,,
+\end{equation}
+with:
+\begin{equation}
+Y_+\equiv 1+(1-y)^2\,,
+\end{equation}
+and where we have defined the structure function:
+\begin{equation}
+F_{UU,2}\equiv F_{UU,T} + F_{UU,L}\,.
+\end{equation}
+Notice that, as compared to Ref.~\cite{Bacchetta:2008xw}, we have
+factored out from the structure functions a further factor $1/\pi$ so
+that they factorize as:
+\begin{equation}\label{eq:FOxsec}
+\begin{array}{rcl}
+  F_{UU,S}&=&\displaystyle 
+  a_s\frac{x}{z^2Q^2}\sum_{i}e_i^2\int_x^1\frac{d\bar{x}}{\bar{x}}\int_z^1\frac{d\bar{z}}{\bar{z}}\delta\left(\frac{q_T^2}{Q^2}-\frac{(1-\bar{x})(1-\bar{z})}{\bar{x}\bar{z}}\right)\bigg[\hat{B}_{qq}^{S,
+    \rm FO}(\bar{x},\bar{z},q_T)f_i\left(\frac{x}{\bar{x}}\right)
+              d_i\left(\frac{z}{\bar{z}}\right)\\
+\\
+&+&\displaystyle \hat{B}_{qg}^{S,
+    \rm FO}(\bar{x},\bar{z},q_T)f_g\left(\frac{x}{\bar{x}}\right)
+              d_i\left(\frac{z}{\bar{z}}\right)+ \hat{B}_{gq}^{S,
+    \rm FO}(\bar{x},\bar{z},q_T)f_i\left(\frac{x}{\bar{x}}\right)
+              d_g\left(\frac{z}{\bar{z}}\right)\bigg]
++\mathcal{O}(a_s^2)\,.
+\end{array}
+\end{equation}
+with $S=2,L$ and where the sum over $i$ runs over the active quark and
+antiquark flavours and $e_i$ is the electric charge of the $i$-th
+flavour. The expression for the coefficient functions are:
+\begin{equation}
+\begin{array}{l}
+\displaystyle \hat{B}_{qq}^{2,\rm FO}(x,z,q_T) = 2C_F\left[(1-x)(1-z)+4xz+\frac{1+x^2z^2}{xz}\frac{Q^2}{q_T^2}\right]\,,\\
+\\
+\displaystyle \hat{B}_{qq}^{L,\rm FO}(x,z,q_T) = 8C_Fxz\,,\\
+\\
+\displaystyle \hat{B}_{qg}^{2,\rm FO}(x,z,q_T) = 2C_F\left[(1-x)z+4x(1-z)+\frac{1+x^2(1-z)^2}{xz}\frac{1-z}{z}\frac{Q^2}{q_T^2}\right]\,,\\
+\\
+\displaystyle \hat{B}_{qg}^{L,\rm FO}(x,z,q_T) = 8C_Fx(1-z)\,,\\
+\\
+\displaystyle \hat{B}_{gq}^{2,\rm FO}(x,z,q_T) = 2T_R\left[[x^2+(1-x)^2][z^2+(1-z)^2]\frac{1-x}{xz^2}\frac{Q^2}{q_T^2} +8x(1-x)\right]\,,\\
+\\
+\displaystyle \hat{B}_{gq}^{L,\rm FO}(x,z,q_T) = 16T_Rx(1-x)\,.\\
+\end{array}
+\end{equation}
+These expressions are enough to compute the SIDIS cross section at
+$\mathcal{O}(a_s)$ in the region $q_T \lesssim Q$. In order to match
+Eq.~(\ref{eq:asymptfromres}) one has to take the limit $q_T\ll Q$ and
+retain in the coefficient functions only the terms enhanced as
+$Q^2/q_T^2$. This automatically means that $F_{UU,L}$ does not
+contribute in the $q_T\leftarrow 0$ limit:
+\begin{equation}
+F_{UU,L}\mathop{\longrightarrow}_{q_T\ll Q} 0\,.
+\end{equation}
+Another crucial observation is that the $\delta$-function in
+Eq.~(\ref{eq:FOxsec}) can be expanded as follows:
+\begin{equation}
+  \delta\left(\frac{q_T^2}{Q^2}-\frac{(1-x)(1-z)}{xz}\right)
+  =\ln\left(\frac{Q^2}{q_T^2}\right)\delta(1-x) \delta(1-z) +
+  \frac{x\delta(1-z)}{(1-x)_+}+ \frac{z\delta(1-x)}{(1-z)_+} +\mathcal{O}\left(\frac{Q^2}{q_T^2}\ln\left(\frac{Q^2}{q_T^2}\right)\right)\,,
+\end{equation}
+so that:
+\begin{equation}\label{eq:FOxsecasy}
+\begin{array}{rcl}
+  F_{UU,2}&\displaystyle \mathop{\longrightarrow}_{q_T\ll Q}&\displaystyle 
+  a_s\frac{x}{z^2q_T^2}\sum_{i}e_i^2\int_x^1\frac{d\bar{x}}{\bar{x}}\int_z^1\frac{d\bar{z}}{\bar{z}}\bigg[\hat{B}_{qq}^{2,
+    \rm asy}(\bar{x},\bar{z},q_T)f_i\left(\frac{x}{\bar{x}}\right)
+              d_i\left(\frac{z}{\bar{z}}\right)\\
+\\
+&+&\displaystyle \hat{B}_{qg}^{2,
+    \rm asy}(\bar{x},\bar{z},q_T)f_g\left(\frac{x}{\bar{x}}\right)
+              d_i\left(\frac{z}{\bar{z}}\right)+ \hat{B}_{gq}^{2,
+    \rm asy}(\bar{x},\bar{z},q_T)f_i\left(\frac{x}{\bar{x}}\right)
+              d_g\left(\frac{z}{\bar{z}}\right)\bigg]
++\mathcal{O}(a_s^2)\,.
+\end{array}
+\end{equation}
+with:
+\begin{equation}
+\begin{array}{rcl}
+  \hat{B}_{qq}^{2,\rm asy}(x,z,q_T) &=& \displaystyle  2C_F\left[2
+                                        \ln\left(\frac{Q^2}{q_T^2}\right)+\frac{1+x^2}{(1-x)_+}\delta(1-z) +\delta(1-x)\frac{1+z^2}{(1-z)_+} \right]\\
+  \\
+                                    &=&\displaystyle 2C_F\left[2\ln\left(\frac{Q^2}{q_T^2}\right) -3\right]\delta(1-x) \delta(1-z)+\mathcal{P}_{qq}^{(1)}(x)\delta(1-z)
+                                        +\delta(1-x) \mathbb{P}_{qq}^{(1)}(z)\,,\\
+  \\
+  \hat{B}_{qg}^{2,\rm asy}(x,z,q_T) &=& \displaystyle  2C_F\left[\frac{1+(1-z)^2}{z}\right]=\delta(1-x)\mathbb{P}_{gq}^{(1)}(z)\,,\\
+  \\
+  \hat{B}_{gq}^{2,\rm asy}(x,z,q_T) &=& \displaystyle 2T_R\left[x^2+(1-x)^2\right]=\mathcal{P}_{gq}^{(1)}(x) \delta(1-z)\,.
+\end{array}
+\end{equation}
+It is thus easy to see that we can rewrite Eq.~(\ref{eq:FOxsecasy})
+as:
+\begin{equation}\label{eq:FOxsecasy2}
+\begin{array}{rcl}
+  F_{UU,2}&\displaystyle \mathop{\longrightarrow}_{q_T\ll Q}&\displaystyle 
+  a_s\frac{x}{z^2q_T^2}\sum_{i}e_i^2 \Bigg[4C_F\left(\ln\left(\frac{Q^2}{q_T^2}\right) -\frac{3}{2}\right) f_i\left(x\right)
+              d_i\left(z\right)\\
+\\
+&+&\displaystyle
+    \left(\sum_{k=q,g}\mathcal{P}^{(1)}_{qk}(x)\otimes f_k\left(x\right) \right)
+              d_i\left(z\right)+ f_i\left(x\right)
+              \left(\sum_{k=q,g}\mathbb{P}^{(1)}_{qk}(z) \otimes d_k\left(z\right)\right)\Bigg]
++\mathcal{O}(a_s^2)\,.
+\end{array}
+\end{equation}
+Eq.~(\ref{eq:FOxsecasy2}) agrees with
+Eq.~(\ref{eq:asymptfromres}). This confirms that this term removes the
+double-counting terms when doing the matching.
+
+In order to provide a version of Eq.~(\ref{eq:FOxsec}) that can be
+readily implemented, we need to perform one of the integrals making
+use of the $\delta$-function. The aim here is to rewrite the cross
+section in such a way that it matches that at $\mathcal{O}(a_s)$ of
+Ref.~\cite{Daleo:2004pn}. That would allow us to confidently use the
+$\mathcal{O}(a_s^2)$ calculation presented right in that reference for
+the matching to the resummed calculation.
 
 
 
@@ -966,6 +1105,37 @@ M_{\alpha\beta}^\tau\equiv \sum_q S_{q,\alpha\beta}^{\tau}\overline{F}_{q,\alpha
   [arXiv:1605.00671 [hep-ph]].
   %%CITATION = doi:10.1103/PhysRevD.94.034014;%%
   %14 citations counted in INSPIRE as of 21 Dec 2017
+
+%\cite{Nadolsky:1999kb}
+\bibitem{Nadolsky:1999kb}
+  P.~M.~Nadolsky, D.~R.~Stump and C.~P.~Yuan,
+  %``Semiinclusive hadron production at HERA: The Effect of QCD gluon resummation,''
+  Phys.\ Rev.\ D {\bf 61} (2000) 014003
+   Erratum: [Phys.\ Rev.\ D {\bf 64} (2001) 059903]
+  doi:10.1103/PhysRevD.64.059903, 10.1103/PhysRevD.61.014003
+  [hep-ph/9906280].
+  %%CITATION = doi:10.1103/PhysRevD.64.059903, 10.1103/PhysRevD.61.014003;%%
+  %77 citations counted in INSPIRE as of 23 Dec 2017
+
+%\cite{Bacchetta:2008xw}
+\bibitem{Bacchetta:2008xw}
+  A.~Bacchetta, D.~Boer, M.~Diehl and P.~J.~Mulders,
+  %``Matches and mismatches in the descriptions of semi-inclusive processes at low and high transverse momentum,''
+  JHEP {\bf 0808} (2008) 023
+  doi:10.1088/1126-6708/2008/08/023
+  [arXiv:0803.0227 [hep-ph]].
+  %%CITATION = doi:10.1088/1126-6708/2008/08/023;%%
+  %174 citations counted in INSPIRE as of 25 Dec 2017
+
+%\cite{Daleo:2004pn}
+\bibitem{Daleo:2004pn}
+  A.~Daleo, D.~de Florian and R.~Sassot,
+  %``O(alpha**2(s)) QCD corrections to the electroproduction of hadrons with high transverse momentum,''
+  Phys.\ Rev.\ D {\bf 71} (2005) 034013
+  doi:10.1103/PhysRevD.71.034013
+  [hep-ph/0411212].
+  %%CITATION = doi:10.1103/PhysRevD.71.034013;%%
+  %45 citations counted in INSPIRE as of 25 Dec 2017
 
 \end{thebibliography}
 
