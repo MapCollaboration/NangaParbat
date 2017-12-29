@@ -604,13 +604,13 @@ flavour. The expression for the coefficient functions are:
 \\
 \displaystyle \hat{B}_{qq}^{L,\rm FO}(x,z,q_T) = 8C_Fxz\,,\\
 \\
-\displaystyle \hat{B}_{qg}^{2,\rm FO}(x,z,q_T) = 2C_F\left[(1-x)z+4x(1-z)+\frac{1+x^2(1-z)^2}{xz}\frac{1-z}{z}\frac{Q^2}{q_T^2}\right]\,,\\
+\displaystyle \hat{B}_{qg}^{2,\rm FO}(x,z,q_T) = 2T_R\left[[x^2+(1-x)^2][z^2+(1-z)^2]\frac{1-x}{xz^2}\frac{Q^2}{q_T^2} +8x(1-x)\right]\,,\\
 \\
-\displaystyle \hat{B}_{qg}^{L,\rm FO}(x,z,q_T) = 8C_Fx(1-z)\,,\\
+\displaystyle \hat{B}_{qg}^{L,\rm FO}(x,z,q_T) = 16T_Rx(1-x)\,.\\
 \\
-\displaystyle \hat{B}_{gq}^{2,\rm FO}(x,z,q_T) = 2T_R\left[[x^2+(1-x)^2][z^2+(1-z)^2]\frac{1-x}{xz^2}\frac{Q^2}{q_T^2} +8x(1-x)\right]\,,\\
+\displaystyle \hat{B}_{gq}^{2,\rm FO}(x,z,q_T) = 2C_F\left[(1-x)z+4x(1-z)+\frac{1+x^2(1-z)^2}{xz}\frac{1-z}{z}\frac{Q^2}{q_T^2}\right]\,,\\
 \\
-\displaystyle \hat{B}_{gq}^{L,\rm FO}(x,z,q_T) = 16T_Rx(1-x)\,.\\
+\displaystyle \hat{B}_{gq}^{L,\rm FO}(x,z,q_T) = 8C_Fx(1-z)\,,
 \end{array}
 \end{equation}
 These expressions are enough to compute the SIDIS cross section at
@@ -654,9 +654,11 @@ with:
                                     &=&\displaystyle 2C_F\left[2\ln\left(\frac{Q^2}{q_T^2}\right) -3\right]\delta(1-x) \delta(1-z)+\mathcal{P}_{qq}^{(1)}(x)\delta(1-z)
                                         +\delta(1-x) \mathbb{P}_{qq}^{(1)}(z)\,,\\
   \\
-  \hat{B}_{qg}^{2,\rm asy}(x,z,q_T) &=& \displaystyle  2C_F\left[\frac{1+(1-z)^2}{z}\right]=\delta(1-x)\mathbb{P}_{gq}^{(1)}(z)\,,\\
-  \\
-  \hat{B}_{gq}^{2,\rm asy}(x,z,q_T) &=& \displaystyle 2T_R\left[x^2+(1-x)^2\right]=\mathcal{P}_{gq}^{(1)}(x) \delta(1-z)\,.
+  \hat{B}_{qg}^{2,\rm asy}(x,z,q_T) &=& \displaystyle
+                                        2T_R\left[x^2+(1-x)^2\right]=\mathcal{P}_{qg}^{(1)}(x)
+                                        \delta(1-z)\,,\\
+\\
+  \hat{B}_{gq}^{2,\rm asy}(x,z,q_T) &=& \displaystyle  2C_F\left[\frac{1+(1-z)^2}{z}\right]=\delta(1-x)\mathbb{P}_{qg}^{(1)}(z)\,.
 \end{array}
 \end{equation}
 It is thus easy to see that we can rewrite Eq.~(\ref{eq:FOxsecasy})
@@ -778,20 +780,22 @@ differential in the same variable as in Eq.~(\ref{eq:FOxsecFin}). What
 we need is to know how the variables $Q^2$, $p_T$, and $\eta$ are
 related to $y$, $z$, and $q_T$. The relevant relations are:
 \begin{equation}
-\begin{array}{rcl}
+\left\{\begin{array}{rcl}
 Q^2 &=& xyS\\
 \\
 p_T^2 &=& z^2 q_T^2\\
 \\
 \eta &=& \displaystyle \frac{1}{2}\ln\left(\frac{S}{q_T^2}\right)
-\end{array}\quad\Longrightarrow\quad dQ^2dp_T^2d\eta = \frac{zQ^2}{y} dydzdq_T^2\,.
+\end{array}\right.\quad\Longrightarrow\quad dQ^2dp_T^2d\eta = \frac{zQ^2}{y} dydzdq_T^2\,.
 \end{equation}
 so that:
 \begin{equation}
-  \frac{d\sigma}{dx dy dz dq_T^2} = \frac{Q^2z}{y}\frac{d\sigma}{dxdQ^2d p_T^2
+  \frac{d\sigma}{dx dy dz dq_T^2} = \frac{zQ^2}{y}\frac{d\sigma}{dxdQ^2d p_T^2
     d\eta} = \frac{2\pi\alpha^2}{xyQ^2}Y_+\left[F_{UU,2}-\frac{y^2}{Y_+}F_{UU,L}\right]\,,
 \end{equation}
-exactly like in Eq.~(\ref{eq:xsexinsf}).
+exactly like in Eq.~(\ref{eq:xsexinsf}). This confirms that the
+computation of Ref.~\cite{Daleo:2004pn} can be matched to the resummed
+calculation provided that the correct Jacobian is taken into account.
 
 
 \newpage
