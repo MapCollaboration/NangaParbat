@@ -723,8 +723,10 @@ the fact that in that paper the cross section is differential in a
 different set of variables. Specifically, we would like it to be
 differential in $x$, $y$, $z$, and $q_T^2$ while in
 Ref.~\cite{Daleo:2004pn} it is differential in $x$, $Q^2$, $\eta$, and
-$p_T^2$. Eq.~(13) of Ref.~\cite{Daleo:2004pn}, can be translated into
-our notation by noticing that:
+$p_T^2$, where the last two are the rapidity and the transverse
+momentum of the outgoing hadron, respectively. Eq.~(13) of
+Ref.~\cite{Daleo:2004pn}, can be translated into our notation by
+noticing that:
 \begin{equation}\label{eq:Daleoetal}
 \frac{d\sigma}{dxdQ^2d p_T^2 d\eta} = \frac{x}{z Q^2}\sum_{i,j}\int_z^{z_{\rm
     max}} \frac{d\bar{z}}{1-\bar{z}} f_i\left(\frac{x}{\bar{x}_0}\right)d_j\left(\frac{z}{\bar{z}}\right) \frac{d\sigma_{ij}^{(1)}}{dxdQ^2d p_T^2 d\eta}+\mathcal{O}(a_s^2)
@@ -754,7 +756,38 @@ $\hat{B}^{M, \rm FO}_{gq}(\bar{x}_0,\bar{z},q_T)$, and
 $\hat{B}^{L, \rm FO}_{gq}(\bar{x}_0,\bar{z},q_T)$ of
 Eq.~(\ref{eq:Bacchettaetal}). It is crucial to notice that the
 correspondence holds only if $\bar{x}_0$ defined in
-Eq.~(\ref{eq:x0bar}) as a function of $\bar{z}$ is used.
+Eq.~(\ref{eq:x0bar}) as a function of $\bar{z}$ is used. As an
+example, taking into account the different factors (a factor 2 for
+$F_{UU,M}$ and a factor 4 for $F_{UU,L}$) and using our notation for
+the integration variables ($y\rightarrow \bar{z}$,
+$\rho(z=0)\rightarrow \bar{x}_0$), we read off from Eq.~(18) of
+Ref.~\cite{Daleo:2004pn}:
+\begin{equation}
+\begin{array}{rcl}
+F_{UU,M}^{qq}(\bar{x}_0,\bar{z}) &=& \displaystyle 2C_F\left[\frac{(\bar{x}_0+\bar{z})^2+2(1-\bar{x}_0-\bar{z})}{(1-\bar{x}_0)(1-\bar{z})}\right]\,,\\
+\\
+F_{UU,L}^{qq}(\bar{x}_0,\bar{z}) &=& \displaystyle 8C_F\bar{x_0}\bar{z}\,,
+\end{array}
+\end{equation}
+so that:
+\begin{equation}
+\begin{array}{rcl}
+F_{UU,2}^{qq}(\bar{x}_0,\bar{z}) &=& F_{UU,M}^{qq}(\bar{x}_0,\bar{z})+\frac{3}{2}F_{UU,L}^{qq}(\bar{x}_0,\bar{z})\\
+\\
+ &=& \displaystyle 2
+     C_F\left[\frac{(\bar{x}_0+\bar{z})^2+2(1-\bar{x}_0-\bar{z})}{(1-\bar{x}_0)(1-\bar{z})}
+     + 3\bar{x_0}\bar{z}\right]\\
+\\
+&=& \displaystyle 2
+     C_F\left[(1-\bar{x}_0)(1-\bar{z})+4\bar{x}_0\bar{z} +\frac{1+\bar{x}_0^2\bar{z}^2}{\bar{x}_0\bar{z}}\left(\frac{\bar{x}_0\bar{z}}{(1-\bar{x}_0)(1-\bar{z})}\right)\right]\,.
+\end{array}
+\end{equation}
+Using Eq.~(\ref{eq:x0bar}), it is easy to see that the factor in round
+brackets in the last line of the equation above is equal to
+$Q^2/q_T^2$. Therefore, it reduces exactly to the first relation in
+Eq.~(\ref{eq:Bacchettaetal}). The same holds also for the remaining
+two partonic channels.
+
 Putting all pieces together, Eq.~(\ref{eq:Daleoetal}) can be recast as:
 \begin{equation}
 \frac{d\sigma}{dxdQ^2d p_T^2 d\eta} = \frac{2\pi \alpha^2
@@ -781,14 +814,15 @@ we need is to know how the variables $Q^2$, $p_T$, and $\eta$ are
 related to $y$, $z$, and $q_T$. The relevant relations are:
 \begin{equation}
 \left\{\begin{array}{rcl}
-Q^2 &=& xyS\\
+Q^2 &=& xyS_H\\
 \\
 p_T^2 &=& z^2 q_T^2\\
 \\
-\eta &=& \displaystyle \frac{1}{2}\ln\left(\frac{S}{q_T^2}\right)
+\eta &=& \displaystyle \frac{1}{2}\ln\left(\frac{y(1-x)S_H}{q_T^2}\right)
 \end{array}\right.\quad\Longrightarrow\quad dQ^2dp_T^2d\eta = \frac{zQ^2}{y} dydzdq_T^2\,.
 \end{equation}
-so that:
+where $S_H$ is the squared center-of-mass energy of the collision, so
+that:
 \begin{equation}
   \frac{d\sigma}{dx dy dz dq_T^2} = \frac{zQ^2}{y}\frac{d\sigma}{dxdQ^2d p_T^2
     d\eta} = \frac{2\pi\alpha^2}{xyQ^2}Y_+\left[F_{UU,2}-\frac{y^2}{Y_+}F_{UU,L}\right]\,,
