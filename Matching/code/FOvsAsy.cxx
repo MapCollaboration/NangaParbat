@@ -32,6 +32,7 @@
 #include "apfel/constants.h"
 #include "apfel/tools.h"
 #include "apfel/integrator.h"
+#include "apfel/doubleobject.h"
 
 using namespace std;
 using namespace apfel;
@@ -79,23 +80,23 @@ int main() {
   const double mt = PDFs->quarkThreshold(6);
   const vector<double> Masses{0, 0, 0, mc, mb, mt};
 
-  const auto SIDISxsec = [=] (double const& VS, double const& x, double const& Q2, double const& pT, double const& eta) -> double
+  // Function for the computation of the fixed-order cross section at
+  // O(as).
+  const auto xsecFO = [=] (double const& VS, double const& x, double const& y, double const& z, double const& qT2) -> double
     {
       // Internal kinematic variables
+      const double Q2 = x * y * VS * VS;
       const double Q  = sqrt(Q2);
-      const double y  = Q2 / x / VS / VS;
-      const double qT = exp(-eta) * VS * sqrt( y * ( 1 - x ) );
-      const double z  = pT / qT;
+      const double qT = sqrt(qT2);
 
       // Useful definitions
-      const double qToQ2  = qT * qT / Q2;
+      const double qToQ2  = qT2 / Q2;
       const double zmax   = ( 1 - x ) / ( 1 - x * ( 1 - qToQ2 ) );
       const double y2     = y * y;
       const double Yp     = 1 + pow(1-y, 2);
-      const double nf     = NF(Q, Masses);
+      const int nf        = NF(Q, Masses);
       const double as     = PDFs->alphasQ(Q) / FourPi;
       const double alpha2 = pow(1./137,2);
-      const double hc2    = 0.38942957e6;
 
       // Define integrands.
       const auto Xsec = [=] (double const& zb) -> double
@@ -128,28 +129,85 @@ int main() {
 	  + ( B2FOqg(xb0, zb, qT, Q) - y2 / Yp * BLFOqg(xb0, zb) ) * qg
 	  + ( B2FOgq(xb0, zb, qT, Q) - y2 / Yp * BLFOgq(xb0, zb) ) * gq ) / Q / Q / ( 1 - zb );
 
-	return 2 * pT * hc2 * 2 * M_PI * alpha2 * Yp * integrand / z / x / pow(Q,4);
+	return 2 * qT * 2 * M_PI * alpha2 * Yp * integrand / x / y / Q2;
       };
 
-      // Integrate
-      // Integrate also over x
+      // Integrate over z.
       const Integrator Integral{Xsec};
       return Integral.integrate(z, zmax, 1e-5);
     };
 
+  // Initialize space- and time-like splitting functions.
+  const Grid g{{SubGrid{100,1e-5,3}, SubGrid{60,1e-1,3}, SubGrid{50,5e-1,3}, SubGrid{60,7e-1,3}}};
+  const auto PDFObj = InitializeDglapObjectsQCD(g, Masses);
+  const auto FFObj  = InitializeDglapObjectsQCDT(g, Masses);
+ 
+  // Function for the computation of the asymptotic cross section at
+  // O(as).
+  const auto xsecAsy = [=,&g] (double const& VS, double const& x, double const& y, double const& z, double const& qT2) -> double
+    {
+      // Internal kinematic variables
+      const double Q2 = x * y * VS * VS;
+      const double Q  = sqrt(Q2);
+      const double qT = sqrt(qT2);
+
+      // Useful definitions
+      const double qToQ2  = qT * qT / Q2;
+      const double y2     = y * y;
+      const double Yp     = 1 + pow(1-y, 2);
+      const int nf        = NF(Q, Masses);
+      const double as     = PDFs->alphasQ(Q) / FourPi;
+      const double alpha2 = pow(1./137,2);
+      const double L      = 4 * CF * ( - log(qToQ2) - 3. / 2 );
+
+      // Create sets of distributions for PDFs and FFs.
+      const map<int,Distribution> DistPDFs = DistributionMap(g, [=] (double const& x, double const& Q)->map<int,double>{ return PDFs->xfxQ(x,Q); }, Q);
+      const map<int,Distribution> DistFFs  = DistributionMap(g, [=] (double const& z, double const& Q)->map<int,double>{ return FFs->xfxQ(z,Q); }, Q);
+
+      DoubleObject<Distribution> DoubDist;
+      for (int j = -nf; j <= nf; j++)
+	{
+	  if (j == 0)
+	    continue;
+
+	  const Set<Operator> Psl = PDFObj.at(nf).SplittingFunctions.at(0);
+	  const Set<Operator> Ptl = FFObj.at(nf).SplittingFunctions.at(0);
+
+	  const Distribution Ppdf = Psl.at(3) * DistPDFs.at(j) + Psl.at(4) * DistPDFs.at(21) / 2 / nf;
+	  const Distribution Pff  = Ptl.at(3) * DistFFs.at(j)  + Ptl.at(4) * DistFFs.at(21) / 2 / nf;
+
+	  DoubDist.AddTerm({QCh2[abs(j)-1] * L, DistPDFs.at(j), DistFFs.at(j)});
+	  DoubDist.AddTerm({QCh2[abs(j)-1], DistPDFs.at(j), Pff});
+	  DoubDist.AddTerm({QCh2[abs(j)-1], Ppdf, DistFFs.at(j)});
+	}
+
+      return 2 * qT * 2 * M_PI * alpha2 * Yp * ( as * DoubDist.Evaluate(x,z) / qT2 / z ) / x / y / Q2;
+    };
+
   // Kinematics in terms of the variables in which TIMBA is
   // differential.
-  const double EP  = 820;
-  const double El  = 27.6;
-  const double VS  = sqrt( 4 * EP * El );
-  const double x   = 5e-5;
-  const double Q2  = 2;
-  const vector<double> pTv = {3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5};
-  const double eta = 1;
+  const double EP = 820;
+  const double El = 27.6;
+  const double VS = sqrt( 4 * EP * El );
+  const double x  = 1e-3;
+  const double z  = 1e-1;
+  const double y  = 0.5;
+
+  const int    nqT    = 100;
+  const double qTmin  = 0.01;
+  const double qTmax  = 20;
+  const double qTstep = exp( log( qTmax / qTmin ) / ( nqT - 1 ) );
 
   cout << scientific;
-  for (auto const& pT : pTv)
-    cout << x << "  " << Q2 << "  " << pT << "  " << eta << "  " << SIDISxsec(VS, x, Q2, pT, eta) << endl;
+  double qT = qTmin;
+  for (int iqT = 0; iqT < nqT; iqT++)
+    {
+      cout << qT << "  "
+	   << xsecFO(VS, x, y, z, qT) << "  "
+	   << xsecAsy(VS, x, y, z, qT) << "  "
+	   << endl;
+      qT *= qTstep;
+    }
 
   return 0;
 }

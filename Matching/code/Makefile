@@ -30,9 +30,12 @@ LDFLAGS  += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS) $(HOPPETLIBS) $(QCDNUMLIBS
 CLIBS += $(LHAPDFLIBS) $(APFELLIBS) $(APFELPPLIBS)
 
 install : all
-all : SIDIS
+all : APFELvsTIMBA FOvsAsy
 
-SIDIS: SIDIS.o
+APFELvsTIMBA: APFELvsTIMBA.o
+	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
+
+FOvsAsy: FOvsAsy.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
 .SUFFIXES : .cxx .o .f .c
@@ -44,5 +47,5 @@ SIDIS: SIDIS.o
 	$(F77)  -c $< 
 
 clean:
-	rm -rf *.lo *.o *.la SIDIS *~
+	rm -rf *.lo *.o *.la APFELvsTIMBA FOvsAsy *~
 

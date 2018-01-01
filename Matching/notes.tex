@@ -4,6 +4,7 @@
 \usepackage[center,small]{caption}[2007/01/07]
 \usepackage{fancyhdr}
 \usepackage{color}
+\usepackage{graphicx}
 
 \definecolor{blu}{rgb}{0,0,1}
 \definecolor{verde}{rgb}{0,1,0}
@@ -627,7 +628,7 @@ Eq.~(\ref{eq:FOxsec}) can be expanded as follows:
 \begin{equation}
   \delta\left(\frac{q_T^2}{Q^2}-\frac{(1-x)(1-z)}{xz}\right)
   =\ln\left(\frac{Q^2}{q_T^2}\right)\delta(1-x) \delta(1-z) +
-  \frac{x\delta(1-z)}{(1-x)_+}+ \frac{z\delta(1-x)}{(1-z)_+} +\mathcal{O}\left(\frac{Q^2}{q_T^2}\ln\left(\frac{Q^2}{q_T^2}\right)\right)\,,
+  \frac{x\delta(1-z)}{(1-x)_+}+ \frac{z\delta(1-x)}{(1-z)_+} +\mathcal{O}\left(\frac{q_T^2}{Q^2}\ln\left(\frac{Q^2}{q_T^2}\right)\right)\,,
 \end{equation}
 so that:
 \begin{equation}\label{eq:FOxsecasy}
@@ -655,10 +656,10 @@ with:
                                         +\delta(1-x) \mathbb{P}_{qq}^{(1)}(z)\,,\\
   \\
   \hat{B}_{qg}^{2,\rm asy}(x,z,q_T) &=& \displaystyle
-                                        2T_R\left[x^2+(1-x)^2\right]=\mathcal{P}_{qg}^{(1)}(x)
+                                        2T_R\left[x^2+(1-x)^2\right]\delta(1-z)=\mathcal{P}_{qg}^{(1)}(x)
                                         \delta(1-z)\,,\\
 \\
-  \hat{B}_{gq}^{2,\rm asy}(x,z,q_T) &=& \displaystyle  2C_F\left[\frac{1+(1-z)^2}{z}\right]=\delta(1-x)\mathbb{P}_{qg}^{(1)}(z)\,.
+  \hat{B}_{gq}^{2,\rm asy}(x,z,q_T) &=& \displaystyle  \delta(1-x)2C_F\left[\frac{1+(1-z)^2}{z}\right]=\delta(1-x)\mathbb{P}_{qg}^{(1)}(z)\,.
 \end{array}
 \end{equation}
 It is thus easy to see that we can rewrite Eq.~(\ref{eq:FOxsecasy})
@@ -666,7 +667,7 @@ as:
 \begin{equation}\label{eq:FOxsecasy2}
 \begin{array}{rcl}
   F_{UU,2}&\displaystyle \mathop{\longrightarrow}_{q_T\ll Q}&\displaystyle 
-  a_s\frac{x}{z^2q_T^2}\sum_{i}e_i^2 \Bigg[4C_F\left(\ln\left(\frac{Q^2}{q_T^2}\right) -\frac{3}{2}\right) f_i\left(x\right)
+  a_s\frac{x}{q_T^2}\sum_{i}e_i^2 \Bigg[4C_F\left(\ln\left(\frac{Q^2}{q_T^2}\right) -\frac{3}{2}\right) f_i\left(x\right)
               d_i\left(z\right)\\
 \\
 &+&\displaystyle
@@ -831,6 +832,49 @@ exactly like in Eq.~(\ref{eq:xsexinsf}). This confirms that the
 computation of Ref.~\cite{Daleo:2004pn} can be matched to the resummed
 calculation provided that the correct Jacobian is taken into account.
 
+In Fig.~\ref{fig:APFELvsTIMBA}, a comparison between the
+$\mathcal{O}(a_s)$ computation of Ref.~\cite{Daleo:2004pn} for the
+differential cross section in Eq.~(\ref{eq:Daleoetal}), implemented in
+the computer code {\tt TIMBA}, and the implementation in the {\tt
+  APFEL++} framework~\cite{Bertone:2017gds} of the expressions in
+Eq.~(\ref{eq:FOxsecFin}) is presented. The cross section as a function
+of the hadron transverse momentum $p_T$ obtained with {\tt APFEL++} is
+displayed as ratios to {\tt TIMBA} for a representative values of the
+kinematic variables.
+\begin{figure}[t]
+  \begin{centering}
+    \includegraphics[width=0.6\textwidth]{plots/APFELvsTIMBA}
+    \caption{Comparison at $\mathcal{O}(\alpha_s)$ between the {\tt
+        TIMBA} code, implementation of the results of
+      Ref.~\cite{Daleo:2004pn}, and the implementation of the
+      expressions in Eq.~(\ref{eq:FOxsecFin}) in the {\tt APFEL++}
+      code~\cite{Bertone:2017gds}.\label{fig:APFELvsTIMBA}}
+  \end{centering}
+\end{figure}
+It is clear that the agreement between the two codes is
+excellent. Since we will be using {\tt TIMBA} for the NLO
+(\textit{i.e.} $\mathcal{O}(a_s^2)$) cross section calculation to be
+matched to the NNLL resummed computation, this provides a solid ground
+to start from.
+
+The next step is to compare the asymptotic behaviour worked out in
+Eq.~(\ref{eq:FOxsecasy2}) to the fixed-order computation. This is done
+Fig.~\ref{fig:FOvsAsy} where the differential cross section in both
+cases is plotted as a function of the photon tranverve momentum $q_T$
+for a representative set of values of the kinematic variables. As
+expected, the two curves are very close to each other at small values
+of $q_T$ where the logarithmically enhanced terms dominate. At larger
+values of $q_T$ instead the two curves tend to depart indicating that
+power corrections are important in that region.
+\begin{figure}[t]
+  \begin{centering}
+    \includegraphics[width=0.6\textwidth]{plots/FOvsAsy}
+    \caption{Comparison at $\mathcal{O}(\alpha_s)$ between the
+      asymptotic expansion in Eq.~(\ref{eq:FOxsecasy2}) to the
+      fixed-order computation expressions in
+      Eq.~(\ref{eq:FOxsecFin}).\label{fig:FOvsAsy}}
+  \end{centering}
+\end{figure}
 
 \newpage
 
@@ -924,6 +968,14 @@ calculation provided that the correct Jacobian is taken into account.
   [hep-ph/0411212].
   %%CITATION = doi:10.1103/PhysRevD.71.034013;%%
   %45 citations counted in INSPIRE as of 25 Dec 2017
+
+%\cite{Bertone:2017gds}
+\bibitem{Bertone:2017gds}
+  V.~Bertone,
+  %``APFEL++: A new PDF evolution library in C++,''
+  arXiv:1708.00911 [hep-ph].
+  %%CITATION = ARXIV:1708.00911;%%
+  %3 citations counted in INSPIRE as of 30 Dec 2017
 
 \end{thebibliography}
 
