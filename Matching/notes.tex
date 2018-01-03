@@ -870,11 +870,84 @@ power corrections are important in that region.
   \begin{centering}
     \includegraphics[width=0.6\textwidth]{plots/FOvsAsy}
     \caption{Comparison at $\mathcal{O}(\alpha_s)$ between the
-      asymptotic expansion in Eq.~(\ref{eq:FOxsecasy2}) to the
-      fixed-order computation expressions in
+      asymptotic limit in Eq.~(\ref{eq:FOxsecasy2}) to the fixed-order
+      computation expressions in
       Eq.~(\ref{eq:FOxsecFin}).\label{fig:FOvsAsy}}
   \end{centering}
 \end{figure}
+
+The conclusive step is the comparison between the resummed computation
+and its fixed-order order expansion that, as we have shown above,
+coincides with the asymptote of the full fixed-oder. This is done in
+Fig.~(\ref{fig:ResVsExp}) where the resummed calculation a NLL
+accuracy is compared to its fixed-order expansion to
+$\mathcal{O}(\alpha_s)$, that coincides with
+Eq.~(\ref{eq:FOxsecasy2}). As expected, while the two curves are far
+apart at low $q_T$ they tend to converge towards larger values of
+$q_T$. However, the convergence is not so ``accurate'' as in the case
+of the fixed-order calculation versus its asymptotic limit. The reason
+is that in this case the two computations converge up to subleading
+terms that in this case are $\mathcal{O}(\alpha_s^2)$ that are
+effectively NLO and thus numerically large. We will see that the
+situation improves when going one order up.
+\begin{figure}[t]
+  \begin{centering}
+    \includegraphics[width=0.6\textwidth]{plots/ResVsExp}
+    \caption{Comparison between the NLL resummed calculation and the
+      expansion to $\mathcal{O}(\alpha_s)$ in
+      Eq.~(\ref{eq:FOxsecasy2}).\label{fig:ResVsExp}}
+  \end{centering}
+\end{figure}
+
+We can now formulate the matching procedure to consistently combine
+the resummed calculation with the fixed-order one subtracting the
+double counting terms. The particular way in which the matching is
+implemented is defined up to subleading and power-suppressed
+terms. One can then exploit this arbitrariness to adjust the matching
+in such a way that the possibly large subleading terms are mitigated
+by some \textit{ad-hoc} prescription. The most natural, despite not
+unique, prescription is the \textit{additive} matching that reads:
+\begin{equation}\label{eq:matching1}
+\sigma^{\rm Match}(q_T,Q) = \sigma^{\rm FO}(q_T,Q) + \sigma^{\rm Res}(q_T,Q) - \sigma^{\rm Asy}(q_T,Q)\,.
+\end{equation}
+where $\sigma^{\rm Match}$ is obtained adding up the fixed-order
+computation $\sigma^{\rm FO}$ to some perturbative accuracy (say
+$\mathcal{O}(\alpha_s^n)$), valid for $q_T \simeq Q$, to the resummed
+calculation $\sigma^{\rm Res}$ at some logarithmic accuracy, valid for
+$q_T\ll Q$, and subtracting the double-counting terms
+$\sigma^{\rm Asy}$. By the arguments discussed above, it is easy to
+see that:
+\begin{equation}
+\begin{array}{rcl}
+  \sigma^{\rm Match}(q_T,Q) &\displaystyle\mathop{\longrightarrow}_{q_T\simeq Q}&
+                                                                                  \sigma^{\rm FO}(q_T,Q) +\mathcal{O}\left[\alpha_s^{n+1}(Q)\right]\,,\\
+  \\
+  \sigma^{\rm Match}(q_T,Q) &\displaystyle\mathop{\longrightarrow}_{q_T\ll Q}&\displaystyle
+                                                                               \sigma^{\rm Res}(q_T,Q) +\mathcal{O}\left(\frac{q_T^2}{Q^2}\right)\,.
+\end{array}
+\end{equation}
+However, as we have seen above, for low-order computation the
+$\mathcal{O}(\alpha_s^{n+1})$ residual for $q_T\simeq Q$ may be
+numerically relevant.
+
+% Exploiting the power-suppressed residual in the $q_T \ll Q$ limit, one
+% can replace the prescription in Eq.~(\ref{eq:matching1}) with:
+% \begin{equation}\label{eq:matching2}
+%   \sigma^{\rm Match}(q_T,Q) = \sigma^{\rm FO}(q_T,Q) + \mathcal{D}\left(\frac{q_T^2}{Q^2}\right)\left[\sigma^{\rm Res}(q_T,Q) - \sigma^{\rm Asy}(q_T,Q)]\right]\,,
+% \end{equation}
+% with:
+% \begin{equation}
+% \mathcal{D}\left(\frac{q_T^2}{Q^2}\right) = 1 + \mathcal{O}\left(\frac{q_T^2}{Q^2}\right)\,.
+% \end{equation}
+% Despite the exact form of the ``damping'' function $\mathcal{D}$
+% remains unspecified at this level, this prescription ensures that the
+% uncertainty of Eq.~(\ref{eq:matching2}) is power suppressed over the
+% whole relevant spectrum. The simplest choice is:
+% \begin{equation}
+%   \mathcal{D}\left(\frac{q_T^2}{Q^2}\right) = 1 + \frac{q_T^2}{Q^2}\,.
+% \end{equation}
+
+
 
 \newpage
 
