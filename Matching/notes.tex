@@ -516,14 +516,14 @@ this end, we write explicitly the expression for
 $\hat{B}_{ij,kl}^{(1)}$ in $q_T$ space without the $\delta(q_T)$ term:
 \begin{equation}
 \begin{array}{rcl}
-\hat{B}_{ij,kl}^{(1)}(x,z;q_T) &=&\displaystyle 
--\hat{B}_{ij,kl}^{(1,1)}(x,z)\mathcal{L}\frac{1}{q_T^2}
-  -\hat{B}_{ij,kl}^{(1,2)}(x,z)\frac{2}{q_T^2}\ln\left(\frac{Q^2}{q_T^2}\right)\\
-\\
- &=&\displaystyle
-     \frac{1}{q_T^2}\bigg[4C_F\left(\ln\left(\frac{Q^2}{q_T^2}\right)-\frac{3}{2}\right)\delta_{ik}\delta_{jl}\delta(1-x)\delta(1-z)\\
-\\
- &+&\displaystyle \mathcal{P}_{ik}^{(1)}(x)\delta_{jl}\delta(1-z) + \delta_{ik}\delta(1-x)\mathbb{P}_{jl}^{(1)}(z)\bigg]\,,
+  \hat{B}_{ij,kl}^{(1)}(x,z;q_T) &=&\displaystyle 
+                                     -\hat{B}_{ij,kl}^{(1,1)}(x,z)\frac{1}{q_T^2}
+                                     -\hat{B}_{ij,kl}^{(1,2)}(x,z)\frac{2}{q_T^2}\ln\left(\frac{Q^2}{q_T^2}\right)\\
+  \\
+                                 &=&\displaystyle
+                                     \frac{1}{q_T^2}\bigg[4C_F\left(\ln\left(\frac{Q^2}{q_T^2}\right)-\frac{3}{2}\right)\delta_{ik}\delta_{jl}\delta(1-x)\delta(1-z)\\
+  \\
+                                 &+&\displaystyle \mathcal{P}_{ik}^{(1)}(x)\delta_{jl}\delta(1-z) + \delta_{ik}\delta(1-x)\mathbb{P}_{jl}^{(1)}(z)\bigg]\,,
 \end{array}
 \end{equation}
 so that:
@@ -926,9 +926,31 @@ see that:
                                                                                \sigma^{\rm Res}(q_T,Q) +\mathcal{O}\left(\frac{q_T^2}{Q^2}\right)\,.
 \end{array}
 \end{equation}
-However, as we have seen above, for low-order computation the
+However, as we have seen above, for low-order computations the
 $\mathcal{O}(\alpha_s^{n+1})$ residual for $q_T\simeq Q$ may be
-numerically relevant.
+numerically relevant. On the other hand, one would expect that when
+increasing the perturbative accuracy these differences tend to
+shrink. Therefore, for the moment I refrain from form introducing any
+prescription for the suppression of subleading terms. I will come back
+on this point in the next section where I will study the matching of
+the NLO fixed-order computation to the NNLL resummed
+one. Fig.~\ref{fig:FONLL} shows a summary of the computations
+consideres so far, including the matched one according to
+Eq.~(\ref{eq:matching1}): this provides the lowest order matching
+LO+NLL. The behaviour of the red curve is the expected one. In
+particular, in the low-$q_T$ region it is close to the resummed
+(green) curve while in the high-$q_T$ region it tends to the
+fixed-order (blue) curve. In the next section we will raise the
+perturbative accuracy to NLO+NNLL.
+\begin{figure}[t]
+  \begin{centering}
+    \includegraphics[width=0.6\textwidth]{plots/FONLL}
+    \caption{Summary of the computations: fixed order (blue curve),
+      resummed (green curve), double counting (cyan curve), and
+      matched according to Eq.~(\ref{eq:matching1}) (red
+      curve).\label{fig:FONLL}}
+  \end{centering}
+\end{figure}
 
 % Exploiting the power-suppressed residual in the $q_T \ll Q$ limit, one
 % can replace the prescription in Eq.~(\ref{eq:matching1}) with:
