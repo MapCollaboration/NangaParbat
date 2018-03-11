@@ -67,7 +67,7 @@ space from the scales $(\mu_i,\zeta_i)$ to $(\mu_f,\zeta_f)$, is:
   \mu_f,\zeta_f;b)\right]^2=\exp\left[\int_{\mu_i^2}^{\mu_f^2}\frac{d\mu^2}{\mu^2}\left(-\gamma_V+\Gamma_{\rm
     cusp}\ln\left(\frac{\mu^2}{\zeta_f}\right)\right)-2\mathcal{D}\ln\left(\frac{\zeta_f}{\zeta_i}\right)\right].
 \end{equation}
-where the following perturbative expansion hold:
+where the following perturbative expansions hold:
 \begin{equation}
 \gamma_V = \sum_{n=1}a_s^n
 \gamma_V^{(n)}\,\quad \Gamma_{\rm cusp} =
@@ -104,7 +104,7 @@ terms will in turn multiply powers of $\ln(Q)$. In view of the
 integral over the impact parameter $b$ needed to obtain cross sections
 differential in the transverse momentum $q_T$, we need to assign
 $\mu_i$ a dependence on $b$. Despite this dependence is arbitrary and
-needs only be dimensionally correct , the most natural choice is:
+needs only be dimensionally correct, the most natural choice is:
 \begin{equation}
   \mu_i=\frac{C_0}{b}\,,\quad\mbox{with}\quad C_0=2e^{-\gamma_E}\,.
 \end{equation}
@@ -131,7 +131,8 @@ This way the Sudakov form factor in Eq.~(\ref{eq:sudakov}) reads:
 \end{array}
 \end{equation}
 where we limited the contributions in the exponential to
-$\mathcal{O}(a_s^2)$ that is the order we need. Now, using the RGE:
+$\mathcal{O}(a_s^2)$ that is the order we are interested in. Now,
+using the RGE at leading order:
 \begin{equation}
 \mu^2\frac{da_s}{d\mu^2}=-\beta_0a_s^2(\mu)\,,
 \end{equation}
@@ -158,18 +159,18 @@ terms of $a_s(Q)$ and finally retain only terms up to $a_s^2(Q)$:
          \ln^2\left(\frac{b^2Q^2}{C_0^2}\right) \right]\bigg\}\,.
 \end{array}
 \end{equation}
-The final step before carrying out the expansion is that of resolving
-the integrals:
+The final step before carrying out the expansion is computing the
+integrals:
 \begin{equation}
 \int_{C_0^2/b^2}^{Q^2}\frac{d\mu^2}{\mu^2}\ln^k\left(\frac{Q^2}{\mu^2}\right)
 = \int_{\ln(C_0^2/b^2)}^{\ln
   Q^2}d\ln\mu^2\ln^k\left(\frac{Q^2}{\mu^2}\right) = \int^{\ln(b^2Q^2/C_0^2)}_{0}dx\,x^k=\frac{1}{k+1}\ln^{k+1}\left(\frac{b^2Q^2}{C_0^2}\right)\,.
 \end{equation}
-If I define:
+If we define:
 \begin{equation}
 \mathcal{L}\equiv \ln\left(\frac{b^2Q^2}{C_0^2}\right)\,,
 \end{equation}
-the Sudakov form fact in Eq.~\ref{eq:sudint} reads:
+the Sudakov form factor in Eq.~\ref{eq:sudint} reads:
 \begin{equation}
 \begin{array}{rcl}
   \displaystyle \left[R(Q,\mathcal{L})\right]^2&=&\displaystyle \exp\bigg\{a_s(Q)\left[2d^{(1,0)}\ell^{(0,0)}-\left(\gamma_V^{(1)}+2d^{(1,0)}\right)\mathcal{L}-\frac{1}{2}\Gamma_{\rm
@@ -205,8 +206,8 @@ with:
 \displaystyle S^{(2,2)} = -\frac12\left(4d^{(1,0)}\beta_0+\Gamma_{\rm cusp}^{(2)}+\gamma_V^{(1)}\beta_0 \right)\,,\quad\displaystyle S^{(2,3)} = -\frac13\Gamma_{\rm cusp}^{(1)}\beta_0\,.
 \end{array}
 \end{equation}
-The values of the coefficients of the anomalous dimensions and beta
-function can be read from Appendix D of
+The values of the coefficients of the anomalous dimensions and
+$\beta$-function can be read from Appendix D of
 Ref.~\cite{Echevarria:2016scs}. The coefficients of the expansion of
 $\zeta(\mu)$ are instead reported in Eq.~(2.29) of
 Ref.~\cite{Scimemi:2017etj}. For the $\mathcal{O}(a_s)$ coefficients I
@@ -283,8 +284,8 @@ computable as:
 \displaystyle \mathbb{C}_{jl}(z,\mathcal{L}) = \delta_{jl}\delta(1-z)+a_s(Q) \mathbb{C}_{jl}^{(1)}(z,\mathcal{L}) +a_s^2(Q) \mathbb{C}_{jl}^{(2)}(z,\mathcal{L}) +\mathcal{O}(a_s^3) \,.
 \end{array}
 \end{equation}
-I now need to put everything together and truncate to order $a_s^2$ in
-such a way that:
+We now need to put everything together and truncate to order $a_s^2$
+in such a way that:
 \begin{equation}
 \hat{B}_{ij,kl}(x,z;b) = \hat{B}_{ij,kl}^{(0)}(x,z;b)+a_s(Q) \hat{B}_{ij,kl}^{(1)}(x,z;b)+a_s^2(Q) \hat{B}_{ij,kl}^{(2)}(x,z;b)+\mathcal{O}(a_s^3) \,,
 \end{equation}
@@ -316,31 +317,30 @@ with:
 
 Despite we derived the expansion of the resummed cross section up to
 $\mathcal{O}(a_s^2)$, these are not yet the final formulas. The reason
-is that, in order some of the terms of the expansion above do not
-depend on the impact parameter $b$. This means that these terms, upon
-Fourier transform needed to obtain the expression in the transverse
-moment $q_T$, will give rise to terms proportional to
-$\delta(q_T)$. In view of the matching procedure, since the
-fixed-order expression we are going to match to does not include any
-$\delta(q_T)$ terms, we need to make sure that they are not
-subtracted.Therefore, we need to identify and remove any term that
-does not depend on $b$. In fact, by construction, this is equivalent
-to leave only terms proportional to a power of $\mathcal{L}$. In order
-to do so, we start observing that the hard factor $H$ does not contain
-any $\mathcal{L}$. In addition, we have to pay attention to the
-coefficients $R^{(n)}$ because they are polynomials in $\mathcal{L}$
-but also include a constant term ($\mathcal{L}^0$). Finally, the
+is that some of the terms of the expansion above do not depend on the
+impact parameter $b$. This means that these terms, upon Fourier
+transform needed to obtain the expression in the transverse moment
+$q_T$, will give rise to terms proportional to $\delta(q_T)$. In view
+of the matching procedure, since the fixed-order expression we are
+going to match to does not include any $\delta(q_T)$ terms, we need to
+make sure that they are not subtracted.Therefore, we need to identify
+and remove any term that does not depend on $b$. In fact, by
+construction, this is equivalent to leave only terms proportional to a
+power of $\mathcal{L}$. In order to do so, we start observing that the
+hard factor $H$ does not contain any $\mathcal{L}$. In addition, the
+coefficients $R^{(n)}$ are polynomials in $\mathcal{L}$ and also
+include a constant term ($\mathcal{L}^0$). Finally, the
 $\zeta$-prescription, Eq.~(\ref{eq:zetapresc}), provides us with a
 simple recipe to compute the logarithmic terms of the matching
 functions $\mathcal{C}_{ik}^{(n)}$ and
 $\mathbb{C}_{jl}^{(n)}$. Specifically, the condition of independence
 of the TMD PDFs and FFs from the factorisation scale $\mu$ is such
 that TMDs behave like physical observable (\textit{e.g.}
-deep-inelastic-scattering or single-inclusive-annihilation structure
-functions) and thus obey the standard scale variation rules derived,
-for example, in Eq.~(2.17) of Ref.~\cite{vanNeerven:2000uj}. More in
-particular, one finds that the matching function coefficients s have
-the usual logarithmic structure:
+deep-inelastic-scattering inclusive structure functions) and thus obey
+the standard scale variation rules derived, for example, in Eq.~(2.17)
+of Ref.~\cite{vanNeerven:2000uj}. More in particular, one finds that
+the matching function coefficients have the usual logarithmic
+structure:
 \begin{equation}
 \mathcal{C}_{ij}^{(n)}(x,\mathcal{L}) =
 \sum_{k=0}^{n}\mathcal{C}_{ij}^{(n,k)}(x)\mathcal{L}^k\quad\mbox{and}\quad \mathbb{C}_{ij}^{(n)}(x,\mathcal{L}) = \sum_{k=0}^{n}\mathbb{C}_{ij}^{(n,k)}(x)\mathcal{L}^k \,,
@@ -624,8 +624,9 @@ contribute in the $q_T\leftarrow 0$ limit:
 F_{UU,L}\mathop{\longrightarrow}_{q_T\ll Q} 0\,.
 \end{equation}
 Another crucial observation is that the $\delta$-function in
-Eq.~(\ref{eq:FOxsec}) can be expanded as follows:
-\begin{equation}
+Eq.~(\ref{eq:FOxsec}) can be expanded as follows\footnote{The proof of
+  the relation in is given in Appendix~\ref{sec:deltaexpansion}.}:
+\begin{equation}\label{eq:deltaexpansion}
   \delta\left(\frac{q_T^2}{Q^2}-\frac{(1-x)(1-z)}{xz}\right)
   =\ln\left(\frac{Q^2}{q_T^2}\right)\delta(1-x) \delta(1-z) +
   \frac{x\delta(1-z)}{(1-x)_+}+ \frac{z\delta(1-x)}{(1-z)_+} +\mathcal{O}\left(\frac{q_T^2}{Q^2}\ln\left(\frac{Q^2}{q_T^2}\right)\right)\,,
@@ -969,6 +970,88 @@ perturbative accuracy to NLO+NNLL.
 %   \mathcal{D}\left(\frac{q_T^2}{Q^2}\right) = 1 + \frac{q_T^2}{Q^2}\,.
 % \end{equation}
 
+\appendix
+
+\section{Expansion of the kinematic $\delta$-function}\label{sec:deltaexpansion}
+
+In order to prove the equality in Eq.~(\ref{eq:deltaexpansion}), we
+consider the following integral:
+\begin{equation}\label{eq:testint}
+I(\varepsilon) =\int_0^1 dx \int_0^1 dy\,\delta(xy-\varepsilon) f(x,y)\,,
+\end{equation}
+where $f(x,y)$ is a test function ``well-behaved'' over the
+integration region. Now I split the integral as follows:
+\begin{equation}
+I(\varepsilon) =\left(\int_0^1 dx \int_x^1 dy+\int_0^1 dy \int_y^1 dx\right)\,\delta(xy-\varepsilon) f(x,y)\,,
+\end{equation}
+where the first term in the r.h.s. corresponds to the integral over
+the grey region \textit{above} the blue line while the second over the
+grey region \textit{below} the blue line in
+Fig.~\ref{fig:deltaexpansion}.
+\begin{figure}[t]
+  \begin{centering}
+    \includegraphics[width=0.6\textwidth]{plots/DeltaExpansion}
+    \caption{Integration region of the integral in 
+      Eq.~(\ref{eq:testint}). The integral is along the red curve 
+      defined by the $\delta$-function.\label{fig:deltaexpansion}}
+  \end{centering}
+\end{figure}
+
+Now I use the following equalities:
+\begin{equation}
+\delta(xy-\varepsilon) = \left\{
+\begin{array}{ll}
+\displaystyle \frac{1}{x}\delta\left(y-\frac{\varepsilon}{x}\right)\theta(y-\sqrt{\varepsilon}) &
+                                                                      \quad\mbox{integral
+                                                                      over
+                                                                      $y$,}\\
+\\
+\displaystyle \frac{1}{y}\delta\left(x-\frac{\varepsilon}{y}\right) \theta(x-\sqrt{\varepsilon}) &
+                                                                      \quad\mbox{integral
+                                                                      over
+                                                                      $x$.}
+\end{array}
+\right.
+\end{equation}
+The $\theta$-functions arise from the fact that the first integral has
+to be done along the upper branch on the red curve while the second
+along the lower branch. The two branches are joint at the point
+$x=y=\sqrt{\varepsilon}$ and thus the integration ranges are bounded
+from below by this point. Therefore, I find:
+\begin{equation}
+I(\varepsilon) =\int_{\sqrt{\varepsilon}}^1
+\frac{dx}{x}f\left(x,\frac{\varepsilon}{x}\right) + \int_{\sqrt{\varepsilon}}^1 \frac{dy}{y}f\left(\frac{\varepsilon}{y},y\right)\,.
+\end{equation}
+It is crucial to realise that in the first and the second integral the
+following conditions hold: $\varepsilon < \sqrt{\varepsilon}\leq x$
+and $\varepsilon < \sqrt{\varepsilon}\leq y$, respectively. Therefore,
+in the limit $\varepsilon\rightarrow 0$, the arguments $\varepsilon/x$
+and $\varepsilon/y$ of the function $f$ will tend to zero. I now add
+and subtract a term proportional to $f(0,0)$ to both integrals, so
+that:
+\begin{equation}
+I(\varepsilon) =\int_{\sqrt{\varepsilon}}^1
+\frac{dx}{x}\left[f\left(x,\frac{\varepsilon}{x}\right)-f(0,0)\right] + \int_{\sqrt{\varepsilon}}^1 \frac{dy}{y}\left[f\left(\frac{\varepsilon}{y},y\right)-f(0,0)\right]+2f(0,0) \underbrace{\int_{\sqrt{\varepsilon}}^1 \frac{d\xi}{\xi}}_{-\ln\sqrt{\varepsilon}}\,.
+\end{equation}
+Finally, I take the limit for $\varepsilon\rightarrow 0$:
+\begin{equation}
+\lim_{\varepsilon\rightarrow 0}I(\varepsilon) =\int_0^1
+\frac{dx}{x}\left[f\left(x,0\right)-f(0,0)\right] + \int_{0}^1 \frac{dy}{y}\left[f\left(0,y\right)-f(0,0)\right]-\ln\left(\varepsilon\right) f(0,0)\,,
+\end{equation}
+that I rewrite as:
+\begin{equation}
+\lim_{\varepsilon\rightarrow 0}I(\varepsilon) =\int_0^1dx \int_0^1dy\left\{\frac{\delta(y)}{[x]_+}+\frac{\delta(x)}{[y]_+}-\ln\left(\varepsilon\right)\delta(x)\delta(y)\right\}f(x,y)\,.
+\end{equation}
+Comparing the equation above with Eq.~(\ref{eq:testint}), one deduces that:
+\begin{equation}
+\delta(xy-\varepsilon)\mathop{\longrightarrow}_{\varepsilon\rightarrow 0}
+\frac{\delta(y)}{[x]_+}+\frac{\delta(x)}{[y]_+}-\ln\left(\varepsilon\right)\delta(x)\delta(y)\,.
+\end{equation}
+Finally, substituting:
+\begin{equation}
+x\rightarrow \frac{1-x}{x}\,,\quad y\rightarrow \frac{1-z}{z}\,,\quad\mbox{and}\quad\varepsilon\rightarrow\frac{q_T^2}{Q^2}\,,
+\end{equation}
+it is easy to recover Eq.~(\ref{eq:deltaexpansion}).
 
 
 \newpage

@@ -43,12 +43,13 @@ using namespace apfel;
 int main() {
   // Kinematics in terms of the variables in which TIMBA is
   // differential.
-  const double EP = 820;
-  const double El = 27.6;
-  const double VS = sqrt( 4 * EP * El );
-  const double x  = 1e-3;
-  const double z  = 1e-1;
-  const double y  = 0.5;
+  const double EP  = 820;
+  const double El  = 27.6;
+  const double VS  = sqrt( 4 * EP * El );
+  const double x   = 1e-3;
+  const double z   = 1e-1;
+  const double y   = 0.5;
+  const int    pto = 2;
 
   // PDF and FF sets
   //LHAPDF::PDF* PDFs = LHAPDF::mkPDF("NNPDF31_nlo_as_0118");
@@ -90,7 +91,7 @@ int main() {
 
   // Get TMD evolution factors.
   const auto Mub = [] (double const& b) -> double{ return 2 * exp(- emc) / b; };
-  const auto EvolFactors = EvolutionFactors(TmdObj, Mub, Mub, 1, Alphas);
+  const auto EvolFactors = EvolutionFactors(TmdObj, Mub, Mub, pto, Alphas);
 
   // Function for the computation of the resummed cross section.
   const auto xsecRes = [=,&g] (double const& VS, double const& x, double const& y, double const& z, double const& qT2) -> double
@@ -102,8 +103,8 @@ int main() {
 
       // Get matched TMD PDFs and FFs.
       const auto Qb = [Q] (double const&) -> double{ return Q; };
-      const auto MatchedTmdPDFs = MatchTmdPDFs(TmdObj, PDFObj, CollPDFs, Qb, 1, Alphas);
-      const auto MatchedTmdFFs  = MatchTmdFFs(TmdObj,  FFObj,  CollFFs,  Qb, 1, Alphas);
+      const auto MatchedTmdPDFs = MatchTmdPDFs(TmdObj, PDFObj, CollPDFs, Qb, pto, Alphas);
+      const auto MatchedTmdFFs  = MatchTmdFFs(TmdObj,  FFObj,  CollFFs,  Qb, pto, Alphas);
 
       // Useful definitions
       const double qToQ2  = qT * qT / Q2;
@@ -131,7 +132,7 @@ int main() {
       };
 
       // Kinmatic factors inclusing the hard form factor.
-      const double hcs = 2 * qT * 2 * M_PI * alpha2 * Yp * HardCrossSectionSIDIS(1, as * FourPi, nf, 1) / x / y / Q2;
+      const double hcs = 2 * qT * 2 * M_PI * alpha2 * Yp * HardCrossSectionSIDIS(1, as * FourPi, nf, pto) / x / y / Q2;
 
       // Integrate over b.
       return hcs * OgataQuadrature(TMDLumib, qT);
@@ -179,7 +180,7 @@ int main() {
       return 2 * qT * 2 * M_PI * alpha2 * Yp * ( as * DoubDist.Evaluate(x,z) / qT2 / z ) / x / y / Q2;
     };
 
-  const int    nqT    = 200;
+  const int    nqT    = 50;
   const double qTmin  = 0.01;
   const double qTmax  = 100;
   const double qTstep = exp( log( qTmax / qTmin ) / ( nqT - 1 ) );

@@ -1,5 +1,4 @@
 import numpy as np
-#import pylab as pl
 import matplotlib.pyplot as pl
 
 pl.style.use('seaborn-talk')
@@ -15,7 +14,7 @@ ax.get_xaxis().set_tick_params(which='minor', size=5)
 
 data = np.loadtxt('FONLL.dat')
 
-#pl.title(r"Fixed order vs. asymptotic limit at $\mathcal{O}(\alpha_s)$", fontsize=22)
+pl.title(r"SIDIS cross section", fontsize=22)
 
 pl.xlabel(r'$q_T$ [GeV]', fontsize=22, labelpad=-2)
 pl.ylabel(r'$\frac{d\sigma}{dx dy dz dq_T}$', fontsize=26, labelpad=-2.5)
@@ -34,9 +33,9 @@ ax.text(0.012, 0.05,  r'$y = 0.5$', fontsize=22)
 ax.text(0.2, 0.02,  r'PDF set: CT14nlo', fontsize=22)
 ax.text(0.2, 0.0125, r'FF set: DSS07 ($h+\overline{h}$)', fontsize=22)
 
-pl.plot(data[:,0], data[:,1], 'b-', label='Fixed order')
-pl.plot(data[:,0], data[:,2], 'g-', label='Resummed')
-pl.plot(data[:,0], data[:,3], 'c-', label='Asymptotic limit')
+pl.plot(data[:,0], data[:,1], 'b-', label=r'Fixed order at $\mathcal{O}(\alpha_s)$')
+pl.plot(data[:,0], data[:,2], 'g-', label='Resummed at NLL')
+pl.plot(data[:,0], data[:,3], 'c-', label='Double counting')
 pl.plot(data[:,0], data[:,4], 'r-', label='Matched')
 
 pl.legend(fontsize=22)
