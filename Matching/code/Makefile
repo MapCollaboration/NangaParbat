@@ -17,7 +17,7 @@ APFELLIBS = $(shell apfel-config --ldflags)
 
 # HOPPET
 HOPPETINCS = $(shell hoppet-config --cxxflags)
-HOPPETLIBS = $(shell hoppet-config --libs) -lgfortran
+HOPPETLIBS = $(shell hoppet-config --libs) #-lgfortran
 
 # QCDNUM
 QCDNUMINCS = $(shell qcdnum-config --cppflags)

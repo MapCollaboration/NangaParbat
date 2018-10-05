@@ -14,6 +14,7 @@
 #include <apfel/tmdbuilder.h>
 #include <apfel/rotations.h>
 #include <apfel/tmdcrosssections.h>
+#include <apfel/evolutionbasisqcd.h>
 
 #include <cmath>
 #include <map>

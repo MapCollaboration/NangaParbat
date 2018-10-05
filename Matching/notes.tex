@@ -628,8 +628,8 @@ Eq.~(\ref{eq:FOxsec}) can be expanded as follows\footnote{The proof of
   the relation in is given in Appendix~\ref{sec:deltaexpansion}.}:
 \begin{equation}\label{eq:deltaexpansion}
   \delta\left(\frac{q_T^2}{Q^2}-\frac{(1-x)(1-z)}{xz}\right)
-  =\ln\left(\frac{Q^2}{q_T^2}\right)\delta(1-x) \delta(1-z) +
-  \frac{x\delta(1-z)}{(1-x)_+}+ \frac{z\delta(1-x)}{(1-z)_+} +\mathcal{O}\left(\frac{q_T^2}{Q^2}\ln\left(\frac{Q^2}{q_T^2}\right)\right)\,,
+  \mathop{\longrightarrow}_{q_T^2/Q^2\rightarrow0}\ln\left(\frac{Q^2}{q_T^2}\right)\delta(1-x) \delta(1-z) +
+  \frac{x\delta(1-z)}{(1-x)_+}+ \frac{z\delta(1-x)}{(1-z)_+}\,,
 \end{equation}
 so that:
 \begin{equation}\label{eq:FOxsecasy}
@@ -1051,7 +1051,11 @@ Finally, substituting:
 \begin{equation}
 x\rightarrow \frac{1-x}{x}\,,\quad y\rightarrow \frac{1-z}{z}\,,\quad\mbox{and}\quad\varepsilon\rightarrow\frac{q_T^2}{Q^2}\,,
 \end{equation}
-it is easy to recover Eq.~(\ref{eq:deltaexpansion}).
+it is easy to recover Eq.~(\ref{eq:deltaexpansion}). In particular,
+one needs to use the fact that:
+\begin{equation}
+\delta\left(\frac{1-x}{x}\right)=\delta(1-x)\,.
+\end{equation}
 
 
 \newpage
