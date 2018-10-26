@@ -19,4 +19,3 @@ plot "Qdist.dat" index 0 u 1:3 w l lt 7 lw 5 lc rgb "blue"       t "{/Symbol gg}
      "Qdist.dat" index 0 u 1:4 w l lt 7 lw 5 lc rgb "orange"     t "ZZ contribution", \
      "Qdist.dat" index 0 u 1:5 w l lt 7 lw 5 lc rgb "dark-green" t "{/Symbol g}Z contribution", \
      "Qdist.dat" index 0 u 1:2 w l lt 7 lw 5 lc rgb "red"        t "Total"
-     

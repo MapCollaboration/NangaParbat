@@ -22,13 +22,10 @@ LDFLAGS  += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS)
 CLIBS += $(LHAPDFLIBS) $(APFELLIBS) $(APFELPPLIBS)
 
 install : all
-all : TestMatchingFunctions Benchmark CrossSection J0ZerosGenerator NWA TestCode SIDIS
+all : Evolution BenchmarkFulvio CrossSection #Benchmark  NWA  SIDIS
 
-TestMatchingFunctions: TestMatchingFunctions.o
-	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
-
-Benchmark: Benchmark.o
-	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
+#Benchmark: Benchmark.o
+#	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
 CrossSection: CrossSection.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
@@ -36,14 +33,17 @@ CrossSection: CrossSection.o
 J0ZerosGenerator: J0ZerosGenerator.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
-NWA: NWA.o
+Evolution: Evolution.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
-TestCode: TestCode.o
+BenchmarkFulvio: BenchmarkFulvio.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
-SIDIS: SIDIS.o
-	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
+#NWA: NWA.o
+#	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
+
+#SIDIS: SIDIS.o
+#	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
 .SUFFIXES : .cxx .o .f .c
 
@@ -54,5 +54,5 @@ SIDIS: SIDIS.o
 	$(F77)  -c $< 
 
 clean:
-	rm -rf *.lo *.o *.la TestMatchingFunctions Benchmark CrossSection J0ZerosGenerator NWA TestCode SIDIS *~
+	rm -rf *.lo *.o *.la Evolution BenchmarkFulvio CrossSection *~
 

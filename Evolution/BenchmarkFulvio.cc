@@ -14,13 +14,47 @@
 #include <apfel/tools.h>
 #include <apfel/hardfactors.h>
 #include <apfel/ogataquadrature.h>
-#include <apfel/doubleobject.h>
 
 #include "LHAPDF/LHAPDF.h"
 
 using namespace apfel;
 using namespace std;
+/*
+// EW charges
+vector<double> EWCharges(double const& Q)
+{
+  // Relevant constants for the computation of the EW charges.
+  // (See https://arxiv.org/pdf/hep-ph/9711387.pdf)
+  const double MZ         = 91.1876;
+  const double GammaZ     = 2.4952;
+  const double Sin2ThetaW = 0.23126;
 
+  // Derived quantities
+  const double MZ2        = MZ * MZ;
+  const double GammaZ2    = GammaZ * GammaZ;
+  const double VD         = - 0.5 + 2 * Sin2ThetaW / 3;
+  const double VU         = + 0.5 - 4 * Sin2ThetaW / 3;
+  const vector<double> Vq = {VD, VU, VD, VU, VD, VU};
+  const double AD         = - 0.5;
+  const double AU         = + 0.5;
+  const vector<double> Aq = {AD, AU, AD, AU, AD, AU};
+  const double Ve         = - 0.5 + 2 * Sin2ThetaW;
+  const double Ae         = - 0.5;
+  const double Q2         = Q * Q;
+  const double PZ         = Q2 * ( Q2 -  MZ2 ) / ( pow(Q2 - MZ2,2) + MZ2 * GammaZ2 ) / ( 4 * Sin2ThetaW * ( 1 - Sin2ThetaW ) );
+  const double PZ2        = pow(Q2,2) / ( pow(Q2 - MZ2,2) + MZ2 * GammaZ2 ) / pow(4 * Sin2ThetaW * ( 1 - Sin2ThetaW ),2);
+  const double alphaem    = ( 1. / 128.77 ) / ( 1 - 0.00167092 * log(Q/MZ) );
+  vector<double> EWCharges;
+  for (auto i = 0; i < 5; i++)
+    {
+      const double b = QCh2[i]
+	- 2 * QCh[i] * Vq[i] * Ve * PZ
+	+ ( Ve * Ve + Ae * Ae ) * ( Vq[i] * Vq[i] + Aq[i] * Aq[i] ) * PZ2;
+      EWCharges.push_back(alphaem * alphaem * b);
+    }
+  return EWCharges;
+}
+*/
 // Narrow-width-approximation charges.
 vector<double> EWChargesNWA(double const& Q)
 {
@@ -136,26 +170,22 @@ int main()
   // EW charges
   const vector<double> Bq = EWChargesNWA(Q);
 
-  // Rapidity
-  const double y = 0;
+  // Rapidity bounds
+  const double ymin = - 1;
+  const double ymax =   1;
 
-  // Bjorken variables
-  const double x1 = Q * exp(-y) / Vs;
-  const double x2 = Q * exp(y) / Vs;
-
-  // Branching ratio Br(Z -> l+l-)
-  const double Br = 0.033658;
-
-  // Compute hard coefficient, including the other kinematic
-  // factors.
-  const double hcs = 4 * ConvFact * Br * Pi2 * HardFactorDY(PerturbativeOrder, Alphas(muf), NF(muf, Thresholds), Cf) / 3 / pow(Q,2);
-
-  // Ogata quadrature object with default settings.
+  // Ogata quadrature object
   OgataQuadrature bintegrand{};
 
   // Define qT-distribution function 
   const auto qTdist = [=] (double const& qT) -> double
+  {
+    const auto ydist = [=] (double const& y) -> double
     {
+      // Bjorken variables
+      const double x1 = Q * exp(-y) / Vs;
+      const double x2 = Q * exp(y) / Vs;
+
       // Construct the TMD luminosity in b scale to be fed to be
       // trasformed in qT space.
       const auto TMDLumib = [=] (double const& b) -> double
@@ -171,7 +201,7 @@ int main()
 	// multiplied by x1 * x2 = Q2 / s.
 	double lumi = 0;
 	for (int i = 1; i <= 5; i++)
-	lumi += Bq[i-1] * ( TMD1[i] * TMD2[-i] + TMD1[-i] * TMD2[i] );
+	  lumi += Bq[i-1] * ( TMD1[i] * TMD2[-i] + TMD1[-i] * TMD2[i] );
 
 	// Multiply by "b" and divide by two to reduce to the Fourier
 	// transform to a Hankel transform.
@@ -179,30 +209,33 @@ int main()
       };
       return bintegrand.transform(TMDLumib, qT);
     };
+    const Integrator yintegrand{ydist};
+    return yintegrand.integrate(ymin, ymax, 1e-5);
+  };
 
-  // Use a different method using a DoubleObject
-  const auto Lumi = [=] (double const& bs) -> DoubleObject<Distribution>
+  const double Br = 0.033658;
+
+  // Compute hard coefficient, including the other kinematic
+  // factors.
+  const double hcs = 4 * ConvFact * Br * Pi2 * HardFactorDY(PerturbativeOrder, Alphas(muf), NF(muf, Thresholds), Cf) / 3 / pow(Q,2);
+/*
+  const int nqT      = 100;
+  const double qTmin = 0.1;
+  const double qTmax = 50;
+  const double qTstep = ( qTmax - qTmin ) / ( nqT - 1 );
+
+  double qT = qTmin;
+  cout << scientific << "\n";
+  cout << "  qT [GeV]    "
+       << "   sigma      "
+       << endl;
+  for (int iqT = 0; iqT < nqT; iqT++)
     {
-      const map<int,Distribution> xF = QCDEvToPhys((QuarkEvolFactor(bs, muf, zetaf) * MatchedTMDPDFs(bs)).GetObjects());
-      DoubleObject<Distribution> L{};
-      for (int i = 1; i <= 5; i++)
-	{
-	  L.AddTerm({Bq[i-1], xF.at(i), xF.at(-i)});
-	  L.AddTerm({Bq[i-1], xF.at(-i), xF.at(i)});
-	}
-      return L;
-    };
-  const TabulateObject<DoubleObject<Distribution>> TabLumi{Lumi, 50, 5e-5, 1.1, 3, {}, TabFunc, InvTabFunc};
-
-  // Define qT-distribution function 
-  const auto qTdistNew = [=] (double const& qT) -> double
-    {
-      // Construct the TMD luminosity in b scale to be fed to be
-      // trasformed in qT space.
-      const auto TMDLumibNew = [=] (double const& b) -> double{ return b * TabLumi.EvaluatexzQ(x1, x2, bstar(b)) * fNP(b, zetaf) * fNP(b, zetaf) / 2; };
-      return 2 * qT * hcs * bintegrand.transform(TMDLumibNew, qT);
-    };
-
+      cout << qT << "  " << 2 * qT * hcs * qTdist(qT) << endl;
+      qT += qTstep;
+    }
+  cout << "\n";
+*/
   Timer t;
   const vector<double> qTv{1, 3, 5, 7, 9, 11, 13, 15, 17};
   cout << scientific << "\n";
@@ -214,45 +247,6 @@ int main()
   cout << "\n";
   t.stop();
 
-  t.start();
-  cout << "\n  qT [GeV]    "
-       << "   sigma      "
-       << endl;
-  for (auto const& qT : qTv)
-    cout << qT << "  " << qTdistNew(qT) << endl;
-  cout << "\n";
-  t.stop();
-
-  // Integrate in qT
-  t.start();
-  cout << "\n    [qTmin:qTmax] [GeV]      "
-       << "   sigma      "
-       << endl;
-  const Integrator IntQt{qTdistNew};
-  for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
-    cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: " << IntQt.integrate(qTv[iqT], qTv[iqT+1], 1e-5) << endl;
-  cout << "\n";
-  t.stop();
-
-  // Ogata quadrature object with default settings.
-  t.start();
-  cout << "\n    [qTmin:qTmax] [GeV]      "
-       << "   sigma      "
-       << endl;
-  OgataQuadrature qTintegrand{1};
-  const auto qTPrimitive = [=] (double const& qT) -> double
-    {
-      // Construct the TMD luminosity in b scale to be fed to be
-      // trasformed in qT space.
-      const auto TMDLumibPrim = [=] (double const& b) -> double{ return TabLumi.EvaluatexzQ(x1, x2, bstar(b)) * fNP(b, zetaf) * fNP(b, zetaf) / 2; };
-      return 2 * qT * hcs * qTintegrand.transform(TMDLumibPrim, qT);
-    };
-  for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
-    cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: " << qTPrimitive(qTv[iqT+1]) - qTPrimitive(qTv[iqT]) << endl;
-  cout << "\n";
-  t.stop();
-
-  cout << "\n";
   return 0;
 }
 
