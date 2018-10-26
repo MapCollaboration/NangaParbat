@@ -22,15 +22,15 @@ LDFLAGS  += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS)
 CLIBS += $(LHAPDFLIBS) $(APFELLIBS) $(APFELPPLIBS)
 
 install : all
-all : Evolution BenchmarkNangaParabat CrossSection
+all : EvolutionMatching BenchmarkNangaParbat qTintegration
 
-CrossSection: CrossSection.o
+qTintegration: qTintegration.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
-Evolution: Evolution.o
+EvolutionMatching: EvolutionMatching.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
-BenchmarkNangaParabat: BenchmarkNangaParabat.o
+BenchmarkNangaParbat: BenchmarkNangaParbat.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
 .SUFFIXES : .cxx .o .f .c
@@ -42,5 +42,5 @@ BenchmarkNangaParabat: BenchmarkNangaParabat.o
 	$(F77)  -c $< 
 
 clean:
-	rm -rf *.lo *.o *.la Evolution BenchmarkFulvio CrossSection *~
+	rm -rf *.lo *.o *.la EvolutionMatching BenchmarkNangaParbat qTintegration *~
 
