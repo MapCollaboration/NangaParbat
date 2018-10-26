@@ -22,28 +22,16 @@ LDFLAGS  += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS)
 CLIBS += $(LHAPDFLIBS) $(APFELLIBS) $(APFELPPLIBS)
 
 install : all
-all : Evolution BenchmarkFulvio CrossSection #Benchmark  NWA  SIDIS
-
-#Benchmark: Benchmark.o
-#	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
+all : Evolution BenchmarkNangaParabat CrossSection
 
 CrossSection: CrossSection.o
-	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
-
-J0ZerosGenerator: J0ZerosGenerator.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
 Evolution: Evolution.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
-BenchmarkFulvio: BenchmarkFulvio.o
+BenchmarkNangaParabat: BenchmarkNangaParabat.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
-
-#NWA: NWA.o
-#	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
-
-#SIDIS: SIDIS.o
-#	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
 .SUFFIXES : .cxx .o .f .c
 
