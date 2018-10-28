@@ -15,11 +15,15 @@ APFELPPLIBS = $(shell apfelxx-config --ldflags)
 APFELINCS = $(shell apfel-config --cppflags)
 APFELLIBS = $(shell apfel-config --ldflags)
 
-# Now set up the compiler and link flags and libs
-CXXFLAGS += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS)
-LDFLAGS  += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS)
+# YAML
+YAMLINCS = -I/usr/local/include
+YAMLLIBS = -L/usr/local/lib -lyaml-cpp
 
-CLIBS += $(LHAPDFLIBS) $(APFELLIBS) $(APFELPPLIBS)
+# Now set up the compiler and link flags and libs
+CXXFLAGS += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS) $(YAMLINCS)
+LDFLAGS  += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS) $(YAMLINCS)
+
+CLIBS += $(LHAPDFLIBS) $(APFELLIBS) $(APFELPPLIBS) $(YAMLLIBS)
 
 install : all
 all : CreateTable

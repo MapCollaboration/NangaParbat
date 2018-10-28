@@ -3,39 +3,13 @@
 //
 
 // APFEL++
-#include <apfel/constants.h>
-#include <apfel/grid.h>
-#include <apfel/timer.h>
-#include <apfel/alphaqcd.h>
-#include <apfel/constants.h>
-#include <apfel/tmdbuilder.h>
-#include <apfel/rotations.h>
-#include <apfel/tools.h>
-#include <apfel/hardfactors.h>
-#include <apfel/ogataquadrature.h>
-#include <apfel/doubleobject.h>
-#include <apfel/evolutionbasisqcd.h>
+#include <apfel/apfelxx.h>
 
 // LHAPDF
 #include <LHAPDF/LHAPDF.h>
 
-// Global parameters to be eventually put in an input card
-
-// Values of bmin and bmax required by the b* prescription
-//const double bmin = 0;
-const double bmax = 1;
-
-// Name of the PDF set
-const std::string pdfset = "MMHT2014nlo68cl";
-
-// Perturbative order
-const int PerturbativeOrder = 1;
-
-// Initial scale-variation factor
-const double Ci = 1;
-
-// Final scale-variation factor
-const double Cf = 1;
+// YAML
+#include <yaml-cpp/yaml.h>
 
 // Kinematics
 // C.M.E.
@@ -52,31 +26,8 @@ const double ymax =  1;
 // Transverse momentum bin bounds
 const std::vector<double> qTv{1, 3};
 
-
-// Parameters of the computation
-
-// Maximum number of Ogata-quadrature points
-const int nOgata = 10;
-
-// Number of points and interpolation degree of the grid in Q
-const int nQ  = 5;
-const int InterDegreeQ  = 3;
-
-// Number of points and interpolation degree of the grid in xi
-const int nxi = 5;
-const int InterDegreexi = 3;
-
-
-
-
-
-
-
-
-
-
 // b* prescription
-double bstar(double const& b) { return b / sqrt( 1 + pow(b / bmax, 2) ); }
+double bstar(double const& b, double const& bmax) { return b / sqrt( 1 + pow(b / bmax, 2) ); }
 
 // Electroweak charges
 std::vector<double> EWCharges(double const& Q)
@@ -129,26 +80,32 @@ std::vector<double> GenerateQGrid(int const& n, double const& min, double const&
 // Main program
 int main()
 {
- // Open LHAPDF set
-  LHAPDF::PDF* distpdf = LHAPDF::mkPDF(pdfset);
+  // Read configuration parameters with YAML
+  const YAML::Node config = YAML::LoadFile("config.yaml");
 
-  // Thresholds
-  const std::vector<double> Thresholds{distpdf->quarkThreshold(1),
-      distpdf->quarkThreshold(2),
-      distpdf->quarkThreshold(3),
-      distpdf->quarkThreshold(4),
-      distpdf->quarkThreshold(5)};
+ // Open LHAPDF set
+  LHAPDF::PDF* distpdf = LHAPDF::mkPDF(config["pdfset"].as<std::string>());
+
+  // Heavy-quark thresholds
+  std::vector<double> Thresholds;
+  for (auto const& v : distpdf->flavors())
+    if (v > 0 && v < 7)
+      Thresholds.push_back(distpdf->quarkThreshold(v));
 
   // Alpha_s
   const auto Alphas = [&] (double const& mu) -> double{ return distpdf->alphasQ(mu); };
 
+  // Set lowest verbosity level for APFEL
+  //apfel::SetVerbosityLevel(0);
+
   // x-space grid
-  const apfel::Grid g{{{100,1e-5,3}, {60,1e-1,3}, {50,6e-1,3}, {100,8e-1,3}}};
+  std::vector<apfel::SubGrid> vsg;
+  for (auto const& sg : config["xgridpdf"])
+    vsg.push_back({sg[0].as<int>(), sg[1].as<double>(), sg[2].as<int>()});
+  const apfel::Grid g{vsg};
 
   // Rotate PDF set into the QCD evolution basis
-  const auto RotPDFs = [=] (double const& x, double const& mu) -> std::map<int,double>{
-    return apfel::PhysToQCDEv(distpdf->xfxQ(x,mu));
-  };
+  const auto RotPDFs = [=] (double const& x, double const& mu) -> std::map<int,double>{ return apfel::PhysToQCDEv(distpdf->xfxQ(x,mu)); };
 
   // Construct set of distributions as a function of the scale to be
   // tabulated
@@ -157,17 +114,28 @@ int main()
   };
 
   // Tabulate PDFs
-  const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 50, 1, 100000, 3, Thresholds};
+  const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 100, distpdf->qMin(), distpdf->qMax(), 3, Thresholds};
   const auto CollPDFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabPDFs.Evaluate(mu); };
 
   // Initialize TMD objects
   const auto TmdObj = apfel::InitializeTmdObjects(g, Thresholds);
 
-  // Get evolution factors
-  const auto QuarkEvolFactor = apfel::QuarkEvolutionFactor(TmdObj, Alphas, PerturbativeOrder, Ci);
+  // Build evolved TMD PDFs
+  const auto EvTMDPDFs = BuildTmdPDFs(TmdObj, CollPDFs, Alphas, config["PerturbativeOrder"].as<int>(), config["TMDscales"]["Ci"].as<double>());
 
-  // Match TMD PDFs
-  const auto MatchedTMDPDFs = apfel::MatchTmdPDFs(TmdObj, CollPDFs, Alphas, PerturbativeOrder, Ci);
+  // Ogata-quadrature object of degree one (required to compute the
+  // primitive in qT of the cross section)
+  apfel::OgataQuadrature OgataObj{1};
+
+  // Retrieve relevant parameters from the configuration file
+  const double Cf            = config["TMDscales"]["Cf"].as<double>();
+  const int    nQ            = config["Qgrid"]["nQ"].as<int>();
+  const int    InterDegreeQ  = config["Qgrid"]["InterDegreeQ"].as<int>();
+  const int    nxi           = config["xigrid"]["nxi"].as<int>();
+  const int    InterDegreexi = config["xigrid"]["InterDegreexi"].as<int>();
+
+  // Timer
+  apfel::Timer t;
 
   // Construct QGrid-like grids for the integration in Q and y
   const std::vector<double> Qg  = GenerateQGrid(nQ, Qmin, Qmax);
@@ -175,30 +143,23 @@ int main()
   const apfel::QGrid<double> Qgrid {Qg,  InterDegreeQ};
   const apfel::QGrid<double> xigrid{xig, InterDegreexi};
 
-  // Ogata-quadrature object of degree one (required to compute the
-  // primitive in qT of the cross section)
-  apfel::OgataQuadrature OgataObj{1};
+  // Unscaled coordinates and weights of the degree-one Ogata
+  // quadrature.
   std::vector<double> z1 = OgataObj.GetCoordinates(); 
   std::vector<double> w1 = OgataObj.GetWeights(); 
-
-  // Timer
-  apfel::Timer t;
 
   // Loop over the qT bin bounds
   for (auto const& qT : qTv)
     {
       // Loop over the Ogata-quadrature points
-      for (int n = 0; n < std::min(nOgata, (int) z1.size()); n++)
+      for (int n = 0; n < std::min(config["nOgata"].as<int>(), (int) z1.size()); n++)
 	{
 	  // Get impact parameter 'b' and 'b*'
 	  const double b  = z1[n] / qT;
-	  const double bs = bstar(b);
+	  const double bs = bstar(b, config["bstar"]["bmax"].as<double>());
 
 	  // Tabulate TMDs in Q
-	  const auto EvolvedTMDPDFs = [&] (double const& Q) -> apfel::Set<apfel::Distribution>
-	    {
-	      return QuarkEvolFactor(bs, Cf * Q, Q * Q) * MatchedTMDPDFs(bs);
-	    };
+	  const auto EvolvedTMDPDFs = [&] (double const& Q) -> apfel::Set<apfel::Distribution>{ return EvTMDPDFs(bs, Cf * Q, Q * Q); };
 	  const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabEvolvedTMDPDFs{EvolvedTMDPDFs, Qg, InterDegreeQ};
 
 	  // Loop over the grid in Q
@@ -207,9 +168,8 @@ int main()
 	      // Loop over the grid in Q
 	      for (int alpha = 0; alpha < nxi; alpha++)
 		{
-
 		  // Function to be integrated in Q
-		  const auto Qintegrand = [=] (double const& Q) -> double
+		  const auto Qintegrand = [&] (double const& Q) -> double
 		    {
 		      // Renormalisation scale
 		      const double muf = Cf * Q;
@@ -224,7 +184,7 @@ int main()
 		      const std::map<int,apfel::Distribution> xF = QCDEvToPhys(TabEvolvedTMDPDFs.Evaluate(Q).GetObjects());
 
 		      // Function to be integrated in xi
-		      const auto xiintegrand = [=] (double const& xi) -> double
+		      const auto xiintegrand = [&] (double const& xi) -> double
 		      {
 			// Compute 'x1' and 'x2'
 			const double x1 = Q * xi / Vs;
@@ -238,6 +198,7 @@ int main()
 			for (int i = 1; i <= nf; i++)
 			  integrand += Bq[i-1] * ( xF.at(i).Evaluate(x1) * xF.at(-i).Evaluate(x2) + xF.at(-i).Evaluate(x1) * xF.at(i).Evaluate(x2) );
 
+			// Return xi integrand
 			return Ixi * integrand / xi;
 		      };
 
@@ -257,8 +218,9 @@ int main()
 		      const double aem2 = pow(alphaem(Q), 2);
 
 		      // Compute hard factor
-		      const double hcs = apfel::HardFactorDY(PerturbativeOrder, Alphas(muf), nf, Cf);
+		      const double hcs = apfel::HardFactorDY(config["PerturbativeOrder"].as<int>(), Alphas(muf), nf, Cf);
 
+		      // Return Q integrand
 		      return IQ * aem2 * hcs * xiintegral / pow(Q, 3);
 		    };
 

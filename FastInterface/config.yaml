@@ -1,0 +1,36 @@
+# Name of the PDF set
+pdfset: "MMHT2014nlo68cl"
+
+# Perturbative order
+PerturbativeOrder: 1
+
+# Initial and final scale-variation factors
+TMDscales:
+  Ci: 1
+  Cf: 1
+
+# Values of bmin and bmax required by the b* prescription
+bstar:
+  bmin: 0
+  bmax: 1
+
+# Maximum number of Ogata-quadrature points (no more than 1000)
+nOgata: 10
+
+# Parameters of the x-space subgrid on which collinear PDFs are
+# tabulated
+xgridpdf:
+  - [100, 1e-5, 3]
+  - [60,  1e-1, 3]
+  - [50,  6e-1, 3]
+  - [100, 8e-1, 3]
+
+# Number of points and interpolation degree of the grid in Q
+Qgrid:
+  nQ: 5
+  InterDegreeQ: 3
+
+# Number of points and interpolation degree of the grid in xi ( = exp(y))
+xigrid:
+  nxi: 5
+  InterDegreexi: 3
