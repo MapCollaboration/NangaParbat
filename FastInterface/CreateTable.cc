@@ -29,37 +29,6 @@ const std::vector<double> qTv{1, 3};
 // b* prescription
 double bstar(double const& b, double const& bmax) { return b / sqrt( 1 + pow(b / bmax, 2) ); }
 
-// Electroweak charges
-std::vector<double> EWCharges(double const& Q)
-{
-  // Relevant constants for the computation of the EW charges
-  // (See https://arxiv.org/pdf/hep-ph/9711387.pdf)
-  const double MZ2   = apfel::ZMass * apfel::ZMass;
-  const double GmZ2  = apfel::GammaZ * apfel::GammaZ;
-  const double S2ThW = apfel::Sin2ThetaW;
-  const double VD    = - 0.5 + 2 * S2ThW / 3;
-  const double VU    = + 0.5 - 4 * S2ThW / 3;
-  const double AD    = - 0.5;
-  const double AU    = + 0.5;
-  const double Ve    = - 0.5 + 2 * S2ThW;
-  const double Ae    = - 0.5;
-  const std::vector<double> Vq = {VD, VU, VD, VU, VD, VU};
-  const std::vector<double> Aq = {AD, AU, AD, AU, AD, AU};
-
-  const double Q2  = Q * Q;
-  const double PZ  = Q2 * ( Q2 -  MZ2 ) / ( pow(Q2 - MZ2,2) + MZ2 * GmZ2 ) / ( 4 * S2ThW * ( 1 - S2ThW ) );
-  const double PZ2 = pow(Q2,2) / ( pow(Q2 - MZ2,2) + MZ2 * GmZ2 ) / pow(4 * S2ThW * ( 1 - S2ThW ),2);
-  std::vector<double> EWCharges;
-  for (auto i = 0; i < 6; i++)
-    {
-      const double b = apfel::QCh2[i]
-	- 2 * apfel::QCh[i] * Vq[i] * Ve * PZ
-	+ ( Ve * Ve + Ae * Ae ) * ( Vq[i] * Vq[i] + Aq[i] * Aq[i] ) * PZ2;
-      EWCharges.push_back(b);
-    }
-  return EWCharges;
-};
-
 // E.M. coupling (to be adjusted)
 double alphaem(double const& Q)
 {
@@ -178,7 +147,7 @@ int main()
 		      const int nf = apfel::NF(muf, Thresholds);
 
 		      // EW charges
-		      const std::vector<double> Bq = EWCharges(Q);
+		      const std::vector<double> Bq = apfel::ElectroWeakCharges(Q, true);
 
 		      // Get Evolved TMD PDFs and rotate them into the physical basis
 		      const std::map<int,apfel::Distribution> xF = QCDEvToPhys(TabEvolvedTMDPDFs.Evaluate(Q).GetObjects());
