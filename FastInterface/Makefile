@@ -26,11 +26,11 @@ LDFLAGS  += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS) $(YAMLINCS)
 CLIBS += $(LHAPDFLIBS) $(APFELLIBS) $(APFELPPLIBS) $(YAMLLIBS)
 
 install : all
-all : CreateTable
+all : CreateTables
 
-CreateTable: CreateTable.o
+CreateTables: CreateTables.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
 clean:
-	rm -rf *.lo *.o *.la CreateTable *~
+	rm -rf *.lo *.o *.la CreateTables *~
 

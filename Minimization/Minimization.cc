@@ -6,14 +6,10 @@
 //
 
 // APFEL++
-#include <apfel/dglapbuilder.h>
-#include <apfel/grid.h>
-#include <apfel/timer.h>
-#include <apfel/tools.h>
-#include <apfel/alphaqcd.h>
-#include <apfel/tabulateobject.h>
-#include <apfel/tmdbuilder.h>
-#include <apfel/rotations.h>
+#include <apfel/apfelxx.h>
+
+// YAML
+#include <yaml-cpp/yaml.h>
 
 // Minuit
 #include <ROOT/Minuit2/Minuit2Minimizer.h>

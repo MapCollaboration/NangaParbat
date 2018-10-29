@@ -19,11 +19,15 @@ APFELLIBS = $(shell apfel-config --ldflags)
 ROOTINCS = $(shell root-config --cflags)
 ROOTLIBS = $(shell root-config --libs) -lMinuit2
 
-# Now set up the compiler and link flags and libs
-CXXFLAGS += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS) $(ROOTINCS)
-LDFLAGS  += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS) $(ROOTINCS)
+# YAML
+YAMLINCS = -I/usr/local/include
+YAMLLIBS = -L/usr/local/lib -lyaml-cpp
 
-CLIBS += $(LHAPDFLIBS) $(APFELLIBS) $(APFELPPLIBS) $(ROOTLIBS)
+# Now set up the compiler and link flags and libs
+CXXFLAGS += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS) $(ROOTINCS) $(YAMLINCS)
+LDFLAGS  += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS) $(ROOTINCS) $(YAMLINCS)
+
+CLIBS += $(LHAPDFLIBS) $(APFELLIBS) $(APFELPPLIBS) $(ROOTLIBS) $(YAMLLIBS)
 
 install : all
 all : Minimization

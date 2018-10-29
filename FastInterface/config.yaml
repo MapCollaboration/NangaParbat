@@ -1,5 +1,7 @@
 # Name of the collinear PDF set
-pdfset: "MMHT2014nlo68cl"
+pdfset:
+  name: "MMHT2014nlo68cl"
+  member: 0
 
 # Perturbative order
 PerturbativeOrder: 1
@@ -34,3 +36,10 @@ Qgrid:
 xigrid:
   nxi: 5
   InterDegreexi: 3
+
+# Accuracy of the gauss-quadrature integration used of the integrals
+# in Q and xi.
+integration_accuracy: 1e-5
+
+# Verbosity level of APFEL++.
+verbosity: 2
