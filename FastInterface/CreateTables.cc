@@ -85,17 +85,11 @@ void RetrieveKinematics(YAML::Node const& df, double& Vs, double& Qmin, double& 
 }
 
 //_________________________________________________________________________________
-// Main program
-int main(int argc, char **argv)
+// Main function that computes the tables
+void ComputeTables(std::string const& configfile, std::string const& datasetfile)
 {
-  if (argc != 3)
-    {
-      std::cout << "\nusage: ./CreateTable config.yaml datasets.yaml\n" << std::endl;
-      exit(-1);
-    }
-
   // Read configuration parameters with YAML
-  const YAML::Node config = YAML::LoadFile(argv[1]);
+  const YAML::Node config = YAML::LoadFile(configfile);
 
   // Open LHAPDF set
   LHAPDF::PDF* distpdf = LHAPDF::mkPDF(config["pdfset"]["name"].as<std::string>(), config["pdfset"]["member"].as<int>());
@@ -145,7 +139,7 @@ int main(int argc, char **argv)
   const apfel::AlphaQED alphaem{0.00776578395589, apfel::ZMass, Thresholds, {0, 0, 1.777}, 0};
 
   // Read kinematics from the 'Data' folder
-  for (auto const& ds : YAML::LoadFile(argv[2]))
+  for (auto const& ds : YAML::LoadFile(datasetfile))
     for (auto const& dist : ds.second)
       {
 	// Timer
@@ -231,79 +225,77 @@ int main(int argc, char **argv)
 		// Loop over the grid in Q
 		std::vector<std::vector<double>> W(nQ, std::vector<double>(nxi));
 		for (int tau = 0; tau < nQ; tau++)
-		  {
-		    // Loop over the grid in xi
-		    for (int alpha = 0; alpha < nxi; alpha++)
-		      {
-			// Function to be integrated in Q
-			const auto Qintegrand = [&] (double const& Q) -> double
+		  // Loop over the grid in xi
+		  for (int alpha = 0; alpha < nxi; alpha++)
+		    {
+		      // Function to be integrated in Q
+		      const auto Qintegrand = [&] (double const& Q) -> double
+			{
+			  // Renormalisation scale
+			  const double muf = Cf * Q;
+
+			  // Number of active flavours at 'Q'
+			  const int nf = apfel::NF(muf, Thresholds);
+
+			  // EW charges
+			  const std::vector<double> Bq = apfel::ElectroWeakCharges(Q, true);
+
+			  // Get Evolved TMD PDFs and rotate them into the physical basis
+			  const std::map<int,apfel::Distribution> xF = QCDEvToPhys(TabEvolvedTMDPDFs.Evaluate(Q).GetObjects());
+
+			  // Function to be integrated in xi
+			  const auto xiintegrand = [&] (double const& xi) -> double
 			  {
-			    // Renormalisation scale
-			    const double muf = Cf * Q;
-
-			    // Number of active flavours at 'Q'
-			    const int nf = apfel::NF(muf, Thresholds);
-
-			    // EW charges
-			    const std::vector<double> Bq = apfel::ElectroWeakCharges(Q, true);
-
-			    // Get Evolved TMD PDFs and rotate them into the physical basis
-			    const std::map<int,apfel::Distribution> xF = QCDEvToPhys(TabEvolvedTMDPDFs.Evaluate(Q).GetObjects());
-
-			    // Function to be integrated in xi
-			    const auto xiintegrand = [&] (double const& xi) -> double
-			    {
-			      // Compute 'x1' and 'x2'
-			      const double x1 = Q * xi / Vs;
-			      const double x2 = Q / xi / Vs;
-
-			      // Get interpolating function in Q
-			      const double Ixi = xigrid.Interpolant(0, alpha, xi);
-
-			      // Combine TMDs through the EW charges
-			      double integrand = 0;
-			      for (int i = 1; i <= nf; i++)
-				integrand += Bq[i-1] * ( xF.at(i).Evaluate(x1) * xF.at(-i).Evaluate(x2) + xF.at(-i).Evaluate(x1) * xF.at(i).Evaluate(x2) );
-
-			      // Return xi integrand
-			      return Ixi * integrand / xi;
-			    };
-
-			    // Get integration bounds and fixed points in xi
-			    const int iximin = std::max(alpha - InterDegreexi, 0);
-			    const int iximax = std::min(alpha + 1, nxi);
-			    std::vector<double> FixPtsxi(xig.begin() + iximin + 1, xig.begin() + std::max(iximax - 1, iximin + 1));
-
-			    // Perform the integral in xi
-			    const apfel::Integrator xiIntObj{xiintegrand};
-			    const double xiintegral = xiIntObj.integrate(xig[iximin], xig[iximax], FixPtsxi, eps);
+			    // Compute 'x1' and 'x2'
+			    const double x1 = Q * xi / Vs;
+			    const double x2 = Q / xi / Vs;
 
 			    // Get interpolating function in Q
-			    const double IQ = Qgrid.Interpolant(0, tau, Q);
+			    const double Ixi = xigrid.Interpolant(0, alpha, xi);
 
-			    // Electromagnetic coupling squared
-			    const double aem2 = pow(alphaem.Evaluate(Q), 2);
+			    // Combine TMDs through the EW charges
+			    double integrand = 0;
+			    for (int i = 1; i <= nf; i++)
+			      integrand += Bq[i-1] * ( xF.at(i).Evaluate(x1) * xF.at(-i).Evaluate(x2) + xF.at(-i).Evaluate(x1) * xF.at(i).Evaluate(x2) );
 
-			    // Compute hard factor
-			    const double hcs = apfel::HardFactorDY(config["PerturbativeOrder"].as<int>(), Alphas(muf), nf, Cf);
-
-			    // Return Q integrand
-			    return IQ * aem2 * hcs * xiintegral / pow(Q, 3);
+			    // Return xi integrand
+			    return Ixi * integrand / xi;
 			  };
 
-			// Get integration bounds and fixed points in Q
-			const int iQmin = std::max(tau - InterDegreeQ, 0);
-			const int iQmax = std::min(tau + 1, nQ);
-			std::vector<double> FixPtsQ(Qg.begin() + iQmin + 1, Qg.begin() + std::max(iQmax - 1, iQmin + 1));
+			  // Get integration bounds and fixed points in xi
+			  const int iximin = std::max(alpha - InterDegreexi, 0);
+			  const int iximax = std::min(alpha + 1, nxi);
+			  std::vector<double> FixPtsxi(xig.begin() + iximin + 1, xig.begin() + std::max(iximax - 1, iximin + 1));
 
-			// Perform the integral in Q
-			const apfel::Integrator QIntObj{Qintegrand};
-			const double Qintegral = QIntObj.integrate(Qg[iQmin], Qg[iQmax], FixPtsQ, eps);
+			  // Perform the integral in xi
+			  const apfel::Integrator xiIntObj{xiintegrand};
+			  const double xiintegral = xiIntObj.integrate(xig[iximin], xig[iximax], FixPtsxi, eps);
 
-			// Compute weight
-			W[tau][alpha] = apfel::ConvFact * 8 * M_PI * w1[n] * Qintegral / 9;
-		      }
-		  }
+			  // Get interpolating function in Q
+			  const double IQ = Qgrid.Interpolant(0, tau, Q);
+
+			  // Electromagnetic coupling squared
+			  const double aem2 = pow(alphaem.Evaluate(Q), 2);
+
+			  // Compute hard factor
+			  const double hcs = apfel::HardFactorDY(config["PerturbativeOrder"].as<int>(), Alphas(muf), nf, Cf);
+
+			  // Return Q integrand
+			  return IQ * aem2 * hcs * xiintegral / pow(Q, 3);
+			};
+
+		      // Get integration bounds and fixed points in Q
+		      const int iQmin = std::max(tau - InterDegreeQ, 0);
+		      const int iQmax = std::min(tau + 1, nQ);
+		      std::vector<double> FixPtsQ(Qg.begin() + iQmin + 1, Qg.begin() + std::max(iQmax - 1, iQmin + 1));
+
+		      // Perform the integral in Q
+		      const apfel::Integrator QIntObj{Qintegrand};
+		      const double Qintegral = QIntObj.integrate(Qg[iQmin], Qg[iQmax], FixPtsQ, eps);
+
+		      // Compute weight
+		      W[tau][alpha] = apfel::ConvFact * 8 * M_PI * w1[n] * Qintegral / 9;
+		    }
 		emitter << YAML::Flow << W;
 	      }
 	    emitter << YAML::EndSeq;
@@ -315,5 +307,94 @@ int main(int argc, char **argv)
 	fout.close();
 	t.stop();
       }
+}
+
+//_________________________________________________________________________________
+class ConvolutionTable
+{
+public:
+  ConvolutionTable(std::string const& infile)
+  {
+    // Input file
+    const YAML::Node table = YAML::LoadFile(infile);
+
+    // C.M.E.
+    _Vs  = table["CME"].as<double>();
+
+    // qT bin bounds
+    _qTv = table["qT_bounds"].as<std::vector<double>>();
+
+    // Ogata unscaled coordinates
+    _z1  = table["Ogata_coordinates"].as<std::vector<double>>();
+
+    // Q grid
+    _Qg  = table["Qgrid"].as<std::vector<double>>();
+
+    // xi grid
+    _xig = table["xigrid"].as<std::vector<double>>();
+  }
+
+  std::vector<double> Convolute(std::function<double(double const&, double const&, double const&)> const& fNP) const
+  {
+    std::vector<double> pred(_qTv.size());
+    for (int i = 0; i < (int) _qTv.size(); i++)
+      {
+	const double qT = _qTv[i];
+	double cs = 0;
+	for (int n = 0; n < (int) _z1.size(); n++)
+	  {
+	    const double b = _z1[n] / qT;
+	    for (int tau = 0; tau < (int) _Qg.size(); tau++)
+	      {
+		const double Q = _Qg[tau];
+		const double Vtau  = Q / _Vs;
+		for (int alpha = 0; alpha < (int) _xig.size(); alpha++)
+		  {
+		    const double xi = _xig[tau];
+		    //cs += _W[i][n][tau][alpha] * fNP(Vtau * xi, b, Q) * fNP(Vtau / xi, b, Q);
+		    cs += fNP(Vtau * xi, b, Q) * fNP(Vtau / xi, b, Q);
+		  }
+	      }
+	  }
+	pred[i] = cs;
+      }
+    return pred;
+  }
+
+private:
+  double              _Vs;
+  std::vector<double> _qTv;
+  std::vector<double> _z1;
+  std::vector<double> _Qg; 
+  std::vector<double> _xig;
+};
+
+
+// Non-perturnative function
+double fNP(double const&, double const& b, double const& zetaf)
+{
+  const double g1 = 0.02;
+  const double g2 = 0.5;
+  const double Q0 = 1.6;
+  return exp( ( - g1 - g2 * log( sqrt(zetaf) / Q0 / 2 ) ) * b * b / 2 );
+}
+
+//_________________________________________________________________________________
+// Main program
+int main(int argc, char **argv)
+{
+  if (argc != 3)
+    {
+      std::cout << "\nusage: ./CreateTable config.yaml datasets.yaml\n" << std::endl;
+      exit(-1);
+    }
+
+  ComputeTables(argv[1], argv[2]);
+
+  const std::string infile = "../Tables/TestData_Table1.yaml";
+  const ConvolutionTable Table{infile};
+  for (auto const& p : Table.Convolute(fNP))
+    std::cout << p << std::endl;
+
   return 0;
 }
