@@ -393,8 +393,10 @@ int main(int argc, char **argv)
 
   const std::string infile = "../Tables/TestData_Table1.yaml";
   const ConvolutionTable Table{infile};
+  apfel::Timer t;
   for (auto const& p : Table.Convolute(fNP))
     std::cout << p << std::endl;
+  t.stop();
 
   return 0;
 }
