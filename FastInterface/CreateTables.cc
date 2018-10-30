@@ -396,11 +396,13 @@ int main(int argc, char **argv)
 
   // Convolute table
   const ConvolutionTable Table{"../Tables/TestData_Table1.yaml"};
+  for (auto const& p : Table.Convolute(fNP))
+    std::cout << p.first << "  " << p.second << std::endl;
 
-  apfel::Timer t;
+  apfel::Timer t;  
   for (int i = 0; i < 8000; i++)
     for (auto const& p : Table.Convolute(fNP))
-      std::cout << i << "  " << p.first << "  " << p.second << std::endl;
+      p.second;
   t.stop();
 
   return 0;
