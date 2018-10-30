@@ -165,8 +165,14 @@ void ComputeTables(std::string const& configfile, std::string const& datasetfile
 	// Read kinematics from the HEPdata yaml file
 	RetrieveKinematics(df, Vs, Qmin, Qmax, ymin, ymax, qTv);
 
+	// Unscaled coordinates and weights of the degree-one Ogata
+	// quadrature.
+	std::vector<double> z1 = OgataObj.GetCoordinates();
+	std::vector<double> w1 = OgataObj.GetWeights();
+
 	// Retrieve relevant parameters from the configuration file
 	const double Cf            = config["TMDscales"]["Cf"].as<double>();
+	const int    nOgata        = std::min(config["nOgata"].as<int>(), (int) z1.size());
 	const int    nQ            = config["Qgrid"]["nQ"].as<int>();
 	const int    InterDegreeQ  = config["Qgrid"]["InterDegreeQ"].as<int>();
 	const int    nxi           = config["xigrid"]["nxi"].as<int>();
@@ -178,11 +184,6 @@ void ComputeTables(std::string const& configfile, std::string const& datasetfile
 	const std::vector<double> xig = GenerateQGrid(nxi, exp(ymin), exp(ymax));
 	const apfel::QGrid<double> Qgrid {Qg,  InterDegreeQ};
 	const apfel::QGrid<double> xigrid{xig, InterDegreexi};
-
-	// Unscaled coordinates and weights of the degree-one Ogata
-	// quadrature.
-	std::vector<double> z1 = OgataObj.GetCoordinates(); 
-	std::vector<double> w1 = OgataObj.GetWeights(); 
 
 	// Open output file
 	const std::string outfile = "../Tables/" + ds.first.as<std::string>() + "_" + dist.as<std::string>();
@@ -205,14 +206,13 @@ void ComputeTables(std::string const& configfile, std::string const& datasetfile
 	emitter << YAML::Newline;
 	emitter << YAML::BeginMap;
 	emitter << YAML::Comment("Weights");
-	emitter << YAML::Key << "Weights";
 	// Loop over the qT bin bounds
 	for (auto const& qT : qTv)
 	  {
-	    emitter << YAML::Value << YAML::BeginSeq;
-
+	    // Container of the weights
+	    std::vector<std::vector<std::vector<double>>> W(nOgata, std::vector<std::vector<double>>(nQ, std::vector<double>(nxi)));
 	    // Loop over the Ogata-quadrature points
-	    for (int n = 0; n < std::min(config["nOgata"].as<int>(), (int) z1.size()); n++)
+	    for (int n = 0; n < nOgata; n++)
 	      {
 		// Get impact parameter 'b' and 'b*'
 		const double b  = z1[n] / qT;
@@ -223,7 +223,7 @@ void ComputeTables(std::string const& configfile, std::string const& datasetfile
 		const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabEvolvedTMDPDFs{EvolvedTMDPDFs, Qg, InterDegreeQ};
 
 		// Loop over the grid in Q
-		std::vector<std::vector<double>> W(nQ, std::vector<double>(nxi));
+		//std::vector<std::vector<double>> W(nQ, std::vector<double>(nxi));
 		for (int tau = 0; tau < nQ; tau++)
 		  // Loop over the grid in xi
 		  for (int alpha = 0; alpha < nxi; alpha++)
@@ -294,11 +294,11 @@ void ComputeTables(std::string const& configfile, std::string const& datasetfile
 		      const double Qintegral = QIntObj.integrate(Qg[iQmin], Qg[iQmax], FixPtsQ, eps);
 
 		      // Compute weight
-		      W[tau][alpha] = apfel::ConvFact * 8 * M_PI * w1[n] * Qintegral / 9;
+		      W[n][tau][alpha] = apfel::ConvFact * 8 * M_PI * w1[n] * Qintegral / 9;
 		    }
-		emitter << YAML::Flow << W;
 	      }
-	    emitter << YAML::EndSeq;
+	    emitter << YAML::Key << qT;
+	    emitter << YAML::Value << YAML::Flow << W;
 	  }
 	emitter << YAML::EndMap;
 
@@ -332,14 +332,16 @@ public:
 
     // xi grid
     _xig = table["xigrid"].as<std::vector<double>>();
+
+    for (auto const& qT : _qTv)
+      _W.insert({qT, table[qT].as<std::vector<std::vector<std::vector<double>>>>()});
   }
 
-  std::vector<double> Convolute(std::function<double(double const&, double const&, double const&)> const& fNP) const
+  std::map<double,double> Convolute(std::function<double(double const&, double const&, double const&)> const& fNP) const
   {
-    std::vector<double> pred(_qTv.size());
-    for (int i = 0; i < (int) _qTv.size(); i++)
+    std::map<double,double> pred;
+    for (auto const& qT : _qTv)
       {
-	const double qT = _qTv[i];
 	double cs = 0;
 	for (int n = 0; n < (int) _z1.size(); n++)
 	  {
@@ -351,12 +353,11 @@ public:
 		for (int alpha = 0; alpha < (int) _xig.size(); alpha++)
 		  {
 		    const double xi = _xig[tau];
-		    //cs += _W[i][n][tau][alpha] * fNP(Vtau * xi, b, Q) * fNP(Vtau / xi, b, Q);
-		    cs += fNP(Vtau * xi, b, Q) * fNP(Vtau / xi, b, Q);
+		    cs += _W.at(qT)[n][tau][alpha] * fNP(Vtau * xi, b, Q) * fNP(Vtau / xi, b, Q);
 		  }
 	      }
 	  }
-	pred[i] = cs;
+	pred.insert({qT, cs});
       }
     return pred;
   }
@@ -367,9 +368,10 @@ private:
   std::vector<double> _z1;
   std::vector<double> _Qg; 
   std::vector<double> _xig;
+  std::map<double,std::vector<std::vector<std::vector<double>>>> _W;
 };
 
-
+//_________________________________________________________________________________
 // Non-perturnative function
 double fNP(double const&, double const& b, double const& zetaf)
 {
@@ -389,13 +391,16 @@ int main(int argc, char **argv)
       exit(-1);
     }
 
+  // Compute table
   ComputeTables(argv[1], argv[2]);
 
-  const std::string infile = "../Tables/TestData_Table1.yaml";
-  const ConvolutionTable Table{infile};
+  // Convolute table
+  const ConvolutionTable Table{"../Tables/TestData_Table1.yaml"};
+
   apfel::Timer t;
-  for (auto const& p : Table.Convolute(fNP))
-    std::cout << p << std::endl;
+  for (int i = 0; i < 8000; i++)
+    for (auto const& p : Table.Convolute(fNP))
+      std::cout << i << "  " << p.first << "  " << p.second << std::endl;
   t.stop();
 
   return 0;
