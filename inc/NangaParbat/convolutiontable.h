@@ -8,6 +8,7 @@
 #include <functional>
 #include <map>
 #include <vector>
+#include <yaml-cpp/yaml.h>
 
 namespace NangaParbat
 {
@@ -16,7 +17,13 @@ namespace NangaParbat
   public:
   /**
    * @brief The "ConvolutionTable" constructor.
-   * @param infile: the interpolation table in YAML format
+   * @param infile: the YAML:Node with the interpolation table
+   */
+    ConvolutionTable(YAML::Node const& table);
+
+  /**
+   * @brief The "ConvolutionTable" constructor.
+   * @param infile: the name of interpolation table in YAML format
    */
     ConvolutionTable(std::string const& infile);
 
@@ -29,6 +36,7 @@ namespace NangaParbat
     std::map<double,double> Convolute(std::function<double(double const&, double const&, double const&)> const& fNP) const;
 
   private:
+    std::string                                                    _name; //!< Name of the table
     double                                                         _Vs;   //!< Center of mass energy
     std::vector<double>                                            _qTv;  //!< Vector of qT
     std::vector<double>                                            _z;    //!< Unscaled Ogata coordinate

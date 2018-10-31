@@ -6,6 +6,7 @@
 #include "NangaParbat/convolutiontable.h"
 
 #include <iostream>
+#include <fstream>
 #include <math.h>
 
 #include <apfel/timer.h>
@@ -33,18 +34,28 @@ int main(int argc, char **argv)
   // Compute table
   const YAML::Node config  = YAML::LoadFile(argv[1]);
   const YAML::Node dataset = YAML::LoadFile(argv[2]);
-  NangaParbat::ComputeTables(config, NangaParbat::RetrieveKinematics(dataset));
+  const std::vector<YAML::Emitter> Tabs = NangaParbat::ComputeTables(config, NangaParbat::RetrieveKinematics(dataset));
 
   // Convolute table
-  const NangaParbat::ConvolutionTable Table{"../tables/TestData_Table1.yaml"};
-  for (auto const& p : Table.Convolute(fNP))
-    std::cout << p.first << "  " << p.second << std::endl;
+  for (auto const& tab : Tabs)
+    {
+      // Convolution
+      const NangaParbat::ConvolutionTable CTable{YAML::Load(tab.c_str())};
+      for (auto const& p : CTable.Convolute(fNP))
+	std::cout << p.first << "  " << p.second << std::endl;
 
-  apfel::Timer t;  
-  for (int i = 0; i < 8000; i++)
-    for (auto const& p : Table.Convolute(fNP))
-      p.second;
-  t.stop();
+      // Dump table to file
+      std::ofstream fout("../tables/" + YAML::Load(tab.c_str())["name"].as<std::string>());
+      fout << tab.c_str() << std::endl;
+      fout.close();
+
+      // Performance test
+      apfel::Timer t;
+      for (int i = 0; i < 8000; i++)
+	for (auto const& p : CTable.Convolute(fNP))
+	  p.second;
+      t.stop();
+    }
 
   return 0;
 }

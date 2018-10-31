@@ -4,16 +4,15 @@
 
 #include "NangaParbat/convolutiontable.h"
 
-// YAML
-#include <yaml-cpp/yaml.h>
+#include <iostream>
 
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  ConvolutionTable::ConvolutionTable(std::string const& infile)
+  ConvolutionTable::ConvolutionTable(YAML::Node const& table)
   {
-    // Input file
-    const YAML::Node table = YAML::LoadFile(infile);
+    // Name
+    _name  = table["name"].as<std::string>();
 
     // C.M.E.
     _Vs  = table["CME"].as<double>();
@@ -32,6 +31,12 @@ namespace NangaParbat
 
     for (auto const& qT : _qTv)
       _W.insert({qT, table[qT].as<std::vector<std::vector<std::vector<double>>>>()});
+  }
+
+  //_________________________________________________________________________________
+  ConvolutionTable::ConvolutionTable(std::string const& infile):
+    ConvolutionTable(YAML::LoadFile(infile))
+  {
   }
 
   //_________________________________________________________________________________

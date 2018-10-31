@@ -4,10 +4,8 @@
 
 #pragma once
 
-// YAML
-#include <yaml-cpp/yaml.h>
-
 #include <utility>
+#include <yaml-cpp/yaml.h>
 
 namespace NangaParbat
 {

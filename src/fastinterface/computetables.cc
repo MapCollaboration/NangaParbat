@@ -5,10 +5,7 @@
 #include "NangaParbat/computetables.h"
 #include "NangaParbat/utilities.h"
 
-// LHAPDF
 #include <LHAPDF/LHAPDF.h>
-
-// APFEL++
 #include <apfel/apfelxx.h>
 
 namespace NangaParbat
@@ -25,15 +22,14 @@ namespace NangaParbat
       for (auto const& dist : dl.second)
 	{
 	  // Open HEPData datafile name
-	  const std::string name = dl.first.as<std::string>() + "/" + dist.as<std::string>();
-	  const YAML::Node df = YAML::LoadFile("../Data/" + name);
+	  const YAML::Node df = YAML::LoadFile("../Data/" + dl.first.as<std::string>() + "/" + dist.as<std::string>());
 
 	  // Initialise a "Kinematics" object
 	  Kinematics kin;
 
 	  // Assing to the "kin" structure the name of the data file
 	  // along with its folder.
-	  kin.name = name;
+	  kin.name = dl.first.as<std::string>() + "_" + dist.as<std::string>();
 
 	  // Retrieve kinematics
 	  for (auto const& dv : df["dependent_variables"])
@@ -174,10 +170,8 @@ namespace NangaParbat
 	Tabs[i].SetFloatPrecision(8);
 	Tabs[i].SetDoublePrecision(8);
 	Tabs[i] << YAML::BeginMap;
-	Tabs[i] << YAML::Key << "name" << YAML::Value << KinVect[i].name;
-	Tabs[i] << YAML::EndMap;
-	Tabs[i] << YAML::BeginMap;
 	Tabs[i] << YAML::Comment("Kinematics and grid information");
+	Tabs[i] << YAML::Key << "name" << YAML::Value << KinVect[i].name;
 	Tabs[i] << YAML::Key << "CME" << YAML::Value << Vs;
 	Tabs[i] << YAML::Key << "qT_bounds" << YAML::Value << YAML::Flow << qTv;
 	Tabs[i] << YAML::Key << "Ogata_coordinates" << YAML::Value << YAML::Flow << std::vector<double>(zo.begin(), zo.begin() + nOgata);
