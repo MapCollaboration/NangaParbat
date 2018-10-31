@@ -64,7 +64,7 @@ namespace NangaParbat
     apfel::OgataQuadrature OgataObj{1};
 
     // Alpha_em
-    const apfel::AlphaQED alphaem{0.00776578395589, apfel::ZMass, Thresholds, {0, 0, 1.777}, 0};
+    const apfel::AlphaQED alphaem{config["alphaem"]["aref"].as<double>(), config["alphaem"]["Qref"].as<double>(), Thresholds, {0, 0, 1.777}, 0};
 
     // Read kinematics from the 'Data' folder
     for (auto const& ds : YAML::LoadFile(datasetfile))
@@ -127,7 +127,8 @@ namespace NangaParbat
 	  emitter << YAML::Comment("Kinematics and grid information");
 	  emitter << YAML::Key << "CME" << YAML::Value << Vs;
 	  emitter << YAML::Key << "qT_bounds" << YAML::Value << YAML::Flow << qTv;
-	  emitter << YAML::Key << "Ogata_coordinates" << YAML::Value << YAML::Flow << std::vector<double>(z1.begin(), z1.begin() + std::min(config["nOgata"].as<int>(), (int) z1.size()));
+	  emitter << YAML::Key << "Ogata_coordinates" << YAML::Value << YAML::Flow
+		  << std::vector<double>(z1.begin(), z1.begin() + std::min(config["nOgata"].as<int>(), (int) z1.size()));
 	  emitter << YAML::Key << "Qgrid" << YAML::Value << YAML::Flow << std::vector<double>(Qg.begin(), Qg.end() - 1);
 	  emitter << YAML::Key << "xigrid" << YAML::Value << YAML::Flow << std::vector<double>(xig.begin(), xig.end() - 1);
 	  emitter << YAML::EndMap;
@@ -203,7 +204,7 @@ namespace NangaParbat
 			    const double IQ = Qgrid.Interpolant(0, tau, Q);
 
 			    // Electromagnetic coupling squared
-			    const double aem2 = pow(alphaem.Evaluate(Q), 2);
+			    const double aem2 = pow((config["alphaem"]["run"].as<bool>() ? alphaem.Evaluate(Q) : config["alphaem"]["ref"].as<double>()), 2);
 
 			    // Compute hard factor
 			    const double hcs = apfel::HardFactorDY(config["PerturbativeOrder"].as<int>(), Alphas(muf), nf, Cf);
