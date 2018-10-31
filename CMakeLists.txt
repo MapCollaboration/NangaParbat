@@ -1,0 +1,90 @@
+cmake_minimum_required (VERSION 2.6)
+# Set a default build type if none was specified
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "Setting build type to 'Release' as none was specified.")
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+  # Set the possible values of build type for cmake-gui
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
+    "MinSizeRel" "RelWithDebInfo")
+endif()
+
+if (NOT DEFINED CMAKE_MACOSX_RPATH)
+   set(CMAKE_MACOSX_RPATH 0)
+endif()
+
+# the project name
+project(NangaParbat)
+
+# activating some global properties for the project
+set(NangaParbat_VERSION 0.1.0)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# export version to file
+configure_file(
+  "${PROJECT_SOURCE_DIR}/inc/NangaParbat/version.h.in"
+  "${PROJECT_BINARY_DIR}/inc/NangaParbat/version.h"
+)
+
+find_package(PkgConfig REQUIRED)
+pkg_search_module(YAML REQUIRED yaml-cpp)
+
+# Configuration script
+set(prefix ${CMAKE_INSTALL_PREFIX})
+set(exec_prefix "${prefix}")
+set(includedir "${prefix}/include")
+set(libdir "${prefix}/lib")
+configure_file(
+  "${PROJECT_SOURCE_DIR}/bin/NangaParbat-config.in"
+  "${PROJECT_SOURCE_DIR}/bin/NangaParbat-config"
+)
+
+include_directories(${PROJECT_SOURCE_DIR}/inc)
+
+# LHAPDF
+find_program(LHAPDF_CONFIG lhapdf-config REQUIRED)
+if (LHAPDF_CONFIG)
+  exec_program(${LHAPDF_CONFIG}
+    ARGS --cflags
+    OUTPUT_VARIABLE LHAPDF_CXX_FLAGS
+  )
+  set(LHAPDF_CXX_FLAGS ${LHAPDF_CXX_FLAGS} CACHE STRING INTERNAL)
+  exec_program(${LHAPDF_CONFIG}
+    ARGS --libs
+    OUTPUT_VARIABLE LHAPDF_LIBRARIES
+  )
+  set(LHAPDF_LIBRARIES ${LHAPDF_LIBRARIES} CACHE STRING INTERNAL)
+endif(LHAPDF_CONFIG)
+
+# APFEL++
+find_program(APFELXX_CONFIG apfelxx-config REQUIRED)
+if (APFELXX_CONFIG)
+  exec_program(${APFELXX_CONFIG}
+    ARGS --cppflags
+    OUTPUT_VARIABLE APFELXX_CXX_FLAGS
+  )
+  set(APFELXX_CXX_FLAGS ${APFELXX_CXX_FLAGS} CACHE STRING INTERNAL)
+  exec_program(${APFELXX_CONFIG}
+    ARGS --ldflags
+    OUTPUT_VARIABLE APFELXX_LIBRARIES
+  )
+  set(APFELXX_LIBRARIES ${APFELXX_LIBRARIES} CACHE STRING INTERNAL)
+endif(APFELXX_CONFIG)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LHAPDF_CXX_FLAGS} ${APFELXX_CXX_FLAGS} ${YAMLCPP_CXX_FLAGS} -std=c++11 -Wall -fPIC")
+
+# build target library
+add_subdirectory(src)
+add_subdirectory(run)
+
+option(BUILD_TESTS "Build tests code" ON)
+if(BUILD_TESTS)
+  enable_testing()
+  add_subdirectory(tests)
+endif(BUILD_TESTS)
+
+install(FILES ${PROJECT_SOURCE_DIR}/bin/NangaParbat-config
+	   DESTINATION bin
+	   PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
