@@ -22,7 +22,7 @@ namespace NangaParbat
     _qTv = table["qT_bounds"].as<std::vector<double>>();
 
     // Ogata unscaled coordinates
-    _z1  = table["Ogata_coordinates"].as<std::vector<double>>();
+    _z   = table["Ogata_coordinates"].as<std::vector<double>>();
 
     // Q grid
     _Qg  = table["Qgrid"].as<std::vector<double>>();
@@ -41,9 +41,9 @@ namespace NangaParbat
     for (auto const& qT : _qTv)
       {
 	double cs = 0;
-	for (int n = 0; n < (int) _z1.size(); n++)
+	for (int n = 0; n < (int) _z.size(); n++)
 	  {
-	    const double b = _z1[n] / qT;
+	    const double b = _z[n] / qT;
 	    for (int tau = 0; tau < (int) _Qg.size(); tau++)
 	      {
 		const double Q = _Qg[tau];

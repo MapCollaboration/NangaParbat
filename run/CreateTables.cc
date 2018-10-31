@@ -31,7 +31,9 @@ int main(int argc, char **argv)
     }
 
   // Compute table
-  NangaParbat::ComputeTables(argv[1], argv[2]);
+  const YAML::Node config  = YAML::LoadFile(argv[1]);
+  const YAML::Node dataset = YAML::LoadFile(argv[2]);
+  NangaParbat::ComputeTables(config, NangaParbat::RetrieveKinematics(dataset));
 
   // Convolute table
   const NangaParbat::ConvolutionTable Table{"../tables/TestData_Table1.yaml"};
