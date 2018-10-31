@@ -183,6 +183,21 @@ qTintegration/fast:
 .PHONY : qTintegration/fast
 
 # Convenience name for target.
+tests/CMakeFiles/TableTest.dir/rule:
+	cd /Users/vbertone/Codes/TMDs && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/TableTest.dir/rule
+.PHONY : tests/CMakeFiles/TableTest.dir/rule
+
+# Convenience name for target.
+TableTest: tests/CMakeFiles/TableTest.dir/rule
+
+.PHONY : TableTest
+
+# fast build rule for target.
+TableTest/fast:
+	cd /Users/vbertone/Codes/TMDs && $(MAKE) -f tests/CMakeFiles/TableTest.dir/build.make tests/CMakeFiles/TableTest.dir/build
+.PHONY : TableTest/fast
+
+# Convenience name for target.
 tests/CMakeFiles/EvolutionMatching.dir/rule:
 	cd /Users/vbertone/Codes/TMDs && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/EvolutionMatching.dir/rule
 .PHONY : tests/CMakeFiles/EvolutionMatching.dir/rule
@@ -266,6 +281,33 @@ EvolutionMatching.cc.s:
 	cd /Users/vbertone/Codes/TMDs && $(MAKE) -f tests/CMakeFiles/EvolutionMatching.dir/build.make tests/CMakeFiles/EvolutionMatching.dir/EvolutionMatching.cc.s
 .PHONY : EvolutionMatching.cc.s
 
+TableTest.o: TableTest.cc.o
+
+.PHONY : TableTest.o
+
+# target to build an object file
+TableTest.cc.o:
+	cd /Users/vbertone/Codes/TMDs && $(MAKE) -f tests/CMakeFiles/TableTest.dir/build.make tests/CMakeFiles/TableTest.dir/TableTest.cc.o
+.PHONY : TableTest.cc.o
+
+TableTest.i: TableTest.cc.i
+
+.PHONY : TableTest.i
+
+# target to preprocess a source file
+TableTest.cc.i:
+	cd /Users/vbertone/Codes/TMDs && $(MAKE) -f tests/CMakeFiles/TableTest.dir/build.make tests/CMakeFiles/TableTest.dir/TableTest.cc.i
+.PHONY : TableTest.cc.i
+
+TableTest.s: TableTest.cc.s
+
+.PHONY : TableTest.s
+
+# target to generate assembly for a file
+TableTest.cc.s:
+	cd /Users/vbertone/Codes/TMDs && $(MAKE) -f tests/CMakeFiles/TableTest.dir/build.make tests/CMakeFiles/TableTest.dir/TableTest.cc.s
+.PHONY : TableTest.cc.s
+
 qTintegration.o: qTintegration.cc.o
 
 .PHONY : qTintegration.o
@@ -307,6 +349,7 @@ help:
 	@echo "... test"
 	@echo "... rebuild_cache"
 	@echo "... qTintegration"
+	@echo "... TableTest"
 	@echo "... EvolutionMatching"
 	@echo "... BenchmarkNangaParbat"
 	@echo "... BenchmarkNangaParbat.o"
@@ -315,6 +358,9 @@ help:
 	@echo "... EvolutionMatching.o"
 	@echo "... EvolutionMatching.i"
 	@echo "... EvolutionMatching.s"
+	@echo "... TableTest.o"
+	@echo "... TableTest.i"
+	@echo "... TableTest.s"
 	@echo "... qTintegration.o"
 	@echo "... qTintegration.i"
 	@echo "... qTintegration.s"
