@@ -34,7 +34,7 @@ int main(int argc, char **argv)
   NangaParbat::ComputeTables(argv[1], argv[2]);
 
   // Convolute table
-  const NangaParbat::ConvolutionTable Table{"../Tables/TestData_Table1.yaml"};
+  const NangaParbat::ConvolutionTable Table{"../tables/TestData_Table1.yaml"};
   for (auto const& p : Table.Convolute(fNP))
     std::cout << p.first << "  " << p.second << std::endl;
 
