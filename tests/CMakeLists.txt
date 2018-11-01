@@ -17,3 +17,8 @@ add_test(qTintegration qTintegration)
 add_executable(TableTest TableTest.cc)
 target_link_libraries(TableTest NangaParbat)
 add_test(TableTest TableTest)
+
+# build tests
+add_executable(IntegrationTest IntegrationTest.cc)
+target_link_libraries(IntegrationTest NangaParbat)
+add_test(IntegrationTest IntegrationTest)

@@ -140,6 +140,7 @@ namespace NangaParbat
     std::vector<YAML::Emitter> Tabs(KinVect.size());
 
     // Loop over the vector of "Kinematics" objects
+    std::cout << std::endl;
     for (int i = 0; i < (int) KinVect.size(); i++)
       {
 	// Timer
@@ -160,6 +161,9 @@ namespace NangaParbat
 	std::vector<double> zo = OgataObj.GetCoordinates();
 	std::vector<double> wo = OgataObj.GetWeights();
 
+	// Number of Ogata points
+	const int nO = std::min(nOgata, (int) zo.size());
+
 	// Construct QGrid-like grids for the integration in Q and y
 	const std::vector<double> Qg  = GenerateQGrid(nQ, Qb.first, Qb.second);
 	const std::vector<double> xig = GenerateQGrid(nxi, exp(yb.first), exp(yb.second));
@@ -174,7 +178,7 @@ namespace NangaParbat
 	Tabs[i] << YAML::Key << "name" << YAML::Value << KinVect[i].name;
 	Tabs[i] << YAML::Key << "CME" << YAML::Value << Vs;
 	Tabs[i] << YAML::Key << "qT_bounds" << YAML::Value << YAML::Flow << qTv;
-	Tabs[i] << YAML::Key << "Ogata_coordinates" << YAML::Value << YAML::Flow << std::vector<double>(zo.begin(), zo.begin() + nOgata);
+	Tabs[i] << YAML::Key << "Ogata_coordinates" << YAML::Value << YAML::Flow << std::vector<double>(zo.begin(), zo.begin() + nO);
 	Tabs[i] << YAML::Key << "Qgrid" << YAML::Value << YAML::Flow << std::vector<double>(Qg.begin(), Qg.end() - 1);
 	Tabs[i] << YAML::Key << "xigrid" << YAML::Value << YAML::Flow << std::vector<double>(xig.begin(), xig.end() - 1);
 	Tabs[i] << YAML::EndMap;
@@ -182,14 +186,21 @@ namespace NangaParbat
 	Tabs[i] << YAML::BeginMap;
 	Tabs[i] << YAML::Comment("Weights");
 
+	// Total number of steps for this particular table. Used to
+	// report the progress of the computation.
+	const int nsteps = qTv.size() * nO * nQ * nxi;
+
+	// Counter
+	int istep = 0;
+
 	// Loop over the qT-bin bounds
 	for (auto const& qT : qTv)
 	  {
 	    // Allocate container of the weights
-	    std::vector<std::vector<std::vector<double>>> W(nOgata, std::vector<std::vector<double>>(nQ, std::vector<double>(nxi)));
+	    std::vector<std::vector<std::vector<double>>> W(nO, std::vector<std::vector<double>>(nQ, std::vector<double>(nxi)));
 
 	    // Loop over the Ogata-quadrature points
-	    for (int n = 0; n < std::min(nOgata, (int) zo.size()); n++)
+	    for (int n = 0; n < nO; n++)
 	      {
 		// Get impact parameters 'b' and 'b*'
 		const double b  = zo[n] / qT;
@@ -275,10 +286,15 @@ namespace NangaParbat
 		      // Compute the weight
 		      W[n][tau][alpha] = apfel::ConvFact * 8 * M_PI * wo[n] * Qintegral / 9;
 
-		      // If not intergrating over qT multiply by b =
-		      // zo[n] / qT.
+		      // If not intergrating over qT, multiply by b
 		      if (!KinVect[i].IntqT)
-			W[n][tau][alpha] *= zo[n] / qT;
+			W[n][tau][alpha] *= b;
+
+		      // Report progress
+		      istep++;
+		      const double perc = (double) 100 * istep / nsteps;
+		      std::cout << "Status report for table '" << KinVect[i].name << "': "<< std::setw(6) << std::setprecision(4) << perc << "\% completed...\r";
+		      std::cout.flush();
 		    }
 	      }
 	    Tabs[i] << YAML::Key << qT;
@@ -287,6 +303,10 @@ namespace NangaParbat
 	Tabs[i] << YAML::EndMap;
 	t.stop();
       }
+    std::cout << std::endl;
+    std::cout << std::endl;
+
+    delete distpdf;
     return Tabs;
   }
 }
