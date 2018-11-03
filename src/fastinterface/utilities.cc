@@ -17,11 +17,11 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  std::vector<double> GenerateQGrid(int const& n, double const& min, double const& max)
+  std::vector<double> GenerateQGrid(int const& n, double const& min, double const& max, int const& ext)
   {
-    std::vector<double> grid(n+1);
-    const double step = ( max - min ) / ( n - 1 );
-    for (int i = 0; i < n + 1; i++)
+    std::vector<double> grid(n+ext+1);
+    const double step = ( max - min ) / n;
+    for (int i = 0; i <= n + ext; i++)
       grid[i] = min + i * step;
     return grid;
   }

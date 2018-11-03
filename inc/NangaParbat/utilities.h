@@ -16,5 +16,5 @@ namespace NangaParbat
   /**
    * @brief Utility function to generate an interpolation grid
    */
-  std::vector<double> GenerateQGrid(int const& n, double const& min, double const& max);
+  std::vector<double> GenerateQGrid(int const& n, double const& min, double const& max, int const& ext = 0);
 }

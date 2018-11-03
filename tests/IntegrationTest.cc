@@ -29,6 +29,14 @@ int main()
   const std::vector<NangaParbat::Kinematics> KinVect = NangaParbat::RetrieveKinematics(YAML::LoadFile("../cards/datasets.yaml"));
   const std::vector<YAML::Emitter> Tabs = NangaParbat::ComputeTables(config, KinVect);
 
+  // Write tables to file
+  for (auto const& tab : Tabs)
+    {
+      std::ofstream fout("../tables/" + YAML::Load(tab.c_str())["name"].as<std::string>());
+      fout << tab.c_str() << std::endl;
+      fout.close();
+    }
+
   // Now start direct computation
   // Set verbosity level of APFEL++
   apfel::SetVerbosityLevel(config["verbosity"].as<int>());
@@ -74,7 +82,7 @@ int main()
   const apfel::AlphaQED alphaem{config["alphaem"]["aref"].as<double>(), config["alphaem"]["Qref"].as<double>(), Thresholds, {0, 0, 1.777}, 0};
 
   // Retrieve relevant parameters from the configuration file
-  const double eps    = 1e-3;
+  const double eps    = 1e-5;
   const double Cf     = config["TMDscales"]["Cf"].as<double>();
   const int    nOgata = config["nOgata"].as<int>();
 
@@ -83,6 +91,7 @@ int main()
     {
       // Load convolution table and do the convolution
       const NangaParbat::ConvolutionTable CTable{YAML::Load(Tabs[i].c_str())};
+      //const NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/TestData_Table1.yaml")};
       const std::map<double,double> Conv = CTable.Convolute(fNP);
 
       // Timer
@@ -111,7 +120,7 @@ int main()
 
 	      // Tabulate TMDs in Q
 	      const auto EvolvedTMDPDFs = [&] (double const& Q) -> apfel::Set<apfel::Distribution>{ return EvTMDPDFs(bs, Cf * Q, Q * Q); };
-	      const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabEvolvedTMDPDFs{EvolvedTMDPDFs, NangaParbat::GenerateQGrid(50, Qb.first, Qb.second), 3};
+	      const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabEvolvedTMDPDFs{EvolvedTMDPDFs, 50, Qb.first, Qb.second, 3, {}};
 
 	      // Function to be integrated in Q
 	      const auto Qintegrand = [&] (double const& Q) -> double
@@ -162,7 +171,7 @@ int main()
 
 	      // Perform the integral in Q
 	      const apfel::Integrator QIntObj{Qintegrand};
-	      double Qintegral = apfel::ConvFact * 8 * M_PI * QIntObj.integrate(Qb.first, Qb.second, eps) / 9;
+	      double Qintegral = apfel::ConvFact * qT * 8 * M_PI * QIntObj.integrate(Qb.first, Qb.second, eps) / 9;
 
 	      // If not intergrating over qT, multiply by b
 	      if (!KinVect[i].IntqT)
@@ -170,7 +179,12 @@ int main()
 
 	      return Qintegral;
 	    };
-	  std::cout << qT << "  " << OgataObj.transform(TMDLumib, qT, nOgata) / Conv.at(qT) << std::endl;
+	  //const double direct = OgataObj.transform(TMDLumib, qT);
+	  const double direct = OgataObj.transform(TMDLumib, qT, nOgata);
+	  //const apfel::Integrator integrand{[=] (double const& bT) -> double{ return TMDLumib(bT) * j0(qT * bT); }};
+	  //const double direct = integrand.integrate(0.00005, 30, eps);
+	  const double tabled = Conv.at(qT);
+	  std::cout << std::scientific << qT << "  " << direct << "  " << tabled << "  " << direct / tabled << std::endl;
 	}
       t.stop();
     }
