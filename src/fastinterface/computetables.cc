@@ -86,7 +86,7 @@ namespace NangaParbat
   {
     // Retrieve relevant parameters from the configuration file
     const int    pto    = config["PerturbativeOrder"].as<int>();
-    const double Ci     = config["TMDscales"]["Cf"].as<double>();
+    const double Ci     = config["TMDscales"]["Ci"].as<double>();
     const double Cf     = config["TMDscales"]["Cf"].as<double>();
     const double aref   = config["alphaem"]["aref"].as<double>();
     const double Qref   = config["alphaem"]["Qref"].as<double>();

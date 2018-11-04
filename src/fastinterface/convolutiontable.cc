@@ -53,7 +53,7 @@ namespace NangaParbat
 	      {
 		const double Q    = _Qg[tau];
 		const double zeta = Q * Q;
-		const double Vtau  = Q / _Vs;
+		const double Vtau = Q / _Vs;
 		for (int alpha = 0; alpha < (int) _xig.size(); alpha++)
 		  {
 		    const double xi = _xig[tau];

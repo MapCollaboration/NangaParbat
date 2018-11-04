@@ -84,7 +84,7 @@ int main()
   // Retrieve relevant parameters from the configuration file
   const double eps    = 1e-5;
   const double Cf     = config["TMDscales"]["Cf"].as<double>();
-  const int    nOgata = config["nOgata"].as<int>();
+  //const int    nOgata = config["nOgata"].as<int>();
 
   // Loop over the vector of "Kinematics" objects
   for (int i = 0; i < (int) KinVect.size(); i++)
