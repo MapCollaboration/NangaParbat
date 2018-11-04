@@ -84,6 +84,22 @@ namespace NangaParbat
   //_________________________________________________________________________________
   std::vector<YAML::Emitter> ComputeTables(YAML::Node const& config, std::vector<Kinematics> const& KinVect)
   {
+    // Retrieve relevant parameters from the configuration file
+    const int    pto    = config["PerturbativeOrder"].as<int>();
+    const double Ci     = config["TMDscales"]["Cf"].as<double>();
+    const double Cf     = config["TMDscales"]["Cf"].as<double>();
+    const double aref   = config["alphaem"]["aref"].as<double>();
+    const double Qref   = config["alphaem"]["Qref"].as<double>();
+    const bool   arun   = config["alphaem"]["run"].as<bool>();
+    const double bmax   = config["bstar"]["bmax"].as<double>();
+    const int    nOgata = config["nOgata"].as<int>();
+    const int    nQ     = config["Qgrid"]["n"].as<int>();
+    const int    idQ    = config["Qgrid"]["InterDegree"].as<int>();
+    const double epsQ   = config["Qgrid"]["eps"].as<double>();
+    const int    nxi    = config["xigrid"]["n"].as<int>();
+    const int    idxi   = config["xigrid"]["InterDegree"].as<int>();
+    const double epsxi  = config["xigrid"]["eps"].as<double>();
+
     // Set verbosity level of APFEL++
     apfel::SetVerbosityLevel(config["verbosity"].as<int>());
 
@@ -122,20 +138,10 @@ namespace NangaParbat
     const auto TmdObj = apfel::InitializeTmdObjects(g, Thresholds);
 
     // Build evolved TMD PDFs
-    const auto EvTMDPDFs = BuildTmdPDFs(TmdObj, CollPDFs, Alphas, config["PerturbativeOrder"].as<int>(), config["TMDscales"]["Ci"].as<double>());
+    const auto EvTMDPDFs = BuildTmdPDFs(TmdObj, CollPDFs, Alphas, pto, Ci);
 
     // Alpha_em
-    const apfel::AlphaQED alphaem{config["alphaem"]["aref"].as<double>(), config["alphaem"]["Qref"].as<double>(), Thresholds, {0, 0, 1.777}, 0};
-
-    // Retrieve relevant parameters from the configuration file
-    const double Cf     = config["TMDscales"]["Cf"].as<double>();
-    const int    nOgata = config["nOgata"].as<int>();
-    const int    nQ     = config["Qgrid"]["n"].as<int>();
-    const int    idQ    = config["Qgrid"]["InterDegree"].as<int>();
-    const double epsQ   = config["Qgrid"]["eps"].as<double>();
-    const int    nxi    = config["xigrid"]["n"].as<int>();
-    const int    idxi   = config["xigrid"]["InterDegree"].as<int>();
-    const double epsxi  = config["xigrid"]["eps"].as<double>();
+    const apfel::AlphaQED alphaem{aref, Qref, Thresholds, {0, 0, 1.777}, 0};
 
     // Initialise container of YAML:Emitter objects.
     std::vector<YAML::Emitter> Tabs(KinVect.size());
@@ -207,7 +213,7 @@ namespace NangaParbat
 	      {
 		// Get impact parameters 'b' and 'b*'
 		const double b  = zo[n] / qT;
-		const double bs = bstar(b, config["bstar"]["bmax"].as<double>());
+		const double bs = bstar(b, bmax);
 
 		// Tabulate TMDs in Q directly in the physical
 		// basis. Here a default (empty) convolution map is
@@ -294,10 +300,10 @@ namespace NangaParbat
 			    const double IQ = Qgrid.Interpolant(0, tau, Q);
 
 			    // Electromagnetic coupling squared
-			    const double aem2 = pow((config["alphaem"]["run"].as<bool>() ? alphaem.Evaluate(Q) : config["alphaem"]["ref"].as<double>()), 2);
+			    const double aem2 = pow((arun ? alphaem.Evaluate(Q) : aref), 2);
 
 			    // Compute the hard factor
-			    const double hcs = apfel::HardFactorDY(config["PerturbativeOrder"].as<int>(), Alphas(muf), nf, Cf);
+			    const double hcs = apfel::HardFactorDY(pto, Alphas(muf), nf, Cf);
 
 			    // Return Q integrand
 			    return IQ * aem2 * hcs * xiintegral / pow(Q, 3);
