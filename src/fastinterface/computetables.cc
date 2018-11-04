@@ -209,8 +209,14 @@ namespace NangaParbat
 		const double b  = zo[n] / qT;
 		const double bs = bstar(b, config["bstar"]["bmax"].as<double>());
 
-		// Tabulate TMDs in Q
-		const auto EvolvedTMDPDFs = [&] (double const& Q) -> apfel::Set<apfel::Distribution>{ return EvTMDPDFs(bs, Cf * Q, Q * Q); };
+		// Tabulate TMDs in Q directly in the physical
+		// basis. Here a default (empty) convolution map is
+		// passed to the "Set" constructor because no
+		// convolution is required.
+		const auto EvolvedTMDPDFs = [&] (double const& Q) -> apfel::Set<apfel::Distribution>
+		  {
+		    return apfel::Set<apfel::Distribution>{apfel::ConvolutionMap{"Unnamed"}, QCDEvToPhys(EvTMDPDFs(bs, Cf * Q, Q * Q).GetObjects())};
+		  };
 		const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabEvolvedTMDPDFs{EvolvedTMDPDFs, Qg, idQ};
 
 		// Initialise vector of fixed points for the integration in Q
@@ -225,6 +231,10 @@ namespace NangaParbat
 		    if (FixPtsQ.size() > idQ || tau >= nQ)
 		      FixPtsQ.erase(FixPtsQ.begin());
 
+		    // Get integration bounds for the integration in Q
+		    const double Qmin = Qg[std::max(tau - idQ, 0)];
+		    const double Qmax = Qg[std::min(tau + 1, nQ)];
+
 		    // Initialise vector of fixed points for the integration in xi
 		    std::vector<double> FixPtsxi{};
 
@@ -236,6 +246,10 @@ namespace NangaParbat
 			  FixPtsxi.push_back(xig[alpha]);
 			if (FixPtsxi.size() > idxi || alpha >= nxi)
 			  FixPtsxi.erase(FixPtsxi.begin());
+
+			// Get integration bounds for the integration in xi
+			const double ximin = xig[std::max(alpha - idxi, 0)];
+			const double ximax = xig[std::min(alpha + 1, nxi)];
 
 			// Function to be integrated in Q
 			const auto Qintegrand = [&] (double const& Q) -> double
@@ -249,9 +263,8 @@ namespace NangaParbat
 			    // EW charges
 			    const std::vector<double> Bq = apfel::ElectroWeakCharges(Q, true);
 
-			    // Get Evolved TMD PDFs and rotate them into
-			    // the physical basis
-			    const std::map<int,apfel::Distribution> xF = QCDEvToPhys(TabEvolvedTMDPDFs.Evaluate(Q).GetObjects());
+			    // Get Evolved TMD PDFs
+			    const std::map<int,apfel::Distribution> xF = TabEvolvedTMDPDFs.Evaluate(Q).GetObjects();
 
 			    // Function to be integrated in xi
 			    const auto xiintegrand = [&] (double const& xi) -> double
@@ -273,13 +286,9 @@ namespace NangaParbat
 			      return Ixi * integrand / xi;
 			    };
 
-			    // Get integration bounds and fixed points
-			    const int iximin = std::max(alpha - idxi, 0);
-			    const int iximax = std::min(alpha + 1, nxi);
-
 			    // Perform the integral in xi
 			    const apfel::Integrator xiIntObj{xiintegrand};
-			    const double xiintegral = xiIntObj.integrate(xig[iximin], xig[iximax], FixPtsxi, epsxi);
+			    const double xiintegral = xiIntObj.integrate(ximin, ximax, FixPtsxi, epsxi);
 
 			    // Get interpolating function in Q
 			    const double IQ = Qgrid.Interpolant(0, tau, Q);
@@ -294,14 +303,9 @@ namespace NangaParbat
 			    return IQ * aem2 * hcs * xiintegral / pow(Q, 3);
 			  };
 
-			// Get integration bounds and fixed points in Q
-			// to help the integration
-			const int iQmin = std::max(tau - idQ, 0);
-			const int iQmax = std::min(tau + 1, nQ);
-
 			// Perform the integral in Q
 			const apfel::Integrator QIntObj{Qintegrand};
-			const double Qintegral = QIntObj.integrate(Qg[iQmin], Qg[iQmax], FixPtsQ, epsQ);
+			const double Qintegral = QIntObj.integrate(Qmin, Qmax, FixPtsQ, epsQ);
 
 			// Compute the weight
 			W[n][tau][alpha] = apfel::ConvFact * 8 * M_PI * wo[n] * Qintegral / 9;
