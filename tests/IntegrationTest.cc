@@ -179,9 +179,9 @@ int main()
 
 	      return Qintegral;
 	    };
-	  //const double direct = OgataObj.transform(TMDLumib, qT);
-	  const double direct = OgataObj.transform(TMDLumib, qT, nOgata);
-	  //const apfel::Integrator integrand{[=] (double const& bT) -> double{ return TMDLumib(bT) * j0(qT * bT); }};
+	  const double direct = OgataObj.transform(TMDLumib, qT);
+	  //const double direct = OgataObj.transform(TMDLumib, qT, nOgata);
+	  //const apfel::Integrator integrand{[=] (double const& bT) -> double{ return TMDLumib(bT) * j1(qT * bT); }};
 	  //const double direct = integrand.integrate(0.00005, 30, eps);
 	  const double tabled = Conv.at(qT);
 	  std::cout << std::scientific << qT << "  " << direct << "  " << tabled << "  " << direct / tabled << std::endl;
@@ -189,7 +189,5 @@ int main()
       t.stop();
     }
   delete distpdf;
-
   return 0;
 }
-

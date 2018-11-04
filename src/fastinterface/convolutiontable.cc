@@ -51,12 +51,13 @@ namespace NangaParbat
 	    const double b = _z[n] / qT;
 	    for (int tau = 0; tau < (int) _Qg.size(); tau++)
 	      {
-		const double Q = _Qg[tau];
+		const double Q    = _Qg[tau];
+		const double zeta = Q * Q;
 		const double Vtau  = Q / _Vs;
 		for (int alpha = 0; alpha < (int) _xig.size(); alpha++)
 		  {
 		    const double xi = _xig[tau];
-		    cs += _W.at(qT)[n][tau][alpha] * fNP(Vtau * xi, b, Q) * fNP(Vtau / xi, b, Q);
+		    cs += _W.at(qT)[n][tau][alpha] * fNP(Vtau * xi, b, zeta) * fNP(Vtau / xi, b, zeta);
 		  }
 	      }
 	  }
