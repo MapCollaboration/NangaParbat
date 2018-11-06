@@ -15,24 +15,24 @@ namespace NangaParbat
   class ConvolutionTable
   {
   public:
-  /**
-   * @brief The "ConvolutionTable" constructor.
-   * @param infile: the YAML:Node with the interpolation table
-   */
+    /**
+     * @brief The "ConvolutionTable" constructor.
+     * @param table: the YAML:Node with the interpolation table
+     */
     ConvolutionTable(YAML::Node const& table);
 
-  /**
-   * @brief The "ConvolutionTable" constructor.
-   * @param infile: the name of interpolation table in YAML format
-   */
+    /**
+     * @brief The "ConvolutionTable" constructor.
+     * @param infile: the name of interpolation table in YAML format
+     */
     ConvolutionTable(std::string const& infile);
 
-  /**
-   * @brief This functions convolute the input convolution table with
-   * a user-given non-perturbative function.
-   * @param fNP: the non-perturbative input function
-   * @return a map that associates each value of qT to a prediction.
-   */
+    /**
+     * @brief This functions convolute the input convolution table with
+     * a user-given non-perturbative function.
+     * @param fNP: the non-perturbative input function
+     * @return a map that associates each value of qT to a prediction.
+     */
     std::map<double,double> Convolute(std::function<double(double const&, double const&, double const&)> const& fNP) const;
 
   private:

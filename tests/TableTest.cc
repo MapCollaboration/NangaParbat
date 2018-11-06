@@ -4,6 +4,7 @@
 
 #include "NangaParbat/computetables.h"
 #include "NangaParbat/convolutiontable.h"
+#include "NangaParbat/testdata.h"
 
 #include <iostream>
 #include <fstream>
@@ -25,16 +26,16 @@ double fNP(double const&, double const& b, double const& zetaf)
 // Main program
 int main(int argc, char **argv)
 {
-  if (argc != 3)
+  if (argc != 2)
     {
-      std::cout << "\nusage: ./CreateTable config.yaml datasets.yaml\n" << std::endl;
+      std::cout << "\nusage: ./CreateTable config.yaml\n" << std::endl;
       exit(-1);
     }
 
   // Compute table
   const YAML::Node config  = YAML::LoadFile(argv[1]);
-  const YAML::Node dataset = YAML::LoadFile(argv[2]);
-  const std::vector<YAML::Emitter> Tabs = NangaParbat::ComputeTables(config, NangaParbat::RetrieveKinematics(dataset));
+  const std::vector<NangaParbat::DataHandler> DHVect = {NangaParbat::TestData{13000, 66, 116, -1, 1, {1, 3}}};
+  const std::vector<YAML::Emitter> Tabs = NangaParbat::ComputeTables(config, DHVect);
 
   // Convolute table
   for (auto const& tab : Tabs)

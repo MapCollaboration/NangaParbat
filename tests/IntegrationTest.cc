@@ -6,6 +6,7 @@
 
 #include "NangaParbat/computetables.h"
 #include "NangaParbat/convolutiontable.h"
+#include "NangaParbat/testdata.h"
 #include "NangaParbat/utilities.h"
 
 #include <math.h>
@@ -26,13 +27,13 @@ int main()
 {
   // Compute table
   const YAML::Node config = YAML::LoadFile("../cards/config.yaml");
-  const std::vector<NangaParbat::Kinematics> KinVect = NangaParbat::RetrieveKinematics(YAML::LoadFile("../cards/datasets.yaml"));
-  const std::vector<YAML::Emitter> Tabs = NangaParbat::ComputeTables(config, KinVect);
+  const std::vector<NangaParbat::DataHandler> DHVect = {NangaParbat::TestData{13000, 66, 116, -1, 1, {1, 3}}};
+  const std::vector<YAML::Emitter> Tabs = NangaParbat::ComputeTables(config, DHVect);
 
   // Write tables to file
   for (auto const& tab : Tabs)
     {
-      std::ofstream fout("../tables/" + YAML::Load(tab.c_str())["name"].as<std::string>());
+      std::ofstream fout("../tables/" + YAML::Load(tab.c_str())["name"].as<std::string>() + ".yaml");
       fout << tab.c_str() << std::endl;
       fout.close();
     }
@@ -82,31 +83,33 @@ int main()
   const apfel::AlphaQED alphaem{config["alphaem"]["aref"].as<double>(), config["alphaem"]["Qref"].as<double>(), Thresholds, {0, 0, 1.777}, 0};
 
   // Retrieve relevant parameters from the configuration file
-  const double eps    = 1e-5;
+  const double eps    = 1e-9;
   const double Cf     = config["TMDscales"]["Cf"].as<double>();
-  //const int    nOgata = config["nOgata"].as<int>();
+  const int    nOgata = config["nOgata"].as<int>();
 
   // Loop over the vector of "Kinematics" objects
-  for (int i = 0; i < (int) KinVect.size(); i++)
+  for (int i = 0; i < (int) DHVect.size(); i++)
     {
       // Load convolution table and do the convolution
       const NangaParbat::ConvolutionTable CTable{YAML::Load(Tabs[i].c_str())};
-      //const NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/TestData_Table1.yaml")};
+      //const NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/TestData.yaml")};
       const std::map<double,double> Conv = CTable.Convolute(fNP);
 
       // Timer
       apfel::Timer t;
 
       // Retrieve kinematics
-      double                   Vs  = KinVect[i].Vs;  // C.M.E.
-      std::pair<double,double> yb  = KinVect[i].yb;  // Rapidity interval
-      std::pair<double,double> Qb  = KinVect[i].Qb;  // Invariant mass interval
-      std::vector<double>      qTv = KinVect[i].qTv; // Transverse momentum bin bounds
+      const NangaParbat::DataHandler::Kinematics kin = DHVect[i].GetKinematics();
+      const double                   Vs    = kin.Vs;    // C.M.E.
+      const std::pair<double,double> yb    = kin.yb;    // Rapidity interval
+      const std::pair<double,double> Qb    = kin.Qb;    // Invariant mass interval
+      const std::vector<double>      qTv   = kin.qTv;   // Transverse momentum bin bounds
+      const bool                     IntqT = kin.IntqT; // Whether to integrate over qT
 
       // Ogata-quadrature object of degree one or zero according to
       // weather the cross sections have to be integrated over the
       // bins in qT or not.
-      apfel::OgataQuadrature OgataObj{(KinVect[i].IntqT ? 1 : 0)};
+      apfel::OgataQuadrature OgataObj{(IntqT ? 1 : 0)};
 
       // Loop over the qT-bin bounds
       for (auto const& qT : qTv)
@@ -174,15 +177,15 @@ int main()
 	      double Qintegral = apfel::ConvFact * qT * 8 * M_PI * QIntObj.integrate(Qb.first, Qb.second, eps) / 9;
 
 	      // If not intergrating over qT, multiply by b
-	      if (!KinVect[i].IntqT)
+	      if (!IntqT)
 		Qintegral *= b;
 
 	      return Qintegral;
 	    };
-	  const double direct = OgataObj.transform(TMDLumib, qT);
-	  //const double direct = OgataObj.transform(TMDLumib, qT, nOgata);
+	  //const double direct = OgataObj.transform(TMDLumib, qT);
+	  const double direct = OgataObj.transform(TMDLumib, qT, nOgata);
 	  //const apfel::Integrator integrand{[=] (double const& bT) -> double{ return TMDLumib(bT) * j1(qT * bT); }};
-	  //const double direct = integrand.integrate(0.00005, 30, eps);
+	  //const double direct = integrand.integrate(0.00005, 30, 1e-5);
 	  const double tabled = Conv.at(qT);
 	  std::cout << std::scientific << qT << "  " << direct << "  " << tabled << "  " << direct / tabled << std::endl;
 	}

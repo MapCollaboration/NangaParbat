@@ -10,79 +10,79 @@
 
 namespace NangaParbat
 {
+  // //_________________________________________________________________________________
+  // std::vector<Kinematics> RetrieveKinematics(YAML::Node const& datalist)
+  // {
+  //   // Initialise output container
+  //   std::vector<Kinematics> KinVect;
+
+  //   // Loop over the dataset list. Each dataset may have more than one
+  //   // distribution. Threfore, loop also over the distributions.
+  //   for (auto const& dl : datalist)
+  //     for (auto const& dist : dl.second)
+  // 	{
+  // 	  // Open HEPData datafile name
+  // 	  const YAML::Node df = YAML::LoadFile("../Data/" + dl.first.as<std::string>() + "/" + dist.as<std::string>());
+
+  // 	  // Initialise a "Kinematics" object
+  // 	  Kinematics kin;
+
+  // 	  // Assing to the "kin" structure the name of the data file
+  // 	  // along with its folder.
+  // 	  kin.name = dl.first.as<std::string>() + "_" + dist.as<std::string>();
+
+  // 	  // Retrieve kinematics
+  // 	  for (auto const& dv : df["dependent_variables"])
+  // 	    for (auto const& ql : dv["qualifiers"])
+  // 	      {
+  // 		// We assume that each table contains one single bin
+  // 		// in rapidity and one single bin in invariant mass
+  // 		// that need to be integrated over. In addition we
+  // 		// interpret the qT vector as a vector o bounds of the
+  // 		// bins that also need to be integrated over.
+  // 		kin.IntqT = true;
+
+  // 		// Rapidity interval interval
+  // 		if (ql["name"].as<std::string>() == "ABS(ETARAP)")
+  // 		  {
+  // 		    std::string tmp;
+  // 		    std::stringstream ss(ql["value"].as<std::string>());
+  // 		    ss >> tmp >> kin.yb.second;
+  // 		    kin.yb.first = - kin.yb.second;
+  // 		  }
+
+  // 		// Invariant-mass interval
+  // 		if (ql["name"].as<std::string>() == "M(P=3_4)")
+  // 		  {
+  // 		    std::string tmp;
+  // 		    std::stringstream ss(ql["value"].as<std::string>());
+  // 		    ss >> kin.Qb.first >> tmp >> kin.Qb.second;
+  // 		  }
+
+  // 		// Center-of-mass energy
+  // 		if (ql["name"].as<std::string>() == "SQRT(S)")
+  // 		  kin.Vs = ql["value"].as<double>();
+  // 	      }
+
+  // 	  // Transverse momentum bin bounds
+  // 	  std::vector<double> qTv;
+  // 	  for (auto const& iv : df["independent_variables"])
+  // 	    for (auto const& vl : iv["values"])
+  // 	      {
+  // 		if(std::find(kin.qTv.begin(), kin.qTv.end(), vl["low"].as<double>()) == kin.qTv.end())
+  // 		  kin.qTv.push_back(std::max(vl["low"].as<double>(), 1e-5));
+  // 		if(std::find(kin.qTv.begin(), kin.qTv.end(), vl["high"].as<double>()) == kin.qTv.end())
+  // 		  kin.qTv.push_back(vl["high"].as<double>());
+  // 	      }
+
+  // 	  // Push "Kinematics" object into the container
+  // 	  KinVect.push_back(kin);
+  // 	}
+  //   return KinVect;
+  // }
+
   //_________________________________________________________________________________
-  std::vector<Kinematics> RetrieveKinematics(YAML::Node const& datalist)
-  {
-    // Initialise output container
-    std::vector<Kinematics> KinVect;
-
-    // Loop over the dataset list. Each dataset may have more than one
-    // distribution. Threfore, loop also over the distributions.
-    for (auto const& dl : datalist)
-      for (auto const& dist : dl.second)
-	{
-	  // Open HEPData datafile name
-	  const YAML::Node df = YAML::LoadFile("../Data/" + dl.first.as<std::string>() + "/" + dist.as<std::string>());
-
-	  // Initialise a "Kinematics" object
-	  Kinematics kin;
-
-	  // Assing to the "kin" structure the name of the data file
-	  // along with its folder.
-	  kin.name = dl.first.as<std::string>() + "_" + dist.as<std::string>();
-
-	  // Retrieve kinematics
-	  for (auto const& dv : df["dependent_variables"])
-	    for (auto const& ql : dv["qualifiers"])
-	      {
-		// We assume that each table contains one single bin
-		// in rapidity and one single bin in invariant mass
-		// that need to be integrated over. In addition we
-		// interpret the qT vector as a vector o bounds of the
-		// bins that also need to be integrated over.
-		kin.IntqT = true;
-
-		// Rapidity interval interval
-		if (ql["name"].as<std::string>() == "ABS(ETARAP)")
-		  {
-		    std::string tmp;
-		    std::stringstream ss(ql["value"].as<std::string>());
-		    ss >> tmp >> kin.yb.second;
-		    kin.yb.first = - kin.yb.second;
-		  }
-
-		// Invariant-mass interval
-		if (ql["name"].as<std::string>() == "M(P=3_4)")
-		  {
-		    std::string tmp;
-		    std::stringstream ss(ql["value"].as<std::string>());
-		    ss >> kin.Qb.first >> tmp >> kin.Qb.second;
-		  }
-
-		// Center-of-mass energy
-		if (ql["name"].as<std::string>() == "SQRT(S)")
-		  kin.Vs = ql["value"].as<double>();
-	      }
-
-	  // Transverse momentum bin bounds
-	  std::vector<double> qTv;
-	  for (auto const& iv : df["independent_variables"])
-	    for (auto const& vl : iv["values"])
-	      {
-		if(std::find(kin.qTv.begin(), kin.qTv.end(), vl["low"].as<double>()) == kin.qTv.end())
-		  kin.qTv.push_back(std::max(vl["low"].as<double>(), 1e-5));
-		if(std::find(kin.qTv.begin(), kin.qTv.end(), vl["high"].as<double>()) == kin.qTv.end())
-		  kin.qTv.push_back(vl["high"].as<double>());
-	      }
-
-	  // Push "Kinematics" object into the container
-	  KinVect.push_back(kin);
-	}
-    return KinVect;
-  }
-
-  //_________________________________________________________________________________
-  std::vector<YAML::Emitter> ComputeTables(YAML::Node const& config, std::vector<Kinematics> const& KinVect)
+  std::vector<YAML::Emitter> ComputeTables(YAML::Node const& config, std::vector<DataHandler> const& DHVect)
   {
     // Retrieve relevant parameters from the configuration file
     const int    pto    = config["PerturbativeOrder"].as<int>();
@@ -144,25 +144,30 @@ namespace NangaParbat
     const apfel::AlphaQED alphaem{aref, Qref, Thresholds, {0, 0, 1.777}, 0};
 
     // Initialise container of YAML:Emitter objects.
-    std::vector<YAML::Emitter> Tabs(KinVect.size());
+    std::vector<YAML::Emitter> Tabs(DHVect.size());
 
     // Loop over the vector of "Kinematics" objects
     std::cout << std::endl;
-    for (int i = 0; i < (int) KinVect.size(); i++)
+    for (int i = 0; i < (int) DHVect.size(); i++)
       {
 	// Timer
 	apfel::Timer t;
 
+	// Name of the dataset
+	const std::string name = DHVect[i].GetName();
+
 	// Retrieve kinematics
-	double                   Vs  = KinVect[i].Vs;  // C.M.E.
-	std::pair<double,double> yb  = KinVect[i].yb;  // Rapidity interval
-	std::pair<double,double> Qb  = KinVect[i].Qb;  // Invariant mass interval
-	std::vector<double>      qTv = KinVect[i].qTv; // Transverse momentum bin bounds
+	const DataHandler::Kinematics  kin   = DHVect[i].GetKinematics();
+	const double                   Vs    = kin.Vs;    // C.M.E.
+	const std::pair<double,double> yb    = kin.yb;    // Rapidity interval
+	const std::pair<double,double> Qb    = kin.Qb;    // Invariant mass interval
+	const std::vector<double>      qTv   = kin.qTv;   // Transverse momentum bin bounds
+	const bool                     IntqT = kin.IntqT; // Whether the bins in qTv are integrated over
 
 	// Ogata-quadrature object of degree one or zero according to
 	// weather the cross sections have to be integrated over the
 	// bins in qT or not.
-	apfel::OgataQuadrature OgataObj{(KinVect[i].IntqT ? 1 : 0)};
+	apfel::OgataQuadrature OgataObj{(IntqT ? 1 : 0)};
 
 	// Unscaled coordinates and weights of the Ogata quadrature.
 	std::vector<double> zo = OgataObj.GetCoordinates();
@@ -184,7 +189,7 @@ namespace NangaParbat
 	Tabs[i].SetDoublePrecision(8);
 	Tabs[i] << YAML::BeginMap;
 	Tabs[i] << YAML::Comment("Kinematics and grid information");
-	Tabs[i] << YAML::Key << "name" << YAML::Value << KinVect[i].name;
+	Tabs[i] << YAML::Key << "name" << YAML::Value << name;
 	Tabs[i] << YAML::Key << "CME" << YAML::Value << Vs;
 	Tabs[i] << YAML::Key << "qT_bounds" << YAML::Value << YAML::Flow << qTv;
 	Tabs[i] << YAML::Key << "Ogata_coordinates" << YAML::Value << YAML::Flow << std::vector<double>(zo.begin(), zo.begin() + nO);
@@ -317,13 +322,13 @@ namespace NangaParbat
 			W[n][tau][alpha] = apfel::ConvFact * 8 * M_PI * wo[n] * Qintegral / 9;
 
 			// If not intergrating over qT, multiply by b
-			if (!KinVect[i].IntqT)
+			if (!IntqT)
 			  W[n][tau][alpha] *= b;
 
 			// Report progress
 			istep++;
 			const double perc = (double) 100 * istep / nsteps;
-			std::cout << "Status report for table '" << KinVect[i].name << "': "<< std::setw(6) << std::setprecision(4) << perc << "\% completed...\r";
+			std::cout << "Status report for table '" << name << "': "<< std::setw(6) << std::setprecision(4) << perc << "\% completed...\r";
 			std::cout.flush();
 		      }  // End loop over alpha
 		  }  // End loop over tau
