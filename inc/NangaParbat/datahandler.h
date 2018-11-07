@@ -20,6 +20,11 @@ namespace NangaParbat
   {
   public:
     /**
+     * @brief The process enumerator
+     */
+    enum Process: int {DY, SIDIS};
+
+    /**
      * @brief Structure containing the kinematic information of one
      * single data set.
      */
@@ -28,22 +33,27 @@ namespace NangaParbat
       int                      ndata;  //!< Number of data points
       double                   Vs;     //!< Center of mass energy
       std::vector<double>      qTv;    //!< Vector of qT values
-      std::pair<double,double> Qb;     //!< Q integration bounds
-      std::pair<double,double> yb;     //!< y integration bounds
+      std::pair<double,double> var1b;  //!< Variable 1 integration bounds
+      std::pair<double,double> var2b;  //!< Variable 1 integration bounds
       bool                     IntqT;  //!< Whether the bins in qTv are integrated over
-      bool                     IntQ;   //!< Whether the bins in Q are integrated over
-      bool                     Inty;   //!< Whether the bins in y are integrated over
+      bool                     Intv1;  //!< Whether the bins in Q are integrated over
+      bool                     Intv2;  //!< Whether the bins in y are integrated over
     };
 
     /**
      * @brief The default "DataHandler" constructor.
      */
-    DataHandler(std::string const& name);
+    DataHandler(std::string const& name, std::string const& datafolder = "../data/");
 
     /**
      * @brief Function to retrive the name of the dataset object
      */
     std::string GetName() const { return _name; };
+
+    /**
+     * @brief Function that returns the process
+     */
+    Process GetProcess() const { return _proc; };
 
     /**
      * @brief Function that returns the kinematic object
@@ -56,14 +66,24 @@ namespace NangaParbat
     std::vector<double> GetMeanValues() const { return _mean; };
 
     /**
-     * @brief Function that returns the covariance matrix
+     * @brief Function that returns the covariance matrix of the
+     * correlated uncertainties.
      */
     apfel::matrix<double> GetCovarianceMatrix() const { return _cov; };
 
+    /**
+     * @brief Function that returns the sum in quadrature of the
+     * uncorrelated uncertainties.
+     */
+    std::vector<double> GetUncorrelatedUnc() const { return _unc; };
+
   protected:
-    std::string           _name;   //!< Name of the dataset
-    Kinematics            _kin;    //!< Kinematics block
-    std::vector<double>   _mean;   //!< vector of central values
-    apfel::matrix<double> _cov;    //!< Covariance matrix
+    std::string           _datafolder;  //!< Path to the data folder
+    std::string           _name;        //!< Name of the dataset
+    Process               _proc;        //!< The process (can be Drell-Yan or SIDIS)
+    Kinematics            _kin;         //!< Kinematics block
+    std::vector<double>   _mean;        //!< Vector of central values
+    std::vector<double>   _unc;         //!< Vector of uncorrelated uncertainties summed in quadrature
+    apfel::matrix<double> _cov;         //!< Covariance matrix
   };
 }

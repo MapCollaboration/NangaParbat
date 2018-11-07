@@ -9,7 +9,8 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  DataHandler::DataHandler(std::string const& name):
+  DataHandler::DataHandler(std::string const& name, std::string const& datafolder):
+    _datafolder(datafolder),
     _name(name)
   {
   }

@@ -1,0 +1,71 @@
+dependent_variables:
+- header: {name: (1/SIG)*D(SIG)/DPT, units: GEV**-1}
+  qualifiers:
+  - {name: ABS(YRAP), value: '> 2'}
+  - {name: RE, value: PBAR P --> Z0 <E+ E-> X + GAMMA* <E+ E-> X}
+  - {name: SQRT(S), units: GeV, value: '1960.0'}
+  - {name: SQRT(S), units: GeV, value: '1960.0'}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.0044}
+    - {label: sys, symerror: 0.0024}
+    value: 0.0667
+  - errors:
+    - {label: stat, symerror: 0.004}
+    - {label: sys, symerror: 0.0032}
+    value: 0.0966
+  - errors:
+    - {label: stat, symerror: 0.0033}
+    - {label: sys, symerror: 0.0023}
+    value: 0.0721
+  - errors:
+    - {label: stat, symerror: 0.0025}
+    - {label: sys, symerror: 0.0015}
+    value: 0.0444
+  - errors:
+    - {label: stat, symerror: 0.002}
+    - {label: sys, symerror: 0.0009}
+    value: 0.0312
+  - errors:
+    - {label: stat, symerror: 0.0016}
+    - {label: sys, symerror: 0.0008}
+    value: 0.0206
+  - errors:
+    - {label: stat, symerror: 0.0013}
+    - {label: sys, symerror: 0.0005}
+    value: 0.0156
+  - errors:
+    - {label: stat, symerror: 0.001}
+    - {label: sys, symerror: 0.0005}
+    value: 0.011
+  - errors:
+    - {label: stat, symerror: 0.0009}
+    - {label: sys, symerror: 0.00044}
+    value: 0.0096
+  - errors:
+    - {label: stat, symerror: 0.00076}
+    - {label: sys, symerror: 0.00048}
+    value: 0.008
+  - errors:
+    - {label: stat, symerror: 0.00063}
+    - {label: sys, symerror: 0.00031}
+    value: 0.0045
+  - errors:
+    - {label: stat, symerror: 0.00052}
+    - {label: sys, symerror: 0.0003}
+    value: 0.004
+independent_variables:
+- header: {name: PT, units: GEV}
+  values:
+  - {high: 2.5, low: 0.0, value: 1.1}
+  - {high: 5.0, low: 2.5, value: 4.0}
+  - {high: 7.5, low: 5.0, value: 6.0}
+  - {high: 10.0, low: 7.5, value: 8.5}
+  - {high: 12.5, low: 10.0, value: 11.5}
+  - {high: 15.0, low: 12.5, value: 14.0}
+  - {high: 17.5, low: 15.0, value: 16.3}
+  - {high: 20.0, low: 17.5, value: 18.7}
+  - {high: 22.5, low: 20.0, value: 20.5}
+  - {high: 25.0, low: 22.5, value: 23.2}
+  - {high: 27.5, low: 25.0, value: 26.2}
+  - {high: 30.0, low: 27.5, value: 29.0}

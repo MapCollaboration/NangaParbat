@@ -21,4 +21,15 @@ namespace NangaParbat
 	     double const& ymin, double const& ymax,
 	     std::vector<double> const& qTv);
   };
+
+  /**
+   * @brief The "ins302822" class is a derived class of "DataHandler"
+   * for the E605 dataset. HEPData page:
+   * https://www.hepdata.net/record/ins302822
+   */
+  class ins302822: public DataHandler
+  {
+  public:
+    ins302822();
+  };
 }

@@ -6,7 +6,7 @@
 
 #include "NangaParbat/computetables.h"
 #include "NangaParbat/convolutiontable.h"
-#include "NangaParbat/testdata.h"
+#include "NangaParbat/datasets.h"
 #include "NangaParbat/utilities.h"
 
 #include <math.h>
@@ -101,8 +101,8 @@ int main()
       // Retrieve kinematics
       const NangaParbat::DataHandler::Kinematics kin = DHVect[i].GetKinematics();
       const double                   Vs    = kin.Vs;    // C.M.E.
-      const std::pair<double,double> yb    = kin.yb;    // Rapidity interval
-      const std::pair<double,double> Qb    = kin.Qb;    // Invariant mass interval
+      const std::pair<double,double> yb    = kin.var2b; // Rapidity interval
+      const std::pair<double,double> Qb    = kin.var1b; // Invariant mass interval
       const std::vector<double>      qTv   = kin.qTv;   // Transverse momentum bin bounds
       const bool                     IntqT = kin.IntqT; // Whether to integrate over qT
 

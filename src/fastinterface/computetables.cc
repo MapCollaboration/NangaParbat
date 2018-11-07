@@ -159,10 +159,12 @@ namespace NangaParbat
 	// Retrieve kinematics
 	const DataHandler::Kinematics  kin   = DHVect[i].GetKinematics();
 	const double                   Vs    = kin.Vs;    // C.M.E.
-	const std::pair<double,double> yb    = kin.yb;    // Rapidity interval
-	const std::pair<double,double> Qb    = kin.Qb;    // Invariant mass interval
 	const std::vector<double>      qTv   = kin.qTv;   // Transverse momentum bin bounds
-	const bool                     IntqT = kin.IntqT; // Whether the bins in qTv are integrated over
+	const std::pair<double,double> Qb    = kin.var1b; // Invariant mass interval
+	const std::pair<double,double> yb    = kin.var2b; // Rapidity interval
+	const bool                     IntqT = kin.IntqT; // Whether the bins in qTv are to be integrated over
+	const bool                     IntQ  = kin.Intv1; // Whether the bin in Q is to be integrated over
+	const bool                     Inty  = kin.Intv2; // Whether the bin in y is to be integrated over
 
 	// Ogata-quadrature object of degree one or zero according to
 	// weather the cross sections have to be integrated over the
@@ -174,8 +176,10 @@ namespace NangaParbat
 	std::vector<double> wo = OgataObj.GetWeights();
 
 	// Construct QGrid-like grids for the integration in Q and y
-	const std::vector<double> Qg  = GenerateQGrid(nQ, Qb.first, Qb.second, idQ - 1);
-	const std::vector<double> xig = GenerateQGrid(nxi, exp(yb.first), exp(yb.second), idxi - 1);
+	const std::vector<double> Qg  = (IntQ ? GenerateQGrid(nQ, Qb.first, Qb.second, idQ - 1) :
+					 std::vector<double>{( Qb.first + Qb.second ) / 2});
+	const std::vector<double> xig = (Inty ? GenerateQGrid(nxi, exp(yb.first), exp(yb.second), idxi - 1) :
+					 std::vector<double>{exp( ( yb.first + yb.second ) / 2 )});
 	const apfel::QGrid<double> Qgrid {Qg,  idQ};
 	const apfel::QGrid<double> xigrid{xig, idxi};
 
@@ -275,7 +279,8 @@ namespace NangaParbat
 			    const std::vector<double> Bq = apfel::ElectroWeakCharges(Q, true);
 
 			    // Get Evolved TMD PDFs
-			    const std::map<int,apfel::Distribution> xF = TabEvolvedTMDPDFs.Evaluate(Q).GetObjects();
+			    const std::map<int,apfel::Distribution> xF = (IntQ ? TabEvolvedTMDPDFs.Evaluate(Q).GetObjects() :
+									  EvolvedTMDPDFs(Q).GetObjects());
 
 			    // Function to be integrated in xi
 			    const auto xiintegrand = [&] (double const& xi) -> double
@@ -284,8 +289,10 @@ namespace NangaParbat
 			      const double x1 = Q * xi / Vs;
 			      const double x2 = Q / xi / Vs;
 
-			      // Get interpolating function in xi
-			      const double Ixi = xigrid.Interpolant(0, alpha, xi);
+			      // Get interpolating function in xi but
+			      // return 1 if no integration over xi is
+			      // required
+			      const double Ixi = (Inty ? xigrid.Interpolant(0, alpha, xi) : 1);
 
 			      // Combine TMDs through the EW charges
 			      double integrand = 0;
@@ -299,10 +306,12 @@ namespace NangaParbat
 
 			    // Perform the integral in xi
 			    const apfel::Integrator xiIntObj{xiintegrand};
-			    const double xiintegral = xiIntObj.integrate(ximin, ximax, FixPtsxi, epsxi);
+			    const double xiintegral = (Inty ? xiIntObj.integrate(ximin, ximax, FixPtsxi, epsxi) : xiintegrand(xig[alpha]));
 
-			    // Get interpolating function in Q
-			    const double IQ = Qgrid.Interpolant(0, tau, Q);
+			    // Get interpolating function in Q but
+			    // return 1 if no integration over Q is
+			    // required
+			    const double IQ = (IntQ ? Qgrid.Interpolant(0, tau, Q) : 1);
 
 			    // Electromagnetic coupling squared
 			    const double aem2 = pow((arun ? alphaem.Evaluate(Q) : aref), 2);
@@ -316,7 +325,7 @@ namespace NangaParbat
 
 			// Perform the integral in Q
 			const apfel::Integrator QIntObj{Qintegrand};
-			const double Qintegral = QIntObj.integrate(Qmin, Qmax, FixPtsQ, epsQ);
+			const double Qintegral = (IntQ ? QIntObj.integrate(Qmin, Qmax, FixPtsQ, epsQ) : Qintegrand(Qg[tau]));
 
 			// Compute the weight
 			W[n][tau][alpha] = apfel::ConvFact * 8 * M_PI * wo[n] * Qintegral / 9;
