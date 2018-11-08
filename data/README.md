@@ -7,7 +7,7 @@ std::vector<double>   _mean;
 std::vector<double>   _unc;
 apfel::matrix<double> _cov;
 ```
-where ```_name```
+where ```_name``` is the identifier name of the dataset, ```_proc``` is a process enumerator that can take the values ```DY``` for Drell-Yan and ```SIDIS``` for semi-inclusive DIS.
 
 ```Shell
 dependent_variables:
