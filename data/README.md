@@ -1,6 +1,6 @@
 # Structure of the data files
 
-The data files contained in this folder are used by the code to compute the interpolation table and to obtaine the experimental information concerning the datasets included in the fit. They are written in the YAML format and follow as closely as possible the HEPData format (https://www.hepdata.net). However, due to a lack of standardisation of the current datafiles, they require a number of modifications that make them readable to the code. Each data file has to contain all required information to carry out the calculation. Specifically, each data file needs to the encode all the information required to instantiate an object of the "datahandler" class. The relevant attributes of this class are:
+The data files contained in this folder are used by the code to compute the interpolation table and to obtaine the experimental information concerning the datasets included in the fit. They are written in the YAML format and follow as closely as possible the **HEPData** format (https://www.hepdata.net). However, due to a lack of standardisation of the current datafiles, they require a number of modifications that make them readable to the code. Each data file has to contain all required information to carry out the calculation. Specifically, each data file needs to the encode all the information required to instantiate an object of the `DataHandler` class. The relevant attributes of this class are:
 ```Shell
 std::string           _name;
 Process               _proc;
@@ -23,38 +23,48 @@ struct Kinematics
   bool                     Intv2;
 };
 ```
-Here `ndata` corresponds to the number of measurements, `Vs` is the center of mass energy in GeV, `qTv` is the vector of transverse momentum points. Denpending on whether `IntqT` is `true` or `false`, the entries of the `qTv` vector will be interpreted as the bounds of bins in transverse momentum or as the values at which the cross section has to be computed. In other words, if `IntqT` is `true` the code will compute the *primitive* in *q*<sub>T</sub> of the cross section, such that the integrated cross section in *q*<sub>T</sub> is computed by taking the difference between the upper and the lower bound. `var1b` and `var2b` correspond to two additional kinematic variables (*e.g.* the invariant mass *Q* and the rapidity *y* of the lepton pair in Drell-Yan). They are given as `std::pair`'s containing the lower and upper bound of the respective allowed region. According to whether `Intv1`(`Intv2`) is `true` or `false`, the cross section will be integrated over or computed in the center of the allowed region.
+Here `ndata` corresponds to the number of measurements, `Vs` is the center of mass energy in GeV, `qTv` is the vector of transverse momentum points. Denpending on whether `IntqT` is `true` or `false`, the entries of the `qTv` vector will be interpreted as the bounds of bins in transverse momentum or as the values at which the cross section has to be computed. In other words, if `IntqT` is `true` the code will compute the *primitive* in *q*<sub>T</sub> of the cross section, such that the integrated cross section in *q*<sub>T</sub> is computed by taking the difference between the upper and the lower bound. It is thus possible that the size of `qTv` does not coincide with `ndata`. `var1b` and `var2b` correspond to two additional kinematic variables (*e.g.* the invariant mass *Q* and the rapidity *y* of the lepton pair in Drell-Yan). They are given as `std::pair`'s containing the lower and upper bound of the respective allowed region. According to whether `Intv1`(`Intv2`) is `true` or `false`, the cross section will be integrated over or computed in the center of the allowed region.
+
+With the goal of sticking as close as possible to the original **HEPData** YAML format, we use the same syntax suggested here: https://github.com/HEPData/hepdata-submission, but adapting it to our needs. A typical data file will look like this:
+
 ```Shell
 dependent_variables:
-- header: {name: D(SIG)/DPT, units: NB/GEV}
+- header: {name: D(SIG)/DPT}
   qualifiers:
-  - {name: RE, value: PBAR P --> Z0 < E+ E- > X}
-  - {name: SQRT(S), units: GeV, value: '1800.0'}
-  - {name: SQRT(S), units: GeV, value: '1800.0'}
+  - {name: process, value: DY}
+  - {name: SQRT(S), value: 1800}
+  - {name: Q, low: 66, high: 116, integrate: true}
+  - {name: y, low: -1, high: 1, integrate: true}
+  - {name: factor, value: 1}
   values:
   - errors:
-    - {symerror: 0.53}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', symerror: 0.53}
+    - {label: 'add', symerror: 5.0%}
+    - {label: 'mult', symerror: 4.4%}
     value: 6.04
   - errors:
-    - {symerror: 0.96}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', symerror: 0.96}
+    - {label: 'add', symerror: 5.0%}
+    - {label: 'mult', symerror: 4.4%}
     value: 16.2
   - errors:
-    - {symerror: 1.1}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', symerror: 1.1}
+    - {label: 'add', symerror: 5.0%}
+    - {label: 'mult', symerror: 4.4%}
     value: 20.4
   - errors:
-    - {symerror: 1.1}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', symerror: 1.1}
+    - {label: 'add', symerror: 5.0%}
+    - {label: 'mult', symerror: 4.4%}
     value: 19.7
   - errors:
-    - {symerror: 0.92}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', symerror: 0.92}
+    - {label: 'corr', symerror: 5.0%}
+    - {label: 'mult', symerror: 4.4%}
     value: 16.2
 ...
 independent_variables:
-- header: {name: PT, units: GEV}
+- header: {name: PT}
   values:
   - {high: 1.0, low: 0.0}
   - {high: 2.0, low: 1.0}
@@ -63,3 +73,35 @@ independent_variables:
   - {high: 5.0, low: 4.0}
 ...
 ```
+Let us analyse the different blocks. The document has two main blocks: `dependent_variables` and `independent_variables`. 
+
+While most of the entries in the `dependent_variables` should be self-explanatory, the `value:` sub-block requires some clarifications. For example the item:
+```Shell
+  - errors:
+    - {label: 'unc', symerror: 0.53}
+    - {label: 'add', symerror: 5.0%}
+    - {label: 'mult', symerror: 4.4%}
+    value: 6.04
+```
+contains information on the uncertanties (`errors`). There may more uncertainties of three different kinds:
+- `unc`: *uncorrelated* uncertainty that contributes to the diagonal of the covariance matrix, typically the statistical uncertainty but can also be systematic.
+- `add`: *additive correlated* uncertainty.
+- `mult`: *multiplicative correlated* uncertainty (typically, the luminosity uncertainty).
+
+Distinguishing between additive and multiplicative uncertainties is required when implementing some prescription to avoid the so-called *D'Agostini bias* induced by correlated multiplicative uncertainties. The information contained in the `error` blocks should be suffiecient to fill in the the `_unc` and `_cov` blocks of the `DataHandler` class. Finally, the `value` block contains the central value of that paprticular measurement and is store in the `_mean` vector.
+
+The `independent_variables` block, instead, provides infomation on the binning in *q*<sub>T</sub> (notice that the number of items in the `value` sub-block in the `independent_variables` block has to match the number of items in the `value` sub-block in the `dependent_variables` block discussed above).
+
+In the particular case displayed above, the corresponding `value` sub-block contains the upper (`high`) and lower (`low`) bounds of each bin in *q*<sub>T</sub>. This implies that the cross section has to be integrated on the *q*<sub>T</sub> bins causing the `IntqT` flag to be `true`. In case no integration in *q*<sub>T</sub> is required, the `independent_variables` block may look like this:
+```Shell
+independent_variables:
+- header: {name: PT, units: GEV}
+  values:
+  - {value: 0.1}
+  - {value: 0.3}
+  - {value: 0.5}
+  - {value: 0.7}
+  - {value: 0.9}
+  ...
+```
+where only the central value in *q*<sub>T</sub> is reported and implying the `IntqT` flag to be `false`.
