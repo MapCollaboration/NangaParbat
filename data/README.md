@@ -7,7 +7,22 @@ std::vector<double>   _unc;
 apfel::matrix<double> _cov;
 Kinematics            _kin;
 ```
-where `_name` is the identifier name of the dataset, `_proc` is a process enumerator that can take the values `DY` for Drell-Yan and `SIDIS` for semi-inclusive DIS. `_mean` is a vector containing the central values of of the measurements, `_unc` is the sum in quadrature of all the uncorrelated uncertainties (therefore each entry corresponds to the square of the total uncorrelated uncertainty), and `_cov` is the covariance matrix constructed out of the correlated uncertainties only. Therefore, adding `_unc` to the diagonal of `_cov` produces the full covariance matrix.
+where `_name` is the identifier name of the dataset, `_proc` is a process enumerator that can take the values `DY` for Drell-Yan and `SIDIS` for semi-inclusive DIS. `_mean` is a vector containing the central values of of the measurements, `_unc` is the sum in quadrature of all the uncorrelated uncertainties (therefore each entry corresponds to the square of the total uncorrelated uncertainty), and `_cov` is the covariance matrix constructed out of the correlated uncertainties only. Therefore, adding `_unc` to the diagonal of `_cov` produces the full covariance matrix. Finally, `_kin` is an object of the structure `Kinematics`:
+```Shell
+struct Kinematics
+{
+  int                      ndata;
+  double                   Vs;
+  std::vector<double>      qTv;
+  std::pair<double,double> var1b;
+  std::pair<double,double> var2b;
+  bool                     IntqT;
+  bool                     Intv1;
+  bool                     Intv2;
+};
+```
+Here `ndata` corresponds to the number of measurements, `Vs` is the center of mass energy in GeV, `qTv` is the vector of transverse momentum points. Denpending on whether `IntqT` is `true` or `false`, the entries of the `qTv` vector will be interpreted as the bounds of bins in transverse momentum or as the values at which the cross section has to be computed. In other words, if `IntqT` is `true` the code will compute the *primitive* in *q*<sub>T</sub>
+
 
 ```Shell
 dependent_variables:
