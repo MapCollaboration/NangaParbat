@@ -1,5 +1,4 @@
 The data files contained in this folder are used by the code to compute the interpolation table and to obtaine the experimental information concerning the datasets included in the fit. They are written in the YAML format and follow as closely as possible the HEPData format (https://www.hepdata.net). However, due to a lack of standardisation of the current datafiles, they require a number of modifications that make them readable to the code. Each data file has to contain all required information to carry out the calculation. Specifically, each data file needs to the encode all the information required to instantiate an object of the "datahandler" class. The relevant attributes of this class are:
-
 ```Shell
 std::string           _name;
 Process               _proc;
@@ -8,7 +7,7 @@ std::vector<double>   _mean;
 std::vector<double>   _unc;
 apfel::matrix<double> _cov;
 ```
-
+where ```_name```
 
 ```Shell
 dependent_variables:
