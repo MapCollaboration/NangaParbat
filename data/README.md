@@ -2,12 +2,12 @@ The data files contained in this folder are used by the code to compute the inte
 ```Shell
 std::string           _name;
 Process               _proc;
-Kinematics            _kin;
 std::vector<double>   _mean;
 std::vector<double>   _unc;
 apfel::matrix<double> _cov;
+Kinematics            _kin;
 ```
-where ```_name``` is the identifier name of the dataset, ```_proc``` is a process enumerator that can take the values ```DY``` for Drell-Yan and ```SIDIS``` for semi-inclusive DIS.
+where `_name` is the identifier name of the dataset, `_proc` is a process enumerator that can take the values `DY` for Drell-Yan and `SIDIS` for semi-inclusive DIS. `_mean` is a vector containing the central values of of the measurements, `_unc` is the sum in quadrature of all the uncorrelated uncertainties (therefore each entry corresponds to the square of the total uncorrelated uncertainty), and `_cov` is the covariance matrix constructed out of the correlated uncertainties only. Therefore, adding `_unc` to the diagonal of `_cov` produces the full covariance matrix.
 
 ```Shell
 dependent_variables:
