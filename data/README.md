@@ -1,6 +1,6 @@
 # Structure of the data files
 
-The data files contained in this folder are used by the code to compute the interpolation table and to obtaine the experimental information concerning the datasets included in the fit. They are written in the YAML format and follow as closely as possible the **HEPData** format (https://www.hepdata.net). However, due to a lack of standardisation of the current datafiles, they require a number of modifications that make them readable to the code. Each data file has to contain all required information to carry out the calculation. Specifically, each data file needs to the encode all the information required to instantiate an object of the `DataHandler` class. The relevant attributes of this class are:
+The data files contained in this folder are used by the code to compute the interpolation tables and to obtain the experimental information required to compute the χ<sup>2</sup> during the fit. They are written in the YAML format and follow as closely as possible the **HEPData** format (https://www.hepdata.net). However, due to a lack of standardisation of the current datafiles, they require a number of modifications that make them readable to the code. Each data file has to contain all required information to carry out the calculation. Specifically, each data file needs to the encode all the information required to instantiate an object of the `DataHandler` class. The relevant attributes of this class are:
 ```Shell
 std::string           _name;
 Process               _proc;
@@ -92,7 +92,7 @@ Distinguishing between additive and multiplicative uncertainties is required whe
 
 The `independent_variables` block, instead, provides infomation on the binning in *q*<sub>T</sub> (notice that the number of items in the `value` sub-block in the `independent_variables` block has to match the number of items in the `value` sub-block in the `dependent_variables` block discussed above).
 
-In the particular case displayed above, the corresponding `value` sub-block contains the upper (`high`) and lower (`low`) bounds of each bin in *q*<sub>T</sub>. This implies that the cross section has to be integrated on the *q*<sub>T</sub> bins causing the `IntqT` flag to be `true`. In case no integration in *q*<sub>T</sub> is required, the `independent_variables` block may look like this:
+In the particular case displayed above, the corresponding `value` sub-block contains the upper (`high`) and lower (`low`) bounds of each bin in *q*<sub>T</sub>. This implies that the cross section has to be integrated over the *q*<sub>T</sub> bins causing the `IntqT` flag to be `true`. In case no integration in *q*<sub>T</sub> is required, the `independent_variables` block may look like this:
 ```Shell
 independent_variables:
 - header: {name: PT, units: GEV}
@@ -104,4 +104,4 @@ independent_variables:
   - {value: 0.9}
   ...
 ```
-where only the central value in *q*<sub>T</sub> is reported and implying the `IntqT` flag to be `false`.
+where only the central value in *q*<sub>T</sub> is reported, implying that the `IntqT` flag is to be `false`.
