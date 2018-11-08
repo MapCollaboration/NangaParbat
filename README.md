@@ -1,4 +1,4 @@
-![alt text](https://github.com/vbertone/TMDs/raw/master/doc/NangaParbatPanoramic.jpg
+![alt text](https://github.com/vbertone/NangaParbat/raw/master/doc/NangaParbatPanoramic.png
  "Nanga Parbat")
 
 # Nanga Parbat: to the top of TMDs
