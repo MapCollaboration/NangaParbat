@@ -39,9 +39,6 @@ int main()
     }
 
   // Now start direct computation
-  // Set verbosity level of APFEL++
-  apfel::SetVerbosityLevel(config["verbosity"].as<int>());
-
   // Open LHAPDF set
   LHAPDF::PDF* distpdf = LHAPDF::mkPDF(config["pdfset"]["name"].as<std::string>(), config["pdfset"]["member"].as<int>());
 

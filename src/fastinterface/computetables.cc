@@ -10,77 +10,6 @@
 
 namespace NangaParbat
 {
-  // //_________________________________________________________________________________
-  // std::vector<Kinematics> RetrieveKinematics(YAML::Node const& datalist)
-  // {
-  //   // Initialise output container
-  //   std::vector<Kinematics> KinVect;
-
-  //   // Loop over the dataset list. Each dataset may have more than one
-  //   // distribution. Threfore, loop also over the distributions.
-  //   for (auto const& dl : datalist)
-  //     for (auto const& dist : dl.second)
-  // 	{
-  // 	  // Open HEPData datafile name
-  // 	  const YAML::Node df = YAML::LoadFile("../Data/" + dl.first.as<std::string>() + "/" + dist.as<std::string>());
-
-  // 	  // Initialise a "Kinematics" object
-  // 	  Kinematics kin;
-
-  // 	  // Assing to the "kin" structure the name of the data file
-  // 	  // along with its folder.
-  // 	  kin.name = dl.first.as<std::string>() + "_" + dist.as<std::string>();
-
-  // 	  // Retrieve kinematics
-  // 	  for (auto const& dv : df["dependent_variables"])
-  // 	    for (auto const& ql : dv["qualifiers"])
-  // 	      {
-  // 		// We assume that each table contains one single bin
-  // 		// in rapidity and one single bin in invariant mass
-  // 		// that need to be integrated over. In addition we
-  // 		// interpret the qT vector as a vector o bounds of the
-  // 		// bins that also need to be integrated over.
-  // 		kin.IntqT = true;
-
-  // 		// Rapidity interval interval
-  // 		if (ql["name"].as<std::string>() == "ABS(ETARAP)")
-  // 		  {
-  // 		    std::string tmp;
-  // 		    std::stringstream ss(ql["value"].as<std::string>());
-  // 		    ss >> tmp >> kin.yb.second;
-  // 		    kin.yb.first = - kin.yb.second;
-  // 		  }
-
-  // 		// Invariant-mass interval
-  // 		if (ql["name"].as<std::string>() == "M(P=3_4)")
-  // 		  {
-  // 		    std::string tmp;
-  // 		    std::stringstream ss(ql["value"].as<std::string>());
-  // 		    ss >> kin.Qb.first >> tmp >> kin.Qb.second;
-  // 		  }
-
-  // 		// Center-of-mass energy
-  // 		if (ql["name"].as<std::string>() == "SQRT(S)")
-  // 		  kin.Vs = ql["value"].as<double>();
-  // 	      }
-
-  // 	  // Transverse momentum bin bounds
-  // 	  std::vector<double> qTv;
-  // 	  for (auto const& iv : df["independent_variables"])
-  // 	    for (auto const& vl : iv["values"])
-  // 	      {
-  // 		if(std::find(kin.qTv.begin(), kin.qTv.end(), vl["low"].as<double>()) == kin.qTv.end())
-  // 		  kin.qTv.push_back(std::max(vl["low"].as<double>(), 1e-5));
-  // 		if(std::find(kin.qTv.begin(), kin.qTv.end(), vl["high"].as<double>()) == kin.qTv.end())
-  // 		  kin.qTv.push_back(vl["high"].as<double>());
-  // 	      }
-
-  // 	  // Push "Kinematics" object into the container
-  // 	  KinVect.push_back(kin);
-  // 	}
-  //   return KinVect;
-  // }
-
   //_________________________________________________________________________________
   std::vector<YAML::Emitter> ComputeTables(YAML::Node const& config, std::vector<DataHandler> const& DHVect)
   {
@@ -100,8 +29,8 @@ namespace NangaParbat
     const int    idxi   = config["xigrid"]["InterDegree"].as<int>();
     const double epsxi  = config["xigrid"]["eps"].as<double>();
 
-    // Set verbosity level of APFEL++
-    apfel::SetVerbosityLevel(config["verbosity"].as<int>());
+    // Set verbosity level of APFEL++ to the minimum
+    apfel::SetVerbosityLevel(0);
 
     // Open LHAPDF set
     LHAPDF::PDF* distpdf = LHAPDF::mkPDF(config["pdfset"]["name"].as<std::string>(), config["pdfset"]["member"].as<int>());
@@ -180,7 +109,7 @@ namespace NangaParbat
 					 std::vector<double>{( Qb.first + Qb.second ) / 2});
 	const std::vector<double> xig = (Inty ? GenerateQGrid(nxi, exp(yb.first), exp(yb.second), idxi - 1) :
 					 std::vector<double>{exp( ( yb.first + yb.second ) / 2 )});
-	const apfel::QGrid<double> Qgrid {Qg,  idQ};
+	const apfel::QGrid<double> Qgrid {Qg, idQ};
 	const apfel::QGrid<double> xigrid{xig, idxi};
 
 	// Number of points of the grids
@@ -224,15 +153,39 @@ namespace NangaParbat
 		const double b  = zo[n] / qT;
 		const double bs = bstar(b, bmax);
 
-		// Tabulate TMDs in Q directly in the physical
-		// basis. Here a default (empty) convolution map is
-		// passed to the "Set" constructor because no
-		// convolution is required.
-		const auto EvolvedTMDPDFs = [&] (double const& Q) -> apfel::Set<apfel::Distribution>
+		// Tabulate the TMD luminosity in 'bs' in the range
+		// [Qb.first:Qb.second].
+		const auto Lumi = [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
 		  {
-		    return apfel::Set<apfel::Distribution>{apfel::ConvolutionMap{"Unnamed"}, QCDEvToPhys(EvTMDPDFs(bs, Cf * Q, Q * Q).GetObjects())};
+		    // TMD scales
+		    const double muf   = Cf * Q;
+		    const double zetaf = Q * Q;
+
+		    // Number of active flavours at 'Q'
+		    const int nf = apfel::NF(muf, Thresholds);
+
+		    // EW charges
+		    const std::vector<double> Bq = apfel::ElectroWeakCharges(Q, true);
+
+		    // Electromagnetic coupling squared
+		    const double aem2 = pow((arun ? alphaem.Evaluate(Q) : aref), 2);
+
+		    // Compute the hard factor
+		    const double hcs = apfel::HardFactorDY(pto, Alphas(muf), nf, Cf);
+
+		    // Global factor
+		    const double factor = apfel::ConvFact * 8 * M_PI * aem2 * hcs / 9;
+
+		    const std::map<int,apfel::Distribution> xF = QCDEvToPhys(EvTMDPDFs(bs, muf, zetaf).GetObjects());
+		    apfel::DoubleObject<apfel::Distribution> Lumi{};
+		    for (int i = 1; i <= nf; i++)
+		      {
+			Lumi.AddTerm({factor * Bq[i-1], xF.at(i), xF.at(-i)});
+			Lumi.AddTerm({factor * Bq[i-1], xF.at(-i), xF.at(i)});
+		      }
+		    return Lumi;
 		  };
-		const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabEvolvedTMDPDFs{EvolvedTMDPDFs, Qg, idQ};
+		const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabLumi{Lumi, 200, Qb.first, Qb.second, 1, {}};
 
 		// Initialise vector of fixed points for the integration in Q
 		std::vector<double> FixPtsQ{};
@@ -269,19 +222,6 @@ namespace NangaParbat
 			// Function to be integrated in Q
 			const auto Qintegrand = [&] (double const& Q) -> double
 			  {
-			    // Renormalisation scale
-			    const double muf = Cf * Q;
-
-			    // Number of active flavours at 'Q'
-			    const int nf = apfel::NF(muf, Thresholds);
-
-			    // EW charges
-			    const std::vector<double> Bq = apfel::ElectroWeakCharges(Q, true);
-
-			    // Get Evolved TMD PDFs
-			    const std::map<int,apfel::Distribution> xF = (IntQ ? TabEvolvedTMDPDFs.Evaluate(Q).GetObjects() :
-									  EvolvedTMDPDFs(Q).GetObjects());
-
 			    // Function to be integrated in xi
 			    const auto xiintegrand = [&] (double const& xi) -> double
 			    {
@@ -294,14 +234,8 @@ namespace NangaParbat
 			      // required
 			      const double Ixi = (Inty ? xigrid.Interpolant(0, alpha, xi) : 1);
 
-			      // Combine TMDs through the EW charges
-			      double integrand = 0;
-			      for (int i = 1; i <= nf; i++)
-				integrand += Bq[i-1] * ( xF.at(i).Evaluate(x1) * xF.at(-i).Evaluate(x2) +
-							 xF.at(-i).Evaluate(x1) * xF.at(i).Evaluate(x2) );
-
 			      // Return xi integrand
-			      return Ixi * integrand / xi;
+			      return Ixi * TabLumi.EvaluatexzQ(x1, x2, Q) / xi;
 			    };
 
 			    // Perform the integral in xi
@@ -313,14 +247,8 @@ namespace NangaParbat
 			    // required
 			    const double IQ = (IntQ ? Qgrid.Interpolant(0, tau, Q) : 1);
 
-			    // Electromagnetic coupling squared
-			    const double aem2 = pow((arun ? alphaem.Evaluate(Q) : aref), 2);
-
-			    // Compute the hard factor
-			    const double hcs = apfel::HardFactorDY(pto, Alphas(muf), nf, Cf);
-
 			    // Return Q integrand
-			    return IQ * aem2 * hcs * xiintegral / pow(Q, 3);
+			    return IQ * xiintegral / pow(Q, 3);
 			  };
 
 			// Perform the integral in Q
@@ -328,7 +256,7 @@ namespace NangaParbat
 			const double Qintegral = (IntQ ? QIntObj.integrate(Qmin, Qmax, FixPtsQ, epsQ) : Qintegrand(Qg[tau]));
 
 			// Compute the weight
-			W[n][tau][alpha] = apfel::ConvFact * 8 * M_PI * wo[n] * Qintegral / 9;
+			W[n][tau][alpha] = wo[n] * Qintegral;
 
 			// If not intergrating over qT, multiply by b
 			if (!IntqT)
@@ -346,11 +274,12 @@ namespace NangaParbat
 	    Tabs[i] << YAML::Value << YAML::Flow << W;
 	  }
 	Tabs[i] << YAML::EndMap;
-	t.stop();
+
+	// Stop timer and force to display the time elapsed
+	std::cout << std::endl;
+	t.stop(true);
       }
     std::cout << std::endl;
-    std::cout << std::endl;
-
     delete distpdf;
     return Tabs;
   }

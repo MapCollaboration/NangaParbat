@@ -23,7 +23,7 @@ alphaem:
   run: true
 
 # Maximum number of Ogata-quadrature points (no more than 1000)
-nOgata: 50
+nOgata: 1
 
 # Parameters of the x-space subgrid on which collinear PDFs are
 # tabulated
@@ -37,7 +37,7 @@ xgridpdf:
 # of the grid in Q
 Qgrid:
   n: 5
-  InterDegree: 1
+  InterDegree: 3
   eps: 1e-3
 
 # Number of points, interpolation degree, and integration accuracy
@@ -46,6 +46,3 @@ xigrid:
   n: 5
   InterDegree: 1
   eps: 1e-3
-
-# Verbosity level of APFEL++.
-verbosity: 0
