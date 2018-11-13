@@ -4,7 +4,7 @@
 
 #include "NangaParbat/computetables.h"
 #include "NangaParbat/convolutiontable.h"
-#include "NangaParbat/testdata.h"
+#include "NangaParbat/datasets.h"
 
 #include <iostream>
 #include <fstream>
