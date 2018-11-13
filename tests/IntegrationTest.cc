@@ -27,7 +27,7 @@ int main()
 {
   // Compute table
   const YAML::Node config = YAML::LoadFile("../cards/config.yaml");
-  const std::vector<NangaParbat::DataHandler> DHVect = {NangaParbat::TestData{13000, 66, 116, -1, 1, {1, 3}}};
+  const std::vector<NangaParbat::DataHandler> DHVect = {NangaParbat::TestData{13000, 66, 116, -1, 0, {1, 3}}};
   const std::vector<YAML::Emitter> Tabs = NangaParbat::ComputeTables(config, DHVect);
 
   // Write tables to file

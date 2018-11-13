@@ -13,13 +13,100 @@ namespace NangaParbat
   //_________________________________________________________________________________
   std::vector<YAML::Emitter> ComputeTables(YAML::Node const& config, std::vector<DataHandler> const& DHVect)
   {
-    // Retrieve relevant parameters from the configuration file
-    const int    pto    = config["PerturbativeOrder"].as<int>();
-    const double Ci     = config["TMDscales"]["Ci"].as<double>();
-    const double Cf     = config["TMDscales"]["Cf"].as<double>();
-    const double aref   = config["alphaem"]["aref"].as<double>();
-    const double Qref   = config["alphaem"]["Qref"].as<double>();
-    const bool   arun   = config["alphaem"]["run"].as<bool>();
+    // Retrieve relevant parameters for the luminosity from the
+    // configuration file
+    const int    pto  = config["PerturbativeOrder"].as<int>();
+    const double Ci   = config["TMDscales"]["Ci"].as<double>();
+    const double Cf   = config["TMDscales"]["Cf"].as<double>();
+    const double aref = config["alphaem"]["aref"].as<double>();
+    const double Qref = config["alphaem"]["Qref"].as<double>();
+    const bool   arun = config["alphaem"]["run"].as<bool>();
+
+    // Set verbosity level of APFEL++ to the minimum
+    apfel::SetVerbosityLevel(0);
+
+    // Open LHAPDF PDF set
+    LHAPDF::PDF* distpdf = LHAPDF::mkPDF(config["pdfset"]["name"].as<std::string>(), config["pdfset"]["member"].as<int>());
+
+    // Heavy-quark thresholds (from PDFs)
+    std::vector<double> Thresholds;
+    for (auto const& v : distpdf->flavors())
+      if (v > 0 && v < 7)
+	Thresholds.push_back(distpdf->quarkThreshold(v));
+
+    // Alpha_s. Get it from the LHAPDF set and tabulate it.
+    const apfel::TabulateObject<double> TabAlphas{[&] (double const& mu) -> double{ return distpdf->alphasQ(mu); }, 100, distpdf->qMin(), distpdf->qMax(), 3, Thresholds};
+    const auto Alphas = [&] (double const& mu) -> double{ return TabAlphas.Evaluate(mu); };
+
+    // Define x-space grid
+    std::vector<apfel::SubGrid> vsg;
+    for (auto const& sg : config["xgridpdf"])
+      vsg.push_back({sg[0].as<int>(), sg[1].as<double>(), sg[2].as<int>()});
+    const apfel::Grid g{vsg};
+
+    // Rotate PDF set into the QCD evolution basis
+    const auto RotPDFs = [&] (double const& x, double const& mu) -> std::map<int,double>{ return apfel::PhysToQCDEv(distpdf->xfxQ(x,mu)); };
+
+    // Construct set of distributions as a function of the scale to be
+    // tabulated
+    const auto EvolvedPDFs = [=,&g] (double const& mu) -> apfel::Set<apfel::Distribution>
+      {
+	return apfel::Set<apfel::Distribution>{apfel::EvolutionBasisQCD{apfel::NF(mu, Thresholds)}, DistributionMap(g, RotPDFs, mu)};
+      };
+
+    // Tabulate collinear PDFs
+    const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 100, distpdf->qMin(), distpdf->qMax(), 3, Thresholds};
+    const auto CollPDFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabPDFs.Evaluate(mu); };
+
+    // Build evolved TMD PDFs
+    const auto EvTMDPDFs = BuildTmdPDFs(apfel::InitializeTmdObjects(g, Thresholds), CollPDFs, Alphas, pto, Ci);
+
+    // Alpha_em
+    const apfel::AlphaQED alphaem{aref, Qref, Thresholds, {0, 0, 1.777}, 0};
+
+    // Construct luminosity function
+    const auto TabulatedLuminosity = [&] (double const& bs, double const& Qmin, double const& Qmax) -> apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>>
+      {
+	// Tabulate the TMD luminosity in 'bs' in the range
+	// [Qb.first:Qb.second].
+	const auto Lumi = [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
+	{
+	  // TMD scales
+	  const double muf   = Cf * Q;
+	  const double zetaf = Q * Q;
+
+	  // Number of active flavours at 'Q'
+	  const int nf = apfel::NF(muf, Thresholds);
+
+	  // EW charges
+	  const std::vector<double> Bq = apfel::ElectroWeakCharges(Q, true);
+
+	  // Electromagnetic coupling squared
+	  const double aem2 = pow((arun ? alphaem.Evaluate(Q) : aref), 2);
+
+	  // Compute the hard factor
+	  const double hcs = apfel::HardFactorDY(pto, Alphas(muf), nf, Cf);
+
+	  // Global factor
+	  const double factor = apfel::ConvFact * 8 * M_PI * aem2 * hcs / 9;
+
+	  apfel::DoubleObject<apfel::Distribution> Lumi;
+	  const std::map<int,apfel::Distribution> xF = QCDEvToPhys(EvTMDPDFs(bs, muf, zetaf).GetObjects());
+	  for (int i = 1; i <= nf; i++)
+	    {
+	      Lumi.AddTerm({factor * Bq[i-1], xF.at(i), xF.at(-i)});
+	      Lumi.AddTerm({factor * Bq[i-1], xF.at(-i), xF.at(i)});
+	    }
+	  return Lumi;
+	};
+	return apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>>{Lumi, 200, Qmin, Qmax, 1, {}};
+      };
+
+    // Delete LHAPDF set
+    delete distpdf;
+
+    // Retrieve relevant parameters for the numerical integration from
+    // the configuration file
     const double bmax   = config["bstar"]["bmax"].as<double>();
     const int    nOgata = config["nOgata"].as<int>();
     const int    nQ     = config["Qgrid"]["n"].as<int>();
@@ -28,49 +115,6 @@ namespace NangaParbat
     const int    nxi    = config["xigrid"]["n"].as<int>();
     const int    idxi   = config["xigrid"]["InterDegree"].as<int>();
     const double epsxi  = config["xigrid"]["eps"].as<double>();
-
-    // Set verbosity level of APFEL++ to the minimum
-    apfel::SetVerbosityLevel(0);
-
-    // Open LHAPDF set
-    LHAPDF::PDF* distpdf = LHAPDF::mkPDF(config["pdfset"]["name"].as<std::string>(), config["pdfset"]["member"].as<int>());
-
-    // Heavy-quark thresholds
-    std::vector<double> Thresholds;
-    for (auto const& v : distpdf->flavors())
-      if (v > 0 && v < 7)
-	Thresholds.push_back(distpdf->quarkThreshold(v));
-
-    // Alpha_s
-    const auto Alphas = [&] (double const& mu) -> double{ return distpdf->alphasQ(mu); };
-
-    // x-space grid
-    std::vector<apfel::SubGrid> vsg;
-    for (auto const& sg : config["xgridpdf"])
-      vsg.push_back({sg[0].as<int>(), sg[1].as<double>(), sg[2].as<int>()});
-    const apfel::Grid g{vsg};
-
-    // Rotate PDF set into the QCD evolution basis
-    const auto RotPDFs = [=] (double const& x, double const& mu) -> std::map<int,double>{ return apfel::PhysToQCDEv(distpdf->xfxQ(x,mu)); };
-
-    // Construct set of distributions as a function of the scale to be
-    // tabulated
-    const auto EvolvedPDFs = [=,&g] (double const& mu) -> apfel::Set<apfel::Distribution>{
-      return apfel::Set<apfel::Distribution>{apfel::EvolutionBasisQCD{apfel::NF(mu, Thresholds)}, DistributionMap(g, RotPDFs, mu)};
-    };
-
-    // Tabulate collinear PDFs
-    const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 100, distpdf->qMin(), distpdf->qMax(), 3, Thresholds};
-    const auto CollPDFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabPDFs.Evaluate(mu); };
-
-    // Initialize TMD objects
-    const auto TmdObj = apfel::InitializeTmdObjects(g, Thresholds);
-
-    // Build evolved TMD PDFs
-    const auto EvTMDPDFs = BuildTmdPDFs(TmdObj, CollPDFs, Alphas, pto, Ci);
-
-    // Alpha_em
-    const apfel::AlphaQED alphaem{aref, Qref, Thresholds, {0, 0, 1.777}, 0};
 
     // Initialise container of YAML:Emitter objects.
     std::vector<YAML::Emitter> Tabs(DHVect.size());
@@ -153,42 +197,11 @@ namespace NangaParbat
 		const double b  = zo[n] / qT;
 		const double bs = bstar(b, bmax);
 
-		// Tabulate the TMD luminosity in 'bs' in the range
-		// [Qb.first:Qb.second].
-		const auto Lumi = [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
-		  {
-		    // TMD scales
-		    const double muf   = Cf * Q;
-		    const double zetaf = Q * Q;
-
-		    // Number of active flavours at 'Q'
-		    const int nf = apfel::NF(muf, Thresholds);
-
-		    // EW charges
-		    const std::vector<double> Bq = apfel::ElectroWeakCharges(Q, true);
-
-		    // Electromagnetic coupling squared
-		    const double aem2 = pow((arun ? alphaem.Evaluate(Q) : aref), 2);
-
-		    // Compute the hard factor
-		    const double hcs = apfel::HardFactorDY(pto, Alphas(muf), nf, Cf);
-
-		    // Global factor
-		    const double factor = apfel::ConvFact * 8 * M_PI * aem2 * hcs / 9;
-
-		    const std::map<int,apfel::Distribution> xF = QCDEvToPhys(EvTMDPDFs(bs, muf, zetaf).GetObjects());
-		    apfel::DoubleObject<apfel::Distribution> Lumi{};
-		    for (int i = 1; i <= nf; i++)
-		      {
-			Lumi.AddTerm({factor * Bq[i-1], xF.at(i), xF.at(-i)});
-			Lumi.AddTerm({factor * Bq[i-1], xF.at(-i), xF.at(i)});
-		      }
-		    return Lumi;
-		  };
-		const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabLumi{Lumi, 200, Qb.first, Qb.second, 1, {}};
+		// Call luminosity function
+		const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabLumi = TabulatedLuminosity(bs, Qb.first, Qb.second);
 
 		// Initialise vector of fixed points for the integration in Q
-		std::vector<double> FixPtsQ{};
+		std::vector<double> FixPtsQ;
 
 		// Loop over the grids in Q
 		for (int tau = 0; tau < nQe; tau++)
@@ -204,7 +217,7 @@ namespace NangaParbat
 		    const double Qmax = Qg[std::min(tau + 1, nQ)];
 
 		    // Initialise vector of fixed points for the integration in xi
-		    std::vector<double> FixPtsxi{};
+		    std::vector<double> FixPtsxi;
 
 		    // Loop over the grid in xi
 		    for (int alpha = 0; alpha < nxie; alpha++)
@@ -264,7 +277,7 @@ namespace NangaParbat
 
 			// Report progress
 			istep++;
-			const double perc = (double) 100 * istep / nsteps;
+			const double perc = 100. * istep / nsteps;
 			std::cout << "Status report for table '" << name << "': "<< std::setw(6) << std::setprecision(4) << perc << "\% completed...\r";
 			std::cout.flush();
 		      }  // End loop over alpha
@@ -280,7 +293,7 @@ namespace NangaParbat
 	t.stop(true);
       }
     std::cout << std::endl;
-    delete distpdf;
+
     return Tabs;
   }
 }
