@@ -4,7 +4,7 @@
 // Authors: Valerio Bertone: valerio.bertone@cern.ch
 //
 
-#include "NangaParbat/computetables.h"
+#include "NangaParbat/fastinterface.h"
 #include "NangaParbat/convolutiontable.h"
 #include "NangaParbat/datasets.h"
 #include "NangaParbat/utilities.h"
@@ -25,10 +25,13 @@ double fNP(double const&, double const& b, double const& zetaf)
 // Main program
 int main()
 {
-  // Compute table
+  // Allocate "FastInterface" object
   const YAML::Node config = YAML::LoadFile("../cards/config.yaml");
+  const NangaParbat::FastInterface FIObj{config};
+
+  // Compute table
   const std::vector<NangaParbat::DataHandler> DHVect = {NangaParbat::TestData{13000, 66, 116, -1, 0, {1, 3}}};
-  const std::vector<YAML::Emitter> Tabs = NangaParbat::ComputeTables(config, DHVect);
+  const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect);
 
   // Write tables to file
   for (auto const& tab : Tabs)
