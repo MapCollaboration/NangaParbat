@@ -55,7 +55,8 @@ namespace NangaParbat
     std::vector<double>                                                     _Thresholds;
     std::unique_ptr<apfel::TabulateObject<double>>                          _TabAlphas;
     std::unique_ptr<apfel::TabulateObject<double>>                          _TabAlphaem;
-    std::map<int,apfel::TmdObjects>                                         _TmdObjs;
+    std::map<int,apfel::TmdObjects>                                         _TmdPdfObjs;
+    std::map<int,apfel::TmdObjects>                                         _TmdFfObjs;
     std::unique_ptr<const apfel::Grid>                                      _gpdf;
     std::unique_ptr<const apfel::Grid>                                      _gff;
     std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>> _TabPDFs;

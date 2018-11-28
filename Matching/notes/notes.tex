@@ -23,6 +23,15 @@
 
 \begin{document}
 
+\title{Transverse momentum resummation and matching in semi-inclusive
+  deep-inelastic scattering}
+
+\author{Valerio Bertone}
+
+\maketitle
+
+\printindex
+
 \section{Expansion of the Sudakov form factor}
 
 In this section I work out the expansion of the quark Sudakov form
@@ -246,6 +255,8 @@ with:
 \end{array}
 \end{equation}
 
+\section{Hard factor and the matching functions}
+
 Now that the expansion of the Sudakov form factor is done to
 $\mathcal{O}(a_s^2)$, it can be combined to the rest of the
 perturbative quantities entering the computation of the cross
@@ -390,7 +401,7 @@ $\mathcal{L}$. Specifically, we find that:
 \hat{B}_{ij,kl}^{(n)} = \sum_{p=0}^{2n}\hat{B}_{ij,kl}^{(n,p)}\mathcal{L}^p\,,
 \end{equation}
 with the $\mathcal{O}(1)$ coefficient being:
-\begin{equation}
+\begin{equation}\label{eq:expLO}
 \begin{array}{rcl}
   \hat{B}_{ij,kl}^{(0,0)} &=& \delta_{ik}\delta_{kl}\delta(1-x)
                               \delta(1-z)\,,
@@ -503,12 +514,12 @@ calculation and thus does not need to be subtracted. Therefore, we write:
   I_p(q_T)+ \left(\sum_{n=0}^2a_s^n(Q)\hat{B}_{ij,kl}^{(n,0)}(x,z)\right)\delta(q_T)+\mathcal{O}(a_s^3)\,,
 \end{equation}
 and we are not going to consider the term proportional to
-$\delta(q_T)$, even though all terms have been derived above.
+$\delta(q_T)$, even though all terms have been derived above. As clear
+from Eq.~(\ref{eq:finalformula}), removing all terms proportional to
+$\delta(q_T)$ also means removing the full $\mathcal{O}(1)$ terms such
+that leading-order term is now $\mathcal{O}(a_s)$.
 
-As clear from Eq.~(\ref{eq:finalformula}), removing all terms
-proportional to $\delta(q_T)$ also means removing the full
-$\mathcal{O}(1)$ terms such that leading-order term is now
-$\mathcal{O}(a_s)$.
+\section{Fixed order and asymptotic limit}
 
 In order to validate the results above, it is opportune to compare the
 $\mathcal{O}(a_s)$ expressions to those present in the literature. To
@@ -833,6 +844,8 @@ exactly like in Eq.~(\ref{eq:xsexinsf}). This confirms that the
 computation of Ref.~\cite{Daleo:2004pn} can be matched to the resummed
 calculation provided that the correct Jacobian is taken into account.
 
+\section{Numerical results}
+
 In Fig.~\ref{fig:APFELvsTIMBA}, a comparison between the
 $\mathcal{O}(a_s)$ computation of Ref.~\cite{Daleo:2004pn} for the
 differential cross section in Eq.~(\ref{eq:Daleoetal}), implemented in
@@ -969,6 +982,79 @@ perturbative accuracy to NLO+NNLL.
 % \begin{equation}
 %   \mathcal{D}\left(\frac{q_T^2}{Q^2}\right) = 1 + \frac{q_T^2}{Q^2}\,.
 % \end{equation}
+
+\section{Integrating over $q_T$}
+
+It is interesting to carry out the integration over $q_T$ of
+Eq.~(\ref{eq:FOxsec}) analytically. The result can the be compared to
+the results presented in Appendix~C of Ref.~\cite{deFlorian:1997zj}.
+\begin{equation}
+\begin{array}{rcl}
+ \displaystyle \int_0^{\infty} dq_T^2 F_{UU,S}&=&\displaystyle 
+  a_sx\sum_{i}e_i^2\int_x^1\frac{d\bar{x}}{\bar{x}}\int_z^1\frac{d\bar{z}}{\bar{z}}\bigg[\hat{B}_{qq}^{S,
+    \rm FO}\left(\bar{x},\bar{z},\frac{(1-\bar{x})(1-\bar{z})}{\bar{x}\bar{z}}\right)f_i\left(\frac{x}{\bar{x}}\right)
+              d_i\left(\frac{z}{\bar{z}}\right)\\
+\\
+&+&\displaystyle \hat{B}_{qg}^{S,
+    \rm FO}\left(\bar{x},\bar{z},\frac{(1-\bar{x})(1-\bar{z})}{\bar{x}\bar{z}}\right)f_g\left(\frac{x}{\bar{x}}\right)
+              d_i\left(\frac{z}{\bar{z}}\right)\\
+\\
+&+& \displaystyle \hat{B}_{gq}^{S,
+    \rm FO}\left(\bar{x},\bar{z},\frac{(1-\bar{x})(1-\bar{z})}{\bar{x}\bar{z}}\right)f_i\left(\frac{x}{\bar{x}}\right)
+              d_g\left(\frac{z}{\bar{z}}\right)\bigg]
++\mathcal{O}(a_s^2)\,.
+\end{array}
+\end{equation}
+replacing $q_T^2/Q^2$ in Eq.~(\ref{eq:Bacchettaetal}) has no effect on
+the coefficient functions for $F_L$. The reason is that $F_L$ is
+independent of $q_T$ and therefore integrating over $q_T$ has
+essentially the effect of removing the $\delta$-function. On the other
+hand, integrating $F_2$ gives:
+\begin{equation}
+\begin{array}{l}
+\displaystyle \hat{B}_{qq}^{2,\rm FO}\left(x,z,\frac{(1-{x})(1-{z})}{{x}{z}}\right) = 2C_F\left[(1-x)(1-z)+4xz+\frac{1+x^2z^2}{(1-x)(1-z)}\right]\,,\\
+\\
+\displaystyle \hat{B}_{qg}^{2,\rm FO}\left
+  (x,z,\frac{(1-{x})(1-{z})}{{x}{z}}\right) = 2T_R\left[[x^2+(1-x)^2]\left(\frac{1}{1-z}+\frac1{z}-2\right)+8x(1-x)\right]\,,\\
+\\
+\displaystyle \hat{B}_{gq}^{2,\rm FO}\left (x,z,\frac{(1-{x})(1-{z})}{{x}{z}}\right) =
+  2C_F\left[(1-x)z+4x(1-z)+\frac{1+x^2(1-z)^2}{z(1-x)}\right]\,,
+\end{array}
+\end{equation}
+Instating the plus prescription in all terms that behave as
+$(1-x)^{-1}$ and $(1-z)^{-1}$, one can see that up to ``local'' terms
+(\textit{i.e.} those terms proportional to the $\delta$-function) the
+expressions of Appendix~C of Ref.~\cite{deFlorian:1997zj} are
+reproduced. The local terms correspond to virtual corrections that
+thus give contributions at $q_T=0$. As such, they should coincide with
+the terms proportional to $\delta(q_T)$ generate in the expansion of
+the resummed calculation. Specifically, they should be equal to the
+coefficients $\hat{B}_{ij,kl}^{(n,0)}$ in the expansion in
+Eq.~(\ref{eq:finalformula}). This is evidently the case of the
+$\mathcal{O}(1)$ term $\hat{B}_{ij,kl}^{(0,0)}$ in
+Eq.~(\ref{eq:expLO}) that gives the leading-order contribution to the
+integrated cross section. Unfortunatey, this is not true at
+next-to-leading order because the expressions for the local terms in
+Appendix~C of Ref.~\cite{deFlorian:1997zj} (Eqs.~(C.2)-(C.4)) do not
+match $\hat{B}_{ij,kl}^{(1,0)}$. However, when checking the
+expressions explicitly an interesting pattern emerges such that, if
+all occurences of $\ln(1-x)$ (or $\ln(1-z)$) in Eqs.~(C.2)-(C.4) of
+Ref.~\cite{deFlorian:1997zj} are replaced with $\ln(x)$ (or $\ln(z)$)
+the two sets of expressions coincide. The expressions reported in
+Ref.~\cite{deFlorian:1997zj} are those computed long time ago in
+Ref.~\cite{Furmanski:1981cw}.
+
+In order to understand which of the two is the correct set of
+expressions, whether those computed in Ref.~\cite{Furmanski:1981cw} or
+those derived here, we may try to integrate over $z$ summing over all
+possible hadrons produced in the final state. By doing so, we should
+obtain the expressions of the hard cross sections for inclusive
+deep-inelastic scattering. This last set of expressions has also been
+computed in Ref.~\cite{Furmanski:1981cw} and is very likely to be
+correct. The presence of terms proportional to $\ln(1-x)$ in the
+inclusive DIS hard cross sections suggests that the expressions
+reported in Ref.~\cite{deFlorian:1997zj} and computed in
+Ref.~\cite{Furmanski:1981cw} are the correct ones.
 
 \appendix
 
@@ -1158,6 +1244,25 @@ one needs to use the fact that:
   arXiv:1708.00911 [hep-ph].
   %%CITATION = ARXIV:1708.00911;%%
   %3 citations counted in INSPIRE as of 30 Dec 2017
+
+%\cite{deFlorian:1997zj}
+\bibitem{deFlorian:1997zj}
+  D.~de Florian, M.~Stratmann and W.~Vogelsang,
+  %``QCD analysis of unpolarized and polarized Lambda baryon production in leading and next-to-leading order,''
+  Phys.\ Rev.\ D {\bf 57} (1998) 5811
+  doi:10.1103/PhysRevD.57.5811
+  [hep-ph/9711387].
+  %%CITATION = doi:10.1103/PhysRevD.57.5811;%%
+  %149 citations counted in INSPIRE as of 26 Nov 2018
+
+%\cite{Furmanski:1981cw}
+\bibitem{Furmanski:1981cw}
+  W.~Furmanski and R.~Petronzio,
+  %``Lepton - Hadron Processes Beyond Leading Order in Quantum Chromodynamics,''
+  Z.\ Phys.\ C {\bf 11} (1982) 293.
+  doi:10.1007/BF01578280
+  %%CITATION = doi:10.1007/BF01578280;%%
+  %493 citations counted in INSPIRE as of 27 Nov 2018
 
 \end{thebibliography}
 
