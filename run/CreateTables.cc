@@ -55,7 +55,7 @@ int main(int argc, char **argv)
       for (int i = 0; i < 8000; i++)
 	for (auto const& p : CTable.Convolute(fNP))
 	  p.second;
-      t.stop();
+      t.stop(true);
     }
 
   return 0;

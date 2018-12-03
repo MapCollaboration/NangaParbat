@@ -7,7 +7,9 @@
 #include <string>
 #include <vector>
 #include <utility>
+
 #include <apfel/matrix.h>
+#include <yaml-cpp/yaml.h>
 
 namespace NangaParbat
 {
@@ -43,8 +45,13 @@ namespace NangaParbat
     /**
      * @brief The default "DataHandler" constructor.
      */
-    DataHandler(std::string const& name, std::string const& datafolder = "../data/");
+    DataHandler(std::string const& name, YAML::Node const& datafile);
 
+    /**
+     * @brief The "DataHandler" constructor to be used for inheritance.
+     */
+
+    DataHandler(std::string const& name);
     /**
      * @brief Function to retrive the name of the dataset object
      */
@@ -78,7 +85,6 @@ namespace NangaParbat
     std::vector<double> GetUncorrelatedUnc() const { return _unc; };
 
   protected:
-    std::string           _datafolder;  //!< Path to the data folder
     std::string           _name;        //!< Name of the dataset
     Process               _proc;        //!< The process (can be Drell-Yan or SIDIS)
     Kinematics            _kin;         //!< Kinematics block

@@ -42,22 +42,4 @@ namespace NangaParbat
       for (int j = 0; j < this->_kin.ndata; j++)
 	this->_cov(i, j) = 0;
   }
-
-  //_________________________________________________________________________________
-  ins302822::ins302822():
-    DataHandler("ins302822")
-  {
-    // Try to open HEPData submission.yaml file in the "data"
-    // folder.
-    const std::vector<YAML::Node> subfile = YAML::LoadAllFromFile(this->_datafolder + "HEPData-" + this->_name + "-v1-yaml/submission.yaml");
-
-    // Loop over the sumbission file to get the available tables
-    std::vector<std::string> tables;
-    for (auto const& f : subfile)
-      if (f["data_file"])
-	tables.push_back(f["data_file"].as<std::string>());
-
-    for (auto const& t : tables)
-      std::cout << t << std::endl;
-  }
 }

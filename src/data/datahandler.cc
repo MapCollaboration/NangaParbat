@@ -9,86 +9,86 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  DataHandler::DataHandler(std::string const& name, std::string const& datafolder):
-    _datafolder(datafolder),
+  DataHandler::DataHandler(std::string const& name, YAML::Node const& datafile):
     _name(name)
   {
+    // Retrieve kinematics
+    for (auto const& dv : datafile["dependent_variables"])
+      {
+	// Run over the qualifiers
+	for (auto const& ql : dv["qualifiers"])
+	  {
+	    // Process
+	    if (ql["name"].as<std::string>() == "process")
+	      {
+		if (ql["process"].as<std::string>() == "DY")
+		  _proc = DY;
+		else if (ql["process"].as<std::string>() == "SIDIS")
+		  _proc = SIDIS;
+		else
+		  {
+		    std::cout << "DataHandler: Unknown process" << std::endl;
+		    exit(-10);
+		  }
+	      }
 
+	    // Center of mass energy
+	    if (ql["name"].as<std::string>() == "SQRT(S)")
+	      _kin.Vs = ql["value"].as<double>();
 
+	    // Invariant-mass interval
+	    if (ql["name"].as<std::string>() == "Q")
+	      {
+		_kin.var1b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
+		_kin.Intv1 = ql["integrate"].as<bool>();
+	      }
 
+	    // Rapidity interval interval
+	    if (ql["name"].as<std::string>() == "y")
+	      {
+		_kin.var2b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
+		_kin.Intv2 = ql["integrate"].as<bool>();
+	      }
+	  }
 
-  // std::vector<Kinematics> RetrieveKinematics(YAML::Node const& datalist)
-  // {
-  //   // Initialise output container
-  //   std::vector<Kinematics> KinVect;
+	// Run over the data point values and uncertainties
+	for (auto const& vl : dv["values"])
+	  {
+	    // Central values
+	    _mean.push_back(vl["value"].as<double>());
 
-  //   // Loop over the dataset list. Each dataset may have more than one
-  //   // distribution. Threfore, loop also over the distributions.
-  //   for (auto const& dl : datalist)
-  //     for (auto const& dist : dl.second)
-  // 	{
-  // 	  // Open HEPData datafile name
-  // 	  const YAML::Node df = YAML::LoadFile("../Data/" + dl.first.as<std::string>() + "/" + dist.as<std::string>());
+	    // Uncertainties
+	    for (auto const& err : vl["errors"])
+	      {
+	      }
+	  }
+      }
 
-  // 	  // Initialise a "Kinematics" object
-  // 	  Kinematics kin;
+    // Transverse momentum bin bounds
+    for (auto const& iv : datafile["independent_variables"])
+      for (auto const& vl : iv["values"])
+	{
+	  _kin.ndata++;
+	  if (vl["low"])
+	    {
+	      _kin.IntqT = true;
+	      if(std::find(_kin.qTv.begin(), _kin.qTv.end(), vl["low"].as<double>()) == _kin.qTv.end())
+		_kin.qTv.push_back(std::max(vl["low"].as<double>(), 1e-5));
+	      if(std::find(_kin.qTv.begin(), _kin.qTv.end(), vl["high"].as<double>()) == _kin.qTv.end())
+		_kin.qTv.push_back(vl["high"].as<double>());
+	    }
+	  else
+	    {
+	      _kin.IntqT = false;
+	      if(std::find(_kin.qTv.begin(), _kin.qTv.end(), vl.as<double>()) == _kin.qTv.end())
+		_kin.qTv.push_back(std::max(vl.as<double>(), 1e-5));
+	    }
+	}
+  }
 
-  // 	  // Assing to the "kin" structure the name of the data file
-  // 	  // along with its folder.
-  // 	  kin.name = dl.first.as<std::string>() + "_" + dist.as<std::string>();
-
-  // 	  // Retrieve kinematics
-  // 	  for (auto const& dv : df["dependent_variables"])
-  // 	    for (auto const& ql : dv["qualifiers"])
-  // 	      {
-  // 		// We assume that each table contains one single bin
-  // 		// in rapidity and one single bin in invariant mass
-  // 		// that need to be integrated over. In addition we
-  // 		// interpret the qT vector as a vector o bounds of the
-  // 		// bins that also need to be integrated over.
-  // 		kin.IntqT = true;
-
-  // 		// Rapidity interval interval
-  // 		if (ql["name"].as<std::string>() == "ABS(ETARAP)")
-  // 		  {
-  // 		    std::string tmp;
-  // 		    std::stringstream ss(ql["value"].as<std::string>());
-  // 		    ss >> tmp >> kin.yb.second;
-  // 		    kin.yb.first = - kin.yb.second;
-  // 		  }
-
-  // 		// Invariant-mass interval
-  // 		if (ql["name"].as<std::string>() == "M(P=3_4)")
-  // 		  {
-  // 		    std::string tmp;
-  // 		    std::stringstream ss(ql["value"].as<std::string>());
-  // 		    ss >> kin.Qb.first >> tmp >> kin.Qb.second;
-  // 		  }
-
-  // 		// Center-of-mass energy
-  // 		if (ql["name"].as<std::string>() == "SQRT(S)")
-  // 		  kin.Vs = ql["value"].as<double>();
-  // 	      }
-
-  // 	  // Transverse momentum bin bounds
-  // 	  std::vector<double> qTv;
-  // 	  for (auto const& iv : df["independent_variables"])
-  // 	    for (auto const& vl : iv["values"])
-  // 	      {
-  // 		if(std::find(kin.qTv.begin(), kin.qTv.end(), vl["low"].as<double>()) == kin.qTv.end())
-  // 		  kin.qTv.push_back(std::max(vl["low"].as<double>(), 1e-5));
-  // 		if(std::find(kin.qTv.begin(), kin.qTv.end(), vl["high"].as<double>()) == kin.qTv.end())
-  // 		  kin.qTv.push_back(vl["high"].as<double>());
-  // 	      }
-
-  // 	  // Push "Kinematics" object into the container
-  // 	  KinVect.push_back(kin);
-  // 	}
-  //   return KinVect;
-  // }
-
-
-
-
+  //_________________________________________________________________________________
+  DataHandler::DataHandler(std::string const& name):
+    _name(name)
+  {
   }
 }
