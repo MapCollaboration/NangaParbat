@@ -1,5 +1,4 @@
 set(fastinterface_source
-  computetables.cc
   fastinterface.cc
   convolutiontable.cc
   utilities.cc

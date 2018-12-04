@@ -48,11 +48,6 @@ namespace NangaParbat
     DataHandler(std::string const& name, YAML::Node const& datafile);
 
     /**
-     * @brief The "DataHandler" constructor to be used for inheritance.
-     */
-
-    DataHandler(std::string const& name);
-    /**
      * @brief Function to retrive the name of the dataset object
      */
     std::string GetName() const { return _name; };
@@ -76,20 +71,21 @@ namespace NangaParbat
      * @brief Function that returns the covariance matrix of the
      * correlated uncertainties.
      */
-    apfel::matrix<double> GetCovarianceMatrix() const { return _cov; };
+    apfel::matrix<double> GetCovarianceMatrix() const { return _covmat; };
 
     /**
      * @brief Function that returns the sum in quadrature of the
      * uncorrelated uncertainties.
      */
-    std::vector<double> GetUncorrelatedUnc() const { return _unc; };
+    std::vector<double> GetUncorrelatedUnc() const { return _uncor; };
 
   protected:
-    std::string           _name;        //!< Name of the dataset
-    Process               _proc;        //!< The process (can be Drell-Yan or SIDIS)
-    Kinematics            _kin;         //!< Kinematics block
-    std::vector<double>   _mean;        //!< Vector of central values
-    std::vector<double>   _unc;         //!< Vector of uncorrelated uncertainties summed in quadrature
-    apfel::matrix<double> _cov;         //!< Covariance matrix
+    std::string                      _name;        //!< Name of the dataset
+    Process                          _proc;        //!< The process (can be Drell-Yan or SIDIS)
+    Kinematics                       _kin;         //!< Kinematics block
+    std::vector<double>              _mean;        //!< Vector of central values
+    std::vector<double>              _uncor;       //!< Vector of uncorrelated uncertainties
+    std::vector<std::vector<double>> _corr;        //!< Correlated uncertainties
+    apfel::matrix<double>            _covmat;      //!< Covariance matrix
   };
 }

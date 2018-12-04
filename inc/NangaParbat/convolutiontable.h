@@ -28,7 +28,7 @@ namespace NangaParbat
     ConvolutionTable(std::string const& infile);
 
     /**
-     * @brief This functions convolute the input convolution table with
+     * @brief This function convolutes the input convolution table with
      * a user-given non-perturbative function.
      * @param fNP: the non-perturbative input function
      * @return a map that associates each value of qT to a prediction.

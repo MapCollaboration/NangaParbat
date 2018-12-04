@@ -2,9 +2,8 @@
 // Author: Valerio Bertone: valerio.bertone@cern.ch
 //
 
-#include "NangaParbat/computetables.h"
+#include "NangaParbat/fastinterface.h"
 #include "NangaParbat/convolutiontable.h"
-#include "NangaParbat/datasets.h"
 
 #include <iostream>
 #include <fstream>
@@ -24,18 +23,21 @@ double fNP(double const&, double const& b, double const& zetaf)
 
 //_________________________________________________________________________________
 // Main program
-int main(int argc, char **argv)
+int main()
 {
-  if (argc != 2)
-    {
-      std::cout << "\nusage: ./CreateTable config.yaml\n" << std::endl;
-      exit(-1);
-    }
+  // Vector of datafiles
+  std::vector<NangaParbat::DataHandler> DHVect;
 
-  // Compute table
-  const YAML::Node config  = YAML::LoadFile(argv[1]);
-  const std::vector<NangaParbat::DataHandler> DHVect = {NangaParbat::TestData{13000, 66, 116, -1, 1, {1, 3}}};
-  const std::vector<YAML::Emitter> Tabs = NangaParbat::ComputeTables(config, DHVect);
+  // Test data
+  DHVect.push_back(NangaParbat::DataHandler{"Test_data", YAML::LoadFile("../data/TestData/Table1.yaml")});
+  // Push back CDF Run I
+  //DHVect.push_back(NangaParbat::DataHandler{"CDF_Run_I", YAML::LoadFile("../data/HEPData-ins505738-v1-yaml/Table1.yaml")});
+
+  // Allocate "FastInterface" object
+  const NangaParbat::FastInterface FIObj{YAML::LoadFile("../cards/config.yaml")};
+
+  // Compute tables
+  const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect);
 
   // Convolute table
   for (auto const& tab : Tabs)
@@ -46,7 +48,7 @@ int main(int argc, char **argv)
 	std::cout << p.first << "  " << p.second << std::endl;
 
       // Dump table to file
-      std::ofstream fout("../tables/" + YAML::Load(tab.c_str())["name"].as<std::string>());
+      std::ofstream fout("../tables/" + YAML::Load(tab.c_str())["name"].as<std::string>() + ".yaml");
       fout << tab.c_str() << std::endl;
       fout.close();
 

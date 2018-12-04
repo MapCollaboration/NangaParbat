@@ -5,8 +5,7 @@
 #include "NangaParbat/utilities.h"
 
 #include <iostream>
-#include <cmath> 
-#include <apfel/messages.h>
+#include <cmath>
 
 namespace NangaParbat
 {

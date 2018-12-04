@@ -6,7 +6,6 @@
 
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/convolutiontable.h"
-#include "NangaParbat/datasets.h"
 #include "NangaParbat/utilities.h"
 
 #include <math.h>
@@ -29,8 +28,8 @@ int main()
   const YAML::Node config = YAML::LoadFile("../cards/config.yaml");
   const NangaParbat::FastInterface FIObj{config};
 
-  // Compute table
-  const std::vector<NangaParbat::DataHandler> DHVect = {NangaParbat::TestData{13000, 66, 116, -1, 0, {1, 3}}};
+  // Vector of datafiles
+  const std::vector<NangaParbat::DataHandler> DHVect{NangaParbat::DataHandler{"Test_data", YAML::LoadFile("../data/TestData/Table1.yaml")}};
   const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect);
 
   // Write tables to file
