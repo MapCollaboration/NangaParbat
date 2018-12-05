@@ -17,3 +17,8 @@ add_test(qTintegration qTintegration)
 add_executable(IntegrationTest IntegrationTest.cc)
 target_link_libraries(IntegrationTest NangaParbat)
 add_test(IntegrationTest IntegrationTest)
+
+# build tests
+add_executable(DrellYanCrossSection DrellYanCrossSection.cc)
+target_link_libraries(DrellYanCrossSection NangaParbat)
+add_test(DrellYanCrossSection DrellYanCrossSection)

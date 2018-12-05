@@ -18,6 +18,9 @@ namespace NangaParbat
     _Vs  = table["CME"].as<double>();
 
     // qT bin bounds
+    _IntqT = table["qTintegrated"].as<bool>();
+
+    // qT bin bounds
     _qTv = table["qT_bounds"].as<std::vector<double>>();
 
     // Ogata unscaled coordinates
@@ -64,5 +67,21 @@ namespace NangaParbat
 	pred.insert({qT, cs});
       }
     return pred;
+  }
+
+  //_________________________________________________________________________________
+  std::vector<double> ConvolutionTable::GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP) const
+  {
+    std::map<double,double> pred = Convolute(fNP);
+    const int npred = pred.size() - (_IntqT ? 1 : 0);
+    std::vector<double> vpred(npred);
+    if (_IntqT)
+      for (int i = 0; i < npred; i++)
+	vpred[i] = pred.at(_qTv[i+1]) - pred.at(_qTv[i]);
+    else
+      for (int i = 0; i < npred; i++)
+	vpred[i] = pred.at(_qTv[i]);
+
+    return vpred;
   }
 }

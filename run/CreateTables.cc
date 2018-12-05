@@ -4,6 +4,7 @@
 
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/convolutiontable.h"
+#include "NangaParbat/chisquare.h"
 
 #include <iostream>
 #include <fstream>
@@ -39,6 +40,14 @@ int main()
   // Compute tables
   const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect);
 
+  // Dump table to file
+  for (auto const& tab : Tabs)
+    {
+      std::ofstream fout("../tables/" + YAML::Load(tab.c_str())["name"].as<std::string>() + ".yaml");
+      fout << tab.c_str() << std::endl;
+      fout.close();
+    }
+
   // Convolute table
   for (auto const& tab : Tabs)
     {
@@ -47,18 +56,24 @@ int main()
       for (auto const& p : CTable.Convolute(fNP))
 	std::cout << p.first << "  " << p.second << std::endl;
 
-      // Dump table to file
-      std::ofstream fout("../tables/" + YAML::Load(tab.c_str())["name"].as<std::string>() + ".yaml");
-      fout << tab.c_str() << std::endl;
-      fout.close();
-
       // Performance test
       apfel::Timer t;
       for (int i = 0; i < 8000; i++)
 	for (auto const& p : CTable.Convolute(fNP))
 	  p.second;
       t.stop(true);
+
+      t.start();
+      for (int i = 0; i < 8000; i++)
+	for (auto const& p : CTable.GetPredictions(fNP))
+	  p;
+      t.stop(true);
     }
+
+  // Define Chi2 object
+  const NangaParbat::ChiSquare chi2{DHVect};
+
+
 
   return 0;
 }

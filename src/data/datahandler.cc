@@ -3,6 +3,7 @@
 //
 
 #include "NangaParbat/datahandler.h"
+#include "NangaParbat/utilities.h"
 
 #include <iostream>
 #include <math.h>
@@ -97,6 +98,10 @@ namespace NangaParbat
     _covmat.resize(_kin.ndata, _kin.ndata);
     for (int i = 0; i < _kin.ndata; i++)
       for (int j = 0; j < _kin.ndata; j++)
-	_covmat(i, j) = std::inner_product(_corr[i].begin(), _corr[i].end(), _corr[j].begin(), 0.) + (i == j ? pow(_uncor[i], 2) : 0);
+	_covmat(i, j) = std::inner_product(_corr[i].begin(), _corr[i].end(), _corr[j].begin(), 0.) * _mean[i] * _mean[j]
+	  + (i == j ? pow(_uncor[i], 2) : 0);
+
+    // Cholesky decomposition of the covariance matrix
+    _CholL = CholeskyDecomposition(_covmat);
   }
 }

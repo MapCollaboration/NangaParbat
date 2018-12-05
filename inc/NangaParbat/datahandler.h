@@ -79,6 +79,12 @@ namespace NangaParbat
      */
     std::vector<double> GetUncorrelatedUnc() const { return _uncor; };
 
+    /**
+     * @brief Function that returns the Cholesky decomposition of the
+     * covariance matrix.
+     */
+    apfel::matrix<double> GetCholeskyDecomposition() const { return _CholL; };
+
   protected:
     std::string                      _name;        //!< Name of the dataset
     Process                          _proc;        //!< The process (can be Drell-Yan or SIDIS)
@@ -87,5 +93,6 @@ namespace NangaParbat
     std::vector<double>              _uncor;       //!< Vector of uncorrelated uncertainties
     std::vector<std::vector<double>> _corr;        //!< Correlated uncertainties
     apfel::matrix<double>            _covmat;      //!< Covariance matrix
+    apfel::matrix<double>            _CholL;       //!< Cholesky decomposition of the covariance matrix
   };
 }

@@ -35,13 +35,22 @@ namespace NangaParbat
      */
     std::map<double,double> Convolute(std::function<double(double const&, double const&, double const&)> const& fNP) const;
 
+    /**
+     * @brief This function returns a vector of predictions with a
+     * a user-given non-perturbative function.
+     * @param fNP: the non-perturbative input function
+     * @return a vector of predictions.
+     */
+    std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP) const;
+
   private:
-    std::string                                                    _name; //!< Name of the table
-    double                                                         _Vs;   //!< Center of mass energy
-    std::vector<double>                                            _qTv;  //!< Vector of qT
-    std::vector<double>                                            _z;    //!< Unscaled Ogata coordinate
-    std::vector<double>                                            _Qg;   //!< Grid in Q
-    std::vector<double>                                            _xig;  //!< Grid in xi
-    std::map<double,std::vector<std::vector<std::vector<double>>>> _W;    //!< The weights
+    std::string                                                    _name;  //!< Name of the table
+    double                                                         _Vs;    //!< Center of mass energy
+    bool                                                           _IntqT; //!< Whether the bin are integrated in qT or not
+    std::vector<double>                                            _qTv;   //!< Vector of qT
+    std::vector<double>                                            _z;     //!< Unscaled Ogata coordinate
+    std::vector<double>                                            _Qg;    //!< Grid in Q
+    std::vector<double>                                            _xig;   //!< Grid in xi
+    std::map<double,std::vector<std::vector<std::vector<double>>>> _W;     //!< The weights
   };
 }
