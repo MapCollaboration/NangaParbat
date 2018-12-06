@@ -12,10 +12,13 @@ namespace NangaParbat
   ConvolutionTable::ConvolutionTable(YAML::Node const& table)
   {
     // Name
-    _name  = table["name"].as<std::string>();
+    _name = table["name"].as<std::string>();
+
+    // Process
+    _proc = table["process"].as<int>();
 
     // C.M.E.
-    _Vs  = table["CME"].as<double>();
+    _Vs = table["CME"].as<double>();
 
     // qT bin bounds
     _IntqT = table["qTintegrated"].as<bool>();
@@ -24,10 +27,10 @@ namespace NangaParbat
     _qTv = table["qT_bounds"].as<std::vector<double>>();
 
     // Ogata unscaled coordinates
-    _z   = table["Ogata_coordinates"].as<std::vector<double>>();
+    _z = table["Ogata_coordinates"].as<std::vector<double>>();
 
     // Q grid
-    _Qg  = table["Qgrid"].as<std::vector<double>>();
+    _Qg = table["Qgrid"].as<std::vector<double>>();
 
     // xi grid
     _xig = table["xigrid"].as<std::vector<double>>();
@@ -43,7 +46,8 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  std::map<double,double> ConvolutionTable::Convolute(std::function<double(double const&, double const&, double const&)> const& fNP) const
+  std::map<double,double> ConvolutionTable::Convolute(std::function<double(double const&, double const&, double const&)> const& fNP1,
+						      std::function<double(double const&, double const&, double const&)> const& fNP2) const
   {
     std::map<double,double> pred;
     for (auto const& qT : _qTv)
@@ -60,7 +64,7 @@ namespace NangaParbat
 		for (int alpha = 0; alpha < (int) _xig.size(); alpha++)
 		  {
 		    const double xi = _xig[tau];
-		    cs += _W.at(qT)[n][tau][alpha] * fNP(Vtau * xi, b, zeta) * fNP(Vtau / xi, b, zeta);
+		    cs += _W.at(qT)[n][tau][alpha] * fNP1(Vtau * xi, b, zeta) * fNP2(Vtau / xi, b, zeta);
 		  }
 	      }
 	  }
@@ -70,9 +74,16 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  std::vector<double> ConvolutionTable::GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP) const
+  std::map<double,double> ConvolutionTable::Convolute(std::function<double(double const&, double const&, double const&)> const& fNP) const
   {
-    std::map<double,double> pred = Convolute(fNP);
+    return Convolute(fNP, fNP);
+  }
+
+  //_________________________________________________________________________________
+  std::vector<double> ConvolutionTable::GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP1,
+						       std::function<double(double const&, double const&, double const&)> const& fNP2) const
+  {
+    std::map<double,double> pred = Convolute(fNP1, fNP2);
     const int npred = pred.size() - (_IntqT ? 1 : 0);
     std::vector<double> vpred(npred);
     if (_IntqT)
@@ -83,5 +94,11 @@ namespace NangaParbat
 	vpred[i] = pred.at(_qTv[i]);
 
     return vpred;
+  }
+
+  //_________________________________________________________________________________
+  std::vector<double> ConvolutionTable::GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP) const
+  {
+    return GetPredictions(fNP, fNP);
   }
 }

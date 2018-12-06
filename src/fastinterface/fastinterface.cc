@@ -197,6 +197,9 @@ namespace NangaParbat
 	// Name of the dataset
 	const std::string name = DHVect[i].GetName();
 
+	// Process
+	const DataHandler::Process proc = DHVect[i].GetProcess();
+
 	// Retrieve kinematics
 	const DataHandler::Kinematics  kin   = DHVect[i].GetKinematics();
 	const double                   Vs    = kin.Vs;    // C.M.E.
@@ -235,6 +238,7 @@ namespace NangaParbat
 	Tabs[i] << YAML::BeginMap;
 	Tabs[i] << YAML::Comment("Kinematics and grid information");
 	Tabs[i] << YAML::Key << "name" << YAML::Value << name;
+	Tabs[i] << YAML::Key << "process" << YAML::Value << proc;
 	Tabs[i] << YAML::Key << "CME" << YAML::Value << Vs;
 	Tabs[i] << YAML::Key << "qTintegrated" << YAML::Value << IntqT;
 	Tabs[i] << YAML::Key << "qT_bounds" << YAML::Value << YAML::Flow << qTv;

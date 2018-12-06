@@ -56,7 +56,7 @@ namespace NangaParbat
 	  for(int k = 0; k < ndata; k++)
 	    T += L(i, k) * L(j, k);
 	  if(abs(T - V(i, j)) > 1e-8)
-	    std::cout << "Problem with the Cholesky decomposition." << std::endl;
+	    throw std::runtime_error("[CholeskyDecomposition]: Problem with the Cholesky decomposition.");
 	}
     delete[] mat;
     return L;
@@ -84,7 +84,7 @@ namespace NangaParbat
 	for(int j = 0; j < ndata; j++)
 	  z += L(i, j) * x[j];
 	if(abs(z - y[i]) > 1e-8)
-	  std::cout << "Problem with the forward substitution." << std::endl;
+	  throw std::runtime_error("[SolveLowerSystem]: Problem with the forward substitution.");
       }
     return x;
   }
@@ -111,7 +111,7 @@ namespace NangaParbat
 	for(int j = 0; j < ndata; j++)
 	  z += U(i, j) * x[j];
 	if(abs(z-y[i]) > 1e-8)
-	  std::cout << "Problem with the backward substitution." << std::endl;
+	  throw std::runtime_error("[SolveUpperSystem]: Problem with the backward substitution.");
       }
     return x;
   }
@@ -142,7 +142,7 @@ namespace NangaParbat
 	for(int j = 0; j < ndata; j++)
 	  z += A(i, j) * lambda[j];
 	if(abs(z - rho[i]) > 1e-8)
-	  std::cout << "Problem with the symmetric system." << std::endl;
+	  throw std::runtime_error("[SolveSymmetricSystem]: Problem with the symmetric system.");
       }
     return lambda;
   }

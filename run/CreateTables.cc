@@ -48,11 +48,14 @@ int main()
       fout.close();
     }
 
+  // Define Chi2 object
+  NangaParbat::ChiSquare chi2;
+
   // Convolute table
-  for (auto const& tab : Tabs)
+  for (int j = 0; j < (int) Tabs.size(); j++)
     {
       // Convolution
-      const NangaParbat::ConvolutionTable CTable{YAML::Load(tab.c_str())};
+      const NangaParbat::ConvolutionTable CTable{YAML::Load(Tabs[j].c_str())};
       for (auto const& p : CTable.Convolute(fNP))
 	std::cout << p.first << "  " << p.second << std::endl;
 
@@ -68,12 +71,14 @@ int main()
 	for (auto const& p : CTable.GetPredictions(fNP))
 	  p;
       t.stop(true);
+
+      for (auto const& p : CTable.GetPredictions(fNP))
+	std::cout << p << std::endl;
+
+      // Append dataset to the chi2 object
+      chi2.AddBlock(std::make_pair(DHVect[j], CTable));
+
+      std::cout << chi2.Evaluate(fNP) << std::endl;
     }
-
-  // Define Chi2 object
-  const NangaParbat::ChiSquare chi2{DHVect};
-
-
-
   return 0;
 }

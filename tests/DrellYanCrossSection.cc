@@ -80,7 +80,7 @@ int main()
   const double Vs = 13000;    // C.M.E.
   const double yb = 0;        // Rapidity
   const double Qb = 91.2;     // Invariant mass
-  const std::vector<double> qTv{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};   // Transverse momentum vector
+  const std::vector<double> qTv{0.01, 0.1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};   // Transverse momentum vector
 
   // Ogata-quadrature object of degree zero (do not integrate in qT).
   apfel::OgataQuadrature OgataObj{};

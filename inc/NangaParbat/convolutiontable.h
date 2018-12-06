@@ -29,7 +29,18 @@ namespace NangaParbat
 
     /**
      * @brief This function convolutes the input convolution table with
-     * a user-given non-perturbative function.
+     * two user-given non-perturbative functions.
+     * @param fNP1: the first non-perturbative input function
+     * @param fNP2: the second non-perturbative input function
+     * @return a map that associates each value of qT to a prediction.
+     */
+    std::map<double,double> Convolute(std::function<double(double const&, double const&, double const&)> const& fNP1,
+				      std::function<double(double const&, double const&, double const&)> const& fNP2) const;
+
+    /**
+     * @brief This function convolutes the input convolution table
+     * with a user-given non-perturbative function assuming that first
+     * and second functions are equal.
      * @param fNP: the non-perturbative input function
      * @return a map that associates each value of qT to a prediction.
      */
@@ -37,14 +48,26 @@ namespace NangaParbat
 
     /**
      * @brief This function returns a vector of predictions with a
-     * a user-given non-perturbative function.
-     * @param fNP: the non-perturbative input function
+     * two user-given non-perturbative functions.
+     * @param fNP1: the first non-perturbative input function
+     * @param fNP2: the second non-perturbative input function
+     * @return a vector of predictions.
+     */
+    std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP1,
+				       std::function<double(double const&, double const&, double const&)> const& fNP2) const;
+
+    /**
+     * @brief This function returns a vector of predictions with a
+     * a user-given non-perturbative function  assuming that first
+     * and second functions are equal.
+     * @param fNP: the first non-perturbative input function
      * @return a vector of predictions.
      */
     std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP) const;
 
   private:
     std::string                                                    _name;  //!< Name of the table
+    int                                                            _proc;  //!< Index of the process (0: DY, 1: SIDIS)
     double                                                         _Vs;    //!< Center of mass energy
     bool                                                           _IntqT; //!< Whether the bin are integrated in qT or not
     std::vector<double>                                            _qTv;   //!< Vector of qT
