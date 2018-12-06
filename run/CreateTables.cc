@@ -30,9 +30,9 @@ int main()
   std::vector<NangaParbat::DataHandler> DHVect;
 
   // Test data
-  DHVect.push_back(NangaParbat::DataHandler{"Test_data", YAML::LoadFile("../data/TestData/Table1.yaml")});
+  //DHVect.push_back(NangaParbat::DataHandler{"Test_data", YAML::LoadFile("../data/TestData/Table1.yaml")});
   // Push back CDF Run I
-  //DHVect.push_back(NangaParbat::DataHandler{"CDF_Run_I", YAML::LoadFile("../data/HEPData-ins505738-v1-yaml/Table1.yaml")});
+  DHVect.push_back(NangaParbat::DataHandler{"CDF_Run_I", YAML::LoadFile("../data/HEPData-ins505738-v1-yaml/Table1.yaml")});
 
   // Allocate "FastInterface" object
   const NangaParbat::FastInterface FIObj{YAML::LoadFile("../cards/config.yaml")};
@@ -57,19 +57,13 @@ int main()
       // Convolution
       const NangaParbat::ConvolutionTable CTable{YAML::Load(Tabs[j].c_str())};
       for (auto const& p : CTable.Convolute(fNP))
-	std::cout << p.first << "  " << p.second << std::endl;
+	std::cout << std::scientific << p.first << "  " << p.second << std::endl;
 
       // Performance test
       apfel::Timer t;
       for (int i = 0; i < 8000; i++)
 	for (auto const& p : CTable.Convolute(fNP))
 	  p.second;
-      t.stop(true);
-
-      t.start();
-      for (int i = 0; i < 8000; i++)
-	for (auto const& p : CTable.GetPredictions(fNP))
-	  p;
       t.stop(true);
 
       for (auto const& p : CTable.GetPredictions(fNP))
