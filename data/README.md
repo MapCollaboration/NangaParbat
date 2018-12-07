@@ -28,13 +28,14 @@ Here `ndata` corresponds to the number of data points, `Vs` is the center-of-mas
 With the goal of sticking as close as possible to the original **HEPData** YAML format, we use the same syntax suggested here: https://github.com/HEPData/hepdata-submission, but adapting it to our needs. A typical data file looks like this:
 ```Shell
 dependent_variables:
-- header: {name: D(SIG)/DPT}
+- header:
   qualifiers:
   - {name: process, value: DY}
-  - {name: SQRT(S), value: 1800}
+  - {name: observable, value: d(sigma)/dydQdqT}
+  - {name: target_isoscalarity, value: -1 }
+  - {name: Vs, value: 1800}
   - {name: Q, low: 66, high: 116, integrate: true}
-  - {name: y, low: -1, high: 1, integrate: true}
-  - {name: factor, value: 1}
+  - {name: y, low: -2.75, high: 2.75, integrate: true}
   values:
   - errors:
     - {label: 'unc', symerror: 0.53}
