@@ -54,17 +54,8 @@ int main()
   // Convolute table
   for (int j = 0; j < (int) Tabs.size(); j++)
     {
-      // Convolution
+      // Convolution table
       const NangaParbat::ConvolutionTable CTable{YAML::Load(Tabs[j].c_str())};
-      for (auto const& p : CTable.Convolute(fNP))
-	std::cout << std::scientific << p.first << "  " << p.second << std::endl;
-
-      // Performance test
-      apfel::Timer t;
-      for (int i = 0; i < 8000; i++)
-	for (auto const& p : CTable.Convolute(fNP))
-	  p.second;
-      t.stop(true);
 
       for (auto const& p : CTable.GetPredictions(fNP))
 	std::cout << p << std::endl;
@@ -72,7 +63,15 @@ int main()
       // Append dataset to the chi2 object
       chi2.AddBlock(std::make_pair(DHVect[j], CTable));
 
+      // Compute chi2
       std::cout << chi2.Evaluate(fNP) << std::endl;
+
+      // Performance test
+      //apfel::Timer t;
+      //for (int i = 0; i < 8000; i++)
+      //  for (auto const& p : CTable.Convolute(fNP))
+      //    p.second;
+      //t.stop(true);
     }
   return 0;
 }

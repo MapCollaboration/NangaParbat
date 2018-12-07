@@ -2,9 +2,11 @@ dependent_variables:
 - header: {name: D(SIG)/DPT}
   qualifiers:
   - {name: process, value: DY}
-  - {name: SQRT(S), value: 1800}
+  - {name: observable, value: d(sigma)/dydQdqT}
+  - {name: target_isoscalarity, value: -1 }
+  - {name: Vs, value: 1800}
   - {name: Q, low: 66, high: 116, integrate: true}
-  - {name: y, low: -4.2, high: 4.2, integrate: true}
+  - {name: y, low: -2.75, high: 2.75, integrate: true}
   values:
   - errors:
     - {label: 'unc', value: 1.2}

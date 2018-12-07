@@ -27,6 +27,11 @@ namespace NangaParbat
     enum Process: int {DY, SIDIS};
 
     /**
+     * @brief The observable enumerator
+     */
+    enum Observable: int {dydQdqT, Ed3q};
+
+    /**
      * @brief Structure containing the kinematic information of one
      * single data set.
      */
@@ -53,9 +58,19 @@ namespace NangaParbat
     std::string GetName() const { return _name; };
 
     /**
-     * @brief Function that returns the process
+     * @brief Function that returns the process code
      */
     Process GetProcess() const { return _proc; };
+
+    /**
+     * @brief Function that returns the observable code
+     */
+    Observable GetObservable() const { return _obs; };
+
+    /**
+     * @brief Function that returns the PDG codes of the two hadrons
+     */
+    double GetTargetIsoscalarity() const { return _targetiso; };
 
     /**
      * @brief Function that returns the kinematic object
@@ -87,7 +102,9 @@ namespace NangaParbat
 
   protected:
     std::string                      _name;        //!< Name of the dataset
-    Process                          _proc;        //!< The process (can be Drell-Yan or SIDIS)
+    Process                          _proc;        //!< The process
+    Observable                       _obs;         //!< The observable
+    double                           _targetiso;   //!< Isoscalarity of the target
     Kinematics                       _kin;         //!< Kinematics block
     std::vector<double>              _mean;        //!< Vector of central values
     std::vector<double>              _uncor;       //!< Vector of uncorrelated uncertainties

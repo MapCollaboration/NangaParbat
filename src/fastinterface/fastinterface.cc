@@ -98,7 +98,7 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  apfel::DoubleObject<apfel::Distribution> FastInterface::LuminosityDY(double const& bT, double const& Q) const
+  apfel::DoubleObject<apfel::Distribution> FastInterface::LuminosityDY(double const& bT, double const& Q, double const& targetiso) const
   {
     // TMD scales
     const int    pto   = _config["PerturbativeOrder"].as<int>();
@@ -107,6 +107,15 @@ namespace NangaParbat
     const bool   arun  = _config["alphaem"]["run"].as<bool>();
     const double muf   = Cf * Q;
     const double zetaf = Q * Q;
+
+    // Whether the target is a particle or an antiparticle
+    int sign = 1;
+    if (targetiso < 0)
+      sign = -1;
+
+    // Fractions of protons and neutrons in the target
+    const double frp = std::abs(targetiso);
+    const double frn = 1 - frp;
 
     // Number of active flavours at 'Q'
     const int nf = apfel::NF(muf, _Thresholds);
@@ -123,18 +132,26 @@ namespace NangaParbat
     // Global factor
     const double factor = apfel::ConvFact * 8 * M_PI * aem2 * hcs / 9 / pow(Q, 3);
 
-    apfel::DoubleObject<apfel::Distribution> Lumi;
     const std::map<int,apfel::Distribution> xF = QCDEvToPhys(_EvTMDPDFs(bT, muf, zetaf).GetObjects());
-    for (int i = 1; i <= nf; i++)
+    apfel::DoubleObject<apfel::Distribution> Lumi;
+    // Treat down and up separately to take isoscalarity of the target
+    // into account
+    Lumi.AddTerm({factor * Bq[0], frp * xF.at(sign)    + frn * xF.at(sign*2),  xF.at(-1)});
+    Lumi.AddTerm({factor * Bq[0], frp * xF.at(-sign)   + frn * xF.at(-sign*2), xF.at(1)});
+    Lumi.AddTerm({factor * Bq[1], frp * xF.at(sign*2)  + frn * xF.at(sign),    xF.at(-2)});
+    Lumi.AddTerm({factor * Bq[1], frp * xF.at(-sign*2) + frn * xF.at(-sign),   xF.at(2)});
+    // Now run over the remaining flavours
+    for (int i = 3; i <= nf; i++)
       {
-	Lumi.AddTerm({factor * Bq[i-1], xF.at(i), xF.at(-i)});
-	Lumi.AddTerm({factor * Bq[i-1], xF.at(-i), xF.at(i)});
+	const int ip = i * sign;
+	Lumi.AddTerm({factor * Bq[i-1], xF.at(ip), xF.at(-i)});
+	Lumi.AddTerm({factor * Bq[i-1], xF.at(-ip), xF.at(i)});
       }
     return Lumi;
   }
 
   //_________________________________________________________________________________
-  apfel::DoubleObject<apfel::Distribution> FastInterface::LuminositySIDIS(double const& bT, double const& Q) const
+  apfel::DoubleObject<apfel::Distribution> FastInterface::LuminositySIDIS(double const& bT, double const& Q, double const& targetiso) const
   {
     // TMD scales
     const int    pto   = _config["PerturbativeOrder"].as<int>();
@@ -143,6 +160,15 @@ namespace NangaParbat
     const bool   arun  = _config["alphaem"]["run"].as<bool>();
     const double muf   = Cf * Q;
     const double zetaf = Q * Q;
+
+    // Whether the target is a particle or an antiparticle
+    int sign = 1;
+    if (targetiso < 0)
+      sign = -1;
+
+    // Fractions of protons and neutrons in the target
+    const double frp = std::abs(targetiso);
+    const double frn = 1 - frp;
 
     // Number of active flavours at 'Q'
     const int nf = apfel::NF(muf, _Thresholds);
@@ -159,13 +185,21 @@ namespace NangaParbat
     // Global factor (TO BE ADJUSTED!)
     const double factor = apfel::ConvFact * aem2 * hcs;
 
-    apfel::DoubleObject<apfel::Distribution> Lumi;
     const std::map<int,apfel::Distribution> xF = QCDEvToPhys(_EvTMDPDFs(bT, muf, zetaf).GetObjects());
     const std::map<int,apfel::Distribution> xD = QCDEvToPhys(_EvTMDFFs(bT, muf, zetaf).GetObjects());
-    for (int i = 1; i <= nf; i++)
+    apfel::DoubleObject<apfel::Distribution> Lumi;
+    // Treat down and up separately to take isoscalarity of the target
+    // into account
+    Lumi.AddTerm({factor * Bq[0], frp * xF.at(sign)    + frn * xF.at(sign*2),  xD.at(-1)});
+    Lumi.AddTerm({factor * Bq[0], frp * xF.at(-sign)   + frn * xF.at(-sign*2), xD.at(1)});
+    Lumi.AddTerm({factor * Bq[1], frp * xF.at(sign*2)  + frn * xF.at(sign),    xD.at(-2)});
+    Lumi.AddTerm({factor * Bq[1], frp * xF.at(-sign*2) + frn * xF.at(-sign),   xD.at(2)});
+    // Now run over the remaining flavours
+    for (int i = 3; i <= nf; i++)
       {
-	Lumi.AddTerm({factor * Bq[i-1], xF.at(i), xD.at(-i)});
-	Lumi.AddTerm({factor * Bq[i-1], xF.at(-i), xD.at(i)});
+	const int ip = i * sign;
+	Lumi.AddTerm({factor * Bq[i-1], xF.at(ip), xD.at(-i)});
+	Lumi.AddTerm({factor * Bq[i-1], xF.at(-ip), xD.at(i)});
       }
     return Lumi;
   }
@@ -199,6 +233,12 @@ namespace NangaParbat
 
 	// Process
 	const DataHandler::Process proc = DHVect[i].GetProcess();
+
+	// Observable
+	const DataHandler::Observable obs = DHVect[i].GetObservable();
+
+	// Target isoscalarity
+	const double targetiso = DHVect[i].GetTargetIsoscalarity();
 
 	// Retrieve kinematics
 	const DataHandler::Kinematics  kin   = DHVect[i].GetKinematics();
@@ -239,6 +279,8 @@ namespace NangaParbat
 	Tabs[i] << YAML::Comment("Kinematics and grid information");
 	Tabs[i] << YAML::Key << "name" << YAML::Value << name;
 	Tabs[i] << YAML::Key << "process" << YAML::Value << proc;
+	Tabs[i] << YAML::Key << "observable" << YAML::Value << obs;
+	Tabs[i] << YAML::Key << "target_isoscalarity" << YAML::Value << targetiso;
 	Tabs[i] << YAML::Key << "CME" << YAML::Value << Vs;
 	Tabs[i] << YAML::Key << "qTintegrated" << YAML::Value << IntqT;
 	Tabs[i] << YAML::Key << "qT_bounds" << YAML::Value << YAML::Flow << qTv;
@@ -272,7 +314,7 @@ namespace NangaParbat
 
 		// Call luminosity function
 		std::function<apfel::DoubleObject<apfel::Distribution>(double const&)> Lumi;
-		Lumi = [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>{ return LuminosityDY(bs, Q); };
+		Lumi = [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>{ return LuminosityDY(bs, Q, targetiso); };
 		const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabLumi{Lumi, 200, Qb.first, Qb.second, 1, {}};
 
 		// Initialise vector of fixed points for the integration in Q

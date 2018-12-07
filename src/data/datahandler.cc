@@ -29,14 +29,26 @@ namespace NangaParbat
 		else if (ql["value"].as<std::string>() == "SIDIS")
 		  _proc = SIDIS;
 		else
-		  {
-		    std::cout << "DataHandler: Unknown process" << std::endl;
-		    exit(-10);
-		  }
+		  throw std::runtime_error("[DataHandler::DataHandler]: Unknown process.");
 	      }
 
+	    // Observable
+	    if (ql["name"].as<std::string>() == "observable")
+	      {
+		if (ql["value"].as<std::string>() == "d(sigma)/dydQdqT")
+		  _obs = dydQdqT;
+		else if (ql["value"].as<std::string>() == "Ed(sigma)/d3q")
+		  _obs = Ed3q;
+		else
+		  throw std::runtime_error("[DataHandler::DataHandler]: Unknown observable.");
+	      }
+
+	    // Hadron codes
+	    if (ql["name"].as<std::string>() == "target_isoscalarity")
+	      _targetiso = ql["value"].as<double>();
+
 	    // Center of mass energy
-	    if (ql["name"].as<std::string>() == "SQRT(S)")
+	    if (ql["name"].as<std::string>() == "Vs")
 	      _kin.Vs = ql["value"].as<double>();
 
 	    // Invariant-mass interval

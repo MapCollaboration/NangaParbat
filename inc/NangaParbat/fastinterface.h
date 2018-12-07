@@ -29,7 +29,7 @@ namespace NangaParbat
      * @param Q: value of the hard scale
      * @return the luminosity for Drell-Yan
      */
-    apfel::DoubleObject<apfel::Distribution> LuminosityDY(double const& bT, double const& Q) const;
+    apfel::DoubleObject<apfel::Distribution> LuminosityDY(double const& bT, double const& Q, double const& targetiso) const;
 
     /**
      * @brief This function returns a "double object" for a
@@ -38,7 +38,7 @@ namespace NangaParbat
      * @param Q: value of the hard scale
      * @return the luminosity for SIDIS
      */
-    apfel::DoubleObject<apfel::Distribution> LuminositySIDIS(double const& b, double const& Q) const;
+    apfel::DoubleObject<apfel::Distribution> LuminositySIDIS(double const& b, double const& Q, double const& targetiso) const;
 
     /**
      * @brief This function computes the interpolation tables given as

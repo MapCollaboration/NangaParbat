@@ -30,6 +30,7 @@ int main()
 
   // Vector of datafiles
   const std::vector<NangaParbat::DataHandler> DHVect{NangaParbat::DataHandler{"Test_data", YAML::LoadFile("../data/TestData/Table1.yaml")}};
+  //const std::vector<NangaParbat::DataHandler> DHVect{NangaParbat::DataHandler{"Test_data", YAML::LoadFile("../data/HEPData-ins505738-v1-yaml/Table1.yaml")}};
   const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect);
 
   // Write tables to file
