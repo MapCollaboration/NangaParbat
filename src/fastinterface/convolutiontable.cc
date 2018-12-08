@@ -88,7 +88,7 @@ namespace NangaParbat
     std::vector<double> vpred(npred);
     if (_IntqT)
       for (int i = 0; i < npred; i++)
-	vpred[i] = pred.at(_qTv[i+1]) - pred.at(_qTv[i]);
+	vpred[i] = ( pred.at(_qTv[i+1]) - pred.at(_qTv[i]) ) / ( _qTv[i+1] - _qTv[i] );
     else
       for (int i = 0; i < npred; i++)
 	vpred[i] = pred.at(_qTv[i]);
