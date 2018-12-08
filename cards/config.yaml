@@ -1,17 +1,20 @@
-# Collinear PDF set
+# Collinear PDF set and member to be used for the generation of the
+# tables. They are assumed to be in the LHAPDF format.
 pdfset:
   name: "MMHT2014nlo68cl"
   member: 0
 
-# Collinear FF set
+# Collinear FF set and member to be used for the generation of the
+# tables. They are assumed to be in the LHAPDF format.
 ffset:
   name: "DSS14_NLO_PiSum"
   member: 0
 
-# Perturbative order
+# Perturbative order of the computation. 0: LO, 1: NLO, 2: NNLO.
 PerturbativeOrder: 2
 
-# Initial and final scale-variation factors
+# Initial and final scale-variation factors arong Q and mub =
+# 2e^{-gamma_E} / b, respectively.
 TMDscales:
   Ci: 1
   Cf: 1
@@ -27,7 +30,7 @@ alphaem:
   Qref: 91.1876
   run: true
 
-# Parameters of the x-space subgrid on which collinear PDFs are
+# Parameters of the x-space subgrids on which collinear PDFs are
 # tabulated
 xgridpdf:
   - [50, 1e-3, 3]
@@ -35,7 +38,7 @@ xgridpdf:
   - [50, 6e-1, 3]
   - [50, 8e-1, 3]
 
-# Parameters of the x-space subgrid on which collinear FFs are
+# Parameters of the x-space subgrids on which collinear FFs are
 # tabulated
 xgridff:
   - [60, 1e-2, 3]
@@ -43,7 +46,7 @@ xgridff:
   - [50, 8e-1, 3]
 
 # Maximum number of Ogata-quadrature points (no more than 1000)
-nOgata: 100
+nOgata: 50
 
 # Number of points, interpolation degree, and integration accuracy
 # of the grid in Q
@@ -58,3 +61,10 @@ xigrid:
   n: 5
   InterDegree: 1
   eps: 1e-3
+
+# Maximum value allowed for the ratio qT / Q. This has to be intended
+# like a "generation-level" cut meaning that only data points with qT
+# / Q below this value are generated. Those above are simply set to
+# zero. However, a more restrictive cut can still be applied at the
+# fit level.
+qToverQmax: 0.3

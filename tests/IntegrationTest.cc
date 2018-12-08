@@ -83,7 +83,7 @@ int main()
   const apfel::AlphaQED alphaem{config["alphaem"]["aref"].as<double>(), config["alphaem"]["Qref"].as<double>(), Thresholds, {0, 0, 1.777}, 0};
 
   // Retrieve relevant parameters from the configuration file
-  const double eps    = 1e-9;
+  const double eps    = 1e-11;
   const double Cf     = config["TMDscales"]["Cf"].as<double>();
   const int    nOgata = config["nOgata"].as<int>();
 

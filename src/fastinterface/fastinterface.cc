@@ -217,6 +217,7 @@ namespace NangaParbat
     const int    nxi    = _config["xigrid"]["n"].as<int>();
     const int    idxi   = _config["xigrid"]["InterDegree"].as<int>();
     const double epsxi  = _config["xigrid"]["eps"].as<double>();
+    const double qToQ   = _config["qToverQmax"].as<double>();
 
     // Initialise container of YAML:Emitter objects.
     std::vector<YAML::Emitter> Tabs(DHVect.size());
@@ -294,7 +295,11 @@ namespace NangaParbat
 
 	// Total number of steps for this particular table. Used to
 	// report the progress of the computation.
-	const int nsteps = qTv.size() * nO * nQe * nxie;
+	int nqT = 0;
+	for (auto const& qT : qTv)
+	  if (qT / Qb.first <= qToQ)
+	    nqT++;
+	const int nsteps = nqT * nO * nQe * nxie;
 
 	// Counter for the status report
 	int istep = 0;
@@ -303,7 +308,16 @@ namespace NangaParbat
 	for (auto const& qT : qTv)
 	  {
 	    // Allocate container of the weights
-	    std::vector<std::vector<std::vector<double>>> W(nO, std::vector<std::vector<double>>(nQe, std::vector<double>(nxie)));
+	    std::vector<std::vector<std::vector<double>>> W(nO, std::vector<std::vector<double>>(nQe, std::vector<double>(nxie, 0.)));
+
+	    // If the value of qT / Qmin is above that allowed print
+	    // all zero's and constinue with the next value of qT
+	    if (qT / Qb.first > qToQ)
+	      {
+		Tabs[i] << YAML::Key << qT;
+		Tabs[i] << YAML::Value << YAML::Flow << W;
+		continue;
+	      }
 
 	    // Loop over the Ogata-quadrature points
 	    for (int n = 0; n < nO; n++)
