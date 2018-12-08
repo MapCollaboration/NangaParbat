@@ -48,12 +48,14 @@ namespace NangaParbat
     };
 
     /**
-     * @brief The default "DataHandler" constructor.
+     * @brief The "DataHandler" constructor.
+     * @param name: the name associated to the data set
+     * @param datafile: the YAML:Node with the interpolation table
      */
     DataHandler(std::string const& name, YAML::Node const& datafile);
 
     /**
-     * @brief Function to retrive the name of the dataset object
+     * @brief Function that returns the name of the dataset
      */
     std::string GetName() const { return _name; };
 
@@ -68,7 +70,10 @@ namespace NangaParbat
     Observable GetObservable() const { return _obs; };
 
     /**
-     * @brief Function that returns the PDG codes of the two hadrons
+     * @brief Function that returns the target isoscalarity
+     * @note The code always assumes that one of the hadrons has
+     * isoscalarity 1, meaning that it's a single hadron whose
+     * distributions don't need to be manipulated.
      */
     double GetTargetIsoscalarity() const { return _targetiso; };
 

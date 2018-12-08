@@ -10,12 +10,19 @@
 namespace NangaParbat
 {
   /**
-   * @brief b* prescription to implement the CSS prescription.
+   * @brief the CSS-like b* prescription
+   * @param bmax: the saturation value
    */
   double bstar(double const& b, double const& bmax);
 
   /**
    * @brief Utility function to generate an interpolation grid
+   * @param n: the number of nodes of the grid
+   * @param min: the lower bound
+   * @param max: the upper bound
+   * @param ext: the numer of extra nodes
+   * @return a linearly-spaced grid with "n" nodes between "min" and
+   * "max" plus "ext" extra nodes on the right.
    */
   std::vector<double> GenerateQGrid(int const& n, double const& min, double const& max, int const& ext = 0);
 

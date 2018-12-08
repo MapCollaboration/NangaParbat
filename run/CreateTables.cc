@@ -57,11 +57,11 @@ int main()
       // Convolution table
       const NangaParbat::ConvolutionTable CTable{YAML::Load(Tabs[j].c_str())};
 
-      for (auto const& p : CTable.GetPredictions(fNP))
-	std::cout << p << std::endl;
-
       // Append dataset to the chi2 object
       chi2.AddBlock(std::make_pair(DHVect[j], CTable));
+
+      for (auto const& p : CTable.GetPredictions(fNP))
+	std::cout << p << std::endl;
 
       // Compute chi2
       std::cout << chi2.Evaluate(fNP) << std::endl;
