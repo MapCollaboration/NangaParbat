@@ -23,6 +23,13 @@ double fNP(double const&, double const& b, double const& zetaf)
 }
 
 //_________________________________________________________________________________
+double bstar(double const& b, double const&)
+{
+  const double bmax = 1;
+  return b / sqrt( 1 + pow(b / bmax, 2) );
+}
+
+//_________________________________________________________________________________
 // Main program
 int main()
 {
@@ -38,7 +45,7 @@ int main()
   const NangaParbat::FastInterface FIObj{YAML::LoadFile("../cards/config.yaml")};
 
   // Compute tables
-  const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect);
+  const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect, bstar);
 
   // Dump table to file
   for (auto const& tab : Tabs)

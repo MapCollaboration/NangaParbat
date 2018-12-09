@@ -47,7 +47,8 @@ namespace NangaParbat
      * @return a vector of "YAML::Emitter" objects containing as many
      * tables as elements of "DHVect".
      */
-    std::vector<YAML::Emitter> ComputeTables(std::vector<DataHandler> const& DHVect) const;
+    std::vector<YAML::Emitter> ComputeTables(std::vector<DataHandler> const& DHVect,
+					     std::function<double(double const&, double const&)> bstar) const;
 
   private:
     YAML::Node                                                                                  _config;     //!< Configuration YAML::Node

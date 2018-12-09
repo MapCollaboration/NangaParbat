@@ -10,13 +10,6 @@
 namespace NangaParbat
 {
   /**
-   * @brief The b* prescription
-   * @param bmin: the small-b saturation value
-   * @param bmax: the large-b saturation value
-   */
-  double bstar(double const& b, double const& bmin, double const& bmax);
-
-  /**
    * @brief Utility function to generate an interpolation grid
    * @param n: the number of nodes of the grid
    * @param min: the lower bound
@@ -25,7 +18,7 @@ namespace NangaParbat
    * @return a linearly-spaced grid with "n" nodes between "min" and
    * "max" plus "ext" extra nodes on the right.
    */
-  std::vector<double> GenerateQGrid(int const& n, double const& min, double const& max, int const& ext = 0);
+  std::vector<double> GenerateGrid(int const& n, double const& min, double const& max, int const& ext = 0);
 
   /**
    * @brief Cholesky decomposition of the covariance matrix.

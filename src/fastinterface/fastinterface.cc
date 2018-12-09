@@ -205,12 +205,11 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  std::vector<YAML::Emitter> FastInterface::ComputeTables(std::vector<DataHandler> const& DHVect) const
+  std::vector<YAML::Emitter> FastInterface::ComputeTables(std::vector<DataHandler> const& DHVect,
+							  std::function<double(double const&, double const&)> bstar) const
   {
     // Retrieve relevant parameters for the numerical integration from
     // the configuration file
-    const double bmin   = _config["bstar"]["bmin"].as<double>();
-    const double bmax   = _config["bstar"]["bmax"].as<double>();
     const int    nOgata = _config["nOgata"].as<int>();
     const int    nQ     = _config["Qgrid"]["n"].as<int>();
     const int    idQ    = _config["Qgrid"]["InterDegree"].as<int>();
@@ -262,9 +261,9 @@ namespace NangaParbat
 	std::vector<double> wo = OgataObj.GetWeights();
 
 	// Construct QGrid-like grids for the integration in Q and y
-	const std::vector<double> Qg  = (IntQ ? GenerateQGrid(nQ, Qb.first, Qb.second, idQ - 1) :
+	const std::vector<double> Qg  = (IntQ ? GenerateGrid(nQ, Qb.first, Qb.second, idQ - 1) :
 					 std::vector<double>{( Qb.first + Qb.second ) / 2});
-	const std::vector<double> xig = (Inty ? GenerateQGrid(nxi, exp(yb.first), exp(yb.second), idxi - 1) :
+	const std::vector<double> xig = (Inty ? GenerateGrid(nxi, exp(yb.first), exp(yb.second), idxi - 1) :
 					 std::vector<double>{exp( ( yb.first + yb.second ) / 2 )});
 	const apfel::QGrid<double> Qgrid {Qg, idQ};
 	const apfel::QGrid<double> xigrid{xig, idxi};
@@ -323,13 +322,13 @@ namespace NangaParbat
 	    // Loop over the Ogata-quadrature points
 	    for (int n = 0; n < nO; n++)
 	      {
-		// Get impact parameters 'b' and 'b*'
+		// Get impact parameters 'b'
 		const double b  = zo[n] / qT;
-		const double bs = bstar(b, bmin, bmax);
 
-		// Call luminosity function
+		// Tabulate luminosity function using b* as an impact
+		// parameter
 		std::function<apfel::DoubleObject<apfel::Distribution>(double const&)> Lumi;
-		Lumi = [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>{ return LuminosityDY(bs, Q, targetiso); };
+		Lumi = [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>{ return LuminosityDY(bstar(b, Q), Q, targetiso); };
 		const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabLumi{Lumi, 200, Qb.first, Qb.second, 1, {}};
 
 		// Initialise vector of fixed points for the integration in Q

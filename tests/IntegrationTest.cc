@@ -21,6 +21,13 @@ double fNP(double const&, double const& b, double const& zetaf)
   return exp( ( - g1 - g2 * log( sqrt(zetaf) / Q0 / 2 ) ) * b * b / 2 );
 }
 
+//_________________________________________________________________________________
+double bstar(double const& b, double const&)
+{
+  const double bmax = 1;
+  return b / sqrt( 1 + pow(b / bmax, 2) );
+}
+
 // Main program
 int main()
 {
@@ -31,7 +38,7 @@ int main()
   // Vector of datafiles
   const std::vector<NangaParbat::DataHandler> DHVect{NangaParbat::DataHandler{"Test_data", YAML::LoadFile("../data/TestData/Table1.yaml")}};
   //const std::vector<NangaParbat::DataHandler> DHVect{NangaParbat::DataHandler{"Test_data", YAML::LoadFile("../data/HEPData-ins505738-v1-yaml/Table1.yaml")}};
-  const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect);
+  const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect, bstar);
 
   // Write tables to file
   for (auto const& tab : Tabs)
@@ -118,11 +125,8 @@ int main()
 	  // trasformed in qT space.
 	  const auto TMDLumib = [=] (double const& b) -> double
 	    {
-	      // Get impact parameters 'b' and 'b*'
-	      const double bs = NangaParbat::bstar(b, config["bstar"]["bmin"].as<double>(), config["bstar"]["bmax"].as<double>());
-
 	      // Tabulate TMDs in Q
-	      const auto EvolvedTMDPDFs = [&] (double const& Q) -> apfel::Set<apfel::Distribution>{ return EvTMDPDFs(bs, Cf * Q, Q * Q); };
+	      const auto EvolvedTMDPDFs = [&] (double const& Q) -> apfel::Set<apfel::Distribution>{ return EvTMDPDFs(bstar(b, Q), Cf * Q, Q * Q); };
 	      const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabEvolvedTMDPDFs{EvolvedTMDPDFs, 50, Qb.first, Qb.second, 3, {}};
 
 	      // Function to be integrated in Q
