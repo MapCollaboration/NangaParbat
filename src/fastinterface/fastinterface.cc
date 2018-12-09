@@ -209,6 +209,7 @@ namespace NangaParbat
   {
     // Retrieve relevant parameters for the numerical integration from
     // the configuration file
+    const double bmin   = _config["bstar"]["bmin"].as<double>();
     const double bmax   = _config["bstar"]["bmax"].as<double>();
     const int    nOgata = _config["nOgata"].as<int>();
     const int    nQ     = _config["Qgrid"]["n"].as<int>();
@@ -324,7 +325,7 @@ namespace NangaParbat
 	      {
 		// Get impact parameters 'b' and 'b*'
 		const double b  = zo[n] / qT;
-		const double bs = bstar(b, bmax);
+		const double bs = bstar(b, bmin, bmax);
 
 		// Call luminosity function
 		std::function<apfel::DoubleObject<apfel::Distribution>(double const&)> Lumi;

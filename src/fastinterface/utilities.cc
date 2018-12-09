@@ -11,7 +11,7 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  double bstar(double const& b, double const& bmax)
+  double bstar(double const& b, double const&, double const& bmax)
   {
     return b / sqrt( 1 + pow(b / bmax, 2) );
   }

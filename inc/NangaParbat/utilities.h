@@ -10,10 +10,11 @@
 namespace NangaParbat
 {
   /**
-   * @brief the CSS-like b* prescription
-   * @param bmax: the saturation value
+   * @brief The b* prescription
+   * @param bmin: the small-b saturation value
+   * @param bmax: the large-b saturation value
    */
-  double bstar(double const& b, double const& bmax);
+  double bstar(double const& b, double const& bmin, double const& bmax);
 
   /**
    * @brief Utility function to generate an interpolation grid

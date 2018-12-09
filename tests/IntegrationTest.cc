@@ -119,7 +119,7 @@ int main()
 	  const auto TMDLumib = [=] (double const& b) -> double
 	    {
 	      // Get impact parameters 'b' and 'b*'
-	      const double bs = NangaParbat::bstar(b, config["bstar"]["bmax"].as<double>());
+	      const double bs = NangaParbat::bstar(b, config["bstar"]["bmin"].as<double>(), config["bstar"]["bmax"].as<double>());
 
 	      // Tabulate TMDs in Q
 	      const auto EvolvedTMDPDFs = [&] (double const& Q) -> apfel::Set<apfel::Distribution>{ return EvTMDPDFs(bs, Cf * Q, Q * Q); };
