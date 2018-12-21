@@ -14,9 +14,9 @@
 namespace NangaParbat
 {
   /**
-   * @brief The "DataHandler" class is a mother class that provides a
-   * common interface to all datasets. It provides methods to get
-   * kinematics, central values, uncertainties, etc.
+   * @brief The "DataHandler" class provides a common interface to all
+   * datasets. It provides methods to get kinematics, central values,
+   * uncertainties, etc.
    */
   class DataHandler
   {

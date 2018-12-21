@@ -37,9 +37,9 @@ int main()
   std::vector<NangaParbat::DataHandler> DHVect;
 
   // Test data
-  //DHVect.push_back(NangaParbat::DataHandler{"Test_data", YAML::LoadFile("../data/TestData/Table1.yaml")});
+  DHVect.push_back(NangaParbat::DataHandler{"Test_data", YAML::LoadFile("../data/TestData/Table1.yaml")});
   // Push back CDF Run I
-  DHVect.push_back(NangaParbat::DataHandler{"CDF_Run_I", YAML::LoadFile("../data/HEPData-ins505738-v1-yaml/Table1.yaml")});
+  //DHVect.push_back(NangaParbat::DataHandler{"CDF_Run_I", YAML::LoadFile("../data/HEPData-ins505738-v1-yaml/Table1.yaml")});
 
   // Allocate "FastInterface" object
   const NangaParbat::FastInterface FIObj{YAML::LoadFile("../cards/config.yaml")};

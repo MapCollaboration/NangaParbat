@@ -1,116 +1,119 @@
 dependent_variables:
-- header: {name: D(SIG)/DPT, units: NB/GEV}
+- header:
   qualifiers:
-  - {name: RE, value: PBAR P --> Z0 < E+ E- > X}
-  - {name: SQRT(S), units: GeV, value: '1800.0'}
-  - {name: SQRT(S), units: GeV, value: '1800.0'}
+  - {name: process, value: DY}
+  - {name: observable, value: d(sigma)/dydQdqT}
+  - {name: target_isoscalarity, value: -1 }
+  - {name: Vs, value: 1800}
+  - {name: Q, low: 66, high: 116, integrate: true}
+  - {name: y, low: -3.31, high: 3.31, integrate: true}
   values:
   - errors:
-    - {symerror: 0.53}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.53}
+    - {label: 'mult', value: 0.044}
     value: 6.04
   - errors:
-    - {symerror: 0.96}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.96}
+    - {label: 'mult', value: 0.044}
     value: 16.2
   - errors:
-    - {symerror: 1.1}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 1.1}
+    - {label: 'mult', value: 0.044}
     value: 20.4
   - errors:
-    - {symerror: 1.1}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 1.1}
+    - {label: 'mult', value: 0.044}
     value: 19.7
   - errors:
-    - {symerror: 0.92}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.92}
+    - {label: 'mult', value: 0.044}
     value: 16.2
   - errors:
-    - {symerror: 0.87}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.87}
+    - {label: 'mult', value: 0.044}
     value: 15.0
   - errors:
-    - {symerror: 0.84}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.84}
+    - {label: 'mult', value: 0.044}
     value: 14.1
   - errors:
-    - {symerror: 0.73}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.73}
+    - {label: 'mult', value: 0.044}
     value: 11.1
   - errors:
-    - {symerror: 0.69}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.69}
+    - {label: 'mult', value: 0.044}
     value: 10.0
   - errors:
-    - {symerror: 0.67}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.67}
+    - {label: 'mult', value: 0.044}
     value: 9.29
   - errors:
-    - {symerror: 0.54}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.54}
+    - {label: 'mult', value: 0.044}
     value: 7.25
   - errors:
-    - {symerror: 0.44}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.44}
+    - {label: 'mult', value: 0.044}
     value: 5.45
   - errors:
-    - {symerror: 0.39}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.39}
+    - {label: 'mult', value: 0.044}
     value: 4.45
   - errors:
-    - {symerror: 0.33}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.33}
+    - {label: 'mult', value: 0.044}
     value: 3.54
   - errors:
-    - {symerror: 0.31}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.31}
+    - {label: 'mult', value: 0.044}
     value: 3.21
   - errors:
-    - {symerror: 0.18}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.18}
+    - {label: 'mult', value: 0.044}
     value: 2.06
   - errors:
-    - {symerror: 0.13}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.13}
+    - {label: 'mult', value: 0.044}
     value: 1.29
   - errors:
-    - {symerror: 0.11}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.11}
+    - {label: 'mult', value: 0.044}
     value: 0.962
   - errors:
-    - {symerror: 0.1}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.1}
+    - {label: 'mult', value: 0.044}
     value: 0.84
   - errors:
-    - {symerror: 0.045}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.045}
+    - {label: 'mult', value: 0.044}
     value: 0.373
   - errors:
-    - {symerror: 0.036}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.036}
+    - {label: 'mult', value: 0.044}
     value: 0.251
   - errors:
-    - {symerror: 0.027}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.027}
+    - {label: 'mult', value: 0.044}
     value: 0.163
   - errors:
-    - {symerror: 0.012}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.012}
+    - {label: 'mult', value: 0.044}
     value: 0.053
   - errors:
-    - {symerror: 0.009}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.009}
+    - {label: 'mult', value: 0.044}
     value: 0.034
   - errors:
-    - {symerror: 0.0013}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.0013}
+    - {label: 'mult', value: 0.044}
     value: 0.005
   - errors:
-    - asymerror: {minus: -0.0003, plus: 0.0004}
-    - {label: 'sys,Overall normalization uncertainty', symerror: 4.4%}
+    - {label: 'unc', value: 0.00035}
+    - {label: 'mult', value: 0.044}
     value: 0.0004
 independent_variables:
-- header: {name: PT, units: GEV}
+- header:
   values:
   - {high: 1.0, low: 0.0}
   - {high: 2.0, low: 1.0}

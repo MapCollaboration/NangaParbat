@@ -10,9 +10,13 @@
 #include <yaml-cpp/yaml.h>
 
 // b* prescription
-double bstar(double const& b, double const& bmin, double const& bmax)
+double bstar(double const& b, double const& Q)
 {
+  const double bmax = 2 * exp( - apfel::emc);
+  //const double bmin = bmax / Q;
+  //std::cout << b << "  " << bmax * pow( ( 1 - exp( - pow(b / bmax, 4) ) ) / ( 1 - exp( - pow(b / bmin, 4) ) ), 0.25) << "  " << b / sqrt( 1 + pow(b / bmax, 2) ) << std::endl;
   return b / sqrt( 1 + pow(b / bmax, 2) );
+  //return bmax * pow( ( 1 - exp( pow(b / bmax, 4) ) ) / ( 1 - exp(pow(b / bmin, 4) ) ), 1. / 4.);
 }
 
 // Non-perturnative function
@@ -110,12 +114,9 @@ int main()
   // trasformed in qT space.
   const auto TMDLumib = [=] (double const& b) -> double
     {
-      // Get impact parameters 'b' and 'b*'
-      const double bs = bstar(b, config["bstar"]["bmin"].as<double>(), config["bstar"]["bmax"].as<double>());
-
       // Get Evolved TMD PDFs and rotate them into the physical
       // basis
-      const std::map<int,apfel::Distribution> xF = QCDEvToPhys(EvTMDPDFs(bs, muf, zetaf).GetObjects());
+      const std::map<int,apfel::Distribution> xF = QCDEvToPhys(EvTMDPDFs(bstar(b, Qb), muf, zetaf).GetObjects());
 
       // Combine TMDs through the EW charges
       double lumi = 0;
