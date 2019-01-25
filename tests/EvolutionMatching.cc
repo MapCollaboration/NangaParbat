@@ -70,7 +70,7 @@ int main()
   const auto MatchedTMDFFs  = MatchTmdFFs(TmdObj, CollFFs, Alphas, PerturbativeOrder);
 
   // Test scales
-  const vector<double> Qg{2};//, 10, 91};
+  const vector<double> Qg{2, 10, 91};
 
   // Kinematics
   const int nb       = 10;

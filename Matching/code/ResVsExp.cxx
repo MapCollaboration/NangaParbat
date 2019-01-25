@@ -20,25 +20,26 @@
 #include "LHAPDF/LHAPDF.h"
 
 // APFEL++ libs
-#include "apfel/dglapbuilder.h"
-#include "apfel/grid.h"
-#include "apfel/timer.h"
-#include "apfel/alphaqcd.h"
-#include "apfel/tabulateobject.h"
-#include "apfel/evolutionbasisqcd.h"
-#include "apfel/matchingbasisqcd.h"
-#include "apfel/dglap.h"
-#include "apfel/rotations.h"
-#include "apfel/constants.h"
-#include "apfel/tools.h"
-#include "apfel/integrator.h"
-#include "apfel/doubleobject.h"
-#include "apfel/tmdbuilder.h"
-#include "apfel/ogataquadrature.h"
-#include "apfel/tmdcrosssections.h"
+#include "apfel/apfelxx.h"
 
 using namespace std;
 using namespace apfel;
+
+// b* prescription
+double bstar(double const& b, double const& Q)
+{
+  const double bmax = 2 * exp( - apfel::emc);
+  return sqrt( pow(b, 2) / ( 1 + pow(b / bmax, 2) ) );//+ pow(bmax / Q, 2) );
+}
+
+// Non-perturbative function
+double fNP(double const&, double const& b, double const& zetaf)
+{
+  const double g1 = 0.02;
+  const double g2 = 0.5;
+  const double Q0 = 1;
+  return exp( ( - g1 - g2 * log( sqrt(zetaf) / Q0 / 2 ) ) * b * b / 2 );
+}
 
 int main() {
   // Kinematics in terms of the variables in which TIMBA is
@@ -52,10 +53,12 @@ int main() {
   const int    pto = 2;
 
   // PDF and FF sets
-  //LHAPDF::PDF* PDFs = LHAPDF::mkPDF("NNPDF31_nlo_as_0118");
-  //LHAPDF::PDF* FFs  = LHAPDF::mkPDF("NNFF10_HadronSum_nlo");
   LHAPDF::PDF* PDFs = LHAPDF::mkPDF("CT14nlo");
-  LHAPDF::PDF* FFs  = LHAPDF::mkPDF("DSS07_NLO_HadronSum");
+  //LHAPDF::PDF* FFs  = LHAPDF::mkPDF("NNFF10_PIsum_nlo");
+  //LHAPDF::PDF* PDFs = LHAPDF::mkPDF("NNPDF31_nlo_as_0118");
+  LHAPDF::PDF* FFs  = LHAPDF::mkPDF("NNFF11_HadronSum_nlo");
+  //LHAPDF::PDF* PDFs = LHAPDF::mkPDF("CT14nlo");
+  //LHAPDF::PDF* FFs  = LHAPDF::mkPDF("DSS07_NLO_HadronSum");
 
   // Heavy quark masses.
   const double mc = PDFs->quarkThreshold(4);
@@ -90,8 +93,10 @@ int main() {
   const auto TmdObj = InitializeTmdObjects(g, Masses);
 
   // Get TMD evolution factors.
-  const auto Mub = [] (double const& b) -> double{ return 2 * exp(- emc) / b; };
-  const auto EvolFactors = EvolutionFactors(TmdObj, Mub, Mub, pto, Alphas);
+  const auto EvolFactors = EvolutionFactors(TmdObj, Alphas, pto);
+
+  // Ogata-quadrature object of degree zero.
+  apfel::OgataQuadrature OgataObj{};
 
   // Function for the computation of the resummed cross section.
   const auto xsecRes = [=,&g] (double const& VS, double const& x, double const& y, double const& z, double const& qT2) -> double
@@ -103,8 +108,10 @@ int main() {
 
       // Get matched TMD PDFs and FFs.
       const auto Qb = [Q] (double const&) -> double{ return Q; };
-      const auto MatchedTmdPDFs = MatchTmdPDFs(TmdObj, PDFObj, CollPDFs, Qb, pto, Alphas);
-      const auto MatchedTmdFFs  = MatchTmdFFs(TmdObj,  FFObj,  CollFFs,  Qb, pto, Alphas);
+      const auto MatchedTmdPDFs = MatchTmdPDFs(TmdObj, CollPDFs, Alphas, pto);
+      const auto MatchedTmdFFs  = MatchTmdFFs(TmdObj,  CollFFs,  Alphas, pto);
+      //const auto MatchedTmdPDFs = MatchTmdPDFs(TmdObj, EvolvedPDFs, Alphas, pto);
+      //const auto MatchedTmdFFs  = MatchTmdFFs(TmdObj,  EvolvedFFs,  Alphas, pto);
 
       // Useful definitions
       const double qToQ2  = qT * qT / Q2;
@@ -119,23 +126,23 @@ int main() {
       const auto TMDLumib = [=] (double const& b) -> double
       {
 	// Evolve TMDs.
-	const vector<double> ef = EvolFactors(b, Q, Q2);
-	const auto EvolvedTMDPDFs = ef * MatchedTmdPDFs(b);
-	const auto EvolvedTMDFFs  = ef * MatchedTmdFFs(b);
+	const vector<double> ef = EvolFactors(bstar(b, Q), Q, Q2);
+	const auto EvolvedTMDPDFs = ef * MatchedTmdPDFs(bstar(b, Q)) * fNP(x, b, Q2);
+	const auto EvolvedTMDFFs  = ef * MatchedTmdFFs(bstar(b, Q)) * fNP(z, b, Q2);
 
 	map<int,Distribution> PDFs = QCDEvToPhys(EvolvedTMDPDFs.GetObjects());
 	map<int,Distribution> FFs  = QCDEvToPhys(EvolvedTMDFFs.GetObjects());
 	double lumi = 0;
 	for (int i = 1; i <= nf; i++)
 	  lumi += QCh2[i-1] * ( PDFs.at(i).Evaluate(x) * FFs.at(i).Evaluate(z) + PDFs.at(-i).Evaluate(x) * FFs.at(-i).Evaluate(z) );
-	return lumi / z;
+	return b * lumi;
       };
 
       // Kinmatic factors inclusing the hard form factor.
-      const double hcs = 2 * qT * 2 * M_PI * alpha2 * Yp * HardCrossSectionSIDIS(1, as * FourPi, nf, pto) / x / y / Q2;
+      const double hcs = 2 * qT * 2 * M_PI * alpha2 * Yp * HardFactorSIDIS(1, as * FourPi, nf, pto) / z / x / y / Q2;
 
       // Integrate over b.
-      return hcs * OgataQuadrature(TMDLumib, qT);
+      return hcs * OgataObj.transform(TMDLumib, qT);
     };
 
   // Function for the computation of the asymptotic cross section at

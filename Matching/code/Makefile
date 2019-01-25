@@ -30,7 +30,7 @@ LDFLAGS  += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS) $(HOPPETLIBS) $(QCDNUMLIBS
 CLIBS += $(LHAPDFLIBS) $(APFELLIBS) $(APFELPPLIBS)
 
 install : all
-all : APFELvsTIMBA FOvsAsy #ResVsExp FONLL
+all : APFELvsTIMBA FOvsAsy ResVsExp Sudakov #FONLL
 
 APFELvsTIMBA: APFELvsTIMBA.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
@@ -41,7 +41,10 @@ FOvsAsy: FOvsAsy.o
 ResVsExp: ResVsExp.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
-FONLL: FONLL.o
+#FONLL: FONLL.o
+#	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
+
+Sudakov: Sudakov.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
 .SUFFIXES : .cxx .o .f .c
