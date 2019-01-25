@@ -17,7 +17,7 @@ namespace NangaParbat
     /**
      * @brief The "Parameterisation" constructor
      */
-    Parameterisation();
+    Parameterisation(int const& nfuncs);
 
     /**
      * @brief Function that sets the free parameters of the
@@ -26,13 +26,41 @@ namespace NangaParbat
      */
     void SetParameters(std::vector<double> const& pars) const { }
 
-    std::vector<double> GetParameters() const { return _pars; }
+    /**
+     * @brief Virtual function that returns the value of one of the functions.
+     * @param x: momentum fraction
+     * @param b: impact parameter
+     * @param zeta: rapidity scale &zeta
+     * @param ifunc: index of the function;
+     * @return it returns the value of the ifunc-th function at (x, b,
+     * &zeta;)
+     */
+    virtual double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const;
 
-    //virtual std::function<double(double const&, double const&, double const&)> Evaluate(int const& ifunc = 0) const = 0;
+    /**
+     * @brief Virtual function that returns the value of the
+     * derivative of one of the functions.
+     * @param x: momentum fraction
+     * @param b: impact parameter
+     * @param zeta: rapidity scale
+     * @param ifunc: index of the function;
+     * @param ipar: index of the parameter
+     * @return it returns the value of the derivative w.r.t. the
+     * ipar-th parameter of the ifunc-th function at (x, b, &zeta;)
+     */
+    virtual double Derive(double const& x, double const& b, double const& zeta, int const& ifunc, int const& ipar) const;
 
-    virtual double Evaluate(double const&, double const&, double const&) const = 0;
+    /**
+     * @defgroup ParameterisationGetters Getter functions to retrieve
+     * the feauture of the parameterisation
+     */
+    ///@{
+    int                 GetNumberOfFunctions() const { return _nfuncs; }
+    std::vector<double> GetParameters()        const { return _pars; }
+    ///@}
 
   private:
-    std::vector<double> _pars; //!< The vector of free parameters
+    const int           _nfuncs; //!< Number output functions
+    std::vector<double> _pars;   //!< The vector of free parameters
   };
 }

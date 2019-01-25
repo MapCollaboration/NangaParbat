@@ -42,6 +42,13 @@ namespace NangaParbat
      * @param fNP2: the second non-perturbative function
      * @param ids: the dataset index (default: -1, the global &chi;<SUP>2</SUP> is computed)
      * @return the value of the &chi;<SUP>2</SUP> of the "ids"-th block normalised to the number of data points.
+     *
+     * @note This function assumes that "fNP1" is associated to a PDF
+     * and "fNP2" is associated to a FF. This is relevant when
+     * computing DY, SIDIS, or e+e- annihilation into two hadrons. In
+     * the first case (DY) the code uses "fNP1" only, in the second
+     * case (SIDIS) it uses both "fNP1" and "fNP2", and in the third
+     * case (e+e-) it uses "fNP2" only.
      */
     double Evaluate(std::function<double(double const&, double const&, double const&)> const& fNP1,
 		    std::function<double(double const&, double const&, double const&)> const& fNP2,

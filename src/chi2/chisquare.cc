@@ -49,9 +49,20 @@ namespace NangaParbat
 	const DataHandler dh      = _DHVect[i].first;
 	const ConvolutionTable ct = _DHVect[i].second;
 
-	// Get experimental central values and predictions 
+	// Get experimental central values
 	const std::vector<double> mean = dh.GetMeanValues();
-	const std::vector<double> pred = ct.GetPredictions(fNP1, fNP2);
+
+	// Get predictions according to the process
+	const int proc = ct.GetProcess();
+	std::vector<double> pred;
+	if (proc == 0)
+	  pred = ct.GetPredictions(fNP1);
+	else if (proc == 1)
+	  pred = ct.GetPredictions(fNP1, fNP2);
+	else if (proc == 2)
+	  pred = ct.GetPredictions(fNP2);
+	else
+	  pred = ct.GetPredictions(fNP1, fNP2);
 
 	const int ndata = pred.size();
 	if (mean.size() != ndata)
