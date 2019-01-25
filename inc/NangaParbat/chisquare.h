@@ -32,7 +32,7 @@ namespace NangaParbat
     /**
      * @brief Add ("DataHandler","ConvolutionTable") pair block to the
      * "DHVect" vector.
-     * @param DHBlock: the ("DataHandler","ConvolutionTable") pair block to be appended
+     * @param DHBlock: the ("DataHandler","ConvolutionTable")-pair block to be appended
      */
     void AddBlock(std::pair<DataHandler,ConvolutionTable> const& DHBlock) { _DHVect.push_back(DHBlock); };
 

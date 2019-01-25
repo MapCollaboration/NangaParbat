@@ -15,6 +15,7 @@
 #include <apfel/hardfactors.h>
 #include <apfel/ogataquadrature.h>
 #include <apfel/doubleobject.h>
+#include <NangaParbat/twoparticlephasespace.h>
 
 #include "LHAPDF/LHAPDF.h"
 
@@ -153,6 +154,9 @@ int main()
   // Ogata quadrature object with default settings.
   OgataQuadrature bintegrand{};
 
+  // Phase-space reduction factor
+  NangaParbat::TwoParticlePhaseSpace ps{20, 2.4};
+
   // Define qT-distribution function 
   const auto qTdist = [=] (double const& qT) -> double
     {
@@ -195,12 +199,12 @@ int main()
   const TabulateObject<DoubleObject<Distribution>> TabLumi{Lumi, 50, 5e-5, 1.1, 3, {}, TabFunc, InvTabFunc};
 
   // Define qT-distribution function 
-  const auto qTdistNew = [=] (double const& qT) -> double
+  const auto qTdistNew = [&] (double const& qT) -> double
     {
       // Construct the TMD luminosity in b scale to be fed to be
       // trasformed in qT space.
       const auto TMDLumibNew = [=] (double const& b) -> double{ return b * TabLumi.EvaluatexzQ(x1, x2, bstar(b)) * fNP(b, zetaf) * fNP(b, zetaf) / 2; };
-      return 2 * qT * hcs * bintegrand.transform(TMDLumibNew, qT);
+      return 2 * qT * hcs * ps.PhaseSpaceReduction(Q, qT, y) * bintegrand.transform(TMDLumibNew, qT);
     };
 
   Timer t;
@@ -240,12 +244,12 @@ int main()
        << "   sigma      "
        << endl;
   OgataQuadrature qTintegrand{1};
-  const auto qTPrimitive = [=] (double const& qT) -> double
+  const auto qTPrimitive = [&] (double const& qT) -> double
     {
       // Construct the TMD luminosity in b scale to be fed to be
       // trasformed in qT space.
       const auto TMDLumibPrim = [=] (double const& b) -> double{ return TabLumi.EvaluatexzQ(x1, x2, bstar(b)) * fNP(b, zetaf) * fNP(b, zetaf) / 2; };
-      return 2 * qT * hcs * qTintegrand.transform(TMDLumibPrim, qT);
+      return 2 * qT * hcs * ps.PhaseSpaceReduction(Q, qT, y) * qTintegrand.transform(TMDLumibPrim, qT);
     };
   for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
     cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: " << qTPrimitive(qTv[iqT+1]) - qTPrimitive(qTv[iqT]) << endl;
