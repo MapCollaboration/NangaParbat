@@ -27,3 +27,8 @@ add_test(DrellYanCrossSection DrellYanCrossSection)
 add_executable(TestChi2 TestChi2.cc)
 target_link_libraries(TestChi2 NangaParbat)
 add_test(TestChi2 TestChi2)
+
+# build tests
+add_executable(TestMinimisation TestMinimisation.cc)
+target_link_libraries(TestMinimisation NangaParbat)
+add_test(TestMinimisation TestMinimisation)

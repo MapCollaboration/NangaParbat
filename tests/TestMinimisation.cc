@@ -3,10 +3,12 @@
 //
 
 #include "NangaParbat/chisquare.h"
+#include "NangaParbat/minimisation.h"
 
 #include <math.h>
 #include <iostream>
 #include <apfel/apfelxx.h>
+#include <root/Minuit2/MnUserParameters.h>
 
 // Davies-Webber-Stirling Parameterisation derived from the
 // "Parameterisation" mother class
@@ -47,16 +49,11 @@ int main()
   // Append dataset to the chi2 object
   chi2.AddBlock(std::make_pair(DHand, CTable));
 
-  // Compute chi2
-  std::cout << "chi2 = " << chi2() << std::endl;
+  // Define "Minuit" object
+  NangaParbat::FcnMinuit fcn{chi2};
 
-  // Performance test
-  apfel::Timer t;
-  const int n = 100;
-  for (int i = 0; i < n; i++)
-      chi2();
-  std::cout << "Evaluating chi2 " << n << " times... ";
-  t.stop(true);
+  // Create Minuit parameters with names
+  //ROOT::Minuit2::MnUserParameters upar;
 
   return 0;
 }

@@ -13,7 +13,7 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  double FcnMinuit::operator()(const std::vector<double>& pars)
+  double FcnMinuit::operator()(const std::vector<double>& pars) const
   {
     // Set the parameters of the parameterisation
     _chi2.SetParameters(pars);
