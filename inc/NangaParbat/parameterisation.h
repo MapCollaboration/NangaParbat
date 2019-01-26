@@ -2,8 +2,10 @@
 // Authors: Valerio Bertone: valerio.bertone@cern.ch
 //
 
+#pragma once
+
 #include <vector>
-#include <functional>
+#include <iostream>
 
 namespace NangaParbat
 {
@@ -17,14 +19,14 @@ namespace NangaParbat
     /**
      * @brief The "Parameterisation" constructor
      */
-    Parameterisation(int const& nfuncs);
+    Parameterisation(int const& nfuncs = 0, std::vector<double> pars = {});
 
     /**
      * @brief Function that sets the free parameters of the
      * parameterisation.
      * @param pars: the vector of parameters
      */
-    void SetParameters(std::vector<double> const& pars) const { }
+    void SetParameters(std::vector<double> const& pars) { _pars = pars; };
 
     /**
      * @brief Virtual function that returns the value of one of the functions.
@@ -35,7 +37,7 @@ namespace NangaParbat
      * @return it returns the value of the ifunc-th function at (x, b,
      * &zeta;)
      */
-    virtual double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const;
+    virtual double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const { return 0; };
 
     /**
      * @brief Virtual function that returns the value of the
@@ -48,7 +50,7 @@ namespace NangaParbat
      * @return it returns the value of the derivative w.r.t. the
      * ipar-th parameter of the ifunc-th function at (x, b, &zeta;)
      */
-    virtual double Derive(double const& x, double const& b, double const& zeta, int const& ifunc, int const& ipar) const;
+    virtual double Derive(double const& x, double const& b, double const& zeta, int const& ifunc, int const& ipar) const { return 0; };
 
     /**
      * @defgroup ParameterisationGetters Getter functions to retrieve
@@ -59,8 +61,8 @@ namespace NangaParbat
     std::vector<double> GetParameters()        const { return _pars; }
     ///@}
 
-  private:
-    const int           _nfuncs; //!< Number output functions
+  protected:
+    int                 _nfuncs; //!< Number of output functions
     std::vector<double> _pars;   //!< The vector of free parameters
   };
 }

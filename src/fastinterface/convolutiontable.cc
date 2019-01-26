@@ -104,4 +104,35 @@ namespace NangaParbat
   {
     return GetPredictions(fNP, fNP);
   }
+
+  //_________________________________________________________________________________
+  std::vector<double> ConvolutionTable::GetPredictions(std::function<double(double const&, double const&, double const&, int const&)> const& fNP) const
+  {
+    // Drell-Yan
+    if (_proc == 0)
+      {
+	const auto fNP1 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); };
+	return GetPredictions(fNP1, fNP1);
+      }
+    // SIDIS
+    else if (_proc == 1)
+      {
+	const auto fNP1 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); };
+	const auto fNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 1); };
+	return GetPredictions(fNP1, fNP2);
+      }
+    // e+e- annihilation
+    if (_proc == 0)
+      {
+	const auto fNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 1); };
+	return GetPredictions(fNP2, fNP2);
+      }
+    // Generic
+    else
+      {
+	const auto fNP1 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); };
+	const auto fNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 1); };
+	return GetPredictions(fNP1, fNP2);
+      }
+  }
 }

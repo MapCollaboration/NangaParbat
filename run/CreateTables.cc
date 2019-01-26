@@ -4,11 +4,8 @@
 
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/convolutiontable.h"
-#include "NangaParbat/chisquare.h"
 
-#include <iostream>
 #include <fstream>
-#include <math.h>
 
 #include <apfel/timer.h>
 
@@ -55,23 +52,15 @@ int main()
       fout.close();
     }
 
-  // Define Chi2 object
-  NangaParbat::ChiSquare chi2;
-
   // Convolute table
   for (int j = 0; j < (int) Tabs.size(); j++)
     {
       // Convolution table
       const NangaParbat::ConvolutionTable CTable{YAML::Load(Tabs[j].c_str())};
 
-      // Append dataset to the chi2 object
-      chi2.AddBlock(std::make_pair(DHVect[j], CTable));
 
       for (auto const& p : CTable.GetPredictions(fNP))
 	std::cout << p << std::endl;
-
-      // Compute chi2
-      std::cout << chi2.Evaluate(fNP) << std::endl;
 
       // Performance test
       //apfel::Timer t;

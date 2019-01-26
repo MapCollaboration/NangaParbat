@@ -2,6 +2,8 @@
 // Authors: Valerio Bertone: valerio.bertone@cern.ch
 //
 
+#pragma once
+
 #include "NangaParbat/chisquare.h"
 #include "NangaParbat/parameterisation.h"
 
@@ -22,7 +24,7 @@ namespace NangaParbat
      * @param chi2: the "ChiSquare" object that returns the values of all chi2's
      * @param func: the "Parameterisation" object that encapsulates the non-perturnative function(s)
      */
-    FcnMinuit(ChiSquare const& chi2, Parameterisation const& func);
+    FcnMinuit(ChiSquare const& chi2);
 
     /**
      * @brief Operator required by Minuit to compute the function to
@@ -30,11 +32,10 @@ namespace NangaParbat
      * @param pars: the vector of parameters
      * @return the function to be minimised
      */
-    double operator()(const std::vector<double>& pars) const;
+    double operator()(const std::vector<double>& pars);
 
     double Up() const { return 4; }
   private:
-    ChiSquare        const& _chi2; //!< The "ChiSquare" object that returns the values of all chi2's
-    Parameterisation const& _func; //!< The "Parameterisation" object that encapsulates the non-perturnative function(s)
+    ChiSquare _chi2; //!< The "ChiSquare" object that returns the values of all chi2's
   };
 }

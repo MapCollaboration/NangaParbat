@@ -6,6 +6,7 @@
 
 #include "NangaParbat/datahandler.h"
 #include "NangaParbat/convolutiontable.h"
+#include "NangaParbat/parameterisation.h"
 
 namespace NangaParbat
 {
@@ -21,13 +22,15 @@ namespace NangaParbat
     /**
      * @brief The "ChiSquare" constructor.
      * @param DHVect: vector of pairs of "DataHandler" and "ConvolutionTable" objects
+     * @param NPFunc: "Parameterisation" object containing the non-perturbative function(s)
      */
-    ChiSquare(std::vector<std::pair<DataHandler,ConvolutionTable>> const& DHVect);
+    ChiSquare(std::vector<std::pair<DataHandler,ConvolutionTable>> const& DHVect, Parameterisation& NPFunc);
 
     /**
      * @brief The default "ChiSquare" constructor.
+     * @param NPFunc: "Parameterisation" object containing the non-perturbative function(s)
      */
-    ChiSquare();
+    ChiSquare(Parameterisation& NPFunc);
 
     /**
      * @brief Add ("DataHandler","ConvolutionTable") pair block to the
@@ -38,33 +41,34 @@ namespace NangaParbat
 
     /**
      * @brief Function that evaluates the &chi;<SUP>2</SUP>'s
-     * @param fNP1: the first non-perturbative function
-     * @param fNP2: the second non-perturbative function
      * @param ids: the dataset index (default: -1, the global &chi;<SUP>2</SUP> is computed)
      * @return the value of the &chi;<SUP>2</SUP> of the "ids"-th block normalised to the number of data points.
-     *
-     * @note This function assumes that "fNP1" is associated to a PDF
-     * and "fNP2" is associated to a FF. This is relevant when
-     * computing DY, SIDIS, or e+e- annihilation into two hadrons. In
-     * the first case (DY) the code uses "fNP1" only, in the second
-     * case (SIDIS) it uses both "fNP1" and "fNP2", and in the third
-     * case (e+e-) it uses "fNP2" only.
      */
-    double Evaluate(std::function<double(double const&, double const&, double const&)> const& fNP1,
-		    std::function<double(double const&, double const&, double const&)> const& fNP2,
-		    int const& ids = -1) const;
+    double Evaluate(int const& ids = -1) const;
 
     /**
-     * @brief Function that evaluates the &chi;<SUP>2</SUP>'s assuming
-     * that the two non-perturbative functions are equal.
-     * @param fNP: the non-perturbative function
-     * @param ids: the dataset index (default: -1, the global &chi;<SUP>2</SUP> is computed)
-     * @return the value of the &chi;<SUP>2</SUP> of the "ids"-th block normalised to the number of data points.
+     * @brief Utility operator that replaces the Evaluate method
+     * above.
      */
-    double Evaluate(std::function<double(double const&, double const&, double const&)> const& fNP,
-		    int const& ids = -1) const;
+    double operator()(int const& ids = -1) { return Evaluate(ids); };
+
+    /**
+     * @brief Function that sets the free parameters of the
+     * parameterisation.
+     * @param pars: the vector of parameters
+     */
+    void SetParameters(std::vector<double> const& pars) { _NPFunc.SetParameters(pars); };
+
+    /**
+     * @defgroup ChiSquareGetters Getter functions to retrieve
+     * the feauture of the chi2
+     */
+    ///@{
+    Parameterisation GetParameterisation() const { return _NPFunc; }
+    ///@}
 
   protected:
     std::vector<std::pair<DataHandler,ConvolutionTable>> _DHVect; //!< Vector of "DataHandler" objects
+    Parameterisation&                                    _NPFunc; //!< Parameterisation of the non-perturbative component
   };
 }

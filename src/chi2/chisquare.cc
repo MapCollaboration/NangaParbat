@@ -5,27 +5,29 @@
 #include "NangaParbat/chisquare.h"
 #include "NangaParbat/utilities.h"
 
-#include <iostream>
 #include <numeric>
 
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  ChiSquare::ChiSquare(std::vector<std::pair<DataHandler,ConvolutionTable>> const& DHVect):
-    _DHVect(DHVect)
+  ChiSquare::ChiSquare(std::vector<std::pair<DataHandler,ConvolutionTable>> const& DHVect, Parameterisation& NPFunc):
+    _DHVect(DHVect),
+    _NPFunc(NPFunc)
+  {
+    // The input parameterisation has to contain 2 functions, othewise
+    // stop the code.
+    if (_NPFunc.GetNumberOfFunctions() != 2)
+      throw std::runtime_error("[ChiSquare::ChiSquare]: the number of functions of the input parameterisation is different from two");
+  }
+
+  //_________________________________________________________________________________
+  ChiSquare::ChiSquare(Parameterisation& NPFunc):
+    ChiSquare{{}, NPFunc}
   {
   }
 
   //_________________________________________________________________________________
-  ChiSquare::ChiSquare():
-    _DHVect(std::vector<std::pair<DataHandler,ConvolutionTable>>{})
-  {
-  }
-
-  //_________________________________________________________________________________
-  double ChiSquare::Evaluate(std::function<double(double const&, double const&, double const&)> const& fNP1,
-			     std::function<double(double const&, double const&, double const&)> const& fNP2,
-			     int const& ids) const
+  double ChiSquare::Evaluate(int const& ids) const
   {
     // Define index range
     int istart = 0;
@@ -52,17 +54,9 @@ namespace NangaParbat
 	// Get experimental central values
 	const std::vector<double> mean = dh.GetMeanValues();
 
-	// Get predictions according to the process
-	const int proc = ct.GetProcess();
-	std::vector<double> pred;
-	if (proc == 0)
-	  pred = ct.GetPredictions(fNP1);
-	else if (proc == 1)
-	  pred = ct.GetPredictions(fNP1, fNP2);
-	else if (proc == 2)
-	  pred = ct.GetPredictions(fNP2);
-	else
-	  pred = ct.GetPredictions(fNP1, fNP2);
+	// Get predictions
+	auto const fNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun)-> double{ return _NPFunc.Evaluate(x, b, zeta, ifun); };
+	const std::vector<double> pred = ct.GetPredictions(fNP);
 
 	const int ndata = pred.size();
 	if (mean.size() != ndata)
@@ -83,12 +77,5 @@ namespace NangaParbat
 	ntot += ndata;
       }
     return chi2 / ntot;
-  }
-
-  //_________________________________________________________________________________
-  double ChiSquare::Evaluate(std::function<double(double const&, double const&, double const&)> const& fNP,
-			     int const& ids) const
-  {
-    return Evaluate(fNP, fNP, ids);
   }
 }

@@ -22,3 +22,8 @@ add_test(IntegrationTest IntegrationTest)
 add_executable(DrellYanCrossSection DrellYanCrossSection.cc)
 target_link_libraries(DrellYanCrossSection NangaParbat)
 add_test(DrellYanCrossSection DrellYanCrossSection)
+
+# build tests
+add_executable(TestChi2 TestChi2.cc)
+target_link_libraries(TestChi2 NangaParbat)
+add_test(TestChi2 TestChi2)

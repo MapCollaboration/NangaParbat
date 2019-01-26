@@ -126,7 +126,7 @@ namespace NangaParbat
     bool _calc_alphas();
     double _integrand_nu(double const& nu);
     static double _gsl_integrand(double x, void* params);
-    double _fnub_upm(double const& sthb, double const& su=-1.) const;
+    double _fnub_upm(double const& sthb, double const& su = -1) const;
     double _set0();
     double _calc_one_region(const Variable_Limit& IR);
     double _calc_one_region(Variable_Limit& IR, Variable_Exclusion E1);
@@ -134,5 +134,5 @@ namespace NangaParbat
     ///@}
   };
 
-  std::ostream& operator<<(std::ostream &os, const TwoParticlePhaseSpace& PS);
+  std::ostream& operator << (std::ostream &os, TwoParticlePhaseSpace const& PS);
 }

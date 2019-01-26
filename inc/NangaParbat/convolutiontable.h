@@ -58,10 +58,21 @@ namespace NangaParbat
 
     /**
      * @brief This function returns a vector of predictions with a
+     * two user-given non-perturbative functions.
+     * @param fNP: the (indexed) non-perturbative input function
+     * @return a vector of predictions.
+     */
+    std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&, int const&)> const& fNP) const;
+
+    /**
+     * @brief This function returns a vector of predictions with a
      * a user-given non-perturbative function  assuming that first
      * and second functions are equal.
      * @param fNP: the first non-perturbative input function
      * @return a vector of predictions.
+     * @note WARNING: This function is meant to be used for internal purposes
+     * because it "decides" how to use the function "fNP" and may
+     * behave in an unexpected way.
      */
     std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP) const;
 
