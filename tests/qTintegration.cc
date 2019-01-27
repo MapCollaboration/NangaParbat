@@ -249,10 +249,11 @@ int main()
       // Construct the TMD luminosity in b scale to be fed to be
       // trasformed in qT space.
       const auto TMDLumibPrim = [=] (double const& b) -> double{ return TabLumi.EvaluatexzQ(x1, x2, bstar(b)) * fNP(b, zetaf) * fNP(b, zetaf) / 2; };
-      return 2 * qT * hcs * ps.PhaseSpaceReduction(Q, qT, y) * qTintegrand.transform(TMDLumibPrim, qT);
+      return 2 * qT * hcs * qTintegrand.transform(TMDLumibPrim, qT);
     };
   for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
-    cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: " << qTPrimitive(qTv[iqT+1]) - qTPrimitive(qTv[iqT]) << endl;
+    cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: "
+	 << ps.PhaseSpaceReduction(Q, ( qTv[iqT+1] + qTv[iqT] ) / 2, y) * ( qTPrimitive(qTv[iqT+1]) - qTPrimitive(qTv[iqT]) ) << endl;
   cout << "\n";
   t.stop();
 

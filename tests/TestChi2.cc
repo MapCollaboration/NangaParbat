@@ -13,7 +13,7 @@
 class DWS: public NangaParbat::Parameterisation
 {
 public:
-  DWS(): Parameterisation{2, std::vector<double>(2, 1.)} { };
+  DWS(): Parameterisation{2, std::vector<double>{0.016, 0.54}} { };
 
   double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
   {
@@ -22,9 +22,9 @@ public:
 
     const double g1  = this->_pars[0];
     const double g2  = this->_pars[1];
-    const double Q02 = 3;
+    const double Q02 = 3.2;
 
-    return exp( - ( g1 + g2 * log(zeta / Q02) ) * pow(b, 2) );
+    return exp( - ( g1 + g2 * log(zeta / Q02) / 2 ) * pow(b, 2) / 2 );
   };
 };
 
@@ -36,10 +36,10 @@ int main()
   DWS NPFunc{};
 
   // Datafile
-  const NangaParbat::DataHandler DHand{"CDF_Run_I", YAML::LoadFile("../data/HEPData-ins505738-v1-yaml/Table1.yaml")};
+  const NangaParbat::DataHandler DHand{"CDF_Run_I", YAML::LoadFile("../data/TestData/Table1.yaml")};
 
   // Convolution table
-  const NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/CDF_Run_I.yaml")};
+  const NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/Test_data.yaml")};
 
   // Define "ChiSquare" object
   NangaParbat::ChiSquare chi2{NPFunc};
