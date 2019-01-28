@@ -52,7 +52,7 @@ int main()
 
   // Performance test
   apfel::Timer t;
-  const int n = 100;
+  const int n = 1000;
   for (int i = 0; i < n; i++)
       chi2();
   std::cout << "Evaluating chi2 " << n << " times... ";

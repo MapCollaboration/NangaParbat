@@ -59,14 +59,6 @@ namespace NangaParbat
      */
     void SetParameters(std::vector<double> const& pars) { _NPFunc.SetParameters(pars); };
 
-    /**
-     * @defgroup ChiSquareGetters Getter functions to retrieve
-     * the feauture of the chi2
-     */
-    ///@{
-    Parameterisation GetParameterisation() const { return _NPFunc; }
-    ///@}
-
   protected:
     std::vector<std::pair<DataHandler,ConvolutionTable>> _DHVect; //!< Vector of "DataHandler" objects
     Parameterisation&                                    _NPFunc; //!< Parameterisation of the non-perturbative component

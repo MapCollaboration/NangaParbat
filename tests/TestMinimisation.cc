@@ -67,7 +67,7 @@ int main()
   // Minimise
   ROOT::Minuit2::FunctionMinimum min = migrad();
 
-  // output
+  // Output of Minuit
   std::cout << "minimum: " << min << std::endl;
 
   return 0;
