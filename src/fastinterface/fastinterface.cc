@@ -241,12 +241,15 @@ namespace NangaParbat
 	// Target isoscalarity
 	const double targetiso = DHVect[i].GetTargetIsoscalarity();
 
+	// Prefactor
+	const double prefactor = DHVect[i].GetPrefactor();
+
 	// Retrieve kinematics
 	const DataHandler::Kinematics  kin   = DHVect[i].GetKinematics();
 	const double                   Vs    = kin.Vs;    // C.M.E.
 	const std::vector<double>      qTv   = kin.qTv;   // Transverse momentum bin bounds
 	const std::pair<double,double> Qb    = kin.var1b; // Invariant mass interval
-	const std::pair<double,double> yb    = kin.var2b; // Rapidity interval
+	const std::pair<double,double> yxb   = kin.var2b; // Rapidity/xF interval
 	const bool                     IntqT = kin.IntqT; // Whether the bins in qTv are to be integrated over
 	const bool                     IntQ  = kin.Intv1; // Whether the bin in Q is to be integrated over
 	const bool                     Inty  = kin.Intv2; // Whether the bin in y is to be integrated over
@@ -260,12 +263,16 @@ namespace NangaParbat
 	std::vector<double> zo = OgataObj.GetCoordinates();
 	std::vector<double> wo = OgataObj.GetWeights();
 
-	// Construct QGrid-like grids for the integration in Q and y
+	// Construct QGrid-like grids for the integration in Q
 	const std::vector<double> Qg  = (IntQ ? GenerateGrid(nQ, Qb.first, Qb.second, idQ - 1) :
 					 std::vector<double>{( Qb.first + Qb.second ) / 2});
-	const std::vector<double> xig = (Inty ? GenerateGrid(nxi, exp(yb.first), exp(yb.second), idxi - 1) :
-					 std::vector<double>{exp( ( yb.first + yb.second ) / 2 )});
 	const apfel::QGrid<double> Qgrid {Qg, idQ};
+
+	// Construct QGrid-like grids for the integration in y or xF
+	const double xil  = (obs == DataHandler::dydQdqT ? exp(yxb.first) : yxb.first);
+	const double xiu  = (obs == DataHandler::dydQdqT ? exp(yxb.second) : yxb.second);
+	const double xiav = (obs == DataHandler::dydQdqT ? exp( ( yxb.first + yxb.second ) / 2 ): ( yxb.first + yxb.second ) / 2 );
+	const std::vector<double> xig = (Inty ? GenerateGrid(nxi, xil, xiu, idxi - 1) : std::vector<double>{xiav});
 	const apfel::QGrid<double> xigrid{xig, idxi};
 
 	// Number of points of the grids
@@ -282,6 +289,7 @@ namespace NangaParbat
 	Tabs[i] << YAML::Key << "process" << YAML::Value << proc;
 	Tabs[i] << YAML::Key << "observable" << YAML::Value << obs;
 	Tabs[i] << YAML::Key << "target_isoscalarity" << YAML::Value << targetiso;
+	Tabs[i] << YAML::Key << "prefactor" << YAML::Value << prefactor;
 	Tabs[i] << YAML::Key << "CME" << YAML::Value << Vs;
 	Tabs[i] << YAML::Key << "qTintegrated" << YAML::Value << IntqT;
 	Tabs[i] << YAML::Key << "qT_bounds" << YAML::Value << YAML::Flow << qTv;
@@ -369,9 +377,10 @@ namespace NangaParbat
 			    // Function to be integrated in xi
 			    const auto xiintegrand = [&] (double const& xi) -> double
 			    {
-			      // Compute 'x1' and 'x2'
-			      const double x1 = Q * xi / Vs;
-			      const double x2 = Q / xi / Vs;
+			      // Compute 'x1' and 'x2' according to
+			      // the proper observable.
+			      const double x1 = (obs == DataHandler::dydQdqT ? Q * xi / Vs : ( xi + sqrt( pow(xi, 2) + pow(2 * Q / Vs, 2) ) ) / 2);
+			      const double x2 = pow(Q / Vs, 2) / x1;
 
 			      // Get interpolating function in xi but
 			      // return 1 if no integration over xi is
@@ -379,7 +388,7 @@ namespace NangaParbat
 			      const double Ixi = (Inty ? xigrid.Interpolant(0, alpha, xi) : 1);
 
 			      // Return xi integrand
-			      return Ixi * TabLumi.EvaluatexzQ(x1, x2, Q) / xi;
+			      return Ixi * TabLumi.EvaluatexzQ(x1, x2, Q) / (obs == DataHandler::dydQdqT ? xi : x1 + x2);
 			    };
 
 			    // Perform the integral in xi
@@ -400,7 +409,7 @@ namespace NangaParbat
 			const double Qintegral = (IntQ ? QIntObj.integrate(Qmin, Qmax, FixPtsQ, epsQ) : Qintegrand(Qg[tau]));
 
 			// Compute the weight
-			W[n][tau][alpha] = wo[n] * Qintegral;
+			W[n][tau][alpha] = prefactor * wo[n] * Qintegral;
 
 			// If not intergrating over qT, multiply by b
 			if (!IntqT)

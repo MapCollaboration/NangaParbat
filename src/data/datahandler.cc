@@ -37,15 +37,19 @@ namespace NangaParbat
 	      {
 		if (ql["value"].as<std::string>() == "d(sigma)/dydQdqT")
 		  _obs = dydQdqT;
-		else if (ql["value"].as<std::string>() == "Ed(sigma)/d3q")
-		  _obs = Ed3q;
+		else if (ql["value"].as<std::string>() == "d(sigma)/dxFdQdqT")
+		  _obs = dxFdQdqT;
 		else
 		  throw std::runtime_error("[DataHandler::DataHandler]: Unknown observable.");
 	      }
 
-	    // Hadron codes
+	    // Isoscalarity
 	    if (ql["name"].as<std::string>() == "target_isoscalarity")
 	      _targetiso = ql["value"].as<double>();
+
+	    // Possible prefactor
+	    if (ql["name"].as<std::string>() == "prefactor")
+	      _prefact = ql["value"].as<double>();
 
 	    // Center of mass energy
 	    if (ql["name"].as<std::string>() == "Vs")
@@ -58,8 +62,8 @@ namespace NangaParbat
 		_kin.Intv1 = ql["integrate"].as<bool>();
 	      }
 
-	    // Rapidity interval interval
-	    if (ql["name"].as<std::string>() == "y")
+	    // Rapidity interval
+	    if (ql["name"].as<std::string>() == "y" || ql["name"].as<std::string>() == "xF")
 	      {
 		_kin.var2b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
 		_kin.Intv2 = ql["integrate"].as<bool>();
@@ -85,6 +89,7 @@ namespace NangaParbat
 	  }
       }
 
+    _kin.ndata = 0;
     // Transverse momentum bin bounds
     for (auto const& iv : datafile["independent_variables"])
       for (auto const& vl : iv["values"])

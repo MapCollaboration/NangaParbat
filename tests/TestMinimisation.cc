@@ -42,7 +42,7 @@ int main()
   DWS NPFunc{};
 
   // Datafile
-  const NangaParbat::DataHandler DHand{"CDF_Run_I", YAML::LoadFile("../data/TestData/Table1.yaml")};
+  const NangaParbat::DataHandler DHand{"TestData", YAML::LoadFile("../data/TestData/Table1.yaml")};
 
   // Convolution table
   const NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/Test_data.yaml")};

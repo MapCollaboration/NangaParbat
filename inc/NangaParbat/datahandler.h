@@ -29,7 +29,7 @@ namespace NangaParbat
     /**
      * @brief The observable enumerator
      */
-    enum Observable: int {dydQdqT, Ed3q};
+    enum Observable: int {dydQdqT, dxFdQdqT};
 
     /**
      * @brief Structure containing the kinematic information of one
@@ -78,6 +78,12 @@ namespace NangaParbat
     double GetTargetIsoscalarity() const { return _targetiso; };
 
     /**
+     * @brief Function that returns any possible constant prefactor to
+     * be used to multiply the theoretical predictions.
+     */
+    double GetPrefactor() const { return _prefact; };
+
+    /**
      * @brief Function that returns the kinematic object
      */
     Kinematics GetKinematics() const { return _kin; };
@@ -110,6 +116,7 @@ namespace NangaParbat
     Process                          _proc;        //!< The process
     Observable                       _obs;         //!< The observable
     double                           _targetiso;   //!< Isoscalarity of the target
+    double                           _prefact;     //!< Possible prefactor to multiply the theoretical predictions
     Kinematics                       _kin;         //!< Kinematics block
     std::vector<double>              _mean;        //!< Vector of central values
     std::vector<double>              _uncor;       //!< Vector of uncorrelated uncertainties
