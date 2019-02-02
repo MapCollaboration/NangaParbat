@@ -16,10 +16,14 @@ namespace NangaParbat
     ndata(0),
     Vs(0),
     qTv({}),
+    var1b(std::pair<double,double>{0, 0}),
+    var2b(std::pair<double,double>{0, 0}),
     IntqT(false),
     Intv1(false),
     Intv2(false),
-    LeptCut(false)
+    LeptCut(false),
+    pTlepMin(0),
+    etaLepRange(std::pair<double,double>{-10, 10})
   {
   }
 

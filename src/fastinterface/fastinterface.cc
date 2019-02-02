@@ -4,6 +4,7 @@
 
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/utilities.h"
+#include "NangaParbat/twoparticlephasespace.h"
 
 #include <LHAPDF/LHAPDF.h>
 
@@ -248,14 +249,20 @@ namespace NangaParbat
 	const double prefactor = DHVect[i].GetPrefactor();
 
 	// Retrieve kinematics
-	const DataHandler::Kinematics  kin   = DHVect[i].GetKinematics();
-	const double                   Vs    = kin.Vs;    // C.M.E.
-	const std::vector<double>      qTv   = kin.qTv;   // Transverse momentum bin bounds
-	const std::pair<double,double> Qb    = kin.var1b; // Invariant mass interval
-	const std::pair<double,double> yxb   = kin.var2b; // Rapidity/xF interval
-	const bool                     IntqT = kin.IntqT; // Whether the bins in qTv are to be integrated over
-	const bool                     IntQ  = kin.Intv1; // Whether the bin in Q is to be integrated over
-	const bool                     Inty  = kin.Intv2; // Whether the bin in y is to be integrated over
+	const DataHandler::Kinematics  kin         = DHVect[i].GetKinematics();
+	const double                   Vs          = kin.Vs;          // C.M.E.
+	const std::vector<double>      qTv         = kin.qTv;         // Transverse momentum bin bounds
+	const std::pair<double,double> Qb          = kin.var1b;       // Invariant mass interval
+	const std::pair<double,double> yxb         = kin.var2b;       // Rapidity/xF interval
+	const bool                     IntqT       = kin.IntqT;       // Whether the bins in qTv are to be integrated over
+	const bool                     IntQ        = kin.Intv1;       // Whether the bin in Q is to be integrated over
+	const bool                     Inty        = kin.Intv2;       // Whether the bin in y is to be integrated over
+	const bool                     LeptCut     = kin.LeptCut;     // Whether there are cuts on the final-state leptons
+	const double                   pTlepMin    = kin.pTlepMin;    // Minimum pT of the final-state leptons
+	const std::pair<double,double> etaLepRange = kin.etaLepRange; // Allowed range in eta of the final-state leptons
+
+	// Initialise two-particle-phase-space object
+	TwoParticlePhaseSpace ps{pTlepMin, etaLepRange.first, etaLepRange.second};
 
 	// Ogata-quadrature object of degree one or zero according to
 	// weather the cross sections have to be integrated over the
@@ -390,8 +397,18 @@ namespace NangaParbat
 			      // required
 			      const double Ixi = (Inty ? xigrid.Interpolant(0, alpha, xi) : 1);
 
+			      // Compute phase-space reduction factor
+			      // due to cuts on the final-state
+			      // leptons.
+			      double RedPS = 1;
+			      if (LeptCut)
+				{
+				  const double rap = log(obs == DataHandler::dydQdqT ? xi : Vs * ( xi + sqrt( pow(xi, 2) + pow(2 * Q / Vs, 2) ) ) / Q / 2);
+				  RedPS = ps.PhaseSpaceReduction(Q, qT, rap);
+				}
+
 			      // Return xi integrand
-			      return Ixi * TabLumi.EvaluatexzQ(x1, x2, Q) / (obs == DataHandler::dydQdqT ? xi : x1 + x2);
+			      return RedPS * Ixi * TabLumi.EvaluatexzQ(x1, x2, Q) / (obs == DataHandler::dydQdqT ? xi : x1 + x2);
 			    };
 
 			    // Perform the integral in xi

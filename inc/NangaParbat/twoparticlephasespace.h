@@ -48,11 +48,23 @@ namespace NangaParbat
      * @param M: invariant mass of the leptonic pair
      * @param qT: transverse momentum of the leptonic pair
      * @param y: rapidity of the leptonic pair
-     * @return the phase-space reduction factor as a function of th
+     * @return the phase-space reduction factor as a function of the
      * invariant mass, transverse momentum and rapidity of the lepton
      * pair.
      */
     double PhaseSpaceReduction(double const& M, double const& qT, double const& y);
+
+    /**
+     * @brief Function that returns the derivative w.r.t. qT of the
+     * phase-space reduction factor.
+     * @param M: invariant mass of the leptonic pair
+     * @param qT: transverse momentum of the leptonic pair
+     * @param y: rapidity of the leptonic pair
+     * @return the derivative of the phase-space reduction factor as a
+     * function of the invariant mass, transverse momentum and rapidity
+     * of the lepton pair.
+     */
+    double DerivePhaseSpaceReduction(double const& M, double const& qT, double const& y);
 
     /**
      * @brief Function that returns the phase-space reduction factor
