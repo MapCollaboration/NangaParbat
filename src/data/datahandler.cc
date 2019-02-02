@@ -12,8 +12,34 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
+  DataHandler::Kinematics::Kinematics():
+    ndata(0),
+    Vs(0),
+    qTv({}),
+    IntqT(false),
+    Intv1(false),
+    Intv2(false),
+    LeptCut(false)
+  {
+  }
+
+  //_________________________________________________________________________________
+  bool DataHandler::Kinematics::empty() const
+  {
+    if (ndata == 0 || Vs == 0 || qTv.empty())
+      return true;
+    else
+      return false;
+  }
+
+  //_________________________________________________________________________________
   DataHandler::DataHandler(std::string const& name, YAML::Node const& datafile):
-    _name(name)
+    _name(name),
+    _proc(UnknownProcess),
+    _obs(UnknownObservable),
+    _targetiso(1),
+    _prefact(1),
+    _kin(DataHandler::Kinematics{})
   {
     // Retrieve kinematics
     for (auto const& dv : datafile["dependent_variables"])
@@ -68,6 +94,14 @@ namespace NangaParbat
 		_kin.var2b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
 		_kin.Intv2 = ql["integrate"].as<bool>();
 	      }
+
+	    // Lepton cuts
+	    if (ql["name"].as<std::string>() == "lepton_cuts")
+	      {
+		_kin.LeptCut     = true;
+		_kin.pTlepMin    = ql["pTmin"].as<double>();
+		_kin.etaLepRange = std::make_pair(ql["etamin"].as<double>(), ql["etamax"].as<double>());
+	      }
 	  }
 
 	// Run over the data point values and uncertainties
@@ -111,6 +145,12 @@ namespace NangaParbat
 	    }
 	}
 
+    // Check that the "DataHandler" has been properly filled in
+    if (_proc == UnknownProcess ||
+	_obs  == UnknownObservable ||
+	_kin.empty())
+      throw std::runtime_error("[DataHandler::DataHandler]: Object not properly filled in. Probably some required key is missing");
+
     // Now construct the covariance matrix
     _covmat.resize(_kin.ndata, _kin.ndata);
     for (int i = 0; i < _kin.ndata; i++)
@@ -120,5 +160,59 @@ namespace NangaParbat
 
     // Cholesky decomposition of the covariance matrix
     _CholL = CholeskyDecomposition(_covmat);
+  }
+
+  //_________________________________________________________________________
+  std::ostream& operator << (std::ostream &os, DataHandler const& DH)
+  {
+    os << "\nDataHandler report:\n";
+
+    os << "- name: " << DH._name << "\n";
+
+    if (DH._proc == DataHandler::Process::DY)
+      os << "- Process: Drell-Yan\n";
+    else if (DH._proc == DataHandler::Process::SIDIS)
+      os << "- Process: SIDIS\n";
+    else
+      os << "- Process: Unknown\n";
+
+    if (DH._obs == DataHandler::Observable::dydQdqT)
+      os << "- Observable: d(sigma)/dydQdqT\n";
+    else if (DH._obs == DataHandler::Observable::dxFdQdqT)
+      os << "- Observable: d(sigma)/dxFdQdqT\n";
+    else
+      os << "- Observable: Unknown\n";
+    os << "- Target isoscalarity: " << DH._targetiso << "\n";
+    os << "- Overall prefactor: " << DH._prefact << "\n";
+
+    os << "- Number of points: " << DH._kin.ndata << "\n";
+    os << "- Center-of-mass energy: " << DH._kin.Vs << " GeV\n";
+    if (DH._kin.IntqT)
+      os << "- qT bin-bounds: [ ";
+    else
+      os << "qT values: [ ";
+    for (auto const& qT : DH._kin.qTv)
+      os << qT << " ";
+    os << "] GeV\n";
+
+    if (DH._kin.Intv1)
+      os << "- Integration bounds of the first kinematic variable: [" << DH._kin.var1b.first << ": " << DH._kin.var1b.second << "]\n";
+    else
+      os << "- Value of the first kinematic variable: " << ( DH._kin.var1b.first + DH._kin.var1b.second ) / 2 << "\n";
+
+    if (DH._kin.Intv2)
+      os << "- Integration bounds of the second kinematic variable: [" << DH._kin.var2b.first << ": " << DH._kin.var2b.second << "]\n";
+    else
+      os << "- Value of the second kinematic variable: " << ( DH._kin.var2b.first + DH._kin.var2b.second ) / 2 << "\n";
+
+    if (DH._kin.LeptCut)
+      {
+	os << "- Lepton minimun pT: " << DH._kin.pTlepMin << " GeV \n";
+	os << "- Lepton range in eta: [" << DH._kin.etaLepRange.first << ": " << DH._kin.etaLepRange.second << "]\n";
+      }
+
+    os << "\n";
+
+    return os;
   }
 }

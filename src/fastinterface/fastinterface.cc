@@ -229,6 +229,9 @@ namespace NangaParbat
 	// Timer
 	apfel::Timer t;
 
+	// Report kinematic details of the dataset
+	std::cout << DHVect[i] << std::endl;
+
 	// Name of the dataset
 	const std::string name = DHVect[i].GetName();
 

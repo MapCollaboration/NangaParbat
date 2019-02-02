@@ -251,12 +251,35 @@ int main()
       const auto TMDLumibPrim = [=] (double const& b) -> double{ return TabLumi.EvaluatexzQ(x1, x2, bstar(b)) * fNP(b, zetaf) * fNP(b, zetaf) / 2; };
       return 2 * qT * hcs * qTintegrand.transform(TMDLumibPrim, qT);
     };
+
+  const auto qTPrimitive2 = [&] (double const& qT, bool const& lower) -> double
+    {
+      // Construct the TMD luminosity in b scale to be fed to be
+      // trasformed in qT space.
+      const auto TMDLumibPrim = [=] (double const& b) -> double{ return TabLumi.EvaluatexzQ(x1, x2, bstar(b)) * fNP(b, zetaf) * fNP(b, zetaf) / 2; };
+      const double deps = 1e-7;
+      const double dps  = ( ps.PhaseSpaceReduction(Q, qT * ( 1 + deps ), y) - ps.PhaseSpaceReduction(Q, qT * ( 1 - deps ), y) ) / 2 / deps / qT;
+      const double DqT  = (lower ? 1 : -1);
+      return 2 * qT * hcs * ( ps.PhaseSpaceReduction(Q, qT, y) + dps * DqT ) * qTintegrand.transform(TMDLumibPrim, qT);
+    };
+
   for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
     cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: "
-	 << ps.PhaseSpaceReduction(Q, ( qTv[iqT+1] + qTv[iqT] ) / 2, y) * ( qTPrimitive(qTv[iqT+1]) - qTPrimitive(qTv[iqT]) ) << endl;
+	 << ps.PhaseSpaceReduction(Q, ( qTv[iqT+1] + qTv[iqT] ) / 2, y) * ( qTPrimitive(qTv[iqT+1]) - qTPrimitive(qTv[iqT]) ) << "  "
+	 << qTPrimitive2(qTv[iqT+1], false) - qTPrimitive2(qTv[iqT], true) << "  "
+	 << qTPrimitive(qTv[iqT]) << "  "
+	 << endl;
   cout << "\n";
   t.stop();
-
+  /*
+  const std::vector<double> Qv{65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115};
+  const std::vector<double> yv{-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2};
+  const std::vector<double> qtv{1, 3, 5, 7, 9, 11, 13, 15, 17};
+  for (auto const qq : Qv)
+    for (auto const yy : yv)
+      for (auto const qT : qtv)
+	std::cout << qq << "  " << yy << "  " << qT << "  " << ps.PhaseSpaceReduction(qq, qT, yy) << std::endl;
+  */
   cout << "\n";
   return 0;
 }

@@ -141,7 +141,7 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________
-  std::ostream& operator<<(std::ostream& os,const TwoParticlePhaseSpace& ps)
+  std::ostream& operator << (std::ostream& os, TwoParticlePhaseSpace const& ps)
   {
     return ps.into_stream(os);
   }

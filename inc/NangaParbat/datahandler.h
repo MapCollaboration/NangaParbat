@@ -24,12 +24,12 @@ namespace NangaParbat
     /**
      * @brief The process enumerator
      */
-    enum Process: int {DY, SIDIS};
+    enum Process: int {UnknownProcess = -1, DY = 0, SIDIS = 1};
 
     /**
      * @brief The observable enumerator
      */
-    enum Observable: int {dydQdqT, dxFdQdqT};
+    enum Observable: int {UnknownObservable = -1, dydQdqT = 0, dxFdQdqT = 1};
 
     /**
      * @brief Structure containing the kinematic information of one
@@ -37,14 +37,19 @@ namespace NangaParbat
      */
     struct Kinematics
     {
-      int                      ndata;  //!< Number of data points
-      double                   Vs;     //!< Center of mass energy
-      std::vector<double>      qTv;    //!< Vector of qT values
-      std::pair<double,double> var1b;  //!< Variable 1 integration bounds
-      std::pair<double,double> var2b;  //!< Variable 1 integration bounds
-      bool                     IntqT;  //!< Whether the bins in qTv are integrated over
-      bool                     Intv1;  //!< Whether the bins in Q are integrated over
-      bool                     Intv2;  //!< Whether the bins in y are integrated over
+      Kinematics();
+      bool empty() const;
+      int                      ndata;       //!< Number of data points
+      double                   Vs;          //!< Center of mass energy
+      std::vector<double>      qTv;         //!< Vector of qT values
+      std::pair<double,double> var1b;       //!< Variable 1 integration bounds
+      std::pair<double,double> var2b;       //!< Variable 1 integration bounds
+      bool                     IntqT;       //!< Whether the bins in qTv are integrated over
+      bool                     Intv1;       //!< Whether the bins in Q are integrated over
+      bool                     Intv2;       //!< Whether the bins in y are integrated over
+      bool                     LeptCut;     //!< Whether there are cuts on the final-state leptons
+      double                   pTlepMin;    //!< Minimum pT of the final-state leptons
+      std::pair<double,double> etaLepRange; //!< Allowed range in eta of the final-state leptons
     };
 
     /**
@@ -123,5 +128,9 @@ namespace NangaParbat
     std::vector<std::vector<double>> _corr;        //!< Correlated uncertainties
     apfel::matrix<double>            _covmat;      //!< Covariance matrix
     apfel::matrix<double>            _CholL;       //!< Cholesky decomposition of the covariance matrix
+
+    friend std::ostream& operator << (std::ostream& os, DataHandler const& DH);
   };
+
+  std::ostream& operator << (std::ostream &os, DataHandler const& DH);
 }
