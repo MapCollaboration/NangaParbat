@@ -39,17 +39,17 @@ namespace NangaParbat
     {
       Kinematics();
       bool empty() const;
-      int                      ndata;       //!< Number of data points
-      double                   Vs;          //!< Center of mass energy
-      std::vector<double>      qTv;         //!< Vector of qT values
-      std::pair<double,double> var1b;       //!< Variable 1 integration bounds
-      std::pair<double,double> var2b;       //!< Variable 1 integration bounds
-      bool                     IntqT;       //!< Whether the bins in qTv are integrated over
-      bool                     Intv1;       //!< Whether the bins in Q are integrated over
-      bool                     Intv2;       //!< Whether the bins in y are integrated over
-      bool                     LeptCut;     //!< Whether there are cuts on the final-state leptons
-      double                   pTlepMin;    //!< Minimum pT of the final-state leptons
-      std::pair<double,double> etaLepRange; //!< Allowed range in eta of the final-state leptons
+      int                      ndata;    //!< Number of data points
+      double                   Vs;       //!< Center of mass energy
+      std::vector<double>      qTv;      //!< Vector of qT values
+      std::pair<double,double> var1b;    //!< Variable 1 integration bounds
+      std::pair<double,double> var2b;    //!< Variable 1 integration bounds
+      bool                     IntqT;    //!< Whether the bins in qTv are integrated over
+      bool                     Intv1;    //!< Whether the bins in Q are integrated over
+      bool                     Intv2;    //!< Whether the bins in y are integrated over
+      bool                     PSRed;    //!< Whether there is a final-state PS reduction
+      double                   pTMin;    //!< Minimum pT of the final-state leptons
+      std::pair<double,double> etaRange; //!< Allowed range in eta of the final-state leptons
     };
 
     /**

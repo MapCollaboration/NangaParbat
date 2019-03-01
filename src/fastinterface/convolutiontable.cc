@@ -38,8 +38,17 @@ namespace NangaParbat
     // xi grid
     _xig = table["xigrid"].as<std::vector<double>>();
 
+    // Read the phase-space reduction factors...
     for (auto const& qT : _qTv)
-      _W.insert({qT, table[qT].as<std::vector<std::vector<std::vector<double>>>>()});
+      _PSRed.insert({qT, table["PS_reduction_factor"][qT].as<std::vector<std::vector<double>>>()});
+
+    // ... and their derivatives.
+    for (auto const& qT : _qTv)
+      _dPSRed.insert({qT, table["PS_reduction_factor_derivative"][qT].as<std::vector<std::vector<double>>>()});
+
+    // Read weights
+    for (auto const& qT : _qTv)
+      _W.insert({qT, table["weights"][qT].as<std::vector<std::vector<std::vector<double>>>>()});
   }
 
   //_________________________________________________________________________________
@@ -53,25 +62,27 @@ namespace NangaParbat
 						      std::function<double(double const&, double const&, double const&)> const& fNP2) const
   {
     std::map<double,double> pred;
-    for (auto const& qT : _qTv)
+    for (int iqT = 0; iqT < _qTv.size(); iqT++)
       {
 	double cs = 0;
-	for (int n = 0; n < (int) _z.size(); n++)
+	for (int tau = 0; tau < (int) _Qg.size(); tau++)
 	  {
-	    const double b = _z[n] / qT;
-	    for (int tau = 0; tau < (int) _Qg.size(); tau++)
+	    const double Q    = _Qg[tau];
+	    const double zeta = Q * Q;
+	    const double Vtau = Q / _Vs;
+	    for (int alpha = 0; alpha < (int) _xig.size(); alpha++)
 	      {
-		const double Q    = _Qg[tau];
-		const double zeta = Q * Q;
-		const double Vtau = Q / _Vs;
-		for (int alpha = 0; alpha < (int) _xig.size(); alpha++)
+		const double xi = _xig[alpha];
+		for (int n = 0; n < (int) _z.size(); n++)
 		  {
-		    const double xi = _xig[tau];
-		    cs += _W.at(qT)[n][tau][alpha] * fNP1(Vtau * xi, b, zeta) * fNP2(Vtau / xi, b, zeta);
+		    const double b = _z[n] / _qTv[iqT];
+		    const double f1 = fNP1(Vtau * xi, b, zeta);
+		    const double f2 = fNP2(Vtau / xi, b, zeta);
+		    cs += _W.at(_qTv[iqT])[n][tau][alpha] * f1 * f2;
 		  }
 	      }
 	  }
-	pred.insert({qT, cs});
+	pred.insert({_qTv[iqT], cs});
       }
     return pred;
   }

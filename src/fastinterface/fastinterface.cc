@@ -249,20 +249,22 @@ namespace NangaParbat
 	const double prefactor = DHVect[i].GetPrefactor();
 
 	// Retrieve kinematics
-	const DataHandler::Kinematics  kin         = DHVect[i].GetKinematics();
-	const double                   Vs          = kin.Vs;          // C.M.E.
-	const std::vector<double>      qTv         = kin.qTv;         // Transverse momentum bin bounds
-	const std::pair<double,double> Qb          = kin.var1b;       // Invariant mass interval
-	const std::pair<double,double> yxb         = kin.var2b;       // Rapidity/xF interval
-	const bool                     IntqT       = kin.IntqT;       // Whether the bins in qTv are to be integrated over
-	const bool                     IntQ        = kin.Intv1;       // Whether the bin in Q is to be integrated over
-	const bool                     Inty        = kin.Intv2;       // Whether the bin in y is to be integrated over
-	const bool                     LeptCut     = kin.LeptCut;     // Whether there are cuts on the final-state leptons
-	const double                   pTlepMin    = kin.pTlepMin;    // Minimum pT of the final-state leptons
-	const std::pair<double,double> etaLepRange = kin.etaLepRange; // Allowed range in eta of the final-state leptons
+	const DataHandler::Kinematics  kin      = DHVect[i].GetKinematics();
+	const double                   Vs       = kin.Vs;       // C.M.E.
+	const std::vector<double>      qTv      = kin.qTv;      // Transverse momentum bin bounds
+	const std::pair<double,double> Qb       = kin.var1b;    // Invariant mass interval
+	const std::pair<double,double> yxb      = kin.var2b;    // Rapidity/xF interval
+	const bool                     IntqT    = kin.IntqT;    // Whether the bins in qTv are to be integrated over
+	const bool                     IntQ     = kin.Intv1;    // Whether the bin in Q is to be integrated over
+	const bool                     Inty     = kin.Intv2;    // Whether the bin in y is to be integrated over
+	const bool                     PSRed    = kin.PSRed;    // Whether there is a final-state PS reduction
+	const double                   pTMin    = kin.pTMin;    // Minimum pT of the final-state leptons
+	const std::pair<double,double> etaRange = kin.etaRange; // Allowed range in eta of the final-state leptons
 
-	// Initialise two-particle-phase-space object
-	TwoParticlePhaseSpace ps{pTlepMin, etaLepRange.first, etaLepRange.second};
+	// Initialise two-particle phase-space object. Symmetrise the
+	// rapidity range.
+	const double deta = ( etaRange.second - etaRange.first ) / 2;
+	TwoParticlePhaseSpace ps{pTMin, deta};
 
 	// Ogata-quadrature object of degree one or zero according to
 	// weather the cross sections have to be integrated over the
@@ -274,9 +276,9 @@ namespace NangaParbat
 	std::vector<double> wo = OgataObj.GetWeights();
 
 	// Construct QGrid-like grids for the integration in Q
-	const std::vector<double> Qg  = (IntQ ? GenerateGrid(nQ, Qb.first, Qb.second, idQ - 1) :
-					 std::vector<double>{( Qb.first + Qb.second ) / 2});
-	const apfel::QGrid<double> Qgrid {Qg, idQ};
+	const double Qav = ( Qb.first + Qb.second ) / 2;
+	const std::vector<double> Qg = (IntQ ? GenerateGrid(nQ, Qb.first, Qb.second, idQ - 1) : std::vector<double>{Qav});
+	const apfel::QGrid<double> Qgrid{Qg, idQ};
 
 	// Construct QGrid-like grids for the integration in y or xF
 	const double xil  = (obs == DataHandler::dydQdqT ? exp(yxb.first) : yxb.first);
@@ -306,13 +308,54 @@ namespace NangaParbat
 	Tabs[i] << YAML::Key << "Ogata_coordinates" << YAML::Value << YAML::Flow << std::vector<double>(zo.begin(), zo.begin() + nO);
 	Tabs[i] << YAML::Key << "Qgrid" << YAML::Value << YAML::Flow << Qg;
 	Tabs[i] << YAML::Key << "xigrid" << YAML::Value << YAML::Flow << xig;
-	Tabs[i] << YAML::EndMap;
-	Tabs[i] << YAML::Newline;
-	Tabs[i] << YAML::BeginMap;
+
+	// Phase-space reduction factor and its derivative on the grid
+	// in Q and xi for each value of qT. Equal to one and zero
+	// respectively is no cut is present.
+	std::map<double,std::vector<std::vector<double>>> mPS;
+	std::map<double,std::vector<std::vector<double>>> mdPS;
+	// Loop over the qT-bin bounds
+	for (auto const& qT : qTv)
+	  {
+	    // Allocate containers of the PS reduction factors
+	    std::vector<std::vector<double>> PS(nQe, std::vector<double>(nxie, 1.));
+	    std::vector<std::vector<double>> dPS(nQe, std::vector<double>(nxie, 0.));
+	    if (PSRed)
+	      // Loop over the grids in Q
+	      for (int tau = 0; tau < nQe; tau++)
+		// Loop over the grid in xi
+		for (int alpha = 0; alpha < nxie; alpha++)
+		  {
+		    const double Q   = Qg[tau];
+		    const double xi  = xig[alpha];
+		    const double rap = log(obs == DataHandler::dydQdqT ? xi : Vs * ( xi + sqrt( pow(xi, 2) + pow(2 * Q / Vs, 2) ) ) / Q / 2);
+		    PS[tau][alpha] = ps.PhaseSpaceReduction(Q, qT, rap);
+		    if (IntqT)
+		      dPS[tau][alpha] = ps.DerivePhaseSpaceReduction(Q, qT, rap);
+		  }
+	    mPS.insert({qT, PS});
+	    mdPS.insert({qT, dPS});
+	  }
+
+	// Output phase-space reduction factor and its
+	// derivative. Write the derivative only if the table is
+	// integrated of qT.
+	Tabs[i] << YAML::Newline << YAML::Newline;
+	Tabs[i] << YAML::Comment("Leptonic tensor cuts");
+	Tabs[i] << YAML::Key << "PS_reduction_factor";
+	Tabs[i] << YAML::Value << YAML::Flow << mPS;
+	Tabs[i] << YAML::Newline << YAML::Newline;
+	Tabs[i] << YAML::Key << "PS_reduction_factor_derivative";
+	Tabs[i] << YAML::Value << YAML::Flow << mdPS;
+
+	// Compute and write the actual weights
+	Tabs[i] << YAML::Newline << YAML::Newline;
 	Tabs[i] << YAML::Comment("Weights");
+	Tabs[i] << YAML::Key << "weights";
+	Tabs[i] << YAML::Value << YAML::BeginMap;
 
 	// Total number of steps for this particular table. Used to
-	// report the progress of the computation.
+	// report the percent progress of the computation.
 	int nqT = 0;
 	for (auto const& qT : qTv)
 	  if (qT / Qb.first <= qToQ)
@@ -329,7 +372,7 @@ namespace NangaParbat
 	    std::vector<std::vector<std::vector<double>>> W(nO, std::vector<std::vector<double>>(nQe, std::vector<double>(nxie, 0.)));
 
 	    // If the value of qT / Qmin is above that allowed print
-	    // all zero's and constinue with the next value of qT
+	    // all zero's and continue with the next value of qT
 	    if (qT / Qb.first > qToQ)
 	      {
 		Tabs[i] << YAML::Key << qT;
@@ -394,21 +437,16 @@ namespace NangaParbat
 
 			      // Get interpolating function in xi but
 			      // return 1 if no integration over xi is
-			      // required
+			      // required. This should not be strictly
+			      // needed because, if no integration
+			      // over Q is required, this function
+			      // should be called in xig[alpha] where
+			      // the interpolating function is already
+			      // one.
 			      const double Ixi = (Inty ? xigrid.Interpolant(0, alpha, xi) : 1);
 
-			      // Compute phase-space reduction factor
-			      // due to cuts on the final-state
-			      // leptons.
-			      double RedPS = 1;
-			      if (LeptCut)
-				{
-				  const double rap = log(obs == DataHandler::dydQdqT ? xi : Vs * ( xi + sqrt( pow(xi, 2) + pow(2 * Q / Vs, 2) ) ) / Q / 2);
-				  RedPS = ps.PhaseSpaceReduction(Q, qT, rap);
-				}
-
 			      // Return xi integrand
-			      return RedPS * Ixi * TabLumi.EvaluatexzQ(x1, x2, Q) / (obs == DataHandler::dydQdqT ? xi : x1 + x2);
+			      return Ixi * TabLumi.EvaluatexzQ(x1, x2, Q) / (obs == DataHandler::dydQdqT ? xi : x1 + x2);
 			    };
 
 			    // Perform the integral in xi
@@ -417,7 +455,11 @@ namespace NangaParbat
 
 			    // Get interpolating function in Q but
 			    // return 1 if no integration over Q is
-			    // required
+			    // required. This should not be strictly
+			    // needed because, if no integration over
+			    // Q is required, this function should be
+			    // called in Qg[tau] where the
+			    // interpolating function is already one.
 			    const double IQ = (IntQ ? Qgrid.Interpolant(0, tau, Q) : 1);
 
 			    // Return Q integrand
@@ -446,6 +488,7 @@ namespace NangaParbat
 	    Tabs[i] << YAML::Key << qT;
 	    Tabs[i] << YAML::Value << YAML::Flow << W;
 	  }
+	Tabs[i] << YAML::EndMap;
 	Tabs[i] << YAML::EndMap;
 
 	// Stop timer and force to display the time elapsed

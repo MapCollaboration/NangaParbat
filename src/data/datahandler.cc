@@ -21,9 +21,9 @@ namespace NangaParbat
     IntqT(false),
     Intv1(false),
     Intv2(false),
-    LeptCut(false),
-    pTlepMin(0),
-    etaLepRange(std::pair<double,double>{-10, 10})
+    PSRed(false),
+    pTMin(0),
+    etaRange(std::pair<double,double>{-10, 10})
   {
   }
 
@@ -100,11 +100,11 @@ namespace NangaParbat
 	      }
 
 	    // Lepton cuts
-	    if (ql["name"].as<std::string>() == "lepton_cuts")
+	    if (ql["name"].as<std::string>() == "PS_reduction")
 	      {
-		_kin.LeptCut     = true;
-		_kin.pTlepMin    = ql["pTmin"].as<double>();
-		_kin.etaLepRange = std::make_pair(ql["etamin"].as<double>(), ql["etamax"].as<double>());
+		_kin.PSRed    = true;
+		_kin.pTMin    = ql["pTmin"].as<double>();
+		_kin.etaRange = std::make_pair(ql["etamin"].as<double>(), ql["etamax"].as<double>());
 	      }
 	  }
 
@@ -209,10 +209,10 @@ namespace NangaParbat
     else
       os << "- Value of the second kinematic variable: " << ( DH._kin.var2b.first + DH._kin.var2b.second ) / 2 << "\n";
 
-    if (DH._kin.LeptCut)
+    if (DH._kin.PSRed)
       {
-	os << "- Lepton minimun pT: " << DH._kin.pTlepMin << " GeV \n";
-	os << "- Lepton range in eta: [" << DH._kin.etaLepRange.first << ": " << DH._kin.etaLepRange.second << "]\n";
+	os << "- Lepton minimun pT: " << DH._kin.pTMin << " GeV \n";
+	os << "- Lepton range in eta: [" << DH._kin.etaRange.first << ": " << DH._kin.etaRange.second << "]\n";
       }
 
     os << "\n";

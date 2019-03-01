@@ -89,15 +89,17 @@ namespace NangaParbat
     ///@}
 
   private:
-    std::string                                                    _name;  //!< Name of the table
-    int                                                            _proc;  //!< Index of the process (0: DY, 1: SIDIS)
-    int                                                            _obs;   //!< Index of the observable
-    double                                                         _Vs;    //!< Center of mass energy
-    bool                                                           _IntqT; //!< Whether the bin are integrated in qT or not
-    std::vector<double>                                            _qTv;   //!< Vector of qT
-    std::vector<double>                                            _z;     //!< Unscaled Ogata coordinate
-    std::vector<double>                                            _Qg;    //!< Grid in Q
-    std::vector<double>                                            _xig;   //!< Grid in xi
-    std::map<double,std::vector<std::vector<std::vector<double>>>> _W;     //!< The weights
+    std::string                                                    _name;    //!< Name of the table
+    int                                                            _proc;    //!< Index of the process (0: DY, 1: SIDIS)
+    int                                                            _obs;     //!< Index of the observable
+    double                                                         _Vs;      //!< Center of mass energy
+    bool                                                           _IntqT;   //!< Whether the bin are integrated in qT or not
+    std::vector<double>                                            _qTv;     //!< Vector of qT
+    std::vector<double>                                            _z;       //!< Unscaled Ogata coordinate
+    std::vector<double>                                            _Qg;      //!< Grid in Q
+    std::vector<double>                                            _xig;     //!< Grid in xi
+    std::map<double,std::vector<std::vector<double>>>              _PSRed;   //!< The phase-space reduction factors
+    std::map<double,std::vector<std::vector<double>>>              _dPSRed;  //!< The derivative of the phase-space reduction factors
+    std::map<double,std::vector<std::vector<std::vector<double>>>> _W;       //!< The weights
   };
 }
