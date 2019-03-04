@@ -311,7 +311,7 @@ namespace NangaParbat
 
 	// Phase-space reduction factor and its derivative on the grid
 	// in Q and xi for each value of qT. Equal to one and zero
-	// respectively is no cut is present.
+	// respectively if no cut is present.
 	std::map<double,std::vector<std::vector<double>>> mPS;
 	std::map<double,std::vector<std::vector<double>>> mdPS;
 	// Loop over the qT-bin bounds

@@ -267,7 +267,6 @@ int main()
     cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: "
 	 << ps.PhaseSpaceReduction(Q, ( qTv[iqT+1] + qTv[iqT] ) / 2, y) * ( qTPrimitive(qTv[iqT+1]) - qTPrimitive(qTv[iqT]) ) << "  "
 	 << qTPrimitive2(qTv[iqT+1], false) - qTPrimitive2(qTv[iqT], true) << "  "
-	 << qTPrimitive(qTv[iqT]) << "  "
 	 << endl;
   cout << "\n";
   t.stop();
