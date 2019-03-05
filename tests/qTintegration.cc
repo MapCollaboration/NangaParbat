@@ -12,9 +12,6 @@
 #include <LHAPDF/LHAPDF.h>
 #include <apfel/apfelxx.h>
 
-using namespace apfel;
-using namespace std;
-
 // Non-perturbative function
 double fNP(double const&, double const& b, double const& zetaf)
 {
@@ -69,15 +66,18 @@ int main()
   const apfel::Grid g{vsg};
 
   // Rotate PDF set into the QCD evolution basis.
-  const auto RotPDFs = [=] (double const& x, double const& mu) -> map<int,double>{ return PhysToQCDEv(distpdf->xfxQ(x,mu)); };
+  const auto RotPDFs = [=] (double const& x, double const& mu) -> std::map<int,double>{ return apfel::PhysToQCDEv(distpdf->xfxQ(x,mu)); };
 
   // Construct set of distributions as a function of the scale to be
   // tabulated.
-  const auto EvolvedPDFs = [=,&g] (double const& mu) -> Set<Distribution>{ return Set<Distribution>{EvolutionBasisQCD{NF(mu, Thresholds)}, DistributionMap(g, RotPDFs, mu)}; };
+  const auto EvolvedPDFs = [=,&g] (double const& mu) -> apfel::Set<apfel::Distribution>
+    {
+      return apfel::Set<apfel::Distribution>{apfel::EvolutionBasisQCD{apfel::NF(mu, Thresholds)}, DistributionMap(g, RotPDFs, mu)};
+    };
 
   // Tabulate PDFs
-  const TabulateObject<Set<Distribution>> TabPDFs{EvolvedPDFs, 50, 1, 100000, 3, Thresholds};
-  const auto CollPDFs = [&] (double const& mu) -> Set<Distribution> { return TabPDFs.Evaluate(mu); };
+  const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 50, 1, 100000, 3, Thresholds};
+  const auto CollPDFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabPDFs.Evaluate(mu); };
 
   // Initialize TMD objects.
   const auto TmdObj = InitializeTmdObjects(g, Thresholds);
@@ -112,7 +112,7 @@ int main()
 
   // Construct function that returns evolved TMDs including the
   // non-perturbative part. This can be tabulated in b.
-  const auto EvolvedTMDPDFs = [=] (double const& b) -> Set<Distribution>
+  const auto EvolvedTMDPDFs = [=] (double const& b) -> apfel::Set<apfel::Distribution>
     {
       const double bs = bstar(b, 0);
       return fNP(0, b, zetaf) * QuarkEvolFactor(bs, muf, zetaf) * MatchedTMDPDFs(bs);
@@ -122,10 +122,9 @@ int main()
   // integral faster.
   const auto TabFunc    = [] (double const& b) -> double{ return log(b); };
   const auto InvTabFunc = [] (double const& fb) -> double{ return exp(fb); };
-  const TabulateObject<Set<Distribution>> TabEvolvedTMDPDFs{EvolvedTMDPDFs, 50, 5e-5, 10, 3, {}, TabFunc, InvTabFunc};
+  const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabEvolvedTMDPDFs{EvolvedTMDPDFs, 50, 5e-5, 10, 3, {}, TabFunc, InvTabFunc};
 
   // EW charges
-  //const vector<double> Bq = EWChargesNWA(Q);
   const std::vector<double> Bq = apfel::ElectroWeakCharges(Q, true);
 
   // Bjorken variables
@@ -134,23 +133,23 @@ int main()
 
   // Compute hard coefficient, including the other kinematic
   // factors.
-  const double hcs = apfel::HardFactorDY(PerturbativeOrder, Alphas(muf), NF(muf, Thresholds), Cf);
+  const double hcs = apfel::HardFactorDY(PerturbativeOrder, Alphas(muf), apfel::NF(muf, Thresholds), Cf);
 
   // Electromagnetic coupling squared
   const double aem2 = pow((config["alphaem"]["run"].as<bool>() ? alphaem.Evaluate(Q) : config["alphaem"]["ref"].as<double>()), 2);
 
   // Ogata quadrature object with default settings.
-  OgataQuadrature bintegrand{};
+  apfel::OgataQuadrature bintegrand{};
 
   // Phase-space reduction factor
   const double deta = ( etaRange.second - etaRange.first ) / 2;
   NangaParbat::TwoParticlePhaseSpace ps{pTMin, deta};
 
   // Define qT-distribution function using a DoubleObject
-  const auto Lumi = [=] (double const& bs) -> DoubleObject<Distribution>
+  const auto Lumi = [=] (double const& bs) -> apfel::DoubleObject<apfel::Distribution>
     {
-      const map<int,Distribution> xF = QCDEvToPhys((QuarkEvolFactor(bs, muf, zetaf) * MatchedTMDPDFs(bs)).GetObjects());
-      DoubleObject<Distribution> L{};
+      const std::map<int,apfel::Distribution> xF = QCDEvToPhys((QuarkEvolFactor(bs, muf, zetaf) * MatchedTMDPDFs(bs)).GetObjects());
+      apfel::DoubleObject<apfel::Distribution> L{};
       for (int i = 1; i <= 5; i++)
 	{
 	  L.AddTerm({Bq[i-1], xF.at(i), xF.at(-i)});
@@ -158,7 +157,7 @@ int main()
 	}
       return L;
     };
-  const TabulateObject<DoubleObject<Distribution>> TabLumi{Lumi, 50, 5e-5, 1.1, 3, {}, TabFunc, InvTabFunc};
+  const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabLumi{Lumi, 50, 5e-5, 1.1, 3, {}, TabFunc, InvTabFunc};
 
   // Define qT-distribution function 
   const auto qTdist = [&] (double const& qT) -> double
@@ -169,20 +168,20 @@ int main()
       return apfel::ConvFact * qT * 8 * M_PI * aem2 * hcs * ps.PhaseSpaceReduction(Q, qT, y) * bintegrand.transform(TMDLumibNew, qT) / pow(Q, 3) / 9;
     };
 
-  Timer t;
-  cout << scientific;
-  cout << "\nNumerical computation of the integral in qT" << endl;
-  cout << "    [qTmin:qTmax] [GeV]      "
+  apfel::Timer t;
+  std::cout << std::scientific;
+  std::cout << "\nNumerical computation of the integral in qT" << std::endl;
+  std::cout << "    [qTmin:qTmax] [GeV]      "
        << "   sigma      "
-       << endl;
-  const Integrator IntQt{qTdist};
+       << std::endl;
+  const apfel::Integrator IntQt{qTdist};
   for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
-    cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: " << IntQt.integrate(qTv[iqT], qTv[iqT+1], 1e-5) << endl;
-  cout << "\n";
+    std::cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: " << IntQt.integrate(qTv[iqT], qTv[iqT+1], 1e-5) << std::endl;
+  std::cout << "\n";
   t.stop();
 
   // Ogata quadrature object with default settings.
-  OgataQuadrature qTintegrand{1};
+  apfel::OgataQuadrature qTintegrand{1};
   const auto qTPrimitive = [&] (double const& qT, bool const& lower) -> double
     {
       // Construct the TMD luminosity in b scale to be fed to be
@@ -195,15 +194,15 @@ int main()
     };
 
   t.start();
-  cout << "\nAnalytic computation of the integral in qT" << endl;
-  cout << "    [qTmin:qTmax] [GeV]      "
+  std::cout << "\nAnalytic computation of the integral in qT" << std::endl;
+  std::cout << "    [qTmin:qTmax] [GeV]      "
        << "   sigma      "
-       << endl;
+       << std::endl;
   for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
-    cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: "
+    std::cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: "
 	 << qTPrimitive(qTv[iqT+1], false) - qTPrimitive(qTv[iqT], true) << "  "
-	 << endl;
-  cout << "\n";
+	 << std::endl;
+  std::cout << "\n";
   t.stop();
 
   // Now produce interpolation grid and test it against the methods
@@ -219,17 +218,17 @@ int main()
   const NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/qTintegration_test.yaml")};
   const std::vector<double> Conv = CTable.GetPredictions(fNP);
   t.start();
-  cout << "\nGrid computation of the integral in qT" << endl;
-  cout << "    [qTmin:qTmax] [GeV]      "
+  std::cout << "\nGrid computation of the integral in qT" << std::endl;
+  std::cout << "    [qTmin:qTmax] [GeV]      "
        << "   sigma      "
-       << endl;
+       << std::endl;
   for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
-    cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: "
+    std::cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: "
 	 << Conv[iqT] << "  "
-	 << endl;
-  cout << "\n";
+	 << std::endl;
+  std::cout << "\n";
   t.stop();
-  cout << "\n";
+  std::cout << "\n";
 
   return 0;
 }
