@@ -9,7 +9,6 @@
 #include "NangaParbat/utilities.h"
 #include "NangaParbat/twoparticlephasespace.h"
 
-#include <math.h>
 #include <LHAPDF/LHAPDF.h>
 #include <apfel/apfelxx.h>
 

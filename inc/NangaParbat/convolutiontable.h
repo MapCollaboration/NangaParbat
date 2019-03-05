@@ -66,7 +66,7 @@ namespace NangaParbat
 
     /**
      * @brief This function returns a vector of predictions with a
-     * a user-given non-perturbative function  assuming that first
+     * a user-given non-perturbative function assuming that first
      * and second functions are equal.
      * @param fNP: the first non-perturbative input function
      * @return a vector of predictions.

@@ -4,49 +4,19 @@
 // Authors: Valerio Bertone: valerio.bertone@cern.ch
 //
 
-#include <apfel/grid.h>
-#include <apfel/timer.h>
-#include <apfel/alphaqcd.h>
-#include <apfel/constants.h>
-#include <apfel/tmdbuilder.h>
-#include <apfel/rotations.h>
-#include <apfel/evolutionbasisqcd.h>
-#include <apfel/tools.h>
-#include <apfel/hardfactors.h>
-#include <apfel/ogataquadrature.h>
-#include <apfel/doubleobject.h>
-#include <NangaParbat/twoparticlephasespace.h>
+#include "NangaParbat/fastinterface.h"
+#include "NangaParbat/convolutiontable.h"
+#include "NangaParbat/utilities.h"
+#include "NangaParbat/twoparticlephasespace.h"
 
-#include "LHAPDF/LHAPDF.h"
+#include <LHAPDF/LHAPDF.h>
+#include <apfel/apfelxx.h>
 
 using namespace apfel;
 using namespace std;
 
-// Narrow-width-approximation charges.
-vector<double> EWChargesNWA(double const& Q)
-{
-  // Relevant constants for the computation of the EW charges.
-  // (See https://arxiv.org/pdf/hep-ph/9711387.pdf)
-  const double MZ         = 91.1876;
-  const double Sin2ThetaW = 0.23126;
-
-  // Derived quantities
-  const double VD         = - 0.5 + 2 * Sin2ThetaW / 3;
-  const double VU         = + 0.5 - 4 * Sin2ThetaW / 3;
-  const vector<double> Vq = {VD, VU, VD, VU, VD, VU};
-  const double AD         = - 0.5;
-  const double AU         = + 0.5;
-  const vector<double> Aq = {AD, AU, AD, AU, AD, AU};
-  const double alphaem    = ( 1. / 128.77 ) / ( 1 - 0.00167092 * log(Q/MZ) );
-
-  vector<double> EWCharges;
-  for (auto i = 0; i < 6; i++)
-    EWCharges.push_back(alphaem * (Vq[i] * Vq[i] + Aq[i] * Aq[i]) / 4 / Sin2ThetaW / ( 1 - Sin2ThetaW ));
-  return EWCharges;
-};
-
-// Non-perturnative function
-double fNP(double const& b, double const& zetaf)
+// Non-perturbative function
+double fNP(double const&, double const& b, double const& zetaf)
 {
   const double g1 = 0.02;
   const double g2 = 0.5;
@@ -55,40 +25,48 @@ double fNP(double const& b, double const& zetaf)
 }
 
 // b* prescription
-double bstar(double const& b)
+double bstar(double const& b, double const&)
 {
   const double bmax = 1;
-  const double bs = b / sqrt( 1 + pow(b / bmax, 2) );
-  return bs;
+  return b / sqrt( 1 + pow(b / bmax, 2) );
 }
 
 // Main program
 int main()
 {
- // Open LHAPDF set.
-  LHAPDF::PDF* distpdf = LHAPDF::mkPDF("MMHT2014nlo68cl");
+  // Allocate "FastInterface" object
+  const YAML::Node config = YAML::LoadFile("../cards/config.yaml");
 
-  // Thresholds.
-  const vector<double> Thresholds{distpdf->quarkThreshold(1),
-      distpdf->quarkThreshold(2),
-      distpdf->quarkThreshold(3),
-      distpdf->quarkThreshold(4),
-      distpdf->quarkThreshold(5)};
+  // Datafiles
+  const NangaParbat::DataHandler DHObj{"qTintegration_test", YAML::LoadFile("../data/TestData/Table2.yaml")};
+
+  // Now start direct computation
+  // Open LHAPDF set
+  LHAPDF::PDF* distpdf = LHAPDF::mkPDF(config["pdfset"]["name"].as<std::string>(), config["pdfset"]["member"].as<int>());
+
+  // Heavy-quark thresholds
+  std::vector<double> Thresholds;
+  for (auto const& v : distpdf->flavors())
+    if (v > 0 && v < 7)
+      Thresholds.push_back(distpdf->quarkThreshold(v));
 
   // Alpha_s.
   const auto Alphas = [&] (double const& mu) -> double{ return distpdf->alphasQ(mu); };
 
   // Perturbative order.
-  const int PerturbativeOrder = 1;
+  const int PerturbativeOrder = config["PerturbativeOrder"].as<int>();
 
   // Initial scale-variation factor;
-  const double Ci = 1;
+  const double Ci = config["TMDscales"]["Ci"].as<double>();
 
   // Final scale-variation factor;
-  const double Cf = 1;
+  const double Cf = config["TMDscales"]["Cf"].as<double>();
 
   // x-space grid.
-  const Grid g{{{100,1e-5,3}, {60,1e-1,3}, {50,6e-1,3}, {100,8e-1,3}}};
+  std::vector<apfel::SubGrid> vsg;
+  for (auto const& sg : config["xgridpdf"])
+    vsg.push_back({sg[0].as<int>(), sg[1].as<double>(), sg[2].as<int>()});
+  const apfel::Grid g{vsg};
 
   // Rotate PDF set into the QCD evolution basis.
   const auto RotPDFs = [=] (double const& x, double const& mu) -> map<int,double>{ return PhysToQCDEv(distpdf->xfxQ(x,mu)); };
@@ -110,11 +88,23 @@ int main()
   // Match TMD PDFs
   const auto MatchedTMDPDFs = MatchTmdPDFs(TmdObj, CollPDFs, Alphas, PerturbativeOrder, Ci);
 
-  // Hard scale
-  const double Q = 91.1876;
+  // Alpha_em
+  const apfel::AlphaQED alphaem{config["alphaem"]["aref"].as<double>(), config["alphaem"]["Qref"].as<double>(), Thresholds, {0, 0, 1.777}, 0};
 
-  // C.M.E.
-  const double Vs = 13000;
+  // Retrieve kinematics
+  const NangaParbat::DataHandler::Kinematics kin = DHObj.GetKinematics();
+  const double                   Vs       = kin.Vs;       // C.M.E.
+  const std::pair<double,double> yb       = kin.var2b;    // Rapidity interval
+  const std::pair<double,double> Qb       = kin.var1b;    // Invariant mass interval
+  const std::vector<double>      qTv      = kin.qTv;      // Transverse momentum bin bounds
+  const double                   pTMin    = kin.pTMin;    // Minimum pT of the final-state leptons
+  const std::pair<double,double> etaRange = kin.etaRange; // Allowed range in eta of the final-state leptons
+
+  // Hard scale
+  const double Q = ( Qb.first + Qb.second ) / 2;
+
+  // Rapidity
+  const double y = ( yb.first + yb.second ) / 2;
 
   // TMD scales
   const double muf   = Cf * Q;
@@ -124,8 +114,8 @@ int main()
   // non-perturbative part. This can be tabulated in b.
   const auto EvolvedTMDPDFs = [=] (double const& b) -> Set<Distribution>
     {
-      const double bs = bstar(b);
-      return fNP(b, zetaf) * QuarkEvolFactor(bs, muf, zetaf) * MatchedTMDPDFs(bs);
+      const double bs = bstar(b, 0);
+      return fNP(0, b, zetaf) * QuarkEvolFactor(bs, muf, zetaf) * MatchedTMDPDFs(bs);
     };
 
   // Tabulate input TMDs in the impact parameter to make the
@@ -135,27 +125,26 @@ int main()
   const TabulateObject<Set<Distribution>> TabEvolvedTMDPDFs{EvolvedTMDPDFs, 50, 5e-5, 10, 3, {}, TabFunc, InvTabFunc};
 
   // EW charges
-  const vector<double> Bq = EWChargesNWA(Q);
-
-  // Rapidity
-  const double y = 0;
+  //const vector<double> Bq = EWChargesNWA(Q);
+  const std::vector<double> Bq = apfel::ElectroWeakCharges(Q, true);
 
   // Bjorken variables
   const double x1 = Q * exp(-y) / Vs;
   const double x2 = Q * exp(y) / Vs;
 
-  // Branching ratio Br(Z -> l+l-)
-  const double Br = 0.033658;
-
   // Compute hard coefficient, including the other kinematic
   // factors.
-  const double hcs = 4 * ConvFact * Br * Pi2 * HardFactorDY(PerturbativeOrder, Alphas(muf), NF(muf, Thresholds), Cf) / 3 / pow(Q,2);
+  const double hcs = apfel::HardFactorDY(PerturbativeOrder, Alphas(muf), NF(muf, Thresholds), Cf);
+
+  // Electromagnetic coupling squared
+  const double aem2 = pow((config["alphaem"]["run"].as<bool>() ? alphaem.Evaluate(Q) : config["alphaem"]["ref"].as<double>()), 2);
 
   // Ogata quadrature object with default settings.
   OgataQuadrature bintegrand{};
 
   // Phase-space reduction factor
-  NangaParbat::TwoParticlePhaseSpace ps{20, 2.4};
+  const double deta = ( etaRange.second - etaRange.first ) / 2;
+  NangaParbat::TwoParticlePhaseSpace ps{pTMin, deta};
 
   // Define qT-distribution function using a DoubleObject
   const auto Lumi = [=] (double const& bs) -> DoubleObject<Distribution>
@@ -176,23 +165,12 @@ int main()
     {
       // Construct the TMD luminosity in b scale to be fed to be
       // trasformed in qT space.
-      const auto TMDLumibNew = [=] (double const& b) -> double{ return b * TabLumi.EvaluatexzQ(x1, x2, bstar(b)) * fNP(b, zetaf) * fNP(b, zetaf) / 2; };
-      return 2 * qT * hcs * ps.PhaseSpaceReduction(Q, qT, y) * bintegrand.transform(TMDLumibNew, qT);
+      const auto TMDLumibNew = [=] (double const& b) -> double{ return b * TabLumi.EvaluatexzQ(x1, x2, bstar(b, 0)) * fNP(0, b, zetaf) * fNP(0, b, zetaf) / 2; };
+      return apfel::ConvFact * qT * 8 * M_PI * aem2 * hcs * ps.PhaseSpaceReduction(Q, qT, y) * bintegrand.transform(TMDLumibNew, qT) / pow(Q, 3) / 9;
     };
 
   Timer t;
-  const vector<double> qTv{1, 3, 5, 7, 9, 11, 13, 15, 17};
   cout << scientific;
-  cout << "\n  qT [GeV]    "
-       << "   sigma      "
-       << endl;
-  for (auto const& qT : qTv)
-    cout << qT << "  " << qTdist(qT) << endl;
-  cout << "\n";
-  t.stop();
-
-  // Integrate in qT
-  t.start();
   cout << "\nNumerical computation of the integral in qT" << endl;
   cout << "    [qTmin:qTmax] [GeV]      "
        << "   sigma      "
@@ -204,24 +182,50 @@ int main()
   t.stop();
 
   // Ogata quadrature object with default settings.
-  t.start();
-  cout << "\nAnalytic computation of the integral in qT" << endl;
-  cout << "    [qTmin:qTmax] [GeV]      "
-       << "   sigma      "
-       << endl;
   OgataQuadrature qTintegrand{1};
   const auto qTPrimitive = [&] (double const& qT, bool const& lower) -> double
     {
       // Construct the TMD luminosity in b scale to be fed to be
       // trasformed in qT space.
-      const auto TMDLumibPrim = [=] (double const& b) -> double{ return TabLumi.EvaluatexzQ(x1, x2, bstar(b)) * fNP(b, zetaf) * fNP(b, zetaf) / 2; };
-      const double DqT  = (lower ? 1 : -1); // This assumes that the bin-width is equal to two
-      return 2 * qT * hcs * ( ps.PhaseSpaceReduction(Q, qT, y) + ps.DerivePhaseSpaceReduction(Q, qT, y) * DqT ) * qTintegrand.transform(TMDLumibPrim, qT);
+      const auto TMDLumibPrim = [=] (double const& b) -> double{ return TabLumi.EvaluatexzQ(x1, x2, bstar(b, 0)) * fNP(0, b, zetaf) * fNP(0, b, zetaf) / 2; };
+      const double DqT    = (lower ? 1 : -1); // This assumes that the bin-width is equal to 2 GeV
+      const double PSRed  = ps.PhaseSpaceReduction(Q, qT, y);
+      const double dPSRed = ps.DerivePhaseSpaceReduction(Q, qT, y);
+      return apfel::ConvFact * qT * 8 * M_PI * aem2 * hcs * ( PSRed + dPSRed * DqT ) * qTintegrand.transform(TMDLumibPrim, qT) / pow(Q, 3) / 9;
     };
 
+  t.start();
+  cout << "\nAnalytic computation of the integral in qT" << endl;
+  cout << "    [qTmin:qTmax] [GeV]      "
+       << "   sigma      "
+       << endl;
   for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
     cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: "
 	 << qTPrimitive(qTv[iqT+1], false) - qTPrimitive(qTv[iqT], true) << "  "
+	 << endl;
+  cout << "\n";
+  t.stop();
+
+  // Now produce interpolation grid and test it against the methods
+  // above.
+  /*
+  const NangaParbat::FastInterface FIObj{config};
+  const std::vector<YAML::Emitter> tab = FIObj.ComputeTables({DHObj}, bstar);
+  std::ofstream fout("../tables/" + YAML::Load(tab[0].c_str())["name"].as<std::string>() + ".yaml");
+  fout << tab[0].c_str() << std::endl;
+  fout.close();
+  const NangaParbat::ConvolutionTable CTable{YAML::Load(tab[0].c_str())};
+  */
+  const NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/qTintegration_test.yaml")};
+  const std::vector<double> Conv = CTable.GetPredictions(fNP);
+  t.start();
+  cout << "\nGrid computation of the integral in qT" << endl;
+  cout << "    [qTmin:qTmax] [GeV]      "
+       << "   sigma      "
+       << endl;
+  for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
+    cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: "
+	 << Conv[iqT] << "  "
 	 << endl;
   cout << "\n";
   t.stop();
