@@ -7,6 +7,7 @@
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/convolutiontable.h"
 #include "NangaParbat/utilities.h"
+#include "NangaParbat/twoparticlephasespace.h"
 
 #include <math.h>
 #include <LHAPDF/LHAPDF.h>
@@ -90,7 +91,7 @@ int main()
   const apfel::AlphaQED alphaem{config["alphaem"]["aref"].as<double>(), config["alphaem"]["Qref"].as<double>(), Thresholds, {0, 0, 1.777}, 0};
 
   // Retrieve relevant parameters from the configuration file
-  const double eps    = 1e-11;
+  const double eps    = 1e-3;
   const double Cf     = config["TMDscales"]["Cf"].as<double>();
   const int    nOgata = config["nOgata"].as<int>();
 
@@ -107,23 +108,29 @@ int main()
 
       // Retrieve kinematics
       const NangaParbat::DataHandler::Kinematics kin = DHVect[i].GetKinematics();
-      const double                   Vs    = kin.Vs;    // C.M.E.
-      const std::pair<double,double> yb    = kin.var2b; // Rapidity interval
-      const std::pair<double,double> Qb    = kin.var1b; // Invariant mass interval
-      const std::vector<double>      qTv   = kin.qTv;   // Transverse momentum bin bounds
-      const bool                     IntqT = kin.IntqT; // Whether to integrate over qT
+      const double                   Vs       = kin.Vs;       // C.M.E.
+      const std::pair<double,double> yb       = kin.var2b;    // Rapidity interval
+      const std::pair<double,double> Qb       = kin.var1b;    // Invariant mass interval
+      const std::vector<double>      qTv      = kin.qTv;      // Transverse momentum bin bounds
+      const bool                     IntqT    = kin.IntqT;    // Whether to integrate over qT
+      const double                   pTMin    = kin.pTMin;    // Minimum pT of the final-state leptons
+      const std::pair<double,double> etaRange = kin.etaRange; // Allowed range in eta of the final-state leptons
 
       // Ogata-quadrature object of degree one or zero according to
       // weather the cross sections have to be integrated over the
       // bins in qT or not.
       apfel::OgataQuadrature OgataObj{(IntqT ? 1 : 0)};
 
+      // Phase-space reduction factor
+      const double deta = ( etaRange.second - etaRange.first ) / 2;
+      NangaParbat::TwoParticlePhaseSpace ps{pTMin, deta};
+
       // Loop over the qT-bin bounds
       for (auto const& qT : qTv)
 	{
 	  // Construct the TMD luminosity in b scale to be fed to be
 	  // trasformed in qT space.
-	  const auto TMDLumib = [=] (double const& b) -> double
+	  const auto TMDLumib = [&] (double const& b) -> double
 	    {
 	      // Tabulate TMDs in Q
 	      const auto EvolvedTMDPDFs = [&] (double const& Q) -> apfel::Set<apfel::Distribution>{ return EvTMDPDFs(bstar(b, Q), Cf * Q, Q * Q); };
@@ -159,7 +166,8 @@ int main()
 		      lumi += Bq[i-1] * ( xF.at(i).Evaluate(x1) * xF.at(-i).Evaluate(x2) + xF.at(-i).Evaluate(x1) * xF.at(i).Evaluate(x2) );
 
 		    // Return xi integrand
-		    return lumi * fNP(x1, b, zetaf) * fNP(x2, b, zetaf) / xi;
+		    return ps.PhaseSpaceReduction(Q, qT, log(xi)) * lumi * fNP(x1, b, zetaf) * fNP(x2, b, zetaf) / xi;
+		    //return lumi * fNP(x1, b, zetaf) * fNP(x2, b, zetaf) / xi;
 		  };
 
 		  // Perform the integral in xi
@@ -190,8 +198,8 @@ int main()
 	  const double direct = OgataObj.transform(TMDLumib, qT, nOgata);
 	  //const apfel::Integrator integrand{[=] (double const& bT) -> double{ return TMDLumib(bT) * j1(qT * bT); }};
 	  //const double direct = integrand.integrate(0.00005, 30, 1e-5);
-	  const double tabled = Conv.at(qT);
-	  std::cout << std::scientific << qT << "  " << direct << "  " << tabled << "  " << direct / tabled << std::endl;
+	  const double tabulated = Conv.at(qT);
+	  std::cout << std::scientific << qT << "  " << direct << "  " << tabulated << "  " << direct / tabulated << std::endl;
 	}
       t.stop();
     }

@@ -157,34 +157,7 @@ int main()
   // Phase-space reduction factor
   NangaParbat::TwoParticlePhaseSpace ps{20, 2.4};
 
-  // Define qT-distribution function 
-  const auto qTdist = [=] (double const& qT) -> double
-    {
-      // Construct the TMD luminosity in b scale to be fed to be
-      // trasformed in qT space.
-      const auto TMDLumib = [=] (double const& b) -> double
-      {
-	// Get map of the TMDs in "x1" and "x2" and rotate them into the
-	// physical basis.
-	map<int,double> TMD1 = QCDEvToPhys(TabEvolvedTMDPDFs.EvaluateMapxQ(x1, b));
-	map<int,double> TMD2 = QCDEvToPhys(TabEvolvedTMDPDFs.EvaluateMapxQ(x2, b));
-
-	// Construct the combination of TMDs weighted by the EW
-	// charges. Remember that each TMD has a factor x in the
-	// front. This effectively means that the luminosity is
-	// multiplied by x1 * x2 = Q2 / s.
-	double lumi = 0;
-	for (int i = 1; i <= 5; i++)
-	lumi += Bq[i-1] * ( TMD1[i] * TMD2[-i] + TMD1[-i] * TMD2[i] );
-
-	// Multiply by "b" and divide by two to reduce to the Fourier
-	// transform to a Hankel transform.
-	return b * lumi / 2;
-      };
-      return bintegrand.transform(TMDLumib, qT);
-    };
-
-  // Use a different method using a DoubleObject
+  // Define qT-distribution function using a DoubleObject
   const auto Lumi = [=] (double const& bs) -> DoubleObject<Distribution>
     {
       const map<int,Distribution> xF = QCDEvToPhys((QuarkEvolFactor(bs, muf, zetaf) * MatchedTMDPDFs(bs)).GetObjects());
@@ -199,7 +172,7 @@ int main()
   const TabulateObject<DoubleObject<Distribution>> TabLumi{Lumi, 50, 5e-5, 1.1, 3, {}, TabFunc, InvTabFunc};
 
   // Define qT-distribution function 
-  const auto qTdistNew = [&] (double const& qT) -> double
+  const auto qTdist = [&] (double const& qT) -> double
     {
       // Construct the TMD luminosity in b scale to be fed to be
       // trasformed in qT space.
@@ -209,30 +182,22 @@ int main()
 
   Timer t;
   const vector<double> qTv{1, 3, 5, 7, 9, 11, 13, 15, 17};
-  cout << scientific << "\n";
-  cout << "  qT [GeV]    "
-       << "   sigma      "
-       << endl;
-  for (auto const& qT : qTv)
-    cout << qT << "  " << 2 * qT * hcs * qTdist(qT) << endl;
-  cout << "\n";
-  t.stop();
-
-  t.start();
+  cout << scientific;
   cout << "\n  qT [GeV]    "
        << "   sigma      "
        << endl;
   for (auto const& qT : qTv)
-    cout << qT << "  " << qTdistNew(qT) << endl;
+    cout << qT << "  " << qTdist(qT) << endl;
   cout << "\n";
   t.stop();
 
   // Integrate in qT
   t.start();
-  cout << "\n    [qTmin:qTmax] [GeV]      "
+  cout << "\nNumerical computation of the integral in qT" << endl;
+  cout << "    [qTmin:qTmax] [GeV]      "
        << "   sigma      "
        << endl;
-  const Integrator IntQt{qTdistNew};
+  const Integrator IntQt{qTdist};
   for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
     cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: " << IntQt.integrate(qTv[iqT], qTv[iqT+1], 1e-5) << endl;
   cout << "\n";
@@ -240,46 +205,28 @@ int main()
 
   // Ogata quadrature object with default settings.
   t.start();
-  cout << "\n    [qTmin:qTmax] [GeV]      "
+  cout << "\nAnalytic computation of the integral in qT" << endl;
+  cout << "    [qTmin:qTmax] [GeV]      "
        << "   sigma      "
        << endl;
   OgataQuadrature qTintegrand{1};
-  const auto qTPrimitive = [&] (double const& qT) -> double
+  const auto qTPrimitive = [&] (double const& qT, bool const& lower) -> double
     {
       // Construct the TMD luminosity in b scale to be fed to be
       // trasformed in qT space.
       const auto TMDLumibPrim = [=] (double const& b) -> double{ return TabLumi.EvaluatexzQ(x1, x2, bstar(b)) * fNP(b, zetaf) * fNP(b, zetaf) / 2; };
-      return 2 * qT * hcs * qTintegrand.transform(TMDLumibPrim, qT);
-    };
-
-  const auto qTPrimitive2 = [&] (double const& qT, bool const& lower) -> double
-    {
-      // Construct the TMD luminosity in b scale to be fed to be
-      // trasformed in qT space.
-      const auto TMDLumibPrim = [=] (double const& b) -> double{ return TabLumi.EvaluatexzQ(x1, x2, bstar(b)) * fNP(b, zetaf) * fNP(b, zetaf) / 2; };
-      const double deps = 1e-7;
-      const double dps  = ( ps.PhaseSpaceReduction(Q, qT * ( 1 + deps ), y) - ps.PhaseSpaceReduction(Q, qT * ( 1 - deps ), y) ) / 2 / deps / qT;
-      const double DqT  = (lower ? 1 : -1);
-      return 2 * qT * hcs * ( ps.PhaseSpaceReduction(Q, qT, y) + dps * DqT ) * qTintegrand.transform(TMDLumibPrim, qT);
+      const double DqT  = (lower ? 1 : -1); // This assumes that the bin-width is equal to two
+      return 2 * qT * hcs * ( ps.PhaseSpaceReduction(Q, qT, y) + ps.DerivePhaseSpaceReduction(Q, qT, y) * DqT ) * qTintegrand.transform(TMDLumibPrim, qT);
     };
 
   for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
     cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: "
-	 << ps.PhaseSpaceReduction(Q, ( qTv[iqT+1] + qTv[iqT] ) / 2, y) * ( qTPrimitive(qTv[iqT+1]) - qTPrimitive(qTv[iqT]) ) << "  "
-	 << qTPrimitive2(qTv[iqT+1], false) - qTPrimitive2(qTv[iqT], true) << "  "
+	 << qTPrimitive(qTv[iqT+1], false) - qTPrimitive(qTv[iqT], true) << "  "
 	 << endl;
   cout << "\n";
   t.stop();
-  /*
-  const std::vector<double> Qv{65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115};
-  const std::vector<double> yv{-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2};
-  const std::vector<double> qtv{1, 3, 5, 7, 9, 11, 13, 15, 17};
-  for (auto const qq : Qv)
-    for (auto const yy : yv)
-      for (auto const qT : qtv)
-	std::cout << qq << "  " << yy << "  " << qT << "  " << ps.PhaseSpaceReduction(qq, qT, yy) << std::endl;
-  */
   cout << "\n";
+
   return 0;
 }
 

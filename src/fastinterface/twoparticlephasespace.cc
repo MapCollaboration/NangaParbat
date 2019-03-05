@@ -126,7 +126,7 @@ namespace NangaParbat
   //_________________________________________________________________________
   double TwoParticlePhaseSpace::DerivePhaseSpaceReduction(double const& M, double const& qT, double const& y)
   {
-    const double eps = 1e-5;
+    const double eps = 1e-3;
     return ( PhaseSpaceReduction(M, qT * ( 1 + eps ), y) - PhaseSpaceReduction(M, qT * ( 1 - eps ), y) ) / 2 / eps / qT;
   }
 
