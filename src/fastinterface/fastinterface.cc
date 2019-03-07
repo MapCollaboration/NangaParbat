@@ -341,7 +341,7 @@ namespace NangaParbat
 	// derivative. Write the derivative only if the table is
 	// integrated of qT.
 	Tabs[i] << YAML::Newline << YAML::Newline;
-	Tabs[i] << YAML::Comment("Leptonic tensor cuts");
+	Tabs[i] << YAML::Comment("Phase-space cuts");
 	Tabs[i] << YAML::Key << "PS_reduction_factor";
 	Tabs[i] << YAML::Value << YAML::Flow << mPS;
 	Tabs[i] << YAML::Newline << YAML::Newline;
