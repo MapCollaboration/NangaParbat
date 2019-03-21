@@ -10,16 +10,6 @@
 #include <apfel/timer.h>
 
 //_________________________________________________________________________________
-// Non-perturnative function
-double fNP(double const&, double const& b, double const& zetaf)
-{
-  const double g1 = 0.02;
-  const double g2 = 0.5;
-  const double Q0 = 1.6;
-  return exp( ( - g1 - g2 * log( sqrt(zetaf) / Q0 / 2 ) ) * b * b / 2 );
-}
-
-//_________________________________________________________________________________
 double bstar(double const& b, double const&)
 {
   const double bmax = 1;
@@ -30,16 +20,22 @@ double bstar(double const& b, double const&)
 // Main program
 int main()
 {
+  // Allocate "FastInterface" object reading the parameters from an
+  // input card.
+  const NangaParbat::FastInterface FIObj{YAML::LoadFile("../cards/config.yaml")};
+
   // Vector of datafiles
   std::vector<NangaParbat::DataHandler> DHVect;
-
   // Test data
-  DHVect.push_back(NangaParbat::DataHandler{"Test_data", YAML::LoadFile("../data/TestData/Table1.yaml")});
+  //DHVect.push_back(NangaParbat::DataHandler{"Test_data", YAML::LoadFile("../data/TestData/Table1.yaml")});
   // Push back CDF Run I
-  //DHVect.push_back(NangaParbat::DataHandler{"CDF_Run_I", YAML::LoadFile("../data/HEPData-ins505738-v1-yaml/Table1.yaml")});
-
-  // Allocate "FastInterface" object
-  const NangaParbat::FastInterface FIObj{YAML::LoadFile("../cards/config.yaml")};
+  //DHVect.push_back(NangaParbat::DataHandler{"CDF_RunI", YAML::LoadFile("../data/CDF_RunI/CDF_RunI.yaml")}); \
+  // Push back CDF Run II
+  DHVect.push_back(NangaParbat::DataHandler{"CDF_RunII", YAML::LoadFile("../data/CDF_RunII/CDF_RunII.yaml")});
+  // Push back D0 Run I
+  //DHVect.push_back(NangaParbat::DataHandler{"D0_RunI", YAML::LoadFile("../data/D0_RunI/D0_RunI.yaml")}); \
+  // Push back D0 Run II
+  //DHVect.push_back(NangaParbat::DataHandler{"D0_RunII", YAML::LoadFile("../data/D0_RunII/D0_RunII.yaml")});
 
   // Compute tables
   const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect, bstar);
@@ -52,22 +48,5 @@ int main()
       fout.close();
     }
 
-  // Convolute table
-  for (int j = 0; j < (int) Tabs.size(); j++)
-    {
-      // Convolution table
-      const NangaParbat::ConvolutionTable CTable{YAML::Load(Tabs[j].c_str())};
-
-
-      for (auto const& p : CTable.GetPredictions(fNP))
-	std::cout << p << std::endl;
-
-      // Performance test
-      //apfel::Timer t;
-      //for (int i = 0; i < 8000; i++)
-      //  for (auto const& p : CTable.Convolute(fNP))
-      //    p.second;
-      //t.stop(true);
-    }
   return 0;
 }
