@@ -10,6 +10,7 @@
 #include <apfel/timer.h>
 
 //_________________________________________________________________________________
+// Define here the b* prescription
 double bstar(double const& b, double const&)
 {
   const double bmax = 1;
@@ -18,24 +19,33 @@ double bstar(double const& b, double const&)
 
 //_________________________________________________________________________________
 // Main program
-int main()
+int main(int argc, char* argv[])
 {
+  // Check that the input is correct otherwise stop the code
+  if(argc < 4 || strcmp(argv[1], "--help") == 0)
+    {
+      std::cout << std::endl;
+      std::cout << "Invalid Parameters:" << std::endl;
+      std::cout << "Syntax: ./CreateTables <configuration file> <path to data folder> <output folder>" << std::endl;
+      std::cout << std::endl;
+      exit(-10);
+    }
+
   // Allocate "FastInterface" object reading the parameters from an
   // input card.
-  const NangaParbat::FastInterface FIObj{YAML::LoadFile("../cards/config.yaml")};
+  const NangaParbat::FastInterface FIObj{YAML::LoadFile(argv[1])};
 
-  // Vector of datafiles
+  // Open datasets.yaml file that contains the list of tables to be
+  // produced and push data sets into the a vector of DataHandler
+  // objects.
+  const YAML::Node datasets = YAML::LoadFile(std::string(argv[2]) + "/datasets.yaml");
   std::vector<NangaParbat::DataHandler> DHVect;
-  // Test data
-  //DHVect.push_back(NangaParbat::DataHandler{"Test_data", YAML::LoadFile("../data/TestData/Table1.yaml")});
-  // Push back CDF Run I
-  //DHVect.push_back(NangaParbat::DataHandler{"CDF_RunI", YAML::LoadFile("../data/CDF_RunI/CDF_RunI.yaml")}); \
-  // Push back CDF Run II
-  DHVect.push_back(NangaParbat::DataHandler{"CDF_RunII", YAML::LoadFile("../data/CDF_RunII/CDF_RunII.yaml")});
-  // Push back D0 Run I
-  //DHVect.push_back(NangaParbat::DataHandler{"D0_RunI", YAML::LoadFile("../data/D0_RunI/D0_RunI.yaml")}); \
-  // Push back D0 Run II
-  //DHVect.push_back(NangaParbat::DataHandler{"D0_RunII", YAML::LoadFile("../data/D0_RunII/D0_RunII.yaml")});
+  for (auto const& exp : datasets)
+    for (auto const& ds : exp.second)
+      {
+	const std::string datafile = std::string(argv[2]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
+	DHVect.push_back(NangaParbat::DataHandler{ds["name"].as<std::string>(), YAML::LoadFile(datafile)});
+      }
 
   // Compute tables
   const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect, bstar);
@@ -43,7 +53,7 @@ int main()
   // Dump table to file
   for (auto const& tab : Tabs)
     {
-      std::ofstream fout("../tables/" + YAML::Load(tab.c_str())["name"].as<std::string>() + ".yaml");
+      std::ofstream fout(std::string(argv[3]) + YAML::Load(tab.c_str())["name"].as<std::string>() + ".yaml");
       fout << tab.c_str() << std::endl;
       fout.close();
     }

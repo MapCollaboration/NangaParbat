@@ -144,8 +144,8 @@ namespace NangaParbat
 	  else
 	    {
 	      _kin.IntqT = false;
-	      if(std::find(_kin.qTv.begin(), _kin.qTv.end(), vl.as<double>()) == _kin.qTv.end())
-		_kin.qTv.push_back(std::max(vl.as<double>(), 1e-5));
+	      if(std::find(_kin.qTv.begin(), _kin.qTv.end(), vl["value"].as<double>()) == _kin.qTv.end())
+		_kin.qTv.push_back(std::max(vl["value"].as<double>(), 1e-5));
 	    }
 	}
 
