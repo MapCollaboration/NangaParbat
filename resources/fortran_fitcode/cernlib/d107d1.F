@@ -1,0 +1,19 @@
+*
+* $Id: d107d1.F,v 1.1.1.1 1996/04/01 15:02:14 mclareni Exp $
+*
+* $Log: d107d1.F,v $
+* Revision 1.1.1.1  1996/04/01 15:02:14  mclareni
+* Mathlib gen
+*
+*
+c#include "gen/pilot.h"
+c#if defined(CERNLIB_DOUBLE)
+      SUBROUTINE D107D1(MODE,F,A,B,N,X,W)
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+c#include "gen/imp64.inc"
+      CHARACTER*6 NAME(2)
+      DATA NAME /'DGQUAD','DGSET'/
+      END
+c#include "d107rd.inc"
+
+c#endif

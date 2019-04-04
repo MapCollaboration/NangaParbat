@@ -1,10 +1,12 @@
-LIBPATH =  -L/sw/lib -L/usr/local/lib
-LIB = -lmathlib -lpacklib -lkernlib -lLHAPDF -lAPFEL
+#LIBPATH =  -L/sw/lib -L/usr/local/lib
+#LIB = -lmathlib -lpacklib -lkernlib -lLHAPDF -lAPFEL
+LIBPATH =  -L/usr/local/lib
+LIB = -lLHAPDF -lAPFEL
 COMP = gfortran
-FFLAGS = -O2
+FFLAGS = -O3
 RUNFLAGS = -ffixed-line-length-none -cpp -fbacktrace -fcheck=all
 DEBUGFLAGS = -g -Wall -Wextra -Wsurprising -Walign-commons -ffpe-trap=zero,invalid,overflow,underflow
-SOURCE = comvar.f90 LeptonCutsDY.f90 integrands.f gridmaker.f fit.f norm.f90 kernel.f bin.f90 reading.f chisquare.f fragmentation.f utilities.f wilsonCoeff.f
+SOURCE = comvar.f90 LeptonCutsDY.f90 integrands.f gridmaker.f fit.f norm.f90 kernel.f bin.f90 reading.f chisquare.f fragmentation.f utilities.f wilsonCoeff.f minuit/*.f cernlib/*.F
 
 
 fit:
