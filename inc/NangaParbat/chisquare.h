@@ -21,23 +21,23 @@ namespace NangaParbat
   public:
     /**
      * @brief The "ChiSquare" constructor.
-     * @param DHVect: vector of pairs of "DataHandler" and "ConvolutionTable" objects
+     * @param DSVect: vector of pairs of "DataHandler" and "ConvolutionTable" objects
      * @param NPFunc: "Parameterisation" object containing the non-perturbative function(s)
      */
-    ChiSquare(std::vector<std::pair<DataHandler,ConvolutionTable>> const& DHVect, Parameterisation& NPFunc);
+    ChiSquare(std::vector<std::pair<DataHandler,ConvolutionTable>> const& DSVect, Parameterisation& NPFunc, double const& qToQMax = 100);
 
     /**
      * @brief The default "ChiSquare" constructor.
      * @param NPFunc: "Parameterisation" object containing the non-perturbative function(s)
      */
-    ChiSquare(Parameterisation& NPFunc);
+    ChiSquare(Parameterisation& NPFunc, double const& qToQMax = 100);
 
     /**
      * @brief Add ("DataHandler","ConvolutionTable") pair block to the
-     * "DHVect" vector.
-     * @param DHBlock: the ("DataHandler","ConvolutionTable")-pair block to be appended
+     * "DSVect" vector.
+     * @param DSBlock: the ("DataHandler","ConvolutionTable")-pair block to be appended
      */
-    void AddBlock(std::pair<DataHandler,ConvolutionTable> const& DHBlock) { _DHVect.push_back(DHBlock); };
+    void AddBlock(std::pair<DataHandler,ConvolutionTable> const& DSBlock);
 
     /**
      * @brief Function that evaluates the &chi;<SUP>2</SUP>'s
@@ -59,8 +59,19 @@ namespace NangaParbat
      */
     void SetParameters(std::vector<double> const& pars) { _NPFunc.SetParameters(pars); };
 
+    /**
+     * @brief Function that gets the number of data points that pass
+     * the qT / Q cut for each data set in the form of a vector of
+     * integers.
+     * @return The number of data points that pass the qT / Q cut for
+     * each data set
+     */
+    std::vector<int> GetDataPointNumbers() const { return _ndata; };
+
   protected:
-    std::vector<std::pair<DataHandler,ConvolutionTable>> _DHVect; //!< Vector of "DataHandler" objects
-    Parameterisation&                                    _NPFunc; //!< Parameterisation of the non-perturbative component
+    std::vector<std::pair<DataHandler,ConvolutionTable>> _DSVect;  //!< Vector of "DataHandler-ConcolutionTable" pairs
+    Parameterisation&                                    _NPFunc;  //!< Parameterisation of the non-perturbative component
+    double                                               _qToQMax; //!< Max value of the ratio qT / Q allowed in the computation of the chi2
+    std::vector<int>                                     _ndata;   //!< Vector constaining the number of data points per dataset that pass the qT/Q cut
   };
 }

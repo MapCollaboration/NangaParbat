@@ -10,7 +10,7 @@ c     initial values of parameters and other configurations of Minuit
       open(unit=5,file='fit.input',form='formatted',status='old')
 
 c     output of Minuit
-      open(unit=6,file='fit.out')
+c      open(unit=6,file='fit.out')
 
 c     temporary values of the parameters
       open(unit=7,file='parameters_save.out')
@@ -48,7 +48,7 @@ c     theory predictions and selected data from experiments
       call minuit(chisquare,0)
 
       close(unit=5)
-      close(unit=6)
+c      close(unit=6)
       close(unit=7)
       close(unit=8)
       close(unit=9)
