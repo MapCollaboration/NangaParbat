@@ -11,10 +11,20 @@
 
 //_________________________________________________________________________________
 // Define here the b* prescription
+
 double bstar(double const& b, double const&)
 {
   const double bmax = 1;
   return b / sqrt( 1 + pow(b / bmax, 2) );
+}
+
+// b-min prescription
+double bstarmin(double const& b, double const& Q)
+{
+  const double bmax       = 1.122919;
+  const double bmin = bmax / Q;
+  const double bs = bmax * pow((1 - exp(-pow(b / bmax, 4)))/(1 - exp(-pow(b / bmin, 4))),0.25); // prescription with bmin
+  return bs;
 }
 
 //_________________________________________________________________________________
@@ -48,7 +58,7 @@ int main(int argc, char* argv[])
       }
 
   // Compute tables
-  const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect, bstar);
+  const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect, bstarmin);
 
   // Dump table to file
   for (auto const& tab : Tabs)
