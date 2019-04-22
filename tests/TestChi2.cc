@@ -42,14 +42,14 @@ int main()
   const NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/Test_data.yaml")};
 
   // Define "ChiSquare" object
-  NangaParbat::ChiSquare chi2{NPFunc};
+  NangaParbat::ChiSquare chi2{NPFunc, 0.1};
 
   // Append dataset to the chi2 object
   chi2.AddBlock(std::make_pair(DHand, CTable));
 
   // Compute chi2
   std::cout << "chi2 = " << chi2() << std::endl;
-
+/*
   // Performance test
   apfel::Timer t;
   const int n = 1000;
@@ -57,6 +57,6 @@ int main()
       chi2();
   std::cout << "Evaluating chi2 " << n << " times... ";
   t.stop(true);
-
+*/
   return 0;
 }

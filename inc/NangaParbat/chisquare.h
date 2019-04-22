@@ -68,6 +68,12 @@ namespace NangaParbat
      */
     std::vector<int> GetDataPointNumbers() const { return _ndata; };
 
+    /**
+     * @brief Function that returns the number of experiments.
+     * @return The number of experiments.
+     */
+    int GetNumberOfExperiments() const { return (int) _ndata.size(); };
+
   protected:
     std::vector<std::pair<DataHandler,ConvolutionTable>> _DSVect;  //!< Vector of "DataHandler-ConcolutionTable" pairs
     Parameterisation&                                    _NPFunc;  //!< Parameterisation of the non-perturbative component

@@ -93,6 +93,7 @@ namespace NangaParbat
     int                                                            _proc;    //!< Index of the process (0: DY, 1: SIDIS)
     int                                                            _obs;     //!< Index of the observable
     double                                                         _Vs;      //!< Center of mass energy
+    double                                                         _prefact; //!< Overall prefactor
     bool                                                           _IntqT;   //!< Whether the bin are integrated in qT or not
     std::vector<double>                                            _qTv;     //!< Vector of qT
     std::vector<double>                                            _z;       //!< Unscaled Ogata coordinate

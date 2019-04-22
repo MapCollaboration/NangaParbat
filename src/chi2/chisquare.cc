@@ -61,7 +61,7 @@ namespace NangaParbat
     int idata = 0;
     for (auto const& qT : qTv)
       if (qT / Qmin < _qToQMax)
-	idata++;
+        idata++;
     _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
   };
 
@@ -74,7 +74,7 @@ namespace NangaParbat
     if (ids >= istart && ids < iend)
       {
 	istart = ids;
-	iend   = ids;
+	iend   = ids + 1;
       }
     else if (ids >= iend)
       throw std::runtime_error("[ChiSquare::Evaluate]: index out of range");

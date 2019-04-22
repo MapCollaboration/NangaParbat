@@ -23,6 +23,9 @@ namespace NangaParbat
     // C.M.E.
     _Vs = table["CME"].as<double>();
 
+    // Prefactor
+    _prefact = table["prefactor"].as<double>();
+
     // qT bin bounds
     _IntqT = table["qTintegrated"].as<bool>();
 
@@ -109,8 +112,8 @@ namespace NangaParbat
 	// Positive value of qT correspond to the non-derivative part
 	// and negative to the derivative part of the phase-space
 	// reduction factor.
-	pred.insert({_qTv[iqT], cs});
-	pred.insert({-_qTv[iqT], dcs});
+	pred.insert({_qTv[iqT], _prefact * cs});
+	pred.insert({-_qTv[iqT], _prefact * dcs});
       }
     return pred;
   }
