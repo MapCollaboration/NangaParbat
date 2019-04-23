@@ -68,9 +68,18 @@ int main(int argc, char* argv[])
 	chi2.AddBlock(std::make_pair(dh, ct));
       }
 
-  // Compute total chi2
+  // Get number of data points for each experiment
   const std::vector<int> ndata = chi2.GetDataPointNumbers();
+
+  // Compute total chi2 with the initial parameters
   std::cout << "\nTotal chi2 = " << chi2() << std::endl;
+  for (int iexp = 0; iexp < (int) ndata.size(); iexp++)
+    std::cout << iexp << ") Partial chi2 / #d.p.= " << chi2(iexp) << " (#d.p = " << ndata[iexp] << ")" << std::endl;
+  std::cout << "\n";
+
+  // Update parameters and recompute chi2's
+  chi2.SetParameters({0.016, 0.06});
+  std::cout << "Total chi2 = " << chi2() << std::endl;
   for (int iexp = 0; iexp < (int) ndata.size(); iexp++)
     std::cout << iexp << ") Partial chi2 / #d.p.= " << chi2(iexp) << " (#d.p = " << ndata[iexp] << ")" << std::endl;
   std::cout << "\n";

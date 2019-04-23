@@ -11,7 +11,6 @@ namespace NangaParbat
 {
   //_________________________________________________________________________________
   ChiSquare::ChiSquare(std::vector<std::pair<DataHandler,ConvolutionTable>> const& DSVect, Parameterisation& NPFunc, double const& qToQMax):
-    _DSVect(DSVect),
     _NPFunc(NPFunc),
     _qToQMax(qToQMax)
   {
@@ -20,23 +19,10 @@ namespace NangaParbat
     if (_NPFunc.GetNumberOfFunctions() != 2)
       throw std::runtime_error("[ChiSquare::ChiSquare]: the number of functions of the input parameterisation is different from two");
 
-    // Loop over the the blocks and determine number of data points
-    // that for each data set that pass the cut qT / Q.
+    // Loop over the the blocks and and push them into the "_DSVect"
+    // container.
     for (auto const& ds : _DSVect)
-      {
-	// Get kinematics
-	const DataHandler::Kinematics kin  = ds.first.GetKinematics();
-	const std::vector<double>     qTv  = kin.qTv;
-	const double                  Qmin = (kin.Intv1 ? kin.var1b.first : ( kin.var1b.first + kin.var1b.second ) / 2);
-
-	// Run over the qTv vector, count how many data points pass
-	// the cut and push the number into the "_ndata" vector.
-	int idata = 0;
-	for (auto const& qT : qTv)
-	  if (qT / Qmin < _qToQMax)
-	    idata++;
-	_ndata.push_back(idata - (kin.IntqT ? 1 : 0));
-      }
+      AddBlock(ds);
   }
 
   //_________________________________________________________________________________
@@ -94,7 +80,7 @@ namespace NangaParbat
 	const std::vector<double> mean = dh.GetMeanValues();
 
 	// Get predictions
-	auto const fNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun)-> double{ return _NPFunc.Evaluate(x, b, zeta, ifun); };
+	auto const fNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return _NPFunc.Evaluate(x, b, zeta, ifun); };
 	const std::vector<double> pred = ct.GetPredictions(fNP);
 
 	// Check that the number of points in the DataHandler and
