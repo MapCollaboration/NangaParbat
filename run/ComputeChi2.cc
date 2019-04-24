@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
     std::cout << iexp << ") Partial chi2 / #d.p.= " << chi2(iexp) << " (#d.p = " << ndata[iexp] << ")" << std::endl;
   std::cout << "\n";
 
-  // Now print
+  // Now print (This also produces plots in pdf with ROOT)
   std::cout << chi2;
 
   return 0;
