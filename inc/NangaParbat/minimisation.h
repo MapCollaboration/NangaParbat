@@ -7,7 +7,7 @@
 #include "NangaParbat/chisquare.h"
 #include "NangaParbat/parameterisation.h"
 
-#include <root/Minuit2/FCNBase.h>
+#include <ROOT/Minuit2/FCNBase.h>
 
 namespace NangaParbat
 {

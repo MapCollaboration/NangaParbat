@@ -8,6 +8,13 @@
 #include <numeric>
 #include <math.h>
 
+#include <ROOT/TGraph.h>
+#include <ROOT/TGraphErrors.h>
+#include <ROOT/TLegend.h>
+#include <ROOT/TMultiGraph.h>
+#include <ROOT/TCanvas.h>
+#include <ROOT/TAxis.h>
+
 namespace NangaParbat
 {
   //_________________________________________________________________________________
@@ -140,21 +147,17 @@ namespace NangaParbat
 	// Construct matrix A and vector rho
 	const int nsys = corr[0].size();
 	apfel::matrix<double> A;
-	std::vector<double>   rho(nsys, 0.);
 	A.resize(nsys, nsys, 0.);
+	std::vector<double>   rho(nsys, 0.);
 	for(int alpha = 0; alpha < nsys; alpha++)
 	  {
 	    for(int j = 0; j < nd; j++)
 	      rho[alpha] += res[j] * corr[j][alpha] * mean[j] / pow(uncu[j], 2);
 
+	    A(alpha, alpha) = 1;
 	    for(int beta = 0; beta < nsys; beta++)
-	      {
-		for(int j = 0; j < nd; j++)
-		  A(alpha, beta) += corr[j][alpha] * corr[j][beta] * pow(mean[j], 2) / pow(uncu[j], 2);
-
-		if(alpha == beta)
-		  A(alpha, beta) += 1;
-	      }
+	      for(int j = 0; j < nd; j++)
+		A(alpha, beta) += corr[j][alpha] * corr[j][beta] * pow(mean[j], 2) / pow(uncu[j], 2);
 	  }
 
 	// Solve A * lambda = rho to obtain the nuisance parameters
@@ -201,6 +204,56 @@ namespace NangaParbat
 	     << pred[j] + shifts[j] << "\t"
 	     << "\n";
 	os << "\n";
+
+	// Now produce plots with ROOT
+	const std::vector<double> qT = dh.GetKinematics().qTv;
+	TGraphErrors* exp = new TGraphErrors{};
+	TGraph* theo      = new TGraph{};
+	TGraph* theoshift = new TGraph{};
+	for (int j = 0; j < nd; j++)
+	  {
+	    const double x = (dh.GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]);
+	    exp->SetPoint(j, x, mean[j]);
+	    exp->SetPointError(j, 0, uncu[j]);
+	    theo->SetPoint(j, x, pred[j]);
+	    theoshift->SetPoint(j, x, pred[j] + shifts[j]);
+	  }
+	exp->SetLineColor(1);
+	exp->SetMarkerStyle(20);
+	theo->SetLineColor(2);
+	theo->SetLineWidth(3);
+	theoshift->SetLineColor(3);
+	theoshift->SetLineWidth(3);
+
+	// Adjust legend
+	TLegend* leg = new TLegend{0.7, 0.89, 0.89, 0.75};
+	leg->SetFillColor(0);
+	leg->AddEntry(exp, "Data", "lp");
+	leg->AddEntry(theo, "Theory");
+	leg->AddEntry(theoshift, "Theory + shifts");
+	leg->AddEntry((TObject*)0,("#chi^{2} = " + std::to_string(chi2n)).c_str(), "");
+
+	// Produce graph
+	TMultiGraph* mg = new TMultiGraph{};
+	TCanvas* c = new TCanvas{};
+	mg->Add(exp, "AP");
+	mg->Add(theo, "AL");
+	mg->Add(theoshift, "AL");
+	mg->SetTitle(dh.GetName().c_str());
+	mg->Draw("AL");
+	mg->GetXaxis()->SetTitle("q_{T} [GeV]");
+	leg->Draw("SAME");
+
+	// Save graph on file
+	std::string outfile = dh.GetName() + ".pdf";
+	c->SaveAs(outfile.c_str());
+
+	delete exp;
+	delete theo;
+	delete theoshift;
+	delete leg;
+	delete mg;
+	delete c;
       }
     return os;
   }
