@@ -1,6 +1,6 @@
 # Structure of the data files
 
-The data files contained in this folder are used by the code to compute the interpolation tables and to obtain the experimental information required to compute the χ<sup>2</sup> during the fit. They are written in the YAML format and follow as closely as possible the **HEPData** format (https://www.hepdata.net). However, due to a lack of standardisation of the current datafiles, they require a number of modifications that make them readable to the code. Each data file has to contain all the required information to carry out the calculation. Specifically, each data file needs to the encode all the information required to instantiate an object of the `DataHandler` class. The relevant attributes of this class are:
+The data files contained in this folder are used by the code to compute the interpolation tables and to obtain the experimental information required to compute the χ<sup>2</sup> during the fit. They are written in YAML format and follow as closely as possible the **HEPData** format (https://www.hepdata.net). However, due to a lack of standardisation of the current datafiles, they require a number of modifications that make them readable to the code. Each data file has to contain all the necessary information to carry out the calculation. Specifically, each data file needs to the encode all the information required to instantiate an object of the `DataHandler` class. The relevant attributes of this class are:
 ```Shell
 std::string           _name;
 Process               _proc;
