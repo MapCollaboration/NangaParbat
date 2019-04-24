@@ -79,5 +79,12 @@ namespace NangaParbat
     Parameterisation&                                    _NPFunc;  //!< Parameterisation of the non-perturbative component
     double                                               _qToQMax; //!< Max value of the ratio qT / Q allowed in the computation of the chi2
     std::vector<int>                                     _ndata;   //!< Vector constaining the number of data points per dataset that pass the qT/Q cut
+
+    friend std::ostream& operator<<(std::ostream& os, ChiSquare const& chi2);
   };
+
+  /**
+   * @brief Method which prints ChiSquare feautures with cout <<.
+   */
+  std::ostream& operator << (std::ostream& os, ChiSquare const& chi2);
 }

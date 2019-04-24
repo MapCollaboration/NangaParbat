@@ -99,16 +99,22 @@ namespace NangaParbat
     std::vector<double> GetMeanValues() const { return _mean; };
 
     /**
-     * @brief Function that returns the covariance matrix of the
-     * correlated uncertainties.
-     */
-    apfel::matrix<double> GetCovarianceMatrix() const { return _covmat; };
-
-    /**
      * @brief Function that returns the sum in quadrature of the
      * uncorrelated uncertainties.
      */
     std::vector<double> GetUncorrelatedUnc() const { return _uncor; };
+
+    /**
+     * @brief Function that returns the correlated systematic
+     * uncertainties.
+     */
+    std::vector<std::vector<double>> GetCorrelatedUnc() const { return _corr; };
+
+    /**
+     * @brief Function that returns the covariance matrix of the
+     * correlated uncertainties.
+     */
+    apfel::matrix<double> GetCovarianceMatrix() const { return _covmat; };
 
     /**
      * @brief Function that returns the Cholesky decomposition of the

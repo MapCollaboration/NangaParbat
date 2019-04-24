@@ -6,6 +6,7 @@
 #include "NangaParbat/utilities.h"
 
 #include <numeric>
+#include <math.h>
 
 namespace NangaParbat
 {
@@ -56,7 +57,7 @@ namespace NangaParbat
   {
     // Define index range
     int istart = 0;
-    int iend   = (int) _DSVect.size();
+    int iend   = _DSVect.size();
     if (ids >= istart && ids < iend)
       {
 	istart = ids;
@@ -90,11 +91,11 @@ namespace NangaParbat
 
 	// Compute residuals only for the points that pass the cut qT
 	// / Q, set the others to zero.
-	std::vector<double> res(mean.size(), 0.);
+	std::vector<double> res(_ndata[i], 0.);
 	for (int j = 0; j < _ndata[i]; j++)
 	  res[j] = mean[j] - pred[j];
 
-	// Solve system
+	// Solve lower-diagonal system
 	const std::vector<double> x = SolveLowerSystem(dh.GetCholeskyDecomposition(), res);
 
 	// Compute contribution to the chi2 as absolute value of "x"
@@ -104,5 +105,103 @@ namespace NangaParbat
 	ntot += _ndata[i];
       }
     return chi2 / ntot;
+  }
+
+  //_________________________________________________________________________________
+  std::ostream& operator << (std::ostream& os, ChiSquare const& chi2)
+  {
+    // Loop over the the blocks
+    for (int i = 0; i < (int) chi2._DSVect.size(); i++)
+      {
+	// Number of data points
+	const int nd = chi2._ndata[i];
+
+	// Get "DataHandler" and "ConvolutionTable" objects
+	const DataHandler      dh = chi2._DSVect[i].first;
+	const ConvolutionTable ct = chi2._DSVect[i].second;
+
+	// Get experimental central values uncorrelated and correlated
+	// uncertainties.
+	const std::vector<double> mean = dh.GetMeanValues();
+	const std::vector<double> uncu = dh.GetUncorrelatedUnc();
+	const std::vector<std::vector<double>> corr = dh.GetCorrelatedUnc();
+
+	// Get predictions
+	auto const fNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return chi2._NPFunc.Evaluate(x, b, zeta, ifun); };
+	const std::vector<double> pred = ct.GetPredictions(fNP);
+
+	// Now compute systematic shifts. Compute residuals only for
+	// the points that pass the cut qT / Q, set the others to
+	// zero.
+	std::vector<double> res(mean.size(), 0.);
+	for (int j = 0; j < nd; j++)
+	  res[j] = mean[j] - pred[j];
+
+	// Construct matrix A and vector rho
+	const int nsys = corr[0].size();
+	apfel::matrix<double> A;
+	std::vector<double>   rho(nsys, 0.);
+	A.resize(nsys, nsys, 0.);
+	for(int alpha = 0; alpha < nsys; alpha++)
+	  {
+	    for(int j = 0; j < nd; j++)
+	      rho[alpha] += res[j] * corr[j][alpha] * mean[j] / pow(uncu[j], 2);
+
+	    for(int beta = 0; beta < nsys; beta++)
+	      {
+		for(int j = 0; j < nd; j++)
+		  A(alpha, beta) += corr[j][alpha] * corr[j][beta] * pow(mean[j], 2) / pow(uncu[j], 2);
+
+		if(alpha == beta)
+		  A(alpha, beta) += 1;
+	      }
+	  }
+
+	// Solve A * lambda = rho to obtain the nuisance parameters
+	const std::vector<double> lambda = SolveSymmetricSystem(A, rho);
+
+	// Compute systematic shifs
+	std::vector<double> shifts(mean.size(), 0.);
+	for (int j = 0; j < nd; j++)
+	  for(int alpha = 0; alpha < nsys; alpha++)
+	    shifts[j] += lambda[alpha] * corr[j][alpha] * mean[j];
+
+	// Compute chi2 using the shifts
+	double chi2n = 0;
+	for(int j = 0; j < nd; j++)
+	  chi2n += pow( ( res[j] - shifts[j] ) / uncu[j], 2);
+
+	// Compute penalty
+	double penalty = 0;
+	for(int alpha = 0; alpha < nsys; alpha++)
+	  penalty += pow(lambda[alpha], 2);
+
+	// Add penalty to the chi2 and divide by the number of data
+	// points.
+	chi2n += penalty;
+	chi2n /= nd;
+
+	// Print predictions, experimental central value, uncorrelated
+	// uncertainty and systemetic shift.
+	os << std::scientific;
+	os << "# Dataset name: " << dh.GetName() << " [chi2 (using the shifts) = " << chi2n << "]\n";
+	os << "#\t"
+	   << "   pred.    \t"
+	   << "   mean.    \t"
+	   << "  unc. unc. \t"
+	   << "   shift    \t"
+	   << "shifted pred.\t"
+	   << "\n";
+	for (int j = 0; j < nd; j++)
+	  os << j << "\t"
+	     << pred[j] << "\t"
+	     << mean[j] << "\t"
+	     << uncu[j] << "\t"
+	     << shifts[j] << "\t"
+	     << pred[j] + shifts[j] << "\t"
+	     << "\n";
+	os << "\n";
+      }
+    return os;
   }
 }
