@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
     {
       std::cout << std::endl;
       std::cout << "Invalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./ComputeChi2 <path to data folder> <path to tables folder>" << std::endl;
+      std::cout << "Syntax: ./RunFit <path to data folder> <path to tables folder>" << std::endl;
       std::cout << std::endl;
       exit(-10);
     }
