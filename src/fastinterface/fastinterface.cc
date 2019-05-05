@@ -163,9 +163,7 @@ namespace NangaParbat
     const double zetaf = Q * Q;
 
     // Whether the target is a particle or an antiparticle
-    int sign = 1;
-    if (targetiso < 0)
-      sign = -1;
+    const int sign = (targetiso < 0 ? -1 : 1);
 
     // Fractions of protons and neutrons in the target
     const double frp = std::abs(targetiso);
@@ -388,8 +386,7 @@ namespace NangaParbat
 
 		// Tabulate luminosity function using b* as an impact
 		// parameter
-		std::function<apfel::DoubleObject<apfel::Distribution>(double const&)> Lumi;
-		Lumi = [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>{ return LuminosityDY(bstar(b, Q), Q, targetiso); };
+		const auto Lumi = [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>{ return LuminosityDY(bstar(b, Q), Q, targetiso); };
 		const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabLumi{Lumi, 200, Qb.first, Qb.second, 1, {}};
 
 		// Initialise vector of fixed points for the integration in Q

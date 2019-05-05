@@ -21,7 +21,7 @@ double bstar(double const& b, double const&)
 // b-min prescription
 double bstarmin(double const& b, double const& Q)
 {
-  const double bmax = 1.122919;
+  const double bmax = 2 * exp( - apfel::emc);
   const double bmin = bmax / Q;
   const double bs = bmax * pow((1 - exp(-pow(b / bmax, 4)))/(1 - exp(-pow(b / bmin, 4))),0.25); // prescription with bmin
   return bs;
