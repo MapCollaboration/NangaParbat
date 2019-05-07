@@ -4,6 +4,7 @@
 
 #include "NangaParbat/convolutiontable.h"
 
+#include <cmath>
 #include <iostream>
 
 namespace NangaParbat
@@ -81,12 +82,13 @@ namespace NangaParbat
 	    const double Vtau = Q / _Vs;
 	    for (int alpha = 0; alpha < (int) _xig.size(); alpha++)
 	      {
-		const double xi = _xig[alpha];
+		const double x1 = Vtau * _xig[alpha];
+		const double x2 = pow(Q / Vtau, 2) / x1;
 		for (int n = 0; n < (int) _z.size(); n++)
 		  {
 		    const double b = _z[n] / _qTv[iqT];
-		    fNP1g[iqT][tau][alpha][n] = fNP1(Vtau * xi, b, zeta);
-		    fNP2g[iqT][tau][alpha][n] = fNP2(Vtau / xi, b, zeta);
+		    fNP1g[iqT][tau][alpha][n] = fNP1(x1, b, zeta);
+		    fNP2g[iqT][tau][alpha][n] = fNP2(x2, b, zeta);
 		  }
 	      }
 	  }

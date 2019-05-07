@@ -1,5 +1,5 @@
 dependent_variables:
-  - header: {name: E*D3(SIG)/D(P**3), units: PB/GEV**2/NUCLEON}
+  - header:
     qualifiers:
       - {name: process, value: DY}
       - {name: observable, value: d(sigma)/dxFdQdqT}
@@ -7,7 +7,7 @@ dependent_variables:
       - {name: prefactor, value: 0.31830989} # this is 1/pi
       - {name: Vs, value: 38.8}
       - {name: Q, low: 7, high: 8, integrate: true}
-      - {name: xF, low: -0.1, high: -0.1, integrate: false}
+      - {name: xF, low: 0.1, high: 0.1, integrate: false}
     values:
       - errors:
           - {label: unc, value: 0.12151363092262531}
@@ -54,7 +54,7 @@ dependent_variables:
           - {label: mult, value: 0.15}
         value: 0.137
 independent_variables:
-  - header: ~
+  - header:
     values:
       - {value: 0.1}
       - {value: 0.3}

@@ -13,16 +13,13 @@
 double bstar(double const& b, double const& Q)
 {
   const double bmax = 2 * exp( - apfel::emc);
-  //const double bmin = bmax / Q;
-  //std::cout << b << "  " << bmax * pow( ( 1 - exp( - pow(b / bmax, 4) ) ) / ( 1 - exp( - pow(b / bmin, 4) ) ), 0.25) << "  " << b / sqrt( 1 + pow(b / bmax, 2) ) << std::endl;
   return b / sqrt( 1 + pow(b / bmax, 2) );
-  //return bmax * pow( ( 1 - exp( pow(b / bmax, 4) ) ) / ( 1 - exp(pow(b / bmin, 4) ) ), 1. / 4.);
 }
 
 // Non-perturnative function
 double fNP(double const&, double const& b, double const& zetaf)
 {
-  const double g1 = 0.02;
+  const double g1 = 0.2;
   const double g2 = 0.5;
   const double Q0 = 1.6;
   return exp( ( - g1 - g2 * log( sqrt(zetaf) / Q0 / 2 ) ) * b * b / 2 );
@@ -84,7 +81,6 @@ int main()
   const double Vs = 13000;    // C.M.E.
   const double yb = 0;        // Rapidity
   const double Qb = 91.2;     // Invariant mass
-  const std::vector<double> qTv{0.01, 0.1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};   // Transverse momentum vector
 
   // Ogata-quadrature object of degree zero (do not integrate in qT).
   apfel::OgataQuadrature OgataObj{};
@@ -128,14 +124,21 @@ int main()
     };
 
   // Loop over the qT-bin bounds
+  const int nqT = 100;
+  const double qTmin = 0.01;
+  const double qTmax = 50;
+  const double qTstep = exp( log( qTmax / qTmin ) / ( nqT - 1 ) );
+
   std::cout << "\n  qT [GeV]     cross-sect." << std::endl;
-  for (auto const& qT : qTv)
+  double qT = qTmin;
+  for (int iqT = 0; iqT < nqT; iqT++)
     {
       // Perform Fourier transform and obtain cross section
       const double prediction = apfel::ConvFact * qT * 8 * M_PI * aem2 * hcs * OgataObj.transform(TMDLumib, qT) / pow(Qb, 3) / 9;
 
       // Print results
       std::cout << std::scientific << qT << "  " << prediction << std::endl;
+      qT *= qTstep;
     }
   std::cout << std::endl;
   t.stop();
