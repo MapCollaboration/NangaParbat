@@ -1,0 +1,63 @@
+dependent_variables:
+  - header: {name: "1/A*E(P=3 4,RF=CM)*D3(SIG)/D3(P(P=3 4,RF=CM))", units: FB/GEV**2}
+    qualifiers:
+      - {name: process, value: DY}
+      - {name: observable, value: d(sigma)/dydQdqT}
+      - {name: target_isoscalarity, value: 0.4603}
+      - {name: prefactor, value: 0.31830989}
+      - {name: Vs, value: 19.4}
+      - {name: Q, low: 9, high: 10, integrate: true}
+      - {name: y, low: 0.4, high: 0.4, integrate: false}
+    values:
+      - errors:
+          - {label: unc, value: 6.1}
+          - {label: mult, value: 0.25}
+        value: 0.015800000000000002
+      - errors:
+          - {label: unc, value: 1.08}
+          - {label: mult, value: 0.25}
+        value: 0.0018600000000000001
+      - errors:
+          - {label: unc, value: 1.45}
+          - {label: mult, value: 0.25}
+        value: 0.00428
+      - errors:
+          - {label: unc, value: 0.94}
+          - {label: mult, value: 0.25}
+        value: 0.0022699999999999999
+      - errors:
+          - {label: unc, value: 1.35}
+          - {label: mult, value: 0.25}
+        value: 0.0043699999999999998
+      - errors:
+          - {label: unc, value: 0.62}
+          - {label: mult, value: 0.25}
+        value: 0.0012199999999999999
+      - errors:
+          - {label: unc, value: 0.92}
+          - {label: mult, value: 0.25}
+        value: 0.0022000000000000001
+      - errors:
+          - {label: unc, value: 0.35}
+          - {label: mult, value: 0.25}
+        value: 0.00035
+      - errors:
+          - {label: unc, value: 0.37}
+        value: 0.37
+      - errors:
+          - {label: unc, value: 0.43}
+          - {label: mult, value: 0.25}
+        value: 0.00041999999999999996
+independent_variables:
+  - header: {name: "PT(P=3 4,RF=CM)", units: GEV}
+    values:
+      - {high: 0.2, low: 0.0}
+      - {high: 0.4, low: 0.2}
+      - {high: 0.6, low: 0.4}
+      - {high: 0.8, low: 0.6}
+      - {high: 1.0, low: 0.8}
+      - {high: 1.2, low: 1.0}
+      - {high: 1.4, low: 1.2}
+      - {high: 1.6, low: 1.4}
+      - {high: 2.0, low: 1.8}
+      - {high: 2.2, low: 2.0}

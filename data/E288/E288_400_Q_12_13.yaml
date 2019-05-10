@@ -1,0 +1,83 @@
+dependent_variables:
+  - header: {name: "1/A*E(P=3 4,RF=CM)*D3(SIG)/D3(P(P=3 4,RF=CM))", units: FB/GEV**2}
+    qualifiers:
+      - {name: process, value: DY}
+      - {name: observable, value: d(sigma)/dydQdqT}
+      - {name: target_isoscalarity, value: 0.4603}
+      - {name: prefactor, value: 0.31830989}
+      - {name: Vs, value: 27.4}
+      - {name: Q, low: 12, high: 13, integrate: true}
+      - {name: y, low: 0.03, high: 0.03, integrate: false}
+    values:
+      - errors:
+          - {label: unc, value: 0.85}
+          - {label: mult, value: 0.25}
+        value: 0.0022499999999999998
+      - errors:
+          - {label: unc, value: 0.54}
+          - {label: mult, value: 0.25}
+        value: 0.0025899999999999999
+      - errors:
+          - {label: unc, value: 0.35}
+          - {label: mult, value: 0.25}
+        value: 0.00157
+      - errors:
+          - {label: unc, value: 0.34}
+          - {label: mult, value: 0.25}
+        value: 0.0020699999999999998
+      - errors:
+          - {label: unc, value: 0.27}
+          - {label: mult, value: 0.25}
+        value: 0.0015400000000000001
+      - errors:
+          - {label: unc, value: 0.24}
+          - {label: mult, value: 0.25}
+        value: 0.0012900000000000001
+      - errors:
+          - {label: unc, value: 0.2}
+          - {label: mult, value: 0.25}
+        value: 0.00096999999999999994
+      - errors:
+          - {label: unc, value: 0.18}
+          - {label: mult, value: 0.25}
+        value: 0.00084999999999999995
+      - errors:
+          - {label: unc, value: 0.14}
+          - {label: mult, value: 0.25}
+        value: 0.00052000000000000006
+      - errors:
+          - {label: unc, value: 0.08}
+          - {label: mult, value: 0.25}
+        value: 0.00016000000000000001
+      - errors:
+          - {label: unc, value: 0.1}
+          - {label: mult, value: 0.25}
+        value: 0.00023999999999999998
+      - errors:
+          - {label: unc, value: 0.08}
+          - {label: mult, value: 0.25}
+        value: 0.00013000000000000002
+      - errors:
+          - {label: unc, value: 0.07}
+        value: 0.12
+      - errors:
+          - {label: unc, value: 0.037}
+          - {label: mult, value: 0.25}
+        value: 3.6999999999999998e-05
+independent_variables:
+  - header: {name: "PT(P=3 4,RF=CM)", units: GEV}
+    values:
+      - {high: 0.2, low: 0.0}
+      - {high: 0.4, low: 0.2}
+      - {high: 0.6, low: 0.4}
+      - {high: 0.8, low: 0.6}
+      - {high: 1.0, low: 0.8}
+      - {high: 1.2, low: 1.0}
+      - {high: 1.4, low: 1.2}
+      - {high: 1.6, low: 1.4}
+      - {high: 1.8, low: 1.6}
+      - {high: 2.0, low: 1.8}
+      - {high: 2.2, low: 2.0}
+      - {high: 2.4, low: 2.2}
+      - {high: 2.8, low: 2.6}
+      - {high: 3.0, low: 2.8}
