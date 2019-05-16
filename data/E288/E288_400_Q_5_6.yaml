@@ -74,8 +74,17 @@ dependent_variables:
           - {label: mult, value: 0.25}
         value: 0.0080000000000000002
       - errors:
-          - {label: unc, value: 13.0}
-        value: 26.0
+          - {label: unc, value: 0.012999999999999999}
+          - {label: mult, value: 0.25}
+        value: 0.025999999999999999
+      - errors:
+          - {label: unc, value: 0.01}
+          - {label: mult, value: 0.25}
+        value: 0.01
+      - errors:
+          - {label: unc, value: 0.028000000000000001}
+          - {label: mult, value: 0.25}
+        value: 0.027
 independent_variables:
   - header: {name: "PT(P=3 4,RF=CM)", units: GEV}
     values:
@@ -94,5 +103,7 @@ independent_variables:
       - value: 2.5
       - value: 2.7000000000000002
       - value: 2.8999999999999999
-      - value: 3.2000000000000002
+      - value: 3.1000000000000001
       - value: 3.5
+      - value: 3.7000000000000002
+      - value: 4.5
