@@ -11,26 +11,18 @@ LHAPDFLIBS = $(shell lhapdf-config --ldflags)
 APFELPPINCS = $(shell apfelxx-config --cppflags)
 APFELPPLIBS = $(shell apfelxx-config --ldflags)
 
-# APFEL
+# APFEL++
 APFELINCS = $(shell apfel-config --cppflags)
 APFELLIBS = $(shell apfel-config --ldflags)
 
-# HOPPET
-HOPPETINCS = $(shell hoppet-config --cxxflags)
-HOPPETLIBS = $(shell hoppet-config --libs) #-lgfortran
-
-# QCDNUM
-QCDNUMINCS = $(shell qcdnum-config --cppflags)
-QCDNUMLIBS = $(shell qcdnum-config --ldflags)
-
 # Now set up the compiler and link flags and libs
-CXXFLAGS += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS) $(HOPPETINCS) $(QCDNUMINCS)
-LDFLAGS  += $(LHAPDFINCS) $(APFELINCS) $(APFELPPINCS) $(HOPPETLIBS) $(QCDNUMLIBS)
+CXXFLAGS += $(LHAPDFINCS) $(APFELPPINCS) $(APFELINCS)
+LDFLAGS  += $(LHAPDFINCS) $(APFELPPINCS) $(APFELINCS)
 
-CLIBS += $(LHAPDFLIBS) $(APFELLIBS) $(APFELPPLIBS)
+CLIBS += $(LHAPDFLIBS) $(APFELPPLIBS) $(APFELLIBS)
 
 install : all
-all : APFELvsTIMBA FOvsAsy ResVsExp Sudakov #FONLL
+all : APFELvsTIMBA FOvsAsy ResVsExp Sudakov FONLL
 
 APFELvsTIMBA: APFELvsTIMBA.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
@@ -41,8 +33,8 @@ FOvsAsy: FOvsAsy.o
 ResVsExp: ResVsExp.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
-#FONLL: FONLL.o
-#	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
+FONLL: FONLL.o
+	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
 
 Sudakov: Sudakov.o
 	$(CXX) $(LDFLAGS) -o $@ $< $(CLIBS)
