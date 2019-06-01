@@ -28,7 +28,7 @@ namespace NangaParbat
     double* mat = new double[ndata*ndata];
     for(int i = 0; i < ndata; i++)
       for(int j = 0; j < ndata; j++)
-	mat[i * ndata + j] = V(i, j);
+        mat[i * ndata + j] = V(i, j);
 
     gsl_matrix_view covmat = gsl_matrix_view_array(mat,ndata,ndata);
 
@@ -37,21 +37,21 @@ namespace NangaParbat
     apfel::matrix<double> L{ndata, ndata};
     for(int i = 0; i < ndata; i++)
       for(int j = 0; j < ndata; j++)
-	if(j > i)
-	  L(i, j) = 0;
-	else
-	  L(i, j) = gsl_matrix_get(&covmat.matrix,i,j);
+        if(j > i)
+          L(i, j) = 0;
+        else
+          L(i, j) = gsl_matrix_get(&covmat.matrix,i,j);
 
     // Check that L * L^T = V
     for(int i = 0; i < ndata; i++)
       for(int j = 0; j < ndata; j++)
-	{
-	  double T = 0;
-	  for(int k = 0; k < ndata; k++)
-	    T += L(i, k) * L(j, k);
-	  if(abs(T - V(i, j)) > 1e-8)
-	    throw std::runtime_error("[CholeskyDecomposition]: Problem with the Cholesky decomposition.");
-	}
+        {
+          double T = 0;
+          for(int k = 0; k < ndata; k++)
+            T += L(i, k) * L(j, k);
+          if(abs(T - V(i, j)) > 1e-8)
+            throw std::runtime_error("[CholeskyDecomposition]: Problem with the Cholesky decomposition.");
+        }
     delete[] mat;
     return L;
   }
@@ -64,21 +64,21 @@ namespace NangaParbat
     std::vector<double> x(ndata);
     for(int i = 0; i < ndata; i++)
       {
-	x[i] = y[i];
-	for(int j = 0; j < i; j++)
-	  x[i] -= L(i, j) * x[j];
+        x[i] = y[i];
+        for(int j = 0; j < i; j++)
+          x[i] -= L(i, j) * x[j];
 
-	x[i] /= L(i, i);
+        x[i] /= L(i, i);
       }
 
     // Check that the solution worked
     for(int i = 0; i < ndata; i++)
       {
-	double z = 0;
-	for(int j = 0; j < ndata; j++)
-	  z += L(i, j) * x[j];
-	if(abs(z - y[i]) > 1e-8)
-	  throw std::runtime_error("[SolveLowerSystem]: Problem with the forward substitution.");
+        double z = 0;
+        for(int j = 0; j < ndata; j++)
+          z += L(i, j) * x[j];
+        if(abs(z - y[i]) > 1e-8)
+          throw std::runtime_error("[SolveLowerSystem]: Problem with the forward substitution.");
       }
     return x;
   }
@@ -91,21 +91,21 @@ namespace NangaParbat
     std::vector<double> x(ndata);
     for(int i = ndata - 1; i >= 0; i--)
       {
-	x[i] = y[i];
-	for(int j = i + 1; j < ndata; j++)
-	  x[i] -= U(i, j) * x[j];
+        x[i] = y[i];
+        for(int j = i + 1; j < ndata; j++)
+          x[i] -= U(i, j) * x[j];
 
-	x[i] /= U(i, i);
+        x[i] /= U(i, i);
       }
 
     // Check that the solution worked
     for(int i = 0; i < ndata; i++)
       {
-	double z = 0;
-	for(int j = 0; j < ndata; j++)
-	  z += U(i, j) * x[j];
-	if(abs(z-y[i]) > 1e-8)
-	  throw std::runtime_error("[SolveUpperSystem]: Problem with the backward substitution.");
+        double z = 0;
+        for(int j = 0; j < ndata; j++)
+          z += U(i, j) * x[j];
+        if(abs(z-y[i]) > 1e-8)
+          throw std::runtime_error("[SolveUpperSystem]: Problem with the backward substitution.");
       }
     return x;
   }
@@ -124,7 +124,7 @@ namespace NangaParbat
     apfel::matrix<double> LaT{ndata, ndata};
     for(int alpha = 0; alpha < ndata; alpha++)
       for(int beta = 0; beta < ndata; beta++)
-	LaT(alpha, beta) = La(beta, alpha);
+        LaT(alpha, beta) = La(beta, alpha);
 
     // Solve system LaT * lambda = sigma
     const std::vector<double> lambda = SolveUpperSystem(LaT, sigma);
@@ -132,11 +132,11 @@ namespace NangaParbat
     // Check that A * lambda = rho
     for(int i = 0; i < ndata; i++)
       {
-	double z = 0;
-	for(int j = 0; j < ndata; j++)
-	  z += A(i, j) * lambda[j];
-	if(abs(z - rho[i]) > 1e-8)
-	  throw std::runtime_error("[SolveSymmetricSystem]: Problem with the symmetric system.");
+        double z = 0;
+        for(int j = 0; j < ndata; j++)
+          z += A(i, j) * lambda[j];
+        if(abs(z - rho[i]) > 1e-8)
+          throw std::runtime_error("[SolveSymmetricSystem]: Problem with the symmetric system.");
       }
     return lambda;
   }

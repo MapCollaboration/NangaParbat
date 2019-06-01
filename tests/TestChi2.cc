@@ -49,14 +49,14 @@ int main()
 
   // Compute chi2
   std::cout << "chi2 = " << chi2() << std::endl;
-/*
-  // Performance test
-  apfel::Timer t;
-  const int n = 1000;
-  for (int i = 0; i < n; i++)
-      chi2();
-  std::cout << "Evaluating chi2 " << n << " times... ";
-  t.stop(true);
-*/
+  /*
+    // Performance test
+    apfel::Timer t;
+    const int n = 1000;
+    for (int i = 0; i < n; i++)
+        chi2();
+    std::cout << "Evaluating chi2 " << n << " times... ";
+    t.stop(true);
+  */
   return 0;
 }

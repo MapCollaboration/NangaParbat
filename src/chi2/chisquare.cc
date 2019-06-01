@@ -67,8 +67,8 @@ namespace NangaParbat
     int iend   = _DSVect.size();
     if (ids >= istart && ids < iend)
       {
-	istart = ids;
-	iend   = ids + 1;
+        istart = ids;
+        iend   = ids + 1;
       }
     else if (ids >= iend)
       throw std::runtime_error("[ChiSquare::Evaluate]: index out of range");
@@ -80,36 +80,36 @@ namespace NangaParbat
     // Loop over the the blocks
     for (int i = istart; i < iend; i++)
       {
-	// Get "DataHandler" and "ConvolutionTable" objects
-	const DataHandler      dh = _DSVect[i].first;
-	const ConvolutionTable ct = _DSVect[i].second;
+        // Get "DataHandler" and "ConvolutionTable" objects
+        const DataHandler      dh = _DSVect[i].first;
+        const ConvolutionTable ct = _DSVect[i].second;
 
-	// Get experimental central values
-	const std::vector<double> mean = dh.GetMeanValues();
+        // Get experimental central values
+        const std::vector<double> mean = dh.GetMeanValues();
 
-	// Get predictions
-	auto const fNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return _NPFunc.Evaluate(x, b, zeta, ifun); };
-	const std::vector<double> pred = ct.GetPredictions(fNP);
+        // Get predictions
+        auto const fNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return _NPFunc.Evaluate(x, b, zeta, ifun); };
+        const std::vector<double> pred = ct.GetPredictions(fNP);
 
-	// Check that the number of points in the DataHandler and
-	// Convolution table objects is the same.
-	if (mean.size() != pred.size())
-	  throw std::runtime_error("[ChiSquare::Evaluate]: mismatch in the number of points");
+        // Check that the number of points in the DataHandler and
+        // Convolution table objects is the same.
+        if (mean.size() != pred.size())
+          throw std::runtime_error("[ChiSquare::Evaluate]: mismatch in the number of points");
 
-	// Compute residuals only for the points that pass the cut qT
-	// / Q, set the others to zero.
-	std::vector<double> res(_ndata[i], 0.);
-	for (int j = 0; j < _ndata[i]; j++)
-	  res[j] = mean[j] - pred[j];
+        // Compute residuals only for the points that pass the cut qT
+        // / Q, set the others to zero.
+        std::vector<double> res(_ndata[i], 0.);
+        for (int j = 0; j < _ndata[i]; j++)
+          res[j] = mean[j] - pred[j];
 
-	// Solve lower-diagonal system
-	const std::vector<double> x = SolveLowerSystem(dh.GetCholeskyDecomposition(), res);
+        // Solve lower-diagonal system
+        const std::vector<double> x = SolveLowerSystem(dh.GetCholeskyDecomposition(), res);
 
-	// Compute contribution to the chi2 as absolute value of "x"
-	chi2 += std::inner_product(x.begin(), x.end(), x.begin(), 0.);
+        // Compute contribution to the chi2 as absolute value of "x"
+        chi2 += std::inner_product(x.begin(), x.end(), x.begin(), 0.);
 
-	// Increment number of points
-	ntot += _ndata[i];
+        // Increment number of points
+        ntot += _ndata[i];
       }
     return chi2 / ntot;
   }
@@ -120,140 +120,140 @@ namespace NangaParbat
     // Loop over the the blocks
     for (int i = 0; i < (int) chi2._DSVect.size(); i++)
       {
-	// Number of data points
-	const int nd = chi2._ndata[i];
+        // Number of data points
+        const int nd = chi2._ndata[i];
 
-	// Get "DataHandler" and "ConvolutionTable" objects
-	const DataHandler      dh = chi2._DSVect[i].first;
-	const ConvolutionTable ct = chi2._DSVect[i].second;
+        // Get "DataHandler" and "ConvolutionTable" objects
+        const DataHandler      dh = chi2._DSVect[i].first;
+        const ConvolutionTable ct = chi2._DSVect[i].second;
 
-	// Get experimental central values uncorrelated and correlated
-	// uncertainties.
-	const std::vector<double> mean = dh.GetMeanValues();
-	const std::vector<double> uncu = dh.GetUncorrelatedUnc();
-	const std::vector<std::vector<double>> corr = dh.GetCorrelatedUnc();
+        // Get experimental central values uncorrelated and correlated
+        // uncertainties.
+        const std::vector<double> mean = dh.GetMeanValues();
+        const std::vector<double> uncu = dh.GetUncorrelatedUnc();
+        const std::vector<std::vector<double>> corr = dh.GetCorrelatedUnc();
 
-	// Get predictions
-	auto const fNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return chi2._NPFunc.Evaluate(x, b, zeta, ifun); };
-	const std::vector<double> pred = ct.GetPredictions(fNP);
+        // Get predictions
+        auto const fNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return chi2._NPFunc.Evaluate(x, b, zeta, ifun); };
+        const std::vector<double> pred = ct.GetPredictions(fNP);
 
-	// Now compute systematic shifts. Compute residuals only for
-	// the points that pass the cut qT / Q, set the others to
-	// zero.
-	std::vector<double> res(mean.size(), 0.);
-	for (int j = 0; j < nd; j++)
-	  res[j] = mean[j] - pred[j];
+        // Now compute systematic shifts. Compute residuals only for
+        // the points that pass the cut qT / Q, set the others to
+        // zero.
+        std::vector<double> res(mean.size(), 0.);
+        for (int j = 0; j < nd; j++)
+          res[j] = mean[j] - pred[j];
 
-	// Construct matrix A and vector rho
-	const int nsys = corr[0].size();
-	apfel::matrix<double> A;
-	A.resize(nsys, nsys, 0.);
-	std::vector<double>   rho(nsys, 0.);
-	for(int alpha = 0; alpha < nsys; alpha++)
-	  {
-	    for(int j = 0; j < nd; j++)
-	      rho[alpha] += res[j] * corr[j][alpha] * mean[j] / pow(uncu[j], 2);
+        // Construct matrix A and vector rho
+        const int nsys = corr[0].size();
+        apfel::matrix<double> A;
+        A.resize(nsys, nsys, 0.);
+        std::vector<double>   rho(nsys, 0.);
+        for(int alpha = 0; alpha < nsys; alpha++)
+          {
+            for(int j = 0; j < nd; j++)
+              rho[alpha] += res[j] * corr[j][alpha] * mean[j] / pow(uncu[j], 2);
 
-	    A(alpha, alpha) = 1;
-	    for(int beta = 0; beta < nsys; beta++)
-	      for(int j = 0; j < nd; j++)
-		A(alpha, beta) += corr[j][alpha] * corr[j][beta] * pow(mean[j], 2) / pow(uncu[j], 2);
-	  }
+            A(alpha, alpha) = 1;
+            for(int beta = 0; beta < nsys; beta++)
+              for(int j = 0; j < nd; j++)
+                A(alpha, beta) += corr[j][alpha] * corr[j][beta] * pow(mean[j], 2) / pow(uncu[j], 2);
+          }
 
-	// Solve A * lambda = rho to obtain the nuisance parameters
-	const std::vector<double> lambda = SolveSymmetricSystem(A, rho);
+        // Solve A * lambda = rho to obtain the nuisance parameters
+        const std::vector<double> lambda = SolveSymmetricSystem(A, rho);
 
-	// Compute systematic shifs
-	std::vector<double> shifts(mean.size(), 0.);
-	for (int j = 0; j < nd; j++)
-	  for(int alpha = 0; alpha < nsys; alpha++)
-	    shifts[j] += lambda[alpha] * corr[j][alpha] * mean[j];
+        // Compute systematic shifs
+        std::vector<double> shifts(mean.size(), 0.);
+        for (int j = 0; j < nd; j++)
+          for(int alpha = 0; alpha < nsys; alpha++)
+            shifts[j] += lambda[alpha] * corr[j][alpha] * mean[j];
 
-	// Compute chi2 using the shifts
-	double chi2n = 0;
-	for(int j = 0; j < nd; j++)
-	  chi2n += pow( ( res[j] - shifts[j] ) / uncu[j], 2);
+        // Compute chi2 using the shifts
+        double chi2n = 0;
+        for(int j = 0; j < nd; j++)
+          chi2n += pow( ( res[j] - shifts[j] ) / uncu[j], 2);
 
-	// Compute penalty
-	double penalty = 0;
-	for(int alpha = 0; alpha < nsys; alpha++)
-	  penalty += pow(lambda[alpha], 2);
+        // Compute penalty
+        double penalty = 0;
+        for(int alpha = 0; alpha < nsys; alpha++)
+          penalty += pow(lambda[alpha], 2);
 
-	// Add penalty to the chi2 and divide by the number of data
-	// points.
-	chi2n += penalty;
-	chi2n /= nd;
+        // Add penalty to the chi2 and divide by the number of data
+        // points.
+        chi2n += penalty;
+        chi2n /= nd;
 
-	// Print predictions, experimental central value, uncorrelated
-	// uncertainty and systemetic shift.
-	os << std::scientific;
-	os << "# Dataset name: " << dh.GetName() << " [chi2 (using the shifts) = " << chi2n << "]\n";
-	os << "#\t"
-	   << "   pred.    \t"
-	   << "   mean.    \t"
-	   << "  unc. unc. \t"
-	   << "   shift    \t"
-	   << "shifted pred.\t"
-	   << "\n";
-	for (int j = 0; j < nd; j++)
-	  os << j << "\t"
-	     << pred[j] << "\t"
-	     << mean[j] << "\t"
-	     << uncu[j] << "\t"
-	     << shifts[j] << "\t"
-	     << pred[j] + shifts[j] << "\t"
-	     << "\n";
-	os << "\n";
+        // Print predictions, experimental central value, uncorrelated
+        // uncertainty and systemetic shift.
+        os << std::scientific;
+        os << "# Dataset name: " << dh.GetName() << " [chi2 (using the shifts) = " << chi2n << "]\n";
+        os << "#\t"
+           << "   pred.    \t"
+           << "   mean.    \t"
+           << "  unc. unc. \t"
+           << "   shift    \t"
+           << "shifted pred.\t"
+           << "\n";
+        for (int j = 0; j < nd; j++)
+          os << j << "\t"
+             << pred[j] << "\t"
+             << mean[j] << "\t"
+             << uncu[j] << "\t"
+             << shifts[j] << "\t"
+             << pred[j] + shifts[j] << "\t"
+             << "\n";
+        os << "\n";
 
-	// Now produce plots with ROOT
-	const std::vector<double> qT = dh.GetKinematics().qTv;
-	TGraphErrors* exp = new TGraphErrors{};
-	TGraph* theo      = new TGraph{};
-	TGraph* theoshift = new TGraph{};
-	for (int j = 0; j < nd; j++)
-	  {
-	    const double x = (dh.GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]);
-	    exp->SetPoint(j, x, mean[j]);
-	    exp->SetPointError(j, 0, uncu[j]);
-	    theo->SetPoint(j, x, pred[j]);
-	    theoshift->SetPoint(j, x, pred[j] + shifts[j]);
-	  }
-	exp->SetLineColor(1);
-	exp->SetMarkerStyle(20);
-	theo->SetLineColor(2);
-	theo->SetLineWidth(3);
-	theoshift->SetLineColor(3);
-	theoshift->SetLineWidth(3);
+        // Now produce plots with ROOT
+        const std::vector<double> qT = dh.GetKinematics().qTv;
+        TGraphErrors* exp = new TGraphErrors{};
+        TGraph* theo      = new TGraph{};
+        TGraph* theoshift = new TGraph{};
+        for (int j = 0; j < nd; j++)
+          {
+            const double x = (dh.GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]);
+            exp->SetPoint(j, x, mean[j]);
+            exp->SetPointError(j, 0, uncu[j]);
+            theo->SetPoint(j, x, pred[j]);
+            theoshift->SetPoint(j, x, pred[j] + shifts[j]);
+          }
+        exp->SetLineColor(1);
+        exp->SetMarkerStyle(20);
+        theo->SetLineColor(2);
+        theo->SetLineWidth(3);
+        theoshift->SetLineColor(3);
+        theoshift->SetLineWidth(3);
 
-	// Adjust legend
-	TLegend* leg = new TLegend{0.7, 0.89, 0.89, 0.75};
-	leg->SetFillColor(0);
-	leg->AddEntry(exp, "Data", "lp");
-	leg->AddEntry(theo, "Theory");
-	leg->AddEntry(theoshift, "Theory + shifts");
-	leg->AddEntry((TObject*)0,("#chi^{2} = " + std::to_string(chi2n)).c_str(), "");
+        // Adjust legend
+        TLegend* leg = new TLegend{0.7, 0.89, 0.89, 0.75};
+        leg->SetFillColor(0);
+        leg->AddEntry(exp, "Data", "lp");
+        leg->AddEntry(theo, "Theory");
+        leg->AddEntry(theoshift, "Theory + shifts");
+        leg->AddEntry((TObject*)0,("#chi^{2} = " + std::to_string(chi2n)).c_str(), "");
 
-	// Produce graph
-	TMultiGraph* mg = new TMultiGraph{};
-	TCanvas* c = new TCanvas{};
-	mg->Add(exp, "AP");
-	mg->Add(theo, "AL");
-	mg->Add(theoshift, "AL");
-	mg->SetTitle(dh.GetName().c_str());
-	mg->Draw("AL");
-	mg->GetXaxis()->SetTitle("q_{T} [GeV]");
-	leg->Draw("SAME");
+        // Produce graph
+        TMultiGraph* mg = new TMultiGraph{};
+        TCanvas* c = new TCanvas{};
+        mg->Add(exp, "AP");
+        mg->Add(theo, "AL");
+        mg->Add(theoshift, "AL");
+        mg->SetTitle(dh.GetName().c_str());
+        mg->Draw("AL");
+        mg->GetXaxis()->SetTitle("q_{T} [GeV]");
+        leg->Draw("SAME");
 
-	// Save graph on file
-	std::string outfile = dh.GetName() + ".pdf";
-	c->SaveAs(outfile.c_str());
+        // Save graph on file
+        std::string outfile = dh.GetName() + ".pdf";
+        c->SaveAs(outfile.c_str());
 
-	delete exp;
-	delete theo;
-	delete theoshift;
-	delete leg;
-	delete mg;
-	delete c;
+        delete exp;
+        delete theo;
+        delete theoshift;
+        delete leg;
+        delete mg;
+        delete c;
       }
     return os;
   }

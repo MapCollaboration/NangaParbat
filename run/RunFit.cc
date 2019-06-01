@@ -61,17 +61,17 @@ int main(int argc, char* argv[])
   for (auto const& exp : datasets)
     for (auto const& ds : exp.second)
       {
-	std::cout << "Reading " << ds["name"].as<std::string>() << " ..." << std::endl;
-	// Datafile
-	const std::string datafile = std::string(argv[1]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
-	const NangaParbat::DataHandler dh{ds["name"].as<std::string>(), YAML::LoadFile(datafile)};
+        std::cout << "Reading " << ds["name"].as<std::string>() << " ..." << std::endl;
+        // Datafile
+        const std::string datafile = std::string(argv[1]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
+        const NangaParbat::DataHandler dh{ds["name"].as<std::string>(), YAML::LoadFile(datafile)};
 
-	// Convolution table
-	const std::string table = std::string(argv[2]) + "/" + ds["name"].as<std::string>() + ".yaml";
-	const NangaParbat::ConvolutionTable ct{YAML::LoadFile(table)};
+        // Convolution table
+        const std::string table = std::string(argv[2]) + "/" + ds["name"].as<std::string>() + ".yaml";
+        const NangaParbat::ConvolutionTable ct{YAML::LoadFile(table)};
 
-	// Add chi2 block
-	chi2.AddBlock(std::make_pair(dh, ct));
+        // Add chi2 block
+        chi2.AddBlock(std::make_pair(dh, ct));
       }
 
   // Define "Minuit" object

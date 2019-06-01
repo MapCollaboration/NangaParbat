@@ -50,11 +50,12 @@ int main()
   const apfel::Grid g{vsg};
 
   // Rotate PDF set into the QCD evolution basis
-  const auto RotPDFs = [=] (double const& x, double const& mu) -> std::map<int,double>{ return apfel::PhysToQCDEv(distpdf->xfxQ(x,mu)); };
+  const auto RotPDFs = [=] (double const& x, double const& mu) -> std::map<int,double> { return apfel::PhysToQCDEv(distpdf->xfxQ(x,mu)); };
 
   // Construct set of distributions as a function of the scale to be
   // tabulated
-  const auto EvolvedPDFs = [=,&g] (double const& mu) -> apfel::Set<apfel::Distribution>{
+  const auto EvolvedPDFs = [=,&g] (double const& mu) -> apfel::Set<apfel::Distribution>
+  {
     return apfel::Set<apfel::Distribution>{apfel::EvolutionBasisQCD{apfel::NF(mu, Thresholds)}, DistributionMap(g, RotPDFs, mu)};
   };
 
@@ -109,19 +110,19 @@ int main()
   // Construct the TMD luminosity in b space to be fed to be
   // trasformed in qT space.
   const auto TMDLumib = [=] (double const& b) -> double
-    {
-      // Get Evolved TMD PDFs and rotate them into the physical
-      // basis
-      const std::map<int,apfel::Distribution> xF = QCDEvToPhys(EvTMDPDFs(bstar(b, Qb), muf, zetaf).GetObjects());
+  {
+    // Get Evolved TMD PDFs and rotate them into the physical
+    // basis
+    const std::map<int,apfel::Distribution> xF = QCDEvToPhys(EvTMDPDFs(bstar(b, Qb), muf, zetaf).GetObjects());
 
-      // Combine TMDs through the EW charges
-      double lumi = 0;
-      for (int i = 1; i <= nf; i++)
-	lumi += Bq[i-1] * ( xF.at(i).Evaluate(x1) * xF.at(-i).Evaluate(x2) + xF.at(-i).Evaluate(x1) * xF.at(i).Evaluate(x2) );
+    // Combine TMDs through the EW charges
+    double lumi = 0;
+    for (int i = 1; i <= nf; i++)
+      lumi += Bq[i-1] * ( xF.at(i).Evaluate(x1) * xF.at(-i).Evaluate(x2) + xF.at(-i).Evaluate(x1) * xF.at(i).Evaluate(x2) );
 
-      // Combine all pieces and return
-      return b * lumi * fNP(x1, b, zetaf) * fNP(x2, b, zetaf);
-    };
+    // Combine all pieces and return
+    return b * lumi * fNP(x1, b, zetaf) * fNP(x2, b, zetaf);
+  };
 
   // Loop over the qT-bin bounds
   const int nqT = 100;

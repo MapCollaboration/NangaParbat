@@ -51,15 +51,15 @@ double bstar(double const& b)
 // Main program
 int main()
 {
- // Open LHAPDF set.
+// Open LHAPDF set.
   LHAPDF::PDF* distpdf = LHAPDF::mkPDF("MMHT2014nlo68cl");
 
   // Thresholds.
   const std::vector<double> Thresholds{distpdf->quarkThreshold(1),
-      distpdf->quarkThreshold(2),
-      distpdf->quarkThreshold(3),
-      distpdf->quarkThreshold(4),
-      distpdf->quarkThreshold(5)};
+                                       distpdf->quarkThreshold(2),
+                                       distpdf->quarkThreshold(3),
+                                       distpdf->quarkThreshold(4),
+                                       distpdf->quarkThreshold(5)};
 
   // Alpha_s.
   const auto Alphas = [&] (double const& mu) -> double{ return distpdf->alphasQ(mu); };
@@ -77,14 +77,14 @@ int main()
   const apfel::Grid g{{{100,1e-5,3}, {60,1e-1,3}, {50,6e-1,3}, {100,8e-1,3}}};
 
   // Rotate PDF set into the QCD evolution basis.
-  const auto RotPDFs = [=] (double const& x, double const& mu) -> std::map<int,double>{ return apfel::PhysToQCDEv(distpdf->xfxQ(x,mu)); };
+  const auto RotPDFs = [=] (double const& x, double const& mu) -> std::map<int,double> { return apfel::PhysToQCDEv(distpdf->xfxQ(x,mu)); };
 
   // Construct set of distributions as a function of the scale to be
   // tabulated.
   const auto EvolvedPDFs = [=,&g] (double const& mu) -> apfel::Set<apfel::Distribution>
-    {
-      return apfel::Set<apfel::Distribution>{apfel::EvolutionBasisQCD{apfel::NF(mu, Thresholds)}, DistributionMap(g, RotPDFs, mu)};
-    };
+  {
+    return apfel::Set<apfel::Distribution>{apfel::EvolutionBasisQCD{apfel::NF(mu, Thresholds)}, DistributionMap(g, RotPDFs, mu)};
+  };
 
   // Tabulate PDFs
   const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 50, 1, 100000, 3, Thresholds};
@@ -112,10 +112,10 @@ int main()
   // Construct function that returns evolved TMDs including the
   // non-perturbative part. This can be tabulated in b.
   const auto EvolvedTMDPDFs = [=] (double const& b) -> apfel::Set<apfel::Distribution>
-    {
-      const double bs = bstar(b);
-      return fNP(b, zetaf) * QuarkEvolFactor(bs, muf, zetaf) * MatchedTMDPDFs(bs);
-    };
+  {
+    const double bs = bstar(b);
+    return fNP(b, zetaf) * QuarkEvolFactor(bs, muf, zetaf) * MatchedTMDPDFs(bs);
+  };
 
   // Tabulate input TMDs in the impact parameter to make the
   // integral faster.
@@ -134,7 +134,7 @@ int main()
   // Ogata quadrature object
   apfel::OgataQuadrature bintegrand{};
 
-  // Define qT-distribution function 
+  // Define qT-distribution function
   const auto qTdist = [=] (double const& qT) -> double
   {
     const auto ydist = [=] (double const& y) -> double
@@ -147,22 +147,22 @@ int main()
       // trasformed in qT space.
       const auto TMDLumib = [=] (double const& b) -> double
       {
-	// Get map of the TMDs in "x1" and "x2" and rotate them into the
-	// physical basis.
-	std::map<int,double> TMD1 = apfel::QCDEvToPhys(TabEvolvedTMDPDFs.EvaluateMapxQ(x1, b));
-	std::map<int,double> TMD2 = apfel::QCDEvToPhys(TabEvolvedTMDPDFs.EvaluateMapxQ(x2, b));
+        // Get map of the TMDs in "x1" and "x2" and rotate them into the
+        // physical basis.
+        std::map<int,double> TMD1 = apfel::QCDEvToPhys(TabEvolvedTMDPDFs.EvaluateMapxQ(x1, b));
+        std::map<int,double> TMD2 = apfel::QCDEvToPhys(TabEvolvedTMDPDFs.EvaluateMapxQ(x2, b));
 
-	// Construct the combination of TMDs weighted by the EW
-	// charges. Remember that each TMD has a factor x in the
-	// front. This effectively means that the luminosity is
-	// multiplied by x1 * x2 = Q2 / s.
-	double lumi = 0;
-	for (int i = 1; i <= 5; i++)
-	  lumi += Bq[i-1] * ( TMD1[i] * TMD2[i] + TMD1[-i] * TMD2[-i] );
+        // Construct the combination of TMDs weighted by the EW
+        // charges. Remember that each TMD has a factor x in the
+        // front. This effectively means that the luminosity is
+        // multiplied by x1 * x2 = Q2 / s.
+        double lumi = 0;
+        for (int i = 1; i <= 5; i++)
+          lumi += Bq[i-1] * ( TMD1[i] * TMD2[i] + TMD1[-i] * TMD2[-i] );
 
-	// Multiply by "b" and divide by two to reduce to the Fourier
-	// transform to a Hankel transform.
-	return b * lumi / 2;
+        // Multiply by "b" and divide by two to reduce to the Fourier
+        // transform to a Hankel transform.
+        return b * lumi / 2;
       };
       return bintegrand.transform(TMDLumib, qT);
     };
@@ -178,13 +178,13 @@ int main()
 
   apfel::Timer t;
   const std::vector<double> qTv{0.2500e+00, 0.7500e+00, 0.1250e+01, 0.1750e+01, 0.2250e+01, 0.2750e+01, 0.3250e+01, 0.3750e+01,
-      0.4250e+01, 0.4750e+01, 0.5250e+01, 0.5750e+01, 0.6250e+01, 0.6750e+01, 0.7250e+01, 0.7750e+01, 0.8250e+01,
-      0.8750e+01, 0.9250e+01, 0.9750e+01, 0.1025e+02, 0.1075e+02, 0.1125e+02, 0.1175e+02, 0.1250e+02, 0.1350e+02,
-      0.1450e+02, 0.1550e+02, 0.1650e+02, 0.1750e+02, 0.1850e+02};
+                                0.4250e+01, 0.4750e+01, 0.5250e+01, 0.5750e+01, 0.6250e+01, 0.6750e+01, 0.7250e+01, 0.7750e+01, 0.8250e+01,
+                                0.8750e+01, 0.9250e+01, 0.9750e+01, 0.1025e+02, 0.1075e+02, 0.1125e+02, 0.1175e+02, 0.1250e+02, 0.1350e+02,
+                                0.1450e+02, 0.1550e+02, 0.1650e+02, 0.1750e+02, 0.1850e+02};
   std::cout << std::scientific << "\n";
   std::cout << "  qT [GeV]    "
-       << "   sigma      "
-       << std::endl;
+            << "   sigma      "
+            << std::endl;
   for (auto const& qT : qTv)
     std::cout << qT << "  " << 2 * qT * hcs * qTdist(qT) << std::endl;
   std::cout << "\n";

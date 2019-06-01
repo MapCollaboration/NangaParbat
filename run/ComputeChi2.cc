@@ -55,17 +55,17 @@ int main(int argc, char* argv[])
   for (auto const& exp : datasets)
     for (auto const& ds : exp.second)
       {
-	std::cout << "Reading " << ds["name"].as<std::string>() << " ..." << std::endl;
-	// Datafile
-	const std::string datafile = std::string(argv[1]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
-	const NangaParbat::DataHandler dh{ds["name"].as<std::string>(), YAML::LoadFile(datafile)};
+        std::cout << "Reading " << ds["name"].as<std::string>() << " ..." << std::endl;
+        // Datafile
+        const std::string datafile = std::string(argv[1]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
+        const NangaParbat::DataHandler dh{ds["name"].as<std::string>(), YAML::LoadFile(datafile)};
 
-	// Convolution table
-	const std::string table = std::string(argv[2]) + "/" + ds["name"].as<std::string>() + ".yaml";
-	const NangaParbat::ConvolutionTable ct{YAML::LoadFile(table)};
+        // Convolution table
+        const std::string table = std::string(argv[2]) + "/" + ds["name"].as<std::string>() + ".yaml";
+        const NangaParbat::ConvolutionTable ct{YAML::LoadFile(table)};
 
-	// Add chi2 block
-	chi2.AddBlock(std::make_pair(dh, ct));
+        // Add chi2 block
+        chi2.AddBlock(std::make_pair(dh, ct));
       }
 
   // Get number of data points for each experiment
@@ -76,14 +76,14 @@ int main(int argc, char* argv[])
   for (int iexp = 0; iexp < (int) ndata.size(); iexp++)
     std::cout << iexp << ") Partial chi2 / #d.p.= " << chi2(iexp) << " (#d.p = " << ndata[iexp] << ")" << std::endl;
   std::cout << "\n";
-
-  // Update parameters and recompute chi2's
-  chi2.SetParameters({0.016, 0.06});
-  std::cout << "Total chi2 = " << chi2() << std::endl;
-  for (int iexp = 0; iexp < (int) ndata.size(); iexp++)
-    std::cout << iexp << ") Partial chi2 / #d.p.= " << chi2(iexp) << " (#d.p = " << ndata[iexp] << ")" << std::endl;
-  std::cout << "\n";
-
+  /*
+    // Update parameters and recompute chi2's
+    chi2.SetParameters({0.016, 0.06});
+    std::cout << "Total chi2 = " << chi2() << std::endl;
+    for (int iexp = 0; iexp < (int) ndata.size(); iexp++)
+      std::cout << iexp << ") Partial chi2 / #d.p.= " << chi2(iexp) << " (#d.p = " << ndata[iexp] << ")" << std::endl;
+    std::cout << "\n";
+  */
   // Now print (This also produces plots in pdf with ROOT)
   std::cout << chi2;
 

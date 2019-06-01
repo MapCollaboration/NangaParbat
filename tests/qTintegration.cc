@@ -66,14 +66,14 @@ int main()
   const apfel::Grid g{vsg};
 
   // Rotate PDF set into the QCD evolution basis.
-  const auto RotPDFs = [=] (double const& x, double const& mu) -> std::map<int,double>{ return apfel::PhysToQCDEv(distpdf->xfxQ(x,mu)); };
+  const auto RotPDFs = [=] (double const& x, double const& mu) -> std::map<int,double> { return apfel::PhysToQCDEv(distpdf->xfxQ(x,mu)); };
 
   // Construct set of distributions as a function of the scale to be
   // tabulated.
   const auto EvolvedPDFs = [=,&g] (double const& mu) -> apfel::Set<apfel::Distribution>
-    {
-      return apfel::Set<apfel::Distribution>{apfel::EvolutionBasisQCD{apfel::NF(mu, Thresholds)}, DistributionMap(g, RotPDFs, mu)};
-    };
+  {
+    return apfel::Set<apfel::Distribution>{apfel::EvolutionBasisQCD{apfel::NF(mu, Thresholds)}, DistributionMap(g, RotPDFs, mu)};
+  };
 
   // Tabulate PDFs
   const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 50, 1, 100000, 3, Thresholds};
@@ -113,10 +113,10 @@ int main()
   // Construct function that returns evolved TMDs including the
   // non-perturbative part. This can be tabulated in b.
   const auto EvolvedTMDPDFs = [=] (double const& b) -> apfel::Set<apfel::Distribution>
-    {
-      const double bs = bstar(b, 0);
-      return fNP(0, b, zetaf) * QuarkEvolFactor(bs, muf, zetaf) * MatchedTMDPDFs(bs);
-    };
+  {
+    const double bs = bstar(b, 0);
+    return fNP(0, b, zetaf) * QuarkEvolFactor(bs, muf, zetaf) * MatchedTMDPDFs(bs);
+  };
 
   // Tabulate input TMDs in the impact parameter to make the
   // integral faster.
@@ -147,33 +147,33 @@ int main()
 
   // Define qT-distribution function using a DoubleObject
   const auto Lumi = [=] (double const& bs) -> apfel::DoubleObject<apfel::Distribution>
-    {
-      const std::map<int,apfel::Distribution> xF = QCDEvToPhys((QuarkEvolFactor(bs, muf, zetaf) * MatchedTMDPDFs(bs)).GetObjects());
-      apfel::DoubleObject<apfel::Distribution> L{};
-      for (int i = 1; i <= 5; i++)
-	{
-	  L.AddTerm({Bq[i-1], xF.at(i), xF.at(-i)});
-	  L.AddTerm({Bq[i-1], xF.at(-i), xF.at(i)});
-	}
-      return L;
-    };
+  {
+    const std::map<int,apfel::Distribution> xF = QCDEvToPhys((QuarkEvolFactor(bs, muf, zetaf) * MatchedTMDPDFs(bs)).GetObjects());
+    apfel::DoubleObject<apfel::Distribution> L{};
+    for (int i = 1; i <= 5; i++)
+      {
+        L.AddTerm({Bq[i-1], xF.at(i), xF.at(-i)});
+        L.AddTerm({Bq[i-1], xF.at(-i), xF.at(i)});
+      }
+    return L;
+  };
   const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabLumi{Lumi, 50, 5e-5, 1.1, 3, {}, TabFunc, InvTabFunc};
 
-  // Define qT-distribution function 
+  // Define qT-distribution function
   const auto qTdist = [&] (double const& qT) -> double
-    {
-      // Construct the TMD luminosity in b scale to be fed to be
-      // trasformed in qT space.
-      const auto TMDLumibNew = [=] (double const& b) -> double{ return b * TabLumi.EvaluatexzQ(x1, x2, bstar(b, 0)) * fNP(0, b, zetaf) * fNP(0, b, zetaf) / 2; };
-      return apfel::ConvFact * qT * 8 * M_PI * aem2 * hcs * ps.PhaseSpaceReduction(Q, qT, y) * bintegrand.transform(TMDLumibNew, qT) / pow(Q, 3) / 9;
-    };
+  {
+    // Construct the TMD luminosity in b scale to be fed to be
+    // trasformed in qT space.
+    const auto TMDLumibNew = [=] (double const& b) -> double{ return b * TabLumi.EvaluatexzQ(x1, x2, bstar(b, 0)) * fNP(0, b, zetaf) * fNP(0, b, zetaf) / 2; };
+    return apfel::ConvFact * qT * 8 * M_PI * aem2 * hcs * ps.PhaseSpaceReduction(Q, qT, y) * bintegrand.transform(TMDLumibNew, qT) / pow(Q, 3) / 9;
+  };
 
   apfel::Timer t;
   std::cout << std::scientific;
   std::cout << "\nNumerical computation of the integral in qT" << std::endl;
   std::cout << "    [qTmin:qTmax] [GeV]      "
-       << "   sigma      "
-       << std::endl;
+            << "   sigma      "
+            << std::endl;
   const apfel::Integrator IntQt{qTdist};
   for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
     std::cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: " << IntQt.integrate(qTv[iqT], qTv[iqT+1], 1e-5) << std::endl;
@@ -183,25 +183,25 @@ int main()
   // Ogata quadrature object with default settings.
   apfel::OgataQuadrature qTintegrand{1};
   const auto qTPrimitive = [&] (double const& qT, bool const& lower) -> double
-    {
-      // Construct the TMD luminosity in b scale to be fed to be
-      // trasformed in qT space.
-      const auto TMDLumibPrim = [=] (double const& b) -> double{ return TabLumi.EvaluatexzQ(x1, x2, bstar(b, 0)) * fNP(0, b, zetaf) * fNP(0, b, zetaf) / 2; };
-      const double DqT    = (lower ? 1 : -1); // This assumes that the bin-width is equal to 2 GeV
-      const double PSRed  = ps.PhaseSpaceReduction(Q, qT, y);
-      const double dPSRed = ps.DerivePhaseSpaceReduction(Q, qT, y);
-      return apfel::ConvFact * qT * 8 * M_PI * aem2 * hcs * ( PSRed + dPSRed * DqT ) * qTintegrand.transform(TMDLumibPrim, qT) / pow(Q, 3) / 9;
-    };
+  {
+    // Construct the TMD luminosity in b scale to be fed to be
+    // trasformed in qT space.
+    const auto TMDLumibPrim = [=] (double const& b) -> double{ return TabLumi.EvaluatexzQ(x1, x2, bstar(b, 0)) * fNP(0, b, zetaf) * fNP(0, b, zetaf) / 2; };
+    const double DqT    = (lower ? 1 : -1); // This assumes that the bin-width is equal to 2 GeV
+    const double PSRed  = ps.PhaseSpaceReduction(Q, qT, y);
+    const double dPSRed = ps.DerivePhaseSpaceReduction(Q, qT, y);
+    return apfel::ConvFact * qT * 8 * M_PI * aem2 * hcs * ( PSRed + dPSRed * DqT ) * qTintegrand.transform(TMDLumibPrim, qT) / pow(Q, 3) / 9;
+  };
 
   t.start();
   std::cout << "\nAnalytic computation of the integral in qT" << std::endl;
   std::cout << "    [qTmin:qTmax] [GeV]      "
-       << "   sigma      "
-       << std::endl;
+            << "   sigma      "
+            << std::endl;
   for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
     std::cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: "
-	 << qTPrimitive(qTv[iqT+1], false) - qTPrimitive(qTv[iqT], true) << "  "
-	 << std::endl;
+              << qTPrimitive(qTv[iqT+1], false) - qTPrimitive(qTv[iqT], true) << "  "
+              << std::endl;
   std::cout << "\n";
   t.stop();
 
@@ -220,12 +220,12 @@ int main()
   t.start();
   std::cout << "\nGrid computation of the integral in qT" << std::endl;
   std::cout << "    [qTmin:qTmax] [GeV]      "
-       << "   sigma      "
-       << std::endl;
+            << "   sigma      "
+            << std::endl;
   for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
     std::cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: "
-	 << Conv[iqT] << "  "
-	 << std::endl;
+              << Conv[iqT] << "  "
+              << std::endl;
   std::cout << "\n";
   t.stop();
   std::cout << "\n";

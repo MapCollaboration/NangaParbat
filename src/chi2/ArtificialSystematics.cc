@@ -78,50 +78,50 @@ int main()
       double **L  = new double*[ndata];
       double **artsys = new double*[ndata];
       for(int i = 0; i < ndata; i++)
-	{
-	  U[i] = new double[ndata];
-	  C[i] = new double[ndata];
-	  V[i] = new double[ndata];
-	  L[i] = new double[ndata];
-	  artsys[i] = new double[ndata];
-	}
+        {
+          U[i] = new double[ndata];
+          C[i] = new double[ndata];
+          V[i] = new double[ndata];
+          L[i] = new double[ndata];
+          artsys[i] = new double[ndata];
+        }
 
       // Read central values and predictions and construct deviations.
       getline(ifile, dummy);
       getline(ifile, dummy);
       for(int i = 0; i < ndata; i++)
-	{
-	  int dum;
-	  double stdv;
-	  ifile >> dum >> ptl[i] >> ptu[i] >> m[i] >> stdv >> t[i];
-	  y[i] = m[i] - t[i];
-	  U[i][i] = stdv * stdv;
-	}
+        {
+          int dum;
+          double stdv;
+          ifile >> dum >> ptl[i] >> ptu[i] >> m[i] >> stdv >> t[i];
+          y[i] = m[i] - t[i];
+          U[i][i] = stdv * stdv;
+        }
 
       // Read covariance matrix
       getline(ifile, dummy);
       getline(ifile, dummy);
       for(int i = 0; i < ndata; i++)
-	for(int j = 0; j < ndata; j++)
-	  {
-	    int dum;
-	    ifile >> dum >> dum >> V[i][j];
-	    C[i][j] = V[i][j];
-	    if (j == i)
-	      C[i][j] -= U[i][i];
-	    else
-	      U[i][j] = 0;
-	  }
+        for(int j = 0; j < ndata; j++)
+          {
+            int dum;
+            ifile >> dum >> dum >> V[i][j];
+            C[i][j] = V[i][j];
+            if (j == i)
+              C[i][j] -= U[i][i];
+            else
+              U[i][j] = 0;
+          }
       ifile.close();
 
       CholeskyDecomposition(ndata, V, L);
 
       SolveLowerSystem(ndata, L, y, x);
 
-      // Compute chi2 per datapoint 
+      // Compute chi2 per datapoint
       double chi2 = 0;
       for(int i = 0; i < ndata; i++)
-	chi2 += x[i] * x[i] / ndata;
+        chi2 += x[i] * x[i] / ndata;
 
       ntot += ndata;
       chi2tot += chi2 * ndata;
@@ -137,22 +137,22 @@ int main()
       double *lambda = new double[ndata];
       double **A     = new double*[ndata];
       for(int alpha = 0; alpha < ndata; alpha++)
-	{
-	  A[alpha]  = new double[ndata];
-	  rho[alpha] = 0;
-	  for(int i = 0; i < ndata; i++)
-	    rho[alpha] += y[i] * artsys[i][alpha] / U[i][i];
+        {
+          A[alpha]  = new double[ndata];
+          rho[alpha] = 0;
+          for(int i = 0; i < ndata; i++)
+            rho[alpha] += y[i] * artsys[i][alpha] / U[i][i];
 
-	  for(int beta = 0; beta < ndata; beta++)
-	    {
-	      A[alpha][beta] = 0;
-	      for(int i = 0; i < ndata; i++)
-		A[alpha][beta] += artsys[i][alpha] * artsys[i][beta] / U[i][i];
+          for(int beta = 0; beta < ndata; beta++)
+            {
+              A[alpha][beta] = 0;
+              for(int i = 0; i < ndata; i++)
+                A[alpha][beta] += artsys[i][alpha] * artsys[i][beta] / U[i][i];
 
-	      if(alpha == beta)
-		A[alpha][beta] += 1;
-	    }
-	}
+              if(alpha == beta)
+                A[alpha][beta] += 1;
+            }
+        }
 
       // Solve A * lambda = rho to obtain the nuisance parameters
       SolveSymmetricSystem(ndata, A, rho, lambda);
@@ -182,50 +182,50 @@ int main()
       //shiftfile << nf << "\t\t" << ndata << endl;
       shiftfile << "# " << nf.substr(0, nf.size()-4) << endl;
       for(int i = 0; i < ndata; i++)
-	{
-	  shifts[i] = 0;
-	  for(int alpha = 0; alpha < ndata; alpha++)
-	    shifts[i] += lambda[alpha] * artsys[i][alpha];
+        {
+          shifts[i] = 0;
+          for(int alpha = 0; alpha < ndata; alpha++)
+            shifts[i] += lambda[alpha] * artsys[i][alpha];
 
-	  chi2n += pow( ( y[i] - shifts[i] ), 2) / U[i][i];
-	  if (i > 0 && ptl[i] < ptl[i-1])
-	    {
-	      shiftfile << endl;
-	      shiftfile << endl;
-	      gpfile << "set title '" << nf.substr(0, nf.size()-4) << " " << subset++ << "'" << endl;
-	      gpfile << "set ylabel 'Cross section'" << endl;
-	      gpfile << "plot [0:]\\" << endl;
-	      gpfile << "     'shifts.txt' u (($3+$2)/2):4:5 index " << icount << " with yerrorbars pointtype 7 pointsize 1.0 lc rgb 'black' t 'Data', \\" << endl;
-	      gpfile << "     'shifts.txt' u (($3+$2)/2):6   index " << icount << " w l linewidth 5.0 lc rgb 'red'  t 'Theory w/o shifts', \\" << endl;
-	      gpfile << "     'shifts.txt' u (($3+$2)/2):7   index " << icount << " w l linewidth 5.0 lc rgb 'blue' t 'Theory w/ shifts'" << endl;
-	      gpfile << endl;
-	      gpfile << "set ylabel 'Theory / Data'" << endl;
-	      gpfile << "plot [0:]\\" << endl;
-	      gpfile << "     'shifts.txt' u (($3+$2)/2):($4/$4):($5/$4) index " << icount << " with yerrorbars pointtype 7 pointsize 1.0 lc rgb 'black' notitle, \\" << endl;
-	      gpfile << "     'shifts.txt' u (($3+$2)/2):($6/$4)         index " << icount << " w l linewidth 5.0 lc rgb 'red'  notitle, \\" << endl;
-	      gpfile << "     'shifts.txt' u (($3+$2)/2):($7/$4)         index " << icount << " w l linewidth 5.0 lc rgb 'blue' notitle" << endl;
-	      gpfile << endl;
-	      icount++;
-	    }
-	  shiftfile << i << "\t\t"
-		    << ptl[i] << "\t\t" << ptu[i] << "\t\t"
-		    << m[i] << "\t\t" << sqrt(U[i][i]) << "\t\t"
-		    << t[i] << "\t\t" << t[i] + shifts[i]
-		    << endl;
-	}
+          chi2n += pow( ( y[i] - shifts[i] ), 2) / U[i][i];
+          if (i > 0 && ptl[i] < ptl[i-1])
+            {
+              shiftfile << endl;
+              shiftfile << endl;
+              gpfile << "set title '" << nf.substr(0, nf.size()-4) << " " << subset++ << "'" << endl;
+              gpfile << "set ylabel 'Cross section'" << endl;
+              gpfile << "plot [0:]\\" << endl;
+              gpfile << "     'shifts.txt' u (($3+$2)/2):4:5 index " << icount << " with yerrorbars pointtype 7 pointsize 1.0 lc rgb 'black' t 'Data', \\" << endl;
+              gpfile << "     'shifts.txt' u (($3+$2)/2):6   index " << icount << " w l linewidth 5.0 lc rgb 'red'  t 'Theory w/o shifts', \\" << endl;
+              gpfile << "     'shifts.txt' u (($3+$2)/2):7   index " << icount << " w l linewidth 5.0 lc rgb 'blue' t 'Theory w/ shifts'" << endl;
+              gpfile << endl;
+              gpfile << "set ylabel 'Theory / Data'" << endl;
+              gpfile << "plot [0:]\\" << endl;
+              gpfile << "     'shifts.txt' u (($3+$2)/2):($4/$4):($5/$4) index " << icount << " with yerrorbars pointtype 7 pointsize 1.0 lc rgb 'black' notitle, \\" << endl;
+              gpfile << "     'shifts.txt' u (($3+$2)/2):($6/$4)         index " << icount << " w l linewidth 5.0 lc rgb 'red'  notitle, \\" << endl;
+              gpfile << "     'shifts.txt' u (($3+$2)/2):($7/$4)         index " << icount << " w l linewidth 5.0 lc rgb 'blue' notitle" << endl;
+              gpfile << endl;
+              icount++;
+            }
+          shiftfile << i << "\t\t"
+                    << ptl[i] << "\t\t" << ptu[i] << "\t\t"
+                    << m[i] << "\t\t" << sqrt(U[i][i]) << "\t\t"
+                    << t[i] << "\t\t" << t[i] + shifts[i]
+                    << endl;
+        }
       shiftfile << endl;
       shiftfile << endl;
 
       // Compute penalty
       double penalty = 0;
       for(int alpha = 0; alpha < ndata; alpha++)
-	penalty += lambda[alpha] * lambda[alpha];
+        penalty += lambda[alpha] * lambda[alpha];
 
       chi2n += penalty;
       chi2n /= ndata;
 
       if(abs(chi2n - chi2) > 1e-8)
-	cout << "Problem withe computation of the chi2 in terms of nuisance parameters." << endl;
+        cout << "Problem withe computation of the chi2 in terms of nuisance parameters." << endl;
 
       // Delete pointers
       delete[] y;
@@ -238,21 +238,21 @@ int main()
       delete[] ptl;
       delete[] ptu;
       for(int i = 0; i < ndata; i++)
-	{
-	  delete[] U[i];
-	  delete[] C[i];
-	  delete[] V[i];
-	  delete[] L[i];
-	  delete[] artsys[i];
-	  delete[] A[i];
-	}
+        {
+          delete[] U[i];
+          delete[] C[i];
+          delete[] V[i];
+          delete[] L[i];
+          delete[] artsys[i];
+          delete[] A[i];
+        }
       delete[] U;
       delete[] C;
       delete[] V;
       delete[] L;
       delete[] artsys;
       delete[] A;
-   }
+    }
   cout << "\nGLOBAL: chi2 per data point = " << chi2tot / ntot << "\n" << endl;
 
   gpfile.close();
@@ -311,24 +311,24 @@ bool genArtSys(int const& ndata, double** C, double** artsys)
         cerr << i << "-th eigen value =" << gsl_vector_get(eval,i) << endl;
         return false;
       }
-  
+
   // Generate aritificial systematics
   for(int i = 0; i < ndata; i++)
     for(int j = 0; j < ndata; j++)
       {
-	artsys[i][j] = gsl_matrix_get(evec,i,j) * sqrt(gsl_vector_get(eval,j));
-	if(gsl_vector_get(eval,j) < 0)
-	  artsys[i][j] = 0;
+        artsys[i][j] = gsl_matrix_get(evec,i,j) * sqrt(gsl_vector_get(eval,j));
+        if(gsl_vector_get(eval,j) < 0)
+          artsys[i][j] = 0;
       }
 
   for(int i = 0; i < ndata; i++)
     for(int j = 0; j < ndata; j++)
       {
-	double T = 0;
-	for(int alpha = 0; alpha < ndata; alpha++)
-	  T += artsys[i][alpha] * artsys[j][alpha];
-	if(abs(T - C[i][j]) > 1e-8)
-	  cout << "Problem with the artificial replica generation." << endl;
+        double T = 0;
+        for(int alpha = 0; alpha < ndata; alpha++)
+          T += artsys[i][alpha] * artsys[j][alpha];
+        if(abs(T - C[i][j]) > 1e-8)
+          cout << "Problem with the artificial replica generation." << endl;
       }
 
   gsl_vector_free(eval);
@@ -357,19 +357,19 @@ bool CholeskyDecomposition(int const& ndata, double** V, double** L)
   for(int i = 0; i < ndata; i++)
     for(int j = 0; j < ndata; j++)
       if(j > i)
-	L[i][j] = 0;
+        L[i][j] = 0;
       else
-	L[i][j] = gsl_matrix_get(&covmat.matrix,i,j);
+        L[i][j] = gsl_matrix_get(&covmat.matrix,i,j);
 
   // Check that L * L^T = V
   for(int i = 0; i < ndata; i++)
     for(int j = 0; j < ndata; j++)
       {
-	double T = 0;
-	for(int k = 0; k < ndata; k++)
-	  T += L[i][k] * L[j][k];
-	if(abs(T - V[i][j]) > 1e-8)
-	  cout << "Problem with the Cholesky decomposition (1)." << endl;
+        double T = 0;
+        for(int k = 0; k < ndata; k++)
+          T += L[i][k] * L[j][k];
+        if(abs(T - V[i][j]) > 1e-8)
+          cout << "Problem with the Cholesky decomposition (1)." << endl;
       }
 
   delete[] mat;
@@ -384,7 +384,7 @@ bool SolveLowerSystem(int const& ndata, double** L, double* y, double* x)
     {
       x[i] = y[i];
       for(int j = 0; j < i; j++)
-	x[i] -= L[i][j] * x[j];
+        x[i] -= L[i][j] * x[j];
 
       x[i] /= L[i][i];
     }
@@ -394,9 +394,9 @@ bool SolveLowerSystem(int const& ndata, double** L, double* y, double* x)
     {
       double z = 0;
       for(int j = 0; j < ndata; j++)
-	z += L[i][j] * x[j];
+        z += L[i][j] * x[j];
       if(abs(z-y[i]) > 1e-8)
-	cout << "Problem with the forward substitution." << endl;
+        cout << "Problem with the forward substitution." << endl;
     }
 
   return true;
@@ -409,7 +409,7 @@ bool SolveUpperSystem(int const& ndata, double** U, double* y, double* x)
     {
       x[i] = y[i];
       for(int j = i + 1; j < ndata; j++)
-	x[i] -= U[i][j] * x[j];
+        x[i] -= U[i][j] * x[j];
 
       x[i] /= U[i][i];
     }
@@ -419,9 +419,9 @@ bool SolveUpperSystem(int const& ndata, double** U, double* y, double* x)
     {
       double z = 0;
       for(int j = 0; j < ndata; j++)
-	z += U[i][j] * x[j];
+        z += U[i][j] * x[j];
       if(abs(z-y[i]) > 1e-8)
-	cout << "Problem with the backward substitution." << endl;
+        cout << "Problem with the backward substitution." << endl;
     }
 
   return true;
@@ -458,9 +458,9 @@ bool SolveSymmetricSystem(int const& ndata, double** A, double* rho, double* lam
     {
       double z = 0;
       for(int j = 0; j < ndata; j++)
-	z += A[i][j] * lambda[j];
+        z += A[i][j] * lambda[j];
       if(abs(z-rho[i]) > 1e-8)
-	cout << "Problem with the symmetric system." << endl;
+        cout << "Problem with the symmetric system." << endl;
     }
 
   // Delete pointers

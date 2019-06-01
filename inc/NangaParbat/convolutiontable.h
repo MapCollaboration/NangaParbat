@@ -35,7 +35,7 @@ namespace NangaParbat
      * @return a map that associates each value of qT to a prediction.
      */
     std::map<double,double> Convolute(std::function<double(double const&, double const&, double const&)> const& fNP1,
-				      std::function<double(double const&, double const&, double const&)> const& fNP2) const;
+                                      std::function<double(double const&, double const&, double const&)> const& fNP2) const;
 
     /**
      * @brief This function convolutes the input convolution table
@@ -54,7 +54,7 @@ namespace NangaParbat
      * @return a vector of predictions.
      */
     std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP1,
-				       std::function<double(double const&, double const&, double const&)> const& fNP2) const;
+                                       std::function<double(double const&, double const&, double const&)> const& fNP2) const;
 
     /**
      * @brief This function returns a vector of predictions with a

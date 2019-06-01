@@ -34,91 +34,91 @@ namespace NangaParbat
     _y  = y;
     if (_cuts)
       {
-	const double iE = 1 / sqrt(pow(_M, 2) + pow(_qT, 2)) / cosh(_y);
-	lM2 = pow(_M * iE, 2);
-	lT  = _qT * iE;
-	ly  = tanh(_y);
-	L_nu.init_min_max(-_thetamax,+_thetamax);
+        const double iE = 1 / sqrt(pow(_M, 2) + pow(_qT, 2)) / cosh(_y);
+        lM2 = pow(_M * iE, 2);
+        lT  = _qT * iE;
+        ly  = tanh(_y);
+        L_nu.init_min_max(-_thetamax,+_thetamax);
 
-	integration_bins.clear();
-	integration_bins.push_back(-_thetamax);
-	integration_bins.push_back(+_thetamax);
+        integration_bins.clear();
+        integration_bins.push_back(-_thetamax);
+        integration_bins.push_back(+_thetamax);
 
-	if (_etamax > 0)
-	  {
-	    if (L_nu.contains_not(ly))
-	      return _set0();
+        if (_etamax > 0)
+          {
+            if (L_nu.contains_not(ly))
+              return _set0();
 
-	    integration_bins.push_back(_fnub_upm(-_thetamax, -1));
-	    integration_bins.push_back(_fnub_upm(-_thetamax, +1));
-	    integration_bins.push_back(_fnub_upm(+_thetamax, +1));
-	    integration_bins.push_back(_fnub_upm(+_thetamax, -1));
-	  }
+            integration_bins.push_back(_fnub_upm(-_thetamax, -1));
+            integration_bins.push_back(_fnub_upm(-_thetamax, +1));
+            integration_bins.push_back(_fnub_upm(+_thetamax, +1));
+            integration_bins.push_back(_fnub_upm(+_thetamax, -1));
+          }
 
-	if (_kTmin > 0)
-	  {
-	    aoE = _kTmin * iE;
+        if (_kTmin > 0)
+          {
+            aoE = _kTmin * iE;
 
-	    const double lp2   = 1 - pow(ly, 2);
-	    const double num1  = pow(2 * aoE, 2) * ly;
-	    const double num2  = sqrt(pow(lp2, 3) * ( lp2 - pow(2 * aoE, 2) ));
-	    const double den   = 1 /( pow(lp2, 2) + num1 * ly );
-	    const double nua_m = ( num1 - num2 ) * den;
-	    const double nua_p = ( num1 + num2 ) * den;
+            const double lp2   = 1 - pow(ly, 2);
+            const double num1  = pow(2 * aoE, 2) * ly;
+            const double num2  = sqrt(pow(lp2, 3) * ( lp2 - pow(2 * aoE, 2) ));
+            const double den   = 1 /( pow(lp2, 2) + num1 * ly );
+            const double nua_m = ( num1 - num2 ) * den;
+            const double nua_p = ( num1 + num2 ) * den;
 
-	    L_nu.add_limit_min_max(nua_m, nua_p);
-	    integration_bins.push_back(nua_m);
-	    integration_bins.push_back(nua_p);
+            L_nu.add_limit_min_max(nua_m, nua_p);
+            integration_bins.push_back(nua_m);
+            integration_bins.push_back(nua_p);
 
-	    if (L_nu.is_unvalid())
-	      return _set0();
-	  }
+            if (L_nu.is_unvalid())
+              return _set0();
+          }
 
-	if (_ex)
-	  {
-	    if (_theta0 == 0)
-	      {
-		E_nu_p.init_min_max(-_theta1,+_theta1);
-		E_nu_m.set_unvalid();
-	      }
-	    else
-	      {
-		E_nu_p.init_min_max(+_theta0,+_theta1);
-		E_nu_m.init_min_max(-_theta1,-_theta0);
-		integration_bins.push_back(-_theta0);
-		integration_bins.push_back(+_theta0);
-	      }
-	    integration_bins.push_back(-_theta1);
-	    integration_bins.push_back(+_theta1);
+        if (_ex)
+          {
+            if (_theta0 == 0)
+              {
+                E_nu_p.init_min_max(-_theta1,+_theta1);
+                E_nu_m.set_unvalid();
+              }
+            else
+              {
+                E_nu_p.init_min_max(+_theta0,+_theta1);
+                E_nu_m.init_min_max(-_theta1,-_theta0);
+                integration_bins.push_back(-_theta0);
+                integration_bins.push_back(+_theta0);
+              }
+            integration_bins.push_back(-_theta1);
+            integration_bins.push_back(+_theta1);
 
-	    E_nu_p.apply_to_limit(L_nu);
-	    E_nu_m.apply_to_limit(L_nu);
+            E_nu_p.apply_to_limit(L_nu);
+            E_nu_m.apply_to_limit(L_nu);
 
-	    if (L_nu.is_unvalid())
-	      return _set0();
-	  }
+            if (L_nu.is_unvalid())
+              return _set0();
+          }
 
-	std::sort(integration_bins.begin(),integration_bins.end());
-	std::vector<double>::const_iterator itr(integration_bins.begin());
-	const std::vector<double>::const_iterator end(integration_bins.end()-1);
+        std::sort(integration_bins.begin(),integration_bins.end());
+        std::vector<double>::const_iterator itr(integration_bins.begin());
+        const std::vector<double>::const_iterator end(integration_bins.end()-1);
 
-	Variable_Limit IR;
-	double res = 0;
+        Variable_Limit IR;
+        double res = 0;
 
-	while (itr!=end)
-	  {
-	    IR.init_min(*itr);
-	    IR.init_max(*(++itr));
-	    IR.add_limit(L_nu);
-	    if (IR.is_valid())
-	      {
-		if (_ex)
-		  res += _calc_one_region(IR, E_nu_m, E_nu_p);
-		else
-		  res += _calc_one_region(IR);
-	      }
-	  }
-	_result = res;
+        while (itr!=end)
+          {
+            IR.init_min(*itr);
+            IR.init_max(*(++itr));
+            IR.add_limit(L_nu);
+            if (IR.is_valid())
+              {
+                if (_ex)
+                  res += _calc_one_region(IR, E_nu_m, E_nu_p);
+                else
+                  res += _calc_one_region(IR);
+              }
+          }
+        _result = res;
       }
     return _result;
   }
@@ -136,12 +136,12 @@ namespace NangaParbat
     os << "PS(" << _M << ", " << _qT << ", " << _y;
     if (_cuts)
       {
-	if (0 < _kTmin)
-	  os << ", kTmin -> " << _kTmin;
-	if (0 < _etamax)
-	  os << ", etamax -> " << _etamax;
-	if (_ex)
-	  os << ", eta01 -> [" << atanh(_theta0) << ", " << atanh(_theta1) <<"]";
+        if (0 < _kTmin)
+          os << ", kTmin -> " << _kTmin;
+        if (0 < _etamax)
+          os << ", etamax -> " << _etamax;
+        if (_ex)
+          os << ", eta01 -> [" << atanh(_theta0) << ", " << atanh(_theta1) <<"]";
       }
     os << ") = (" << _result << " +- " << _error << ")";
     return os;
@@ -157,8 +157,8 @@ namespace NangaParbat
   double TwoParticlePhaseSpace::f(double const& alpha_m, double const& alpha_p) const
   {
     return lM2 * ( ( 1 - ly * nu ) * ( asin(sqrt(alpha_p)) - asin(sqrt(alpha_m)) )
-		   - lT * Snu * ( sqrt( alpha_p * ( 1 - alpha_p ) ) - sqrt( alpha_m * ( 1 - alpha_m ) ) ) )
-      / pow( sqrt( pow(1 - ly * nu, 2) - pow(lT * Snu, 2) ), 3) / M_PI;
+                   - lT * Snu * ( sqrt( alpha_p * ( 1 - alpha_p ) ) - sqrt( alpha_m * ( 1 - alpha_m ) ) ) )
+           / pow( sqrt( pow(1 - ly * nu, 2) - pow(lT * Snu, 2) ), 3) / M_PI;
   }
 
   //_________________________________________________________________________
@@ -192,34 +192,34 @@ namespace NangaParbat
 
     if (_kTmin > 0)
       {
-	L_u.add_limit_min(aoE / Snu);
-	L_u.add_limit_max( ( (1 - ly * nu) - sqrt( pow(ly - nu, 2) + pow(aoE * Snu, 2) ) ) / pow(Snu, 2) );
-	if (L_u.is_unvalid())
-	  return false;
+        L_u.add_limit_min(aoE / Snu);
+        L_u.add_limit_max( ( (1 - ly * nu) - sqrt( pow(ly - nu, 2) + pow(aoE * Snu, 2) ) ) / pow(Snu, 2) );
+        if (L_u.is_unvalid())
+          return false;
       }
 
     if (_etamax > 0)
       {
-	L_u.add_limit_max(_fthb(copysign(1, nu - ly) * _thetamax));
-	if (L_u.is_unvalid())
-	  return false;
+        L_u.add_limit_max(_fthb(copysign(1, nu - ly) * _thetamax));
+        if (L_u.is_unvalid())
+          return false;
       }
 
     if (_ex)
       {
-	E_u_m.init(_fthb(-_theta0), _fthb(-_theta1));
-	E_u_p.init(_fthb(+_theta0), _fthb(+_theta1));
+        E_u_m.init(_fthb(-_theta0), _fthb(-_theta1));
+        E_u_p.init(_fthb(+_theta0), _fthb(+_theta1));
 
-	E_u_m.apply_to_limit(L_u);
-	E_u_p.apply_to_limit(L_u);
+        E_u_m.apply_to_limit(L_u);
+        E_u_p.apply_to_limit(L_u);
 
-	if (L_u.is_unvalid())
-	  return false;
+        if (L_u.is_unvalid())
+          return false;
 
-	if (E_u_m.is_valid())
-	  u_limit_to_alpha(E_u_m, um, iDu);
-	if (E_u_p.is_valid())
-	  u_limit_to_alpha(E_u_p, um, iDu);
+        if (E_u_m.is_valid())
+          u_limit_to_alpha(E_u_m, um, iDu);
+        if (E_u_p.is_valid())
+          u_limit_to_alpha(E_u_p, um, iDu);
       }
     u_limit_to_alpha(L_u, um, iDu);
 
@@ -234,14 +234,14 @@ namespace NangaParbat
     Snu = sqrt(1 - pow(nu, 2));
     if (_calc_alphas())
       {
-	res = f(L_u.min, L_u.max);
-	if (_ex)
-	  {
-	    if (E_u_m.is_valid())
-	      res -= f(E_u_m.min, E_u_m.max);
-	    if (E_u_p.is_valid())
-	      res -= f(E_u_p.min, E_u_m.max);
-	  }
+        res = f(L_u.min, L_u.max);
+        if (_ex)
+          {
+            if (E_u_m.is_valid())
+              res -= f(E_u_m.min, E_u_m.max);
+            if (E_u_p.is_valid())
+              res -= f(E_u_p.min, E_u_m.max);
+          }
       }
     return res;
   }
@@ -279,9 +279,9 @@ namespace NangaParbat
   {
     if (IR.is_valid())
       {
-	_gsl_status = gsl_integration_qag(&_gsl_f, IR.min, IR.max, 1e-5, 0., LIMIT_SIZE, GSL_INTEG_GAUSS31,
-					  static_cast<gsl_integration_workspace*>(_workspace), &_result, &_error);
-	return _result;
+        _gsl_status = gsl_integration_qag(&_gsl_f, IR.min, IR.max, 1e-5, 0., LIMIT_SIZE, GSL_INTEG_GAUSS31,
+                                          static_cast<gsl_integration_workspace*>(_workspace), &_result, &_error);
+        return _result;
       }
     else
       return 0.;
@@ -293,9 +293,9 @@ namespace NangaParbat
     E1.apply_to_limit(IR);
     if (E1.is_valid() && (IR.position_of(E1) == I_I_inside))
       {
-	Variable_Limit IR2(E1.max, IR.max);
-	IR.init_min_max(IR.min, E1.min);
-	return _calc_one_region(IR) + _calc_one_region(IR2);
+        Variable_Limit IR2(E1.max, IR.max);
+        IR.init_min_max(IR.min, E1.min);
+        return _calc_one_region(IR) + _calc_one_region(IR2);
       }
     return _calc_one_region(IR);
   }
@@ -306,9 +306,9 @@ namespace NangaParbat
     E2.apply_to_limit(IR);
     if (E2.is_valid() && (IR.position_of(E2) == I_I_inside))
       {
-	Variable_Limit IR2(E2.max, IR.max);
-	IR.init_min_max(IR.min, E2.min);
-	return _calc_one_region(IR, E1) + _calc_one_region(IR2, E1);
+        Variable_Limit IR2(E2.max, IR.max);
+        IR.init_min_max(IR.min, E2.min);
+        return _calc_one_region(IR, E1) + _calc_one_region(IR2, E1);
       }
     else
       return _calc_one_region(IR, E1);

@@ -21,7 +21,6 @@ double fNP(double const&, double const& b, double const& zetaf)
   return exp( ( - g1 - g2 * log( sqrt(zetaf) / Q0 / 2 ) ) * b * b / 2 );
 }
 
-//_________________________________________________________________________________
 double bstar(double const& b, double const&)
 {
   const double bmax = 1;
@@ -36,8 +35,9 @@ int main()
   const NangaParbat::FastInterface FIObj{config};
 
   // Vector of datafiles
-  const std::vector<NangaParbat::DataHandler> DHVect{NangaParbat::DataHandler{"Test_data", YAML::LoadFile("../data/TestData/Table1.yaml")}};
-  //const std::vector<NangaParbat::DataHandler> DHVect{NangaParbat::DataHandler{"Test_data", YAML::LoadFile("../data/HEPData-ins505738-v1-yaml/Table1.yaml")}};
+  const std::vector<NangaParbat::DataHandler> DHVect{NangaParbat::DataHandler{"Test_data", YAML::LoadFile("../data/TestData/Table5.yaml")}};
+
+  // Compute interpolation table(s)
   const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect, bstar);
 
   // Write tables to file
@@ -68,11 +68,12 @@ int main()
   const apfel::Grid g{vsg};
 
   // Rotate PDF set into the QCD evolution basis
-  const auto RotPDFs = [=] (double const& x, double const& mu) -> std::map<int,double>{ return apfel::PhysToQCDEv(distpdf->xfxQ(x,mu)); };
+  const auto RotPDFs = [=] (double const& x, double const& mu) -> std::map<int,double> { return apfel::PhysToQCDEv(distpdf->xfxQ(x,mu)); };
 
   // Construct set of distributions as a function of the scale to be
   // tabulated
-  const auto EvolvedPDFs = [=,&g] (double const& mu) -> apfel::Set<apfel::Distribution>{
+  const auto EvolvedPDFs = [=,&g] (double const& mu) -> apfel::Set<apfel::Distribution>
+  {
     return apfel::Set<apfel::Distribution>{apfel::EvolutionBasisQCD{apfel::NF(mu, Thresholds)}, DistributionMap(g, RotPDFs, mu)};
   };
 
@@ -90,20 +91,16 @@ int main()
   const apfel::AlphaQED alphaem{config["alphaem"]["aref"].as<double>(), config["alphaem"]["Qref"].as<double>(), Thresholds, {0, 0, 1.777}, 0};
 
   // Retrieve relevant parameters from the configuration file
-  const double eps    = 1e-3;
-  const double Cf     = config["TMDscales"]["Cf"].as<double>();
-  const int    nOgata = config["nOgata"].as<int>();
+  const double eps = 1e-4;
+  const double Cf  = config["TMDscales"]["Cf"].as<double>();
 
   // Loop over the vector of "Kinematics" objects
   for (int i = 0; i < (int) DHVect.size(); i++)
     {
       // Load convolution table and do the convolution
       const NangaParbat::ConvolutionTable CTable{YAML::Load(Tabs[i].c_str())};
-      //const NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/TestData.yaml")};
-      const std::map<double,double> Conv = CTable.Convolute(fNP);
-
-      // Timer
-      apfel::Timer t;
+      //const NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/TestData3.yaml")};
+      const std::vector<double> Conv = CTable.GetPredictions(fNP);
 
       // Retrieve kinematics
       const NangaParbat::DataHandler::Kinematics kin = DHVect[i].GetKinematics();
@@ -111,95 +108,98 @@ int main()
       const std::pair<double,double> yb       = kin.var2b;    // Rapidity interval
       const std::pair<double,double> Qb       = kin.var1b;    // Invariant mass interval
       const std::vector<double>      qTv      = kin.qTv;      // Transverse momentum bin bounds
-      const bool                     IntqT    = kin.IntqT;    // Whether to integrate over qT
       const double                   pTMin    = kin.pTMin;    // Minimum pT of the final-state leptons
       const std::pair<double,double> etaRange = kin.etaRange; // Allowed range in eta of the final-state leptons
 
-      // Ogata-quadrature object of degree one or zero according to
-      // weather the cross sections have to be integrated over the
-      // bins in qT or not.
-      apfel::OgataQuadrature OgataObj{(IntqT ? 1 : 0)};
+      // Ogata-quadrature object of degree zero
+      apfel::OgataQuadrature OgataObj{};
 
       // Phase-space reduction factor
       const double deta = ( etaRange.second - etaRange.first ) / 2;
       NangaParbat::TwoParticlePhaseSpace ps{pTMin, deta};
 
       // Loop over the qT-bin bounds
-      for (auto const& qT : qTv)
-	{
-	  // Construct the TMD luminosity in b scale to be fed to be
-	  // trasformed in qT space.
-	  const auto TMDLumib = [&] (double const& b) -> double
-	    {
-	      // Tabulate TMDs in Q
-	      const auto EvolvedTMDPDFs = [&] (double const& Q) -> apfel::Set<apfel::Distribution>{ return EvTMDPDFs(bstar(b, Q), Cf * Q, Q * Q); };
-	      const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabEvolvedTMDPDFs{EvolvedTMDPDFs, 50, Qb.first, Qb.second, 3, {}};
+      const auto qTintegrand = [&] (double const& qT) -> double
+                               //for (auto const& qT : qTv)
+      {
+        // Construct the TMD luminosity in b scale to be fed to be
+        // trasformed in qT space.
+        const auto TMDLumib = [&] (double const& b) -> double
+        {
+          // Tabulate TMDs in Q
+          const auto EvolvedTMDPDFs = [&] (double const& Q) -> apfel::Set<apfel::Distribution>{ return EvTMDPDFs(bstar(b, Q), Cf * Q, Q * Q); };
+          const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabEvolvedTMDPDFs{EvolvedTMDPDFs, 50, Qb.first, Qb.second, 3, {}};
 
-	      // Function to be integrated in Q
-	      const auto Qintegrand = [&] (double const& Q) -> double
-		{
-		  // Renormalisation scales
-		  const double muf   = Cf * Q;
-		  const double zetaf = Q * Q;
+          // Function to be integrated in Q
+          const auto Qintegrand = [&] (double const& Q) -> double
+          {
+            // Renormalisation scales
+            const double muf   = Cf * Q;
+            const double zetaf = Q * Q;
 
-		  // Number of active flavours at 'Q'
-		  const int nf = apfel::NF(muf, Thresholds);
+            // Number of active flavours at 'Q'
+            const int nf = apfel::NF(muf, Thresholds);
 
-		  // EW charges
-		  const std::vector<double> Bq = apfel::ElectroWeakCharges(Q, true);
+            // EW charges
+            const std::vector<double> Bq = apfel::ElectroWeakCharges(Q, true);
 
-		  // Get Evolved TMD PDFs and rotate them into
-		  // the physical basis
-		  const std::map<int,apfel::Distribution> xF = QCDEvToPhys(TabEvolvedTMDPDFs.Evaluate(Q).GetObjects());
+            // Get Evolved TMD PDFs and rotate them into
+            // the physical basis
+            const std::map<int,apfel::Distribution> xF = QCDEvToPhys(TabEvolvedTMDPDFs.Evaluate(Q).GetObjects());
 
-		  // Function to be integrated in xi
-		  const auto xiintegrand = [&] (double const& xi) -> double
-		  {
-		    // Compute 'x1' and 'x2'
-		    const double x1 = Q * xi / Vs;
-		    const double x2 = Q / xi / Vs;
+            // Function to be integrated in xi
+            const auto xiintegrand = [&] (double const& xi) -> double
+            {
+              // Compute 'x1' and 'x2'
+              const double x1 = Q * xi / Vs;
+              const double x2 = Q / xi / Vs;
 
-		    // Combine TMDs through the EW charges
-		    double lumi = 0;
-		    for (int i = 1; i <= nf; i++)
-		      lumi += Bq[i-1] * ( xF.at(i).Evaluate(x1) * xF.at(-i).Evaluate(x2) + xF.at(-i).Evaluate(x1) * xF.at(i).Evaluate(x2) );
+              // Combine TMDs through the EW charges
+              double lumi = 0;
+              for (int i = 1; i <= nf; i++)
+                lumi += Bq[i-1] * ( xF.at(i).Evaluate(x1) * xF.at(-i).Evaluate(x2) + xF.at(-i).Evaluate(x1) * xF.at(i).Evaluate(x2) ) / 2;
 
-		    // Return xi integrand
-		    return ps.PhaseSpaceReduction(Q, qT, log(xi)) * lumi * fNP(x1, b, zetaf) * fNP(x2, b, zetaf) / xi;
-		    //return lumi * fNP(x1, b, zetaf) * fNP(x2, b, zetaf) / xi;
-		  };
+              // Return xi integrand
+              return ps.PhaseSpaceReduction(Q, qT, log(xi)) * lumi * fNP(x1, b, zetaf) * fNP(x2, b, zetaf) / xi;
+            };
 
-		  // Perform the integral in xi
-		  const apfel::Integrator xiIntObj{xiintegrand};
-		  const double xiintegral = xiIntObj.integrate(exp(yb.first), exp(yb.second), eps);
+            // Perform the integral in xi
+            const apfel::Integrator xiIntObj{xiintegrand};
+            const double xiintegral = xiIntObj.integrate(exp(yb.first), exp(yb.second), eps);
 
-		  // Electromagnetic coupling squared
-		  const double aem2 = pow((config["alphaem"]["run"].as<bool>() ? alphaem.Evaluate(Q) : config["alphaem"]["ref"].as<double>()), 2);
+            // Electromagnetic coupling squared
+            const double aem2 = pow((config["alphaem"]["run"].as<bool>() ? alphaem.Evaluate(Q) : config["alphaem"]["ref"].as<double>()), 2);
 
-		  // Compute the hard factor
-		  const double hcs = apfel::HardFactorDY(config["PerturbativeOrder"].as<int>(), Alphas(muf), nf, Cf);
+            // Compute the hard factor
+            const double hcs = apfel::HardFactorDY(config["PerturbativeOrder"].as<int>(), Alphas(muf), nf, Cf);
 
-		  // Return Q integrand
-		  return aem2 * hcs * xiintegral / pow(Q, 3);
-		};
+            // Return Q integrand
+            return aem2 * hcs * xiintegral / pow(Q, 3);
+          };
 
-	      // Perform the integral in Q
-	      const apfel::Integrator QIntObj{Qintegrand};
-	      double Qintegral = apfel::ConvFact * qT * 8 * M_PI * QIntObj.integrate(Qb.first, Qb.second, eps) / 9;
+          // Perform the integral in Q
+          const apfel::Integrator QIntObj{Qintegrand};
+          double Qintegral = b * apfel::ConvFact * qT * 8 * M_PI * QIntObj.integrate(Qb.first, Qb.second, eps) / 9;
+          return Qintegral;
+        };
+        const double direct = OgataObj.transform(TMDLumib, qT);
+        return direct;
+      };
 
-	      // If not intergrating over qT, multiply by b
-	      if (!IntqT)
-		Qintegral *= b;
-
-	      return Qintegral;
-	    };
-	  //const double direct = OgataObj.transform(TMDLumib, qT);
-	  const double direct = OgataObj.transform(TMDLumib, qT, nOgata);
-	  //const apfel::Integrator integrand{[=] (double const& bT) -> double{ return TMDLumib(bT) * j1(qT * bT); }};
-	  //const double direct = integrand.integrate(0.00005, 30, 1e-5);
-	  const double tabulated = Conv.at(qT);
-	  std::cout << std::scientific << qT << "  " << direct << "  " << tabulated << "  " << direct / tabulated << std::endl;
-	}
+      // Timer
+      apfel::Timer t;
+      const apfel::Integrator qTIntObj{qTintegrand};
+      std::cout << std::scientific;
+      for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
+        //std::cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: "
+        std::cout << qTv[iqT] << "\t" << qTv[iqT+1] << "\t" << ( qTv[iqT] + qTv[iqT+1] ) / 2 << "\t"
+                  << DHVect[i].GetMeanValues()[iqT] << "\t"
+                  << DHVect[i].GetUncorrelatedUnc()[iqT] << "\t"
+                  //<< qTIntObj.integrate(qTv[iqT], qTv[iqT+1], eps) / ( qTv[iqT+1] - qTv[iqT] ) << "  "
+                  << Conv[iqT] / ( qTv[iqT] + qTv[iqT+1] ) * 2 / 6.8 << "  "
+                  //<< Conv[iqT] / qTv[iqT] / 6.8 << "  "
+                  << std::endl;
+      std::cout << "\n";
       t.stop();
     }
   delete distpdf;

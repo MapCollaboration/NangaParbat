@@ -48,11 +48,11 @@ namespace NangaParbat
      * tables as elements of "DHVect".
      */
     std::vector<YAML::Emitter> ComputeTables(std::vector<DataHandler> const& DHVect,
-					     std::function<double(double const&, double const&)> bstar) const;
+                                             std::function<double(double const&, double const&)> bstar) const;
 
   private:
     YAML::Node                                                                                  _config;     //!< Configuration YAML::Node
-    std::vector<double>                                                                         _Thresholds; //!< Heavy-quark thresholds 
+    std::vector<double>                                                                         _Thresholds; //!< Heavy-quark thresholds
     std::unique_ptr<apfel::TabulateObject<double>>                                              _TabAlphas;  //!< Strong coupling
     std::unique_ptr<apfel::TabulateObject<double>>                                              _TabAlphaem; //!< Fine-structure coupling
     std::map<int,apfel::TmdObjects>                                                             _TmdPdfObjs; //!< Space-like TMD objects

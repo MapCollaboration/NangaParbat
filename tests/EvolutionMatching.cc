@@ -28,11 +28,11 @@ int main()
 
   // Thresholds.
   const vector<double> Thresholds{distpdf->quarkThreshold(1),
-      distpdf->quarkThreshold(2),
-      distpdf->quarkThreshold(3),
-      distpdf->quarkThreshold(4),
-      distpdf->quarkThreshold(5),
-      distpdf->quarkThreshold(6)};
+                                  distpdf->quarkThreshold(2),
+                                  distpdf->quarkThreshold(3),
+                                  distpdf->quarkThreshold(4),
+                                  distpdf->quarkThreshold(5),
+                                  distpdf->quarkThreshold(6)};
 
   // Alpha_s.
   const auto Alphas = [&] (double const& mu) -> double{ return distpdf->alphasQ(mu); };
@@ -50,13 +50,13 @@ int main()
   const auto QuarkEvolFactor = QuarkEvolutionFactor(TmdObj, Alphas, PerturbativeOrder);
 
   // Rotate PDF and FF sets into the QCD evolution basis.
-  const auto RotPDFs = [=] (double const& x, double const& mu) -> map<int,double>{ return PhysToQCDEv(distpdf->xfxQ(x,mu)); };
-  const auto RotFFs  = [=] (double const& x, double const& mu) -> map<int,double>{ return PhysToQCDEv(distff->xfxQ(x,mu)); };
+  const auto RotPDFs = [=] (double const& x, double const& mu) -> map<int,double> { return PhysToQCDEv(distpdf->xfxQ(x,mu)); };
+  const auto RotFFs  = [=] (double const& x, double const& mu) -> map<int,double> { return PhysToQCDEv(distff->xfxQ(x,mu)); };
 
   // Construct set of distributions as a function of the scale to be
   // tabulated.
-  const auto EvolvedPDFs = [=,&g] (double const& mu) -> Set<Distribution>{ return Set<Distribution>{EvolutionBasisQCD{NF(mu, Thresholds)}, DistributionMap(g, RotPDFs, mu)}; };
-  const auto EvolvedFFs  = [=,&g] (double const& mu) -> Set<Distribution>{ return Set<Distribution>{EvolutionBasisQCD{NF(mu, Thresholds)}, DistributionMap(g, RotFFs, mu)}; };
+  const auto EvolvedPDFs = [=,&g] (double const& mu) -> Set<Distribution> { return Set<Distribution>{EvolutionBasisQCD{NF(mu, Thresholds)}, DistributionMap(g, RotPDFs, mu)}; };
+  const auto EvolvedFFs  = [=,&g] (double const& mu) -> Set<Distribution> { return Set<Distribution>{EvolutionBasisQCD{NF(mu, Thresholds)}, DistributionMap(g, RotFFs, mu)}; };
 
   // Tabulate PDFs and FFs
   const TabulateObject<Set<Distribution>> TabPDFs{EvolvedPDFs, 50, 1, 100, 3, Thresholds};
@@ -87,17 +87,17 @@ int main()
       double b = bmin;
       cout << scientific << "\n";
       cout << " Q [GeV]      "
-	   << " b [1/GeV]    "
-	   << " mub [GeV]    "
-	   << " Ev. (sigma)  "
-	   << endl;
+           << " b [1/GeV]    "
+           << " mub [GeV]    "
+           << " Ev. (sigma)  "
+           << endl;
       for (int ib = 0; ib < nb; ib++)
-	{
-	  const double mub = 2 * exp(- emc) / b;
-	  const double evfq = QuarkEvolFactor(b, Q, Q2);
-	  cout << Q << "  " << b << "  " <<  mub << "  " << evfq << endl;
-	  b *= bstep;
-	}
+        {
+          const double mub = 2 * exp(- emc) / b;
+          const double evfq = QuarkEvolFactor(b, Q, Q2);
+          cout << Q << "  " << b << "  " <<  mub << "  " << evfq << endl;
+          b *= bstep;
+        }
       cout << "\n";
     }
   t.stop();
@@ -115,17 +115,17 @@ int main()
       double x = xmin;
       cout << scientific << "\n";
       cout << " Q [GeV]      "
-	   << " b [1/GeV]    "
-	   << "      x       "
-	   << "   LHAPDF     "
-	   << "  down PDF    "
-	   << endl;
+           << " b [1/GeV]    "
+           << "      x       "
+           << "   LHAPDF     "
+           << "  down PDF    "
+           << endl;
       for (int ib = 0; ib < nb; ib++)
-	{
-	  const map<int,Distribution> mpdf = QCDEvToPhys(MatchedTMDPDFs(b).GetObjects());
-	  cout << Q << "  " << b << "  " <<  x << "  " << mpdf.at(1).Evaluate(x) << "  " << distpdf->xfxQ(1,x,Q) << endl;
-	  x *= xstep;
-	}
+        {
+          const map<int,Distribution> mpdf = QCDEvToPhys(MatchedTMDPDFs(b).GetObjects());
+          cout << Q << "  " << b << "  " <<  x << "  " << mpdf.at(1).Evaluate(x) << "  " << distpdf->xfxQ(1,x,Q) << endl;
+          x *= xstep;
+        }
       cout << "\n";
     }
   t.stop();
@@ -143,17 +143,17 @@ int main()
       double x = xmin;
       cout << scientific << "\n";
       cout << " Q [GeV]      "
-	   << " b [1/GeV]    "
-	   << "      x       "
-	   << "   LHAPDF     "
-	   << "  down FF     "
-	   << endl;
+           << " b [1/GeV]    "
+           << "      x       "
+           << "   LHAPDF     "
+           << "  down FF     "
+           << endl;
       for (int ib = 0; ib < nb; ib++)
-	{
-	  const map<int,Distribution> mff = QCDEvToPhys(MatchedTMDFFs(b).GetObjects());
-	  cout << Q << "  " << b << "  " <<  x << "  " << mff.at(1).Evaluate(x) << "  " << distff->xfxQ(1,x,Q) << endl;
-	  x *= xstep;
-	}
+        {
+          const map<int,Distribution> mff = QCDEvToPhys(MatchedTMDFFs(b).GetObjects());
+          cout << Q << "  " << b << "  " <<  x << "  " << mff.at(1).Evaluate(x) << "  " << distff->xfxQ(1,x,Q) << endl;
+          x *= xstep;
+        }
       cout << "\n";
     }
   t.stop();
