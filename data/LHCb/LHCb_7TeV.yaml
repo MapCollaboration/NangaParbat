@@ -1,0 +1,99 @@
+dependent_variables:
+  - header: {name: "$\\sigma_{Z \\to \\mu^{+}\\mu^{-}}$", units: PB}
+    qualifiers:
+      - {name: process, value: DY}
+      - {name: observable, value: d(sigma)/dydQdqT}
+      - {name: target_isoscalarity, value: 1}
+      - {name: prefactor, value: 1}
+      - {name: Vs, value: 7000}
+      - {name: Q, low: 60, high: 120, integrate: true}
+      - {name: y, low: 2, high: 4.5, integrate: true}
+      - {name: PS_reduction, pTmin: 20, etamin: 2, etamax: 4.5}
+    values:
+      - errors:
+          - {label: unc, value: 0.105}
+          - {label: add, value: 0.019987604586303068}
+          - {label: mult, value: 0.021262408142070834}
+        value: 6.454
+      - errors:
+          - {label: unc, value: 0.106}
+          - {label: add, value: 0.023006134969325152}
+          - {label: mult, value: 0.021262408142070834}
+        value: 6.52
+      - errors:
+          - {label: unc, value: 0.102}
+          - {label: add, value: 0.035593493316153975}
+          - {label: mult, value: 0.021262408142070834}
+        value: 6.209
+      - errors:
+          - {label: unc, value: 0.099}
+          - {label: add, value: 0.035446489434219491}
+          - {label: mult, value: 0.021262408142070834}
+        value: 5.868
+      - errors:
+          - {label: unc, value: 0.098}
+          - {label: add, value: 0.026787267350843625}
+          - {label: mult, value: 0.021262408142070834}
+        value: 5.749
+      - errors:
+          - {label: unc, value: 0.098}
+          - {label: add, value: 0.014802924915284467}
+          - {label: mult, value: 0.021262408142070834}
+        value: 5.607
+      - errors:
+          - {label: unc, value: 0.098}
+          - {label: add, value: 0.0095795635976583301}
+          - {label: mult, value: 0.021262408142070834}
+        value: 5.637
+      - errors:
+          - {label: unc, value: 0.096}
+          - {label: add, value: 0.014663287472845765}
+          - {label: mult, value: 0.021262408142070834}
+        value: 5.524
+      - errors:
+          - {label: unc, value: 0.092}
+          - {label: add, value: 0.012989530825901511}
+          - {label: mult, value: 0.021262408142070834}
+        value: 5.158
+      - errors:
+          - {label: unc, value: 0.087}
+          - {label: add, value: 0.010679024783397138}
+          - {label: mult, value: 0.021262408142070834}
+        value: 4.963
+      - errors:
+          - {label: unc, value: 0.088}
+          - {label: add, value: 0.0099691861518941445}
+          - {label: mult, value: 0.021262408142070834}
+        value: 5.517
+      - errors:
+          - {label: unc, value: 0.085}
+          - {label: add, value: 0.012259835315645016}
+          - {label: mult, value: 0.021262408142070834}
+        value: 5.465
+      - errors:
+          - {label: unc, value: 0.085}
+          - {label: add, value: 0.013128346864743479}
+          - {label: mult, value: 0.021262408142070834}
+        value: 5.789
+      - errors:
+          - {label: unc, value: 0.043}
+          - {label: add, value: 0.029023746701846962}
+          - {label: mult, value: 0.021262408142070834}
+        value: 1.516
+independent_variables:
+  - header: {name: "$P_{T,Z}$", units: GEV}
+    values:
+      - {high: 2.2, low: 0.0}
+      - {high: 3.4, low: 2.2}
+      - {high: 4.6, low: 3.4}
+      - {high: 5.8, low: 4.6}
+      - {high: 7.2, low: 5.8}
+      - {high: 8.7, low: 7.2}
+      - {high: 10.5, low: 8.7}
+      - {high: 12.8, low: 10.5}
+      - {high: 15.4, low: 12.8}
+      - {high: 19.0, low: 15.4}
+      - {high: 24.5, low: 19.0}
+      - {high: 34.0, low: 24.5}
+      - {high: 63.0, low: 34.0}
+      - {high: 270.0, low: 63.0}
