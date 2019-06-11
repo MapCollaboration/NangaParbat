@@ -39,17 +39,19 @@ namespace NangaParbat
     {
       Kinematics();
       bool empty() const;
-      int                      ndata;    //!< Number of data points
-      double                   Vs;       //!< Center of mass energy
-      std::vector<double>      qTv;      //!< Vector of qT values
-      std::pair<double,double> var1b;    //!< Variable 1 integration bounds
-      std::pair<double,double> var2b;    //!< Variable 1 integration bounds
-      bool                     IntqT;    //!< Whether the bins in qTv are integrated over
-      bool                     Intv1;    //!< Whether the bins in Q are integrated over
-      bool                     Intv2;    //!< Whether the bins in y are integrated over
-      bool                     PSRed;    //!< Whether there is a final-state PS reduction
-      double                   pTMin;    //!< Minimum pT of the final-state leptons
-      std::pair<double,double> etaRange; //!< Allowed range in eta of the final-state leptons
+      int                                   ndata;    //!< Number of data points
+      double                                Vs;       //!< Center of mass energy
+      std::vector<double>                   qTv;      //!< Vector of qT values
+      std::vector<std::pair<double,double>> qTmap;    //!< Map of qT bounds to associate to the single bins
+      std::vector<double>                   qTfact;   //!< Possible bin-by-bin prefactors to multiply the theoretical predictions
+      std::pair<double,double>              var1b;    //!< Variable 1 integration bounds
+      std::pair<double,double>              var2b;    //!< Variable 1 integration bounds
+      bool                                  IntqT;    //!< Whether the bins in qTv are integrated over
+      bool                                  Intv1;    //!< Whether the bins in Q are integrated over
+      bool                                  Intv2;    //!< Whether the bins in y are integrated over
+      bool                                  PSRed;    //!< Whether there is a final-state PS reduction
+      double                                pTMin;    //!< Minimum pT of the final-state leptons
+      std::pair<double,double>              etaRange; //!< Allowed range in eta of the final-state leptons
     };
 
     /**
@@ -105,8 +107,20 @@ namespace NangaParbat
     std::vector<double> GetUncorrelatedUnc() const { return _uncor; };
 
     /**
-     * @brief Function that returns the correlated systematic
+     * @brief Function that returns the additive correlated systematic
      * uncertainties.
+     */
+    std::vector<std::vector<double>> GetAddCorrelatedUnc() const { return _corra; };
+
+    /**
+     * @brief Function that returns the multiplicative correlated
+     * systematic uncertainties.
+     */
+    std::vector<std::vector<double>> GetMultCorrelatedUnc() const { return _corrm; };
+
+    /**
+     * @brief Function that returns the all the correlated systematic
+     * uncertainties (additive first and multiplicative second).
      */
     std::vector<std::vector<double>> GetCorrelatedUnc() const { return _corr; };
 
@@ -127,11 +141,13 @@ namespace NangaParbat
     Process                          _proc;        //!< The process
     Observable                       _obs;         //!< The observable
     double                           _targetiso;   //!< Isoscalarity of the target
-    double                           _prefact;     //!< Possible prefactor to multiply the theoretical predictions
+    double                           _prefact;     //!< Possible overall prefactor to multiply the theoretical predictions
     Kinematics                       _kin;         //!< Kinematics block
     std::vector<double>              _mean;        //!< Vector of central values
     std::vector<double>              _uncor;       //!< Vector of uncorrelated uncertainties
-    std::vector<std::vector<double>> _corr;        //!< Correlated uncertainties
+    std::vector<std::vector<double>> _corra;       //!< Additive correlated uncertainties
+    std::vector<std::vector<double>> _corrm;       //!< Multiplicative correlated uncertainties
+    std::vector<std::vector<double>> _corr;        //!< All correlated uncertainties
     apfel::matrix<double>            _covmat;      //!< Covariance matrix
     apfel::matrix<double>            _CholL;       //!< Cholesky decomposition of the covariance matrix
 
