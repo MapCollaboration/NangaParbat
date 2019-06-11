@@ -16,24 +16,24 @@ namespace NangaParbat
     ndata(0),
     Vs(0),
     qTv({}),
-      var1b(std::pair<double,double>
-            {
-              0, 0
-            }),
-      var2b(std::pair<double,double> {0, 0}),
+      qTmap({}),
+      qTfact({}),
+      var1b({0, 0}),
+      var2b({0, 0}),
       IntqT(false),
       Intv1(false),
       Intv2(false),
       PSRed(false),
       pTMin(0),
-      etaRange(std::pair<double,double> {-10, 10})
+      etaRange({-10, 10})
   {
   }
 
   //_________________________________________________________________________________
   bool DataHandler::Kinematics::empty() const
   {
-    if (ndata == 0 || Vs == 0 || qTv.empty())
+    if (ndata == 0 || Vs == 0 || qTv.empty() || qTmap.empty() || qTfact.empty() ||
+        ( var1b.first == 0 && var1b.second == 0 && var1b.first == 0 && var1b.second == 0 ))
       return true;
     else
       return false;
@@ -51,7 +51,8 @@ namespace NangaParbat
     // Retrieve kinematics
     for (auto const& dv : datafile["dependent_variables"])
       {
-        // Run over the qualifiers
+        // Run over the qualifiers and make sure that all necessary
+        // parameters are found.
         for (auto const& ql : dv["qualifiers"])
           {
             // Process
@@ -111,59 +112,110 @@ namespace NangaParbat
               }
           }
 
-        // Run over the data point values and uncertainties
+        // Run over the data-point values and uncertainties
         for (auto const& vl : dv["values"])
           {
             // Read central values
             _mean.push_back(vl["value"].as<double>());
 
             // Read uncertainties
-            std::vector<double> c;
+            double u = 0;
+            std::vector<double> a;
+            std::vector<double> m;
             for (auto const& err : vl["errors"])
               {
+                // Sum in quadrature all uncurrelated uncertainties.
                 if (err["label"].as<std::string>() == "unc")
-                  _uncor.push_back(err["value"].as<double>());
-                if (err["label"].as<std::string>() == "mult" || err["label"].as<std::string>() == "add")
-                  c.push_back(err["value"].as<double>());
+                  u += pow(err["value"].as<double>(), 2);
+
+                // Additive correlated uncertities
+                if (err["label"].as<std::string>() == "add")
+                  a.push_back(err["value"].as<double>());
+
+                // Multiplicative correlated uncertities
+                if (err["label"].as<std::string>() == "mult")
+                  m.push_back(err["value"].as<double>());
               }
+            _uncor.push_back(sqrt(u));
+            _corra.push_back(a);
+            _corrm.push_back(m);
+
+            // Now concatenate vectors of additive and multiplicative
+            // uncertainties and push it back into "_corr".
+            std::vector<double> c = a;
+            c.insert(c.end(), m.begin(), m.end());
             _corr.push_back(c);
           }
       }
 
-    _kin.ndata = 0;
-    // Transverse momentum bin bounds
+    // Transverse-momentum bin bounds
     for (auto const& iv : datafile["independent_variables"])
       for (auto const& vl : iv["values"])
         {
+          // Increment number of datapoints
           _kin.ndata++;
-          if (vl["low"])
+
+          // If the keys "low" and "high" are present the data-point
+          // is integrated over the qT bin. If instead the key "value"
+          // is found the bin is not integrated. Save in the "_qTv"
+          // vector values of qT without repetitions. Don't allow for
+          // values smaller than 10^{-5} GeV. Create a vector of pairs
+          // to map the values of qT to the single data points. If the
+          // data point is not integrate over qT the second entry of
+          // the map pair is set to -1. Make also sure that all bins
+          // are either all integrated or all are not by checking if
+          // "_kin.IntqT" has changed after the first data point.
+          if (vl["low"] && vl["high"])
             {
+              if (_kin.ndata > 1 and _kin.IntqT != true)
+                throw std::runtime_error("[DataHandler::DataHandler]: Mixed qT integrated/non-integrated data points found");
+
               _kin.IntqT = true;
-              if(std::find(_kin.qTv.begin(), _kin.qTv.end(), vl["low"].as<double>()) == _kin.qTv.end())
+              const double qTl = vl["low"].as<double>();
+              const double qTh = vl["high"].as<double>();
+              if(std::find(_kin.qTv.begin(), _kin.qTv.end(), qTl) == _kin.qTv.end())
                 _kin.qTv.push_back(std::max(vl["low"].as<double>(), 1e-5));
-              if(std::find(_kin.qTv.begin(), _kin.qTv.end(), vl["high"].as<double>()) == _kin.qTv.end())
+              if(std::find(_kin.qTv.begin(), _kin.qTv.end(), qTh) == _kin.qTv.end())
                 _kin.qTv.push_back(vl["high"].as<double>());
+
+              _kin.qTmap.push_back(std::make_pair(qTl, qTh));
+            }
+          else if (vl["value"])
+            {
+              if (_kin.ndata > 1 and _kin.IntqT != false)
+                throw std::runtime_error("[DataHandler::DataHandler]: Mixed qT integrated/non-integrated data points found");
+
+              _kin.IntqT = false;
+              const double qTval = vl["value"].as<double>();
+              if(std::find(_kin.qTv.begin(), _kin.qTv.end(), qTval) == _kin.qTv.end())
+                _kin.qTv.push_back(std::max(vl["value"].as<double>(), 1e-5));
+
+              _kin.qTmap.push_back(std::make_pair(qTval, -1));
             }
           else
-            {
-              _kin.IntqT = false;
-              if(std::find(_kin.qTv.begin(), _kin.qTv.end(), vl["value"].as<double>()) == _kin.qTv.end())
-                _kin.qTv.push_back(std::max(vl["value"].as<double>(), 1e-5));
-            }
+            throw std::runtime_error("[DataHandler::DataHandler]: Invalid qT-bin structure");
+
+          // Now fill in vector of by-by-bin prefactors.
+          if (vl["factor"])
+            _kin.qTfact.push_back(vl["factor"].as<double>());
+          else
+            _kin.qTfact.push_back(1);
         }
 
     // Check that the "DataHandler" has been properly filled in
     if (_proc == UnknownProcess ||
         _obs  == UnknownObservable ||
         _kin.empty())
-      throw std::runtime_error("[DataHandler::DataHandler]: Object not properly filled in. Probably some required key is missing");
+      throw std::runtime_error("[DataHandler::DataHandler]: Object not properly filled in. Probably one or more required keys are missing");
 
     // Now construct the covariance matrix
     _covmat.resize(_kin.ndata, _kin.ndata);
     for (int i = 0; i < _kin.ndata; i++)
       for (int j = 0; j < _kin.ndata; j++)
-        _covmat(i, j) = std::inner_product(_corr[i].begin(), _corr[i].end(), _corr[j].begin(), 0.) * _mean[i] * _mean[j]
-                        + (i == j ? pow(_uncor[i], 2) : 0);
+        _covmat(i, j) =
+          std::inner_product(_corra[i].begin(), _corra[i].end(), _corra[j].begin(), 0.) * _mean[i] * _mean[j]    // Additive component
+          + std::inner_product(_corrm[i].begin(), _corrm[i].end(), _corrm[j].begin(), 0.) * _mean[i] * _mean[j]  // Multiplicative component
+          + (i == j ? pow(_uncor[i], 2) : 0);                                                                    // Uncorrelated component
 
     // Cholesky decomposition of the covariance matrix
     _CholL = CholeskyDecomposition(_covmat);
@@ -189,17 +241,25 @@ namespace NangaParbat
       os << "- Observable: d(sigma)/dxFdQdqT\n";
     else
       os << "- Observable: Unknown\n";
+
     os << "- Target isoscalarity: " << DH._targetiso << "\n";
     os << "- Overall prefactor: " << DH._prefact << "\n";
-
     os << "- Number of points: " << DH._kin.ndata << "\n";
     os << "- Center-of-mass energy: " << DH._kin.Vs << " GeV\n";
-    if (DH._kin.IntqT)
-      os << "- qT bin-bounds: [ ";
-    else
-      os << "qT values: [ ";
-    for (auto const& qT : DH._kin.qTv)
-      os << qT << " ";
+
+    os << "- qT bin-bounds: [ ";
+    for (auto const& qTp : DH._kin.qTmap)
+      {
+        os << "(" << qTp.first;
+        if (qTp.second > 0)
+          os << ", " << qTp.second;
+        os << ") ";
+      }
+    os << "] GeV\n";
+
+    os << "- qT bin facors: [ ";
+    for (auto const& qTf : DH._kin.qTfact)
+      os << qTf << " ";
     os << "] GeV\n";
 
     if (DH._kin.Intv1)
