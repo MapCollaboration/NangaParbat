@@ -4,17 +4,12 @@
 // Authors: Valerio Bertone: valerio.bertone@cern.ch
 //
 
+#include "NangaParbat/utilities.h"
+
 #include <math.h>
 #include <LHAPDF/LHAPDF.h>
 #include <apfel/apfelxx.h>
 #include <yaml-cpp/yaml.h>
-
-// b* prescription
-double bstar(double const& b, double const& Q)
-{
-  const double bmax = 2 * exp( - apfel::emc);
-  return b / sqrt( 1 + pow(b / bmax, 2) );
-}
 
 // Non-perturnative function
 double fNP(double const&, double const& b, double const& zetaf)
@@ -113,7 +108,7 @@ int main()
   {
     // Get Evolved TMD PDFs and rotate them into the physical
     // basis
-    const std::map<int,apfel::Distribution> xF = QCDEvToPhys(EvTMDPDFs(bstar(b, Qb), muf, zetaf).GetObjects());
+    const std::map<int,apfel::Distribution> xF = QCDEvToPhys(EvTMDPDFs(NangaParbat::bstar(b, Qb), muf, zetaf).GetObjects());
 
     // Combine TMDs through the EW charges
     double lumi = 0;

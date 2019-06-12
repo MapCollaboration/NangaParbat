@@ -2,30 +2,13 @@
 // Author: Valerio Bertone: valerio.bertone@cern.ch
 //
 
+#include "NangaParbat/DWS.h"
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/convolutiontable.h"
+#include "NangaParbat/utilities.h"
 
 #include <fstream>
-
 #include <apfel/timer.h>
-
-//_________________________________________________________________________________
-// Define here the b* prescription
-double bstar(double const& b, double const&)
-{
-  const double bmax = 1;
-  return b / sqrt( 1 + pow(b / bmax, 2) );
-}
-
-//_________________________________________________________________________________
-// b-min prescription
-double bstarmin(double const& b, double const& Q)
-{
-  const double bmax = 2 * exp( - apfel::emc);
-  const double bmin = bmax / Q;
-  const double bs = bmax * pow((1 - exp(-pow(b / bmax, 4)))/(1 - exp(-pow(b / bmin, 4))),0.25); // prescription with bmin
-  return bs;
-}
 
 //_________________________________________________________________________________
 // Main program
@@ -58,7 +41,7 @@ int main(int argc, char* argv[])
       }
 
   // Compute tables
-  const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect, bstarmin);
+  const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect, NangaParbat::bstarmin);
 
   // Dump table to file
   for (auto const& tab : Tabs)
@@ -66,6 +49,35 @@ int main(int argc, char* argv[])
       std::ofstream fout(std::string(argv[3]) + YAML::Load(tab.c_str())["name"].as<std::string>() + ".yaml");
       fout << tab.c_str() << std::endl;
       fout.close();
+    }
+
+  // Now test tables
+  // Allocate "Parameterisation" derived object
+  DWS NPFunc{};
+
+  // Compute direct predictions
+  auto const fNP = [=] (double const& x, double const& b, double const& zeta) -> double { return NPFunc.Evaluate(x, b, zeta, 0); };
+  const std::vector<std::vector<double>> dc = FIObj.DirectComputation(DHVect, NangaParbat::bstarmin, fNP, fNP);
+
+  // No read convolution tables and compute predictions from the grids
+  std::vector<std::vector<double>> gc;
+  for (auto const& exp : datasets)
+    for (auto const& ds : exp.second)
+      {
+        const std::string table = std::string(argv[3]) + "/" + ds["name"].as<std::string>() + ".yaml";
+        const NangaParbat::ConvolutionTable ct{YAML::LoadFile(table)};
+        gc.push_back(ct.GetPredictions(fNP));
+      }
+
+  // Report results
+  std::cout << "  Direct           Grid            Ratio" << std::endl;
+  std::cout << std::scientific;
+  for (int i = 0; i < (int) gc.size(); i++)
+    {
+      std::cout << "Dataset " << i + 1 << "):" << std::endl;
+      for (int j = 0; j < (int) gc[i].size(); j++)
+	std::cout << dc[i][j] << "\t" << gc[i][j] << "\t" << dc[i][j] / gc[i][j] << std::endl;
+      std::cout << "\n";
     }
 
   return 0;

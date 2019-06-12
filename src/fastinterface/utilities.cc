@@ -7,6 +7,7 @@
 #include <iostream>
 #include <cmath>
 #include <gsl/gsl_linalg.h>
+#include <apfel/constants.h>
 
 namespace NangaParbat
 {
@@ -139,5 +140,23 @@ namespace NangaParbat
           throw std::runtime_error("[SolveSymmetricSystem]: Problem with the symmetric system.");
       }
     return lambda;
+  }
+
+  //_________________________________________________________________________________
+  double bstar(double const& b, double const&)
+  {
+    const double bmax = 2 * exp( - apfel::emc);
+    return b / sqrt( 1 + pow(b / bmax, 2) );
+  }
+
+  //_________________________________________________________________________________
+  double bstarmin(double const& b, double const& Q)
+  {
+    const double bmax  = 2 * exp( - apfel::emc);
+    const double bmin  = bmax / Q;
+    const double power = 4;
+    const double bs = bmax * pow( ( 1 - exp( - pow(b / bmax, power) ) ) /
+                                  ( 1 - exp( - pow(b / bmin, power) ) ), 1 / power);
+    return bs;
   }
 }

@@ -4,9 +4,10 @@
 // Authors: Valerio Bertone: valerio.bertone@cern.ch
 //
 
-#include <apfel/apfelxx.h>
+#include "NangaParbat/utilities.h"
 
-#include "LHAPDF/LHAPDF.h"
+#include <apfel/apfelxx.h>
+#include <LHAPDF/LHAPDF.h>
 
 // Narrow-width-approximation charges.
 std::vector<double> EWChargesNWA(double const& Q)
@@ -38,14 +39,6 @@ double fNP(double const& b, double const& zetaf)
   const double g2 = 0.5;
   const double Q0 = 1.6;
   return exp( ( - g1 - g2 * log( sqrt(zetaf) / Q0 / 2 ) ) * b * b / 2 );
-}
-
-// b* prescription
-double bstar(double const& b)
-{
-  const double bmax = 1;
-  const double bs = b / sqrt( 1 + pow(b / bmax, 2) );
-  return bs;
 }
 
 // Main program
@@ -113,7 +106,7 @@ int main()
   // non-perturbative part. This can be tabulated in b.
   const auto EvolvedTMDPDFs = [=] (double const& b) -> apfel::Set<apfel::Distribution>
   {
-    const double bs = bstar(b);
+    const double bs = NangaParbat::bstar(b, 0);
     return fNP(b, zetaf) * QuarkEvolFactor(bs, muf, zetaf) * MatchedTMDPDFs(bs);
   };
 

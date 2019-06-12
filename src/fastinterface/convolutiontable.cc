@@ -24,14 +24,20 @@ namespace NangaParbat
     // C.M.E.
     _Vs = table["CME"].as<double>();
 
-    // Prefactor
-    _prefact = table["prefactor"].as<double>();
-
-    // qT bin bounds
+    // Whether the data is integrated over qT
     _IntqT = table["qTintegrated"].as<bool>();
 
     // qT bin bounds
     _qTv = table["qT_bounds"].as<std::vector<double>>();
+
+    // Bin bounds for each qT bin
+    _qTmap = table["qT_map"].as<std::vector<std::vector<double>>>();
+
+    // Bin-by-bin factors
+    _qTfact = table["bin_factors"].as<std::vector<double>>();
+
+    // Prefactor
+    _prefact = table["prefactor"].as<double>();
 
     // Ogata unscaled coordinates
     _z = table["Ogata_coordinates"].as<std::vector<double>>();
@@ -53,7 +59,6 @@ namespace NangaParbat
     // Read weights
     for (auto const& qT : _qTv)
       _W.insert({qT, table["weights"][qT].as<std::vector<std::vector<std::vector<double>>>>()});
-
   }
 
   //_________________________________________________________________________________
@@ -131,17 +136,18 @@ namespace NangaParbat
                                                        std::function<double(double const&, double const&, double const&)> const& fNP2) const
   {
     std::map<double,double> pred = Convolute(fNP1, fNP2);
-    const int npred = pred.size() / 2 - (_IntqT ? 1 : 0);
+    const int npred = (int) _qTmap.size();
     std::vector<double> vpred(npred);
     if (_IntqT)
       for (int i = 0; i < npred; i++)
         {
-          vpred[i]  = ( pred.at(_qTv[i+1]) - pred.at(_qTv[i]) ) / ( _qTv[i+1] - _qTv[i] );
-          vpred[i] -= ( pred.at(-_qTv[i+1]) + pred.at(-_qTv[i]) ) / 2;
+          vpred[i]  = ( pred.at(_qTmap[i][1]) - pred.at(_qTmap[i][0]) ) / ( _qTmap[i][1] - _qTmap[i][0] );
+          vpred[i] -= ( pred.at(-_qTmap[i][1]) + pred.at(-_qTmap[i][0]) ) / 2;
+          vpred[i] *= _prefact * _qTfact[i];
         }
     else
       for (int i = 0; i < npred; i++)
-        vpred[i] = pred.at(_qTv[i]);
+        vpred[i] = _prefact * _qTfact[i] * pred.at(_qTmap[i][1]);
 
     return vpred;
   }

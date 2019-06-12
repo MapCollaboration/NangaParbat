@@ -136,12 +136,14 @@ namespace NangaParbat
 
     const std::map<int,apfel::Distribution> xF = QCDEvToPhys(_EvTMDPDFs(bT, muf, zetaf).GetObjects());
     apfel::DoubleObject<apfel::Distribution> Lumi;
+
     // Treat down and up separately to take isoscalarity of the target
     // into account
     Lumi.AddTerm({factor * Bq[0], frp * xF.at(sign)    + frn * xF.at(sign*2),  xF.at(-1)});
     Lumi.AddTerm({factor * Bq[0], frp * xF.at(-sign)   + frn * xF.at(-sign*2), xF.at(1)});
     Lumi.AddTerm({factor * Bq[1], frp * xF.at(sign*2)  + frn * xF.at(sign),    xF.at(-2)});
     Lumi.AddTerm({factor * Bq[1], frp * xF.at(-sign*2) + frn * xF.at(-sign),   xF.at(2)});
+
     // Now run over the remaining flavours
     for (int i = 3; i <= nf; i++)
       {
@@ -188,12 +190,14 @@ namespace NangaParbat
     const std::map<int,apfel::Distribution> xF = QCDEvToPhys(_EvTMDPDFs(bT, muf, zetaf).GetObjects());
     const std::map<int,apfel::Distribution> xD = QCDEvToPhys(_EvTMDFFs(bT, muf, zetaf).GetObjects());
     apfel::DoubleObject<apfel::Distribution> Lumi;
+
     // Treat down and up separately to take isoscalarity of the target
     // into account
     Lumi.AddTerm({factor * Bq[0], frp * xF.at(sign)    + frn * xF.at(sign*2),  xD.at(-1)});
     Lumi.AddTerm({factor * Bq[0], frp * xF.at(-sign)   + frn * xF.at(-sign*2), xD.at(1)});
     Lumi.AddTerm({factor * Bq[1], frp * xF.at(sign*2)  + frn * xF.at(sign),    xD.at(-2)});
     Lumi.AddTerm({factor * Bq[1], frp * xF.at(-sign*2) + frn * xF.at(-sign),   xD.at(2)});
+
     // Now run over the remaining flavours
     for (int i = 3; i <= nf; i++)
       {
@@ -205,8 +209,8 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  std::vector<YAML::Emitter> FastInterface::ComputeTables(std::vector<DataHandler> const& DHVect,
-                                                          std::function<double(double const&, double const&)> bstar) const
+  std::vector<YAML::Emitter> FastInterface::ComputeTables(std::vector<DataHandler>                            const& DHVect,
+                                                          std::function<double(double const&, double const&)> const& bstar) const
   {
     // Retrieve relevant parameters for the numerical integration from
     // the configuration file
@@ -248,17 +252,19 @@ namespace NangaParbat
         const double prefactor = DHVect[i].GetPrefactor();
 
         // Retrieve kinematics
-        const DataHandler::Kinematics  kin      = DHVect[i].GetKinematics();
-        const double                   Vs       = kin.Vs;       // C.M.E.
-        const std::vector<double>      qTv      = kin.qTv;      // Transverse momentum bin bounds
-        const std::pair<double,double> Qb       = kin.var1b;    // Invariant mass interval
-        const std::pair<double,double> yxb      = kin.var2b;    // Rapidity/xF interval
-        const bool                     IntqT    = kin.IntqT;    // Whether the bins in qTv are to be integrated over
-        const bool                     IntQ     = kin.Intv1;    // Whether the bin in Q is to be integrated over
-        const bool                     Inty     = kin.Intv2;    // Whether the bin in y is to be integrated over
-        const bool                     PSRed    = kin.PSRed;    // Whether there is a final-state PS reduction
-        const double                   pTMin    = kin.pTMin;    // Minimum pT of the final-state leptons
-        const std::pair<double,double> etaRange = kin.etaRange; // Allowed range in eta of the final-state leptons
+        const DataHandler::Kinematics               kin      = DHVect[i].GetKinematics();
+        const double                                Vs       = kin.Vs;       // C.M.E.
+        const std::vector<double>                   qTv      = kin.qTv;      // Transverse momentum bin bounds
+        const std::vector<std::pair<double,double>> qTmap    = kin.qTmap;    // Map of qT bounds to associate to the single bins
+        const std::vector<double>                   qTfact   = kin.qTfact;   // Possible bin-by-bin prefactors to multiply the theoretical predictions
+        const std::pair<double,double>              Qb       = kin.var1b;    // Invariant mass interval
+        const std::pair<double,double>              yxb      = kin.var2b;    // Rapidity/xF interval
+        const bool                                  IntqT    = kin.IntqT;    // Whether the bins in qTv are to be integrated over
+        const bool                                  IntQ     = kin.Intv1;    // Whether the bin in Q is to be integrated over
+        const bool                                  Inty     = kin.Intv2;    // Whether the bin in y is to be integrated over
+        const bool                                  PSRed    = kin.PSRed;    // Whether there is a final-state PS reduction
+        const double                                pTMin    = kin.pTMin;    // Minimum pT of the final-state leptons
+        const std::pair<double,double>              etaRange = kin.etaRange; // Allowed range in eta of the final-state leptons
 
         // Initialise two-particle phase-space object. Symmetrise the
         // rapidity range.
@@ -299,11 +305,15 @@ namespace NangaParbat
         Tabs[i] << YAML::Key << "name" << YAML::Value << name;
         Tabs[i] << YAML::Key << "process" << YAML::Value << proc;
         Tabs[i] << YAML::Key << "observable" << YAML::Value << obs;
-        Tabs[i] << YAML::Key << "target_isoscalarity" << YAML::Value << targetiso;
-        Tabs[i] << YAML::Key << "prefactor" << YAML::Value << prefactor;
         Tabs[i] << YAML::Key << "CME" << YAML::Value << Vs;
         Tabs[i] << YAML::Key << "qTintegrated" << YAML::Value << IntqT;
         Tabs[i] << YAML::Key << "qT_bounds" << YAML::Value << YAML::Flow << qTv;
+        Tabs[i] << YAML::Key << "qT_map" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+        for (auto const& qTp : qTmap)
+          Tabs[i] << YAML::Flow << YAML::BeginSeq << qTp.first <<  qTp.second << YAML::EndSeq;
+        Tabs[i] << YAML::EndSeq;
+        Tabs[i] << YAML::Key << "bin_factors" << YAML::Value << YAML::Flow << qTfact;
+        Tabs[i] << YAML::Key << "prefactor" << YAML::Value << prefactor;
         Tabs[i] << YAML::Key << "Ogata_coordinates" << YAML::Value << YAML::Flow << std::vector<double>(zo.begin(), zo.begin() + nO);
         Tabs[i] << YAML::Key << "Qgrid" << YAML::Value << YAML::Flow << Qg;
         Tabs[i] << YAML::Key << "xigrid" << YAML::Value << YAML::Flow << xig;
@@ -313,6 +323,7 @@ namespace NangaParbat
         // respectively if no cut is present.
         std::map<double,std::vector<std::vector<double>>> mPS;
         std::map<double,std::vector<std::vector<double>>> mdPS;
+
         // Loop over the qT-bin bounds
         for (auto const& qT : qTv)
           {
@@ -386,9 +397,15 @@ namespace NangaParbat
                 const double b  = zo[n] / qT;
 
                 // Tabulate luminosity function using b* as an impact
-                // parameter
-                const auto Lumi = [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution> { return LuminosityDY(bstar(b, Q), Q, targetiso); };
-                const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabLumi{Lumi, 200, Qb.first, Qb.second, 1, {}};
+                // parameter. If no integration in Q is requested
+                // compute the luminosity at "Qav" even when
+                // tabulating.
+                const auto Lumi = [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
+                {
+                  const double Qt = (IntQ ? Q : Qav);
+                  return LuminosityDY(bstar(b, Qt), Qt, targetiso);
+                };
+                const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabLumi{Lumi, (IntQ ? 200 : 2), Qb.first, Qb.second, 1, {}};
 
                 // Initialise vector of fixed points for the integration in Q
                 std::vector<double> FixPtsQ;
@@ -428,19 +445,18 @@ namespace NangaParbat
                           // Function to be integrated in xi
                           const auto xiintegrand = [&] (double const& xi) -> double
                           {
-                            // Compute 'x1' and 'x2' according to
-                            // the proper observable.
+                            // Compute 'x1' and 'x2' according to the
+                            // proper observable.
                             const double x1 = (obs == DataHandler::dydQdqT ? Q * xi / Vs : ( xi + sqrt( pow(xi, 2) + pow(2 * Q / Vs, 2) ) ) / 2);
                             const double x2 = pow(Q / Vs, 2) / x1;
 
                             // Get interpolating function in xi but
                             // return 1 if no integration over xi is
                             // required. This should not be strictly
-                            // needed because, if no integration
-                            // over Q is required, this function
-                            // should be called in xig[alpha] where
-                            // the interpolating function is already
-                            // one.
+                            // needed because, if no integration over
+                            // Q is required, this function should be
+                            // called in xig[alpha] where the
+                            // interpolating function is already one.
                             const double Ixi = (Inty ? xigrid.Interpolant(0, alpha, xi) : 1);
 
                             // Return xi integrand
@@ -454,10 +470,10 @@ namespace NangaParbat
                           // Get interpolating function in Q but
                           // return 1 if no integration over Q is
                           // required. This should not be strictly
-                          // needed because, if no integration over
-                          // Q is required, this function should be
-                          // called in Qg[tau] where the
-                          // interpolating function is already one.
+                          // needed because, if no integration over Q
+                          // is required, this function should be
+                          // called in Qg[tau] where the interpolating
+                          // function is already one.
                           const double IQ = (IntQ ? Qgrid.Interpolant(0, tau, Q) : 1);
 
                           // Return Q integrand
@@ -469,7 +485,7 @@ namespace NangaParbat
                         const double Qintegral = (IntQ ? QIntObj.integrate(Qmin, Qmax, FixPtsQ, epsQ) : Qintegrand(Qg[tau]));
 
                         // Compute the weight
-                        W[n][tau][alpha] = prefactor * wo[n] * Qintegral;
+                        W[n][tau][alpha] = wo[n] * Qintegral;
 
                         // If not intergrating over qT, multiply by b
                         if (!IntqT)
@@ -496,5 +512,126 @@ namespace NangaParbat
     std::cout << std::endl;
 
     return Tabs;
+  }
+
+  //_________________________________________________________________________________
+  std::vector<std::vector<double>> FastInterface::DirectComputation(std::vector<DataHandler>                                           const& DHVect,
+                                                                    std::function<double(double const&, double const&)>                const& bstar,
+                                                                    std::function<double(double const&, double const&, double const&)> const& fNP1,
+                                                                    std::function<double(double const&, double const&, double const&)> const& fNP2,
+                                                                    double                                                             const& epsQ,
+                                                                    double                                                             const& epsxi,
+                                                                    bool                                                               const& sameOgata) const
+  {
+    // Timer
+    apfel::Timer t;
+
+    // Allocate a vector of vectors that will be filled in with the
+    // predictions for each dataset and will eventually be returned
+    std::vector<std::vector<double>> DirectPredictions;
+
+    // Loop over the vector of "Kinematics" objects
+    for (auto const& dh : DHVect)
+      {
+        // Allocate vector of predictions for this particular dataset.
+        std::vector<double> vpred;
+
+        // Target isoscalarity
+        const double targetiso = dh.GetTargetIsoscalarity();
+
+        // Prefactor
+        const double prefactor = dh.GetPrefactor();
+
+        // Retrieve kinematics
+        const DataHandler::Kinematics               kin      = dh.GetKinematics();
+        const double                                Vs       = kin.Vs;       // C.M.E.
+        const std::vector<std::pair<double,double>> qTmap    = kin.qTmap;    // Map of qT bounds to associate to the single bins
+        const bool                                  IntqT    = kin.IntqT;    // Whether the bins in qTv are to be integrated over
+        const bool                                  IntQ     = kin.Intv1;    // Whether the bin in Q is to be integrated over
+        const bool                                  Inty     = kin.Intv2;    // Whether the bin in y is to be integrated over
+        const bool                                  PSRed    = kin.PSRed;    // Whether there is a final-state PS reduction
+        const double                                pTMin    = kin.pTMin;    // Minimum pT of the final-state leptons
+        const std::pair<double,double>              etaRange = kin.etaRange; // Allowed range in eta of the final-state leptons
+
+        // Initialise two-particle phase-space object. Symmetrise the
+        // rapidity range.
+        //const double aveta = ( etaRange.second + etaRange.first ) / 2;
+        const double deta  = ( etaRange.second - etaRange.first ) / 2;
+        TwoParticlePhaseSpace ps{pTMin, deta};
+
+        // Q integration bounds
+        const double Qmin = kin.var1b.first;
+        const double Qmax = kin.var1b.second;
+        const double Qav  = ( Qmax + Qmin ) / 2;
+
+        // xi integration bounds
+        const double ximin = exp( kin.var2b.first );
+        const double ximax = exp( kin.var2b.second );
+        const double xiav  = exp( ( kin.var2b.first + kin.var2b.second ) / 2 );
+
+        // Ogata-quadrature object of degree one or zero according to
+        // weather the cross sections have to be integrated over the
+        // bins in qT or not.
+        apfel::OgataQuadrature OgataObj{(IntqT ? 1 : 0)};
+
+        // Loop over the qT-bin bounds
+        for (int i = 0; i < (int) kin.qTmap.size(); i++)
+          {
+            // If the value of qT / Qmin is above that allowed print
+            // all zero's and continue with the next value of qT
+            if (kin.qTmap[i].second / Qmin > _config["qToverQmax"].as<double>())
+              {
+                vpred.push_back(0);
+                continue;
+              }
+
+            // Construct the TMD luminosity in b scale to be fed to be
+            // trasformed in qT space.
+            const auto TMDLumib = [&] (double const& b) -> double
+            {
+              // Function to be integrated in Q
+              const auto Qintegrand = [&] (double const& Q) -> double
+              {
+                // Compute Drell-Yan luminosity
+                const apfel::DoubleObject<apfel::Distribution> Lumi = LuminosityDY(bstar(b, Q), Q, targetiso);
+
+                // Function to be integrated in xi
+                const auto xiintegrand = [&] (double const& xi) -> double
+                {
+                  // Compute 'x1' and 'x2' according to the
+                  // proper observable.
+                  const double x1 = Q * xi / Vs;
+                  const double x2 = pow(Q / Vs, 2) / x1;
+
+                  // Return xi integrand
+                  return (PSRed ? ps.PhaseSpaceReduction(Q, kin.qTv[i], log(xi)) : 1) * Lumi.Evaluate(x1, x2) * fNP1(x1, b, Q * Q) * fNP2(x2, b, Q * Q) / xi;
+                };
+                // Perform the integral in xi
+                const apfel::Integrator xiIntObj{xiintegrand};
+                const double xiintegral = (Inty ? xiIntObj.integrate(ximin, ximax, epsxi) : xiintegrand(xiav));
+                return xiintegral;
+              };
+              // Perform the integral in Q
+              const apfel::Integrator QIntObj{Qintegrand};
+              const double Qintegral = (IntqT ? 1 : b) * (IntQ ? QIntObj.integrate(Qmin, Qmax, epsQ) : Qintegrand(Qav));
+              return Qintegral;
+            };
+            // Compute predictions through Ogata quadrature
+            double pred = 0;
+            const int nOgata = (sameOgata ? _config["nOgata"].as<int>() : 1000);
+            if (IntqT)
+              pred = ( qTmap[i].second * OgataObj.transform(TMDLumib, qTmap[i].second, nOgata) - qTmap[i].first * OgataObj.transform(TMDLumib, qTmap[i].first, nOgata) )
+                     / ( qTmap[i].second - qTmap[i].first );
+            else
+              pred = qTmap[i].second * OgataObj.transform(TMDLumib, qTmap[i].second, nOgata);
+            pred *= prefactor * kin.qTfact[i];
+            vpred.push_back(pred);
+          }
+        DirectPredictions.push_back(vpred);
+      }
+    std::cout << "Direct computation... ";
+    t.stop(true);
+    std::cout << "\n";
+    return DirectPredictions;
   }
 }

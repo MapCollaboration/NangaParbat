@@ -161,7 +161,7 @@ namespace NangaParbat
           // vector values of qT without repetitions. Don't allow for
           // values smaller than 10^{-5} GeV. Create a vector of pairs
           // to map the values of qT to the single data points. If the
-          // data point is not integrate over qT the second entry of
+          // data point is not integrate over qT the first entry of
           // the map pair is set to -1. Make also sure that all bins
           // are either all integrated or all are not by checking if
           // "_kin.IntqT" has changed after the first data point.
@@ -190,7 +190,7 @@ namespace NangaParbat
               if(std::find(_kin.qTv.begin(), _kin.qTv.end(), qTval) == _kin.qTv.end())
                 _kin.qTv.push_back(std::max(vl["value"].as<double>(), 1e-5));
 
-              _kin.qTmap.push_back(std::make_pair(qTval, -1));
+              _kin.qTmap.push_back(std::make_pair(-1, qTval));
             }
           else
             throw std::runtime_error("[DataHandler::DataHandler]: Invalid qT-bin structure");
@@ -257,10 +257,10 @@ namespace NangaParbat
       }
     os << "] GeV\n";
 
-    os << "- qT bin facors: [ ";
+    os << "- qT bin factors: [ ";
     for (auto const& qTf : DH._kin.qTfact)
       os << qTf << " ";
-    os << "] GeV\n";
+    os << "]\n";
 
     if (DH._kin.Intv1)
       os << "- Integration bounds of the first kinematic variable: [" << DH._kin.var1b.first << ": " << DH._kin.var1b.second << "]\n";

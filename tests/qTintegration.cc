@@ -21,13 +21,6 @@ double fNP(double const&, double const& b, double const& zetaf)
   return exp( ( - g1 - g2 * log( sqrt(zetaf) / Q0 / 2 ) ) * b * b / 2 );
 }
 
-// b* prescription
-double bstar(double const& b, double const&)
-{
-  const double bmax = 1;
-  return b / sqrt( 1 + pow(b / bmax, 2) );
-}
-
 // Main program
 int main()
 {
@@ -114,7 +107,7 @@ int main()
   // non-perturbative part. This can be tabulated in b.
   const auto EvolvedTMDPDFs = [=] (double const& b) -> apfel::Set<apfel::Distribution>
   {
-    const double bs = bstar(b, 0);
+    const double bs = NangaParbat::bstar(b, 0);
     return fNP(0, b, zetaf) * QuarkEvolFactor(bs, muf, zetaf) * MatchedTMDPDFs(bs);
   };
 
@@ -164,7 +157,7 @@ int main()
   {
     // Construct the TMD luminosity in b scale to be fed to be
     // trasformed in qT space.
-    const auto TMDLumibNew = [=] (double const& b) -> double{ return b * TabLumi.EvaluatexzQ(x1, x2, bstar(b, 0)) * fNP(0, b, zetaf) * fNP(0, b, zetaf) / 2; };
+    const auto TMDLumibNew = [=] (double const& b) -> double{ return b * TabLumi.EvaluatexzQ(x1, x2, NangaParbat::bstar(b, 0)) * fNP(0, b, zetaf) * fNP(0, b, zetaf) / 2; };
     return apfel::ConvFact * qT * 8 * M_PI * aem2 * hcs * ps.PhaseSpaceReduction(Q, qT, y) * bintegrand.transform(TMDLumibNew, qT) / pow(Q, 3) / 9;
   };
 
@@ -186,7 +179,7 @@ int main()
   {
     // Construct the TMD luminosity in b scale to be fed to be
     // trasformed in qT space.
-    const auto TMDLumibPrim = [=] (double const& b) -> double{ return TabLumi.EvaluatexzQ(x1, x2, bstar(b, 0)) * fNP(0, b, zetaf) * fNP(0, b, zetaf) / 2; };
+    const auto TMDLumibPrim = [=] (double const& b) -> double{ return TabLumi.EvaluatexzQ(x1, x2, NangaParbat::bstar(b, 0)) * fNP(0, b, zetaf) * fNP(0, b, zetaf) / 2; };
     const double DqT    = (lower ? 1 : -1); // This assumes that the bin-width is equal to 2 GeV
     const double PSRed  = ps.PhaseSpaceReduction(Q, qT, y);
     const double dPSRed = ps.DerivePhaseSpaceReduction(Q, qT, y);
@@ -209,7 +202,7 @@ int main()
   // above.
   /*
   const NangaParbat::FastInterface FIObj{config};
-  const std::vector<YAML::Emitter> tab = FIObj.ComputeTables({DHObj}, bstar);
+  const std::vector<YAML::Emitter> tab = FIObj.ComputeTables({DHObj}, NangaParbat::bstar);
   std::ofstream fout("../tables/" + YAML::Load(tab[0].c_str())["name"].as<std::string>() + ".yaml");
   fout << tab[0].c_str() << std::endl;
   fout.close();

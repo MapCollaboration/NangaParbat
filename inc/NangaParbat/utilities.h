@@ -50,4 +50,20 @@ namespace NangaParbat
    * @return the solution vector
    */
   std::vector<double> SolveSymmetricSystem(apfel::matrix<double> A, std::vector<double> rho);
+
+  /**
+   * @brief b* prescription a la Collins
+   * @param b: the impact parameter
+   * @param Q: the hard scale
+   * @return b*
+   */
+  double bstar(double const& b, double const& Q);
+
+  /**
+   * @brief b* prescription with bmin
+   * @param b: the impact parameter
+   * @param Q: the hard scale
+   * @return b*
+   */
+  double bstarmin(double const& b, double const& Q);
 }

@@ -81,11 +81,11 @@ namespace NangaParbat
      * the feauture of the convolution table
      */
     ///@{
-    std::string         GetName()       const { return _name; }
-    int                 GetProcess()    const { return _proc; }
-    int                 GetObservable() const { return _obs; }
-    double              GetCME()        const { return _Vs; }
-    std::vector<double> GetqTBins()     const { return _qTv; }
+    std::string                      GetName()       const { return _name; }
+    int                              GetProcess()    const { return _proc; }
+    int                              GetObservable() const { return _obs; }
+    double                           GetCME()        const { return _Vs; }
+    std::vector<std::vector<double>> GetqTBins()     const { return _qTmap; }
     ///@}
 
   private:
@@ -93,9 +93,11 @@ namespace NangaParbat
     int                                                            _proc;    //!< Index of the process (0: DY, 1: SIDIS)
     int                                                            _obs;     //!< Index of the observable
     double                                                         _Vs;      //!< Center of mass energy
-    double                                                         _prefact; //!< Overall prefactor
     bool                                                           _IntqT;   //!< Whether the bin are integrated in qT or not
-    std::vector<double>                                            _qTv;     //!< Vector of qT
+    std::vector<double>                                            _qTv;     //!< Vector of qT bin-bounds
+    std::vector<std::vector<double>>                               _qTmap;   //!< Vector of bounds for each qT bin
+    std::vector<double>                                            _qTfact;  //!< Bin-by-bin factors
+    double                                                         _prefact; //!< Overall prefactor
     std::vector<double>                                            _z;       //!< Unscaled Ogata coordinate
     std::vector<double>                                            _Qg;      //!< Grid in Q
     std::vector<double>                                            _xig;     //!< Grid in xi
