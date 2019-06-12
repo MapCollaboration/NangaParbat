@@ -8,15 +8,12 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________
-  TwoParticlePhaseSpace::TwoParticlePhaseSpace(double const& kTmin, double const& etamax, double const& eta0, double const& eta1):
+  TwoParticlePhaseSpace::TwoParticlePhaseSpace(double const& kTmin, double const& etamax):
     _kTmin(kTmin),
     _etamax(etamax)
   {
-    _ex       = ( eta0 > 0 && eta0 < eta1 ? true : false);
-    _cuts     = (_kTmin > 0 || _etamax > 0 || _ex ? true : false);
+    _cuts     = (_kTmin > 0 || _etamax > 0 ? true : false);
     _thetamax = (_etamax > 0 ? tanh(etamax) : 1);
-    _theta0   = tanh(eta0);
-    _theta1   = tanh(eta1);
 
     _result = 1;
     _error  = 0;
@@ -74,30 +71,6 @@ namespace NangaParbat
               return _set0();
           }
 
-        if (_ex)
-          {
-            if (_theta0 == 0)
-              {
-                E_nu_p.init_min_max(-_theta1,+_theta1);
-                E_nu_m.set_unvalid();
-              }
-            else
-              {
-                E_nu_p.init_min_max(+_theta0,+_theta1);
-                E_nu_m.init_min_max(-_theta1,-_theta0);
-                integration_bins.push_back(-_theta0);
-                integration_bins.push_back(+_theta0);
-              }
-            integration_bins.push_back(-_theta1);
-            integration_bins.push_back(+_theta1);
-
-            E_nu_p.apply_to_limit(L_nu);
-            E_nu_m.apply_to_limit(L_nu);
-
-            if (L_nu.is_unvalid())
-              return _set0();
-          }
-
         std::sort(integration_bins.begin(),integration_bins.end());
         std::vector<double>::const_iterator itr(integration_bins.begin());
         const std::vector<double>::const_iterator end(integration_bins.end()-1);
@@ -111,12 +84,7 @@ namespace NangaParbat
             IR.init_max(*(++itr));
             IR.add_limit(L_nu);
             if (IR.is_valid())
-              {
-                if (_ex)
-                  res += _calc_one_region(IR, E_nu_m, E_nu_p);
-                else
-                  res += _calc_one_region(IR);
-              }
+              res += _calc_one_region(IR);
           }
         _result = res;
       }
@@ -140,8 +108,6 @@ namespace NangaParbat
           os << ", kTmin -> " << _kTmin;
         if (0 < _etamax)
           os << ", etamax -> " << _etamax;
-        if (_ex)
-          os << ", eta01 -> [" << atanh(_theta0) << ", " << atanh(_theta1) <<"]";
       }
     os << ") = (" << _result << " +- " << _error << ")";
     return os;
@@ -205,22 +171,6 @@ namespace NangaParbat
           return false;
       }
 
-    if (_ex)
-      {
-        E_u_m.init(_fthb(-_theta0), _fthb(-_theta1));
-        E_u_p.init(_fthb(+_theta0), _fthb(+_theta1));
-
-        E_u_m.apply_to_limit(L_u);
-        E_u_p.apply_to_limit(L_u);
-
-        if (L_u.is_unvalid())
-          return false;
-
-        if (E_u_m.is_valid())
-          u_limit_to_alpha(E_u_m, um, iDu);
-        if (E_u_p.is_valid())
-          u_limit_to_alpha(E_u_p, um, iDu);
-      }
     u_limit_to_alpha(L_u, um, iDu);
 
     return true;
@@ -233,16 +183,8 @@ namespace NangaParbat
     double res = 0;
     Snu = sqrt(1 - pow(nu, 2));
     if (_calc_alphas())
-      {
-        res = f(L_u.min, L_u.max);
-        if (_ex)
-          {
-            if (E_u_m.is_valid())
-              res -= f(E_u_m.min, E_u_m.max);
-            if (E_u_p.is_valid())
-              res -= f(E_u_p.min, E_u_m.max);
-          }
-      }
+      res = f(L_u.min, L_u.max);
+
     return res;
   }
 

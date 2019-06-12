@@ -268,7 +268,7 @@ namespace NangaParbat
 
         // Initialise two-particle phase-space object. Symmetrise the
         // rapidity range.
-        const double deta = ( etaRange.second - etaRange.first ) / 2;
+        const double deta = std::abs( etaRange.second - etaRange.first ) / 2;
         TwoParticlePhaseSpace ps{pTMin, deta};
 
         // Ogata-quadrature object of degree one or zero according to
@@ -558,7 +558,7 @@ namespace NangaParbat
         // Initialise two-particle phase-space object. Symmetrise the
         // rapidity range.
         //const double aveta = ( etaRange.second + etaRange.first ) / 2;
-        const double deta  = ( etaRange.second - etaRange.first ) / 2;
+        const double deta  = std::abs( etaRange.second - etaRange.first ) / 2;
         TwoParticlePhaseSpace ps{pTMin, deta};
 
         // Q integration bounds
@@ -606,7 +606,8 @@ namespace NangaParbat
                   const double x2 = pow(Q / Vs, 2) / x1;
 
                   // Return xi integrand
-                  return (PSRed ? ps.PhaseSpaceReduction(Q, kin.qTv[i], log(xi)) : 1) * Lumi.Evaluate(x1, x2) * fNP1(x1, b, Q * Q) * fNP2(x2, b, Q * Q) / xi;
+                  const double qTm = ( kin.qTmap[i].first + kin.qTmap[i].second ) / 2;
+                  return (PSRed ? ps.PhaseSpaceReduction(Q, qTm, log(xi)) : 1) * Lumi.Evaluate(x1, x2) * fNP1(x1, b, Q * Q) * fNP2(x2, b, Q * Q) / xi;
                 };
 
                 // Perform the integral in xi

@@ -20,8 +20,6 @@ namespace NangaParbat
    * 	with:
    * 		k_T   > kTmin 	&&	kb_T   > kTmin
    * 		|eta| < etamax	&&	|etab| < etamax
-   * 	excluding:
-   * 		eta0 < |eta| < eta1  && eta0 < |etab| < eta1
    *
    * The following class has been extracted from the "Cute" program
    * version 2.0.0 (see https://cute.hepforge.org) and adapted to fit
@@ -34,9 +32,8 @@ namespace NangaParbat
      * @brief The "TwoParticlePhaseSpace" constructor.
      * @param kTmin: the minimum cut in the k_T of the single lepton (default = -1, i.e. no cut)
      * @param etamax: the maximum cut in the &eta; of the single lepton (default = -1, i.e. no cut)
-     * @param eta0 and eta1: the bounds of the interval in the &eta; to be excluded (default = -1 and -1, i.e. no cut)
      */
-    TwoParticlePhaseSpace(double const& kTmin = -1, double const& etamax = -1, double const& eta0 = -1, double const& eta1 = -1);
+    TwoParticlePhaseSpace(double const& kTmin = -1, double const& etamax = -1);
 
     /**
      * @brief The "TwoParticlePhaseSpace" destructor.
@@ -93,11 +90,9 @@ namespace NangaParbat
      */
     ///@{
     bool   _cuts;
-    bool   _ex;
     double _kTmin;
     double _etamax;
     double _thetamax;
-    double _theta0, _theta1;
     ///@}
 
     /**
