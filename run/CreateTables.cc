@@ -15,11 +15,11 @@
 int main(int argc, char* argv[])
 {
   // Check that the input is correct otherwise stop the code
-  if(argc < 4 || strcmp(argv[1], "--help") == 0)
+  if(argc < 5 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << std::endl;
       std::cout << "Invalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./CreateTables <configuration file> <path to data folder> <output folder>" << std::endl;
+      std::cout << "Syntax: ./CreateTables <configuration file> <path to data folder> <output folder> <test tables? [y/n]>" << std::endl;
       std::cout << std::endl;
       exit(-10);
     }
@@ -51,34 +51,37 @@ int main(int argc, char* argv[])
       fout.close();
     }
 
-  // Now test tables
-  // Allocate "Parameterisation" derived object
-  DWS NPFunc{};
-
-  // Compute direct predictions
-  auto const fNP = [=] (double const& x, double const& b, double const& zeta) -> double { return NPFunc.Evaluate(x, b, zeta, 0); };
-  const std::vector<std::vector<double>> dc = FIObj.DirectComputation(DHVect, NangaParbat::bstarmin, fNP, fNP);
-
-  // No read convolution tables and compute predictions from the grids
-  std::vector<std::vector<double>> gc;
-  for (auto const& exp : datasets)
-    for (auto const& ds : exp.second)
-      {
-        const std::string table = std::string(argv[3]) + "/" + ds["name"].as<std::string>() + ".yaml";
-        const NangaParbat::ConvolutionTable ct{YAML::LoadFile(table)};
-        gc.push_back(ct.GetPredictions(fNP));
-      }
-
-  // Report results
-  std::cout << "  Direct           Grid            Ratio" << std::endl;
-  std::cout << std::scientific;
-  for (int i = 0; i < (int) gc.size(); i++)
+  // Now test tables if required
+  if (std::strncmp(argv[4], "y", 1) == 0)
     {
-      std::cout << "Dataset " << i + 1 << "):" << std::endl;
-      for (int j = 0; j < (int) gc[i].size(); j++)
-	std::cout << dc[i][j] << "\t" << gc[i][j] << "\t" << dc[i][j] / gc[i][j] << std::endl;
-      std::cout << "\n";
-    }
+      // Allocate "Parameterisation" derived object
+      DWS NPFunc{};
 
+      // Compute direct predictions
+      auto const fNP = [=] (double const& x, double const& b, double const& zeta) -> double { return NPFunc.Evaluate(x, b, zeta, 0); };
+      const std::vector<std::vector<double>> dc = FIObj.DirectComputation(DHVect, NangaParbat::bstarmin, fNP, fNP);
+
+      // No read convolution tables and compute predictions from the grids
+      std::vector<std::vector<double>> gc;
+      for (auto const& exp : datasets)
+        for (auto const& ds : exp.second)
+          {
+            const std::string table = std::string(argv[3]) + "/" + ds["name"].as<std::string>() + ".yaml";
+            const NangaParbat::ConvolutionTable ct{YAML::LoadFile(table)};
+            gc.push_back(ct.GetPredictions(fNP));
+          }
+
+      std::cout << "Testing tables against direct computation...\n" << std::endl;
+      // Report results
+      std::cout << std::scientific;
+      for (int i = 0; i < (int) gc.size(); i++)
+        {
+          std::cout << "Dataset " << i + 1 << ")" << std::endl;
+          std::cout << "  Direct          Table           Ratio" << std::endl;
+          for (int j = 0; j < (int) gc[i].size(); j++)
+            std::cout << dc[i][j] << "\t" << gc[i][j] << "\t" << dc[i][j] / gc[i][j] << std::endl;
+          std::cout << "\n";
+        }
+    }
   return 0;
 }

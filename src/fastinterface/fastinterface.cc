@@ -523,6 +523,8 @@ namespace NangaParbat
                                                                     double                                                             const& epsxi,
                                                                     bool                                                               const& sameOgata) const
   {
+    std::cout << "Direct computation... ";
+
     // Timer
     apfel::Timer t;
 
@@ -606,16 +608,19 @@ namespace NangaParbat
                   // Return xi integrand
                   return (PSRed ? ps.PhaseSpaceReduction(Q, kin.qTv[i], log(xi)) : 1) * Lumi.Evaluate(x1, x2) * fNP1(x1, b, Q * Q) * fNP2(x2, b, Q * Q) / xi;
                 };
+
                 // Perform the integral in xi
                 const apfel::Integrator xiIntObj{xiintegrand};
                 const double xiintegral = (Inty ? xiIntObj.integrate(ximin, ximax, epsxi) : xiintegrand(xiav));
                 return xiintegral;
               };
+
               // Perform the integral in Q
               const apfel::Integrator QIntObj{Qintegrand};
               const double Qintegral = (IntqT ? 1 : b) * (IntQ ? QIntObj.integrate(Qmin, Qmax, epsQ) : Qintegrand(Qav));
               return Qintegral;
             };
+
             // Compute predictions through Ogata quadrature
             double pred = 0;
             const int nOgata = (sameOgata ? _config["nOgata"].as<int>() : 1000);
@@ -629,7 +634,6 @@ namespace NangaParbat
           }
         DirectPredictions.push_back(vpred);
       }
-    std::cout << "Direct computation... ";
     t.stop(true);
     std::cout << "\n";
     return DirectPredictions;
