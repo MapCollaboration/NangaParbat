@@ -31,13 +31,13 @@ namespace NangaParbat
     _y  = y;
     if (_cuts)
       {
-        const double iE = 1 / sqrt(pow(_M, 2) + pow(_qT, 2)) / cosh(_y);
+        const double iE = 1 / sqrt( pow(_M, 2) + pow(_qT, 2) ) / cosh(_y);
         lM2 = pow(_M * iE, 2);
         lT  = _qT * iE;
         ly  = tanh(_y);
-        L_nu.init_min_max(-_thetamax,+_thetamax);
 
         integration_bins.clear();
+        L_nu.init_min_max(-_thetamax, +_thetamax);
         integration_bins.push_back(-_thetamax);
         integration_bins.push_back(+_thetamax);
 
@@ -58,8 +58,8 @@ namespace NangaParbat
 
             const double lp2   = 1 - pow(ly, 2);
             const double num1  = pow(2 * aoE, 2) * ly;
-            const double num2  = sqrt(pow(lp2, 3) * ( lp2 - pow(2 * aoE, 2) ));
-            const double den   = 1 /( pow(lp2, 2) + num1 * ly );
+            const double num2  = sqrt( pow(lp2, 3) * ( lp2 - pow(2 * aoE, 2) ) );
+            const double den   = 1 / ( pow(lp2, 2) + num1 * ly );
             const double nua_m = ( num1 - num2 ) * den;
             const double nua_p = ( num1 + num2 ) * den;
 
@@ -71,7 +71,7 @@ namespace NangaParbat
               return _set0();
           }
 
-        std::sort(integration_bins.begin(),integration_bins.end());
+        std::sort(integration_bins.begin(), integration_bins.end());
         std::vector<double>::const_iterator itr(integration_bins.begin());
         const std::vector<double>::const_iterator end(integration_bins.end()-1);
 
@@ -84,7 +84,7 @@ namespace NangaParbat
             IR.init_max(*(++itr));
             IR.add_limit(L_nu);
             if (IR.is_valid())
-              res += _calc_one_region(IR);
+              res += _calc_one_region(IR.min, IR.max);
           }
         _result = res;
       }
@@ -217,42 +217,10 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________
-  double TwoParticlePhaseSpace::_calc_one_region(const Variable_Limit& IR)
+  double TwoParticlePhaseSpace::_calc_one_region(double const& min, double const& max)
   {
-    if (IR.is_valid())
-      {
-        _gsl_status = gsl_integration_qag(&_gsl_f, IR.min, IR.max, 1e-5, 0., LIMIT_SIZE, GSL_INTEG_GAUSS31,
-                                          static_cast<gsl_integration_workspace*>(_workspace), &_result, &_error);
-        return _result;
-      }
-    else
-      return 0.;
-  }
-
-  //_________________________________________________________________________
-  double TwoParticlePhaseSpace::_calc_one_region(Variable_Limit& IR, Variable_Exclusion E1)
-  {
-    E1.apply_to_limit(IR);
-    if (E1.is_valid() && (IR.position_of(E1) == I_I_inside))
-      {
-        Variable_Limit IR2(E1.max, IR.max);
-        IR.init_min_max(IR.min, E1.min);
-        return _calc_one_region(IR) + _calc_one_region(IR2);
-      }
-    return _calc_one_region(IR);
-  }
-
-  //_________________________________________________________________________
-  double TwoParticlePhaseSpace::_calc_one_region(Variable_Limit& IR, const Variable_Exclusion& E1, Variable_Exclusion E2)
-  {
-    E2.apply_to_limit(IR);
-    if (E2.is_valid() && (IR.position_of(E2) == I_I_inside))
-      {
-        Variable_Limit IR2(E2.max, IR.max);
-        IR.init_min_max(IR.min, E2.min);
-        return _calc_one_region(IR, E1) + _calc_one_region(IR2, E1);
-      }
-    else
-      return _calc_one_region(IR, E1);
+    _gsl_status = gsl_integration_qag(&_gsl_f, min, max, 1e-5, 0., LIMIT_SIZE, GSL_INTEG_GAUSS31,
+                                      static_cast<gsl_integration_workspace*>(_workspace), &_result, &_error);
+    return _result;
   }
 }

@@ -2,6 +2,7 @@ set(fastinterface_source
   fastinterface.cc
   convolutiontable.cc
   utilities.cc
+  twobodyphasespace.cc
   twoparticlephasespace.cc
   )
 

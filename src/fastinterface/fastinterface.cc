@@ -289,7 +289,7 @@ namespace NangaParbat
         const double xil  = (obs == DataHandler::dydQdqT ? exp(yxb.first) : yxb.first);
         const double xiu  = (obs == DataHandler::dydQdqT ? exp(yxb.second) : yxb.second);
         const double xiav = (obs == DataHandler::dydQdqT ? exp( ( yxb.first + yxb.second ) / 2 ): ( yxb.first + yxb.second ) / 2 );
-        const std::vector<double> xig = (Inty ? GenerateGrid(nxi, xil, xiu, idxi - 1) : std::vector<double> {xiav});
+        const std::vector<double> xig = (Inty ? GenerateGrid(nxi, xil, xiu, idxi - 1, true) : std::vector<double> {xiav});
         const apfel::QGrid<double> xigrid{xig, idxi};
 
         // Number of points of the grids
@@ -606,7 +606,7 @@ namespace NangaParbat
                   const double x2 = pow(Q / Vs, 2) / x1;
 
                   // Return xi integrand
-                  const double qTm = ( kin.qTmap[i].first + kin.qTmap[i].second ) / 2;
+                  const double qTm = (IntqT ? ( kin.qTmap[i].first + kin.qTmap[i].second ) / 2 : kin.qTmap[i].second);
                   return (PSRed ? ps.PhaseSpaceReduction(Q, qTm, log(xi)) : 1) * Lumi.Evaluate(x1, x2) * fNP1(x1, b, Q * Q) * fNP2(x2, b, Q * Q) / xi;
                 };
 

@@ -116,10 +116,6 @@ namespace NangaParbat
     double Snu;
     Variable_Limit L_nu;
     Variable_Limit L_u;
-    Variable_Exclusion E_nu_p;
-    Variable_Exclusion E_nu_m;
-    Variable_Exclusion E_u_m;
-    Variable_Exclusion E_u_p;
     std::vector<double> integration_bins;
     ///@}
 
@@ -135,9 +131,7 @@ namespace NangaParbat
     static double _gsl_integrand(double x, void* params);
     double _fnub_upm(double const& sthb, double const& su = -1) const;
     double _set0();
-    double _calc_one_region(const Variable_Limit& IR);
-    double _calc_one_region(Variable_Limit& IR, Variable_Exclusion E1);
-    double _calc_one_region(Variable_Limit& IR, const Variable_Exclusion& E1, Variable_Exclusion E2);
+    double _calc_one_region(double const& min, double const& max);
     ///@}
   };
 
