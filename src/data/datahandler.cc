@@ -178,7 +178,8 @@ namespace NangaParbat
               if(std::find(_kin.qTv.begin(), _kin.qTv.end(), qTh) == _kin.qTv.end())
                 _kin.qTv.push_back(vl["high"].as<double>());
 
-              _kin.qTmap.push_back(std::make_pair(qTl, qTh));
+              //_kin.qTmap.push_back(std::make_pair(qTl, qTh));
+              _kin.qTmap.push_back(std::make_pair(std::max(qTl, 1e-5), qTh));
             }
           else if (vl["value"])
             {
