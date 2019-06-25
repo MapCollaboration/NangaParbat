@@ -88,7 +88,7 @@ namespace NangaParbat
             for (int alpha = 0; alpha < (int) _xig.size(); alpha++)
               {
                 const double x1 = Vtau * _xig[alpha];
-                const double x2 = pow(Q / Vtau, 2) / x1;
+                const double x2 = pow(Q / _Vs, 2) / x1;
                 for (int n = 0; n < (int) _z.size(); n++)
                   {
                     const double b = _z[n] / _qTv[iqT];
