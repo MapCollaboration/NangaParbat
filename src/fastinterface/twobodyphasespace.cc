@@ -68,23 +68,21 @@ namespace NangaParbat
       {
         const double x2 = x * x;
         const double xp = sqrt( 1 - x2 );
-        const double Fi = qT2 * x * xp / ( x2 * qT2 - Eq2 )
-        - Eq * ( atan( ( qT - x * Eq ) / EmqT / xp ) - atan( ( qT + x * Eq ) / EmqT / xp ) ) / EmqT;
+	const double atanfact = Eq * ( atan( ( qT - x * Eq ) / EmqT / xp ) - atan( ( qT + x * Eq ) / EmqT / xp ) ) / EmqT;
+        const double Fi = qT2 * x * xp / ( x2 * qT2 - Eq2 ) - atanfact;
         const double Gi = Q2 * sh2
 	* ( qT2 * xp * ( ( ( 11 * Eq2 * qT2 + 4 * qT4 ) * x2 + 3 * Eq * qT * ( 9 * Eq2 + qT2 ) * x + 18 * Eq4 - 5 * Eq2 * qT2 + 2 * qT4 ) / pow(x * qT + Eq, 3) +
 			 ( ( 11 * Eq2 * qT2 + 4 * qT4 ) * x2 - 3 * Eq * qT * ( 9 * Eq2 + qT2 ) * x + 18 * Eq4 - 5 * Eq2 * qT2 + 2 * qT4 ) / pow(x * qT - Eq, 3) )
-        - 6 * Eq * ( 2 * Eq2 + 3 * qT2 )
-	* ( atan( ( qT - x * Eq ) / EmqT / xp ) - atan( ( qT + x * Eq ) / EmqT / xp ) ) / EmqT ) / EmqT4 / 4;
+	    - 6 * ( 2 * Eq2 + 3 * qT2 ) * atanfact ) / EmqT4 / 4;
 
-        return 3 * Fi / 4 + Gi / 4;
-        //return Fi;
+        return 3 * Fi + Gi;
       };
       return ( Fbar(x2) - Fbar(x1) ) / EmqT2;
     };
 
     // Return integral
     const apfel::Integrator Ieta{IntegrandP};
-    return Q2 * Ieta.integrate(-_etamax, _etamax, _eps) / 4 / M_PI;
+    return Q2 * Ieta.integrate(-_etamax, _etamax, _eps) / 16 / M_PI;
   }
 
   //_________________________________________________________________________
