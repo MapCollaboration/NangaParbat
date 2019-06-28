@@ -4,7 +4,7 @@
 
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/utilities.h"
-#include "NangaParbat/twoparticlephasespace.h"
+#include "NangaParbat/twobodyphasespace.h"
 
 #include <LHAPDF/LHAPDF.h>
 
@@ -269,7 +269,7 @@ namespace NangaParbat
         // Initialise two-particle phase-space object. Symmetrise the
         // rapidity range.
         const double deta = std::abs( etaRange.second - etaRange.first ) / 2;
-        TwoParticlePhaseSpace ps{pTMin, deta};
+        TwoBodyPhaseSpace ps{pTMin, deta};
 
         // Ogata-quadrature object of degree one or zero according to
         // weather the cross sections have to be integrated over the
@@ -339,9 +339,9 @@ namespace NangaParbat
                     const double Q   = Qg[tau];
                     const double xi  = xig[alpha];
                     const double rap = log(obs == DataHandler::dydQdqT ? xi : Vs * ( xi + sqrt( pow(xi, 2) + pow(2 * Q / Vs, 2) ) ) / Q / 2);
-                    PS[tau][alpha] = ps.PhaseSpaceReduction(Q, qT, rap);
+                    PS[tau][alpha] = ps.PhaseSpaceReduction(Q, rap, qT);
                     if (IntqT)
-                      dPS[tau][alpha] = ps.DerivePhaseSpaceReduction(Q, qT, rap);
+                      dPS[tau][alpha] = ps.DerivePhaseSpaceReduction(Q, rap, qT);
                   }
             mPS.insert({qT, PS});
             mdPS.insert({qT, dPS});
@@ -559,7 +559,7 @@ namespace NangaParbat
         // rapidity range.
         //const double aveta = ( etaRange.second + etaRange.first ) / 2;
         const double deta  = std::abs( etaRange.second - etaRange.first ) / 2;
-        TwoParticlePhaseSpace ps{pTMin, deta};
+        TwoBodyPhaseSpace ps{pTMin, deta};
 
         // Q integration bounds
         const double Qmin = kin.var1b.first;
@@ -607,7 +607,7 @@ namespace NangaParbat
 
                   // Return xi integrand
                   const double qTm = (IntqT ? ( kin.qTmap[i].first + kin.qTmap[i].second ) / 2 : kin.qTmap[i].second);
-                  return (PSRed ? ps.PhaseSpaceReduction(Q, qTm, log(xi)) : 1) * Lumi.Evaluate(x1, x2) * fNP1(x1, b, Q * Q) * fNP2(x2, b, Q * Q) / xi;
+                  return (PSRed ? ps.PhaseSpaceReduction(Q, log(xi), qTm) : 1 ) * Lumi.Evaluate(x1, x2) * fNP1(x1, b, Q * Q) * fNP2(x2, b, Q * Q) / xi;
                 };
 
                 // Perform the integral in xi

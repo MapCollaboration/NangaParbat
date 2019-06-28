@@ -7,7 +7,7 @@
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/convolutiontable.h"
 #include "NangaParbat/utilities.h"
-#include "NangaParbat/twoparticlephasespace.h"
+#include "NangaParbat/twobodyphasespace.h"
 
 #include <LHAPDF/LHAPDF.h>
 #include <apfel/apfelxx.h>
@@ -111,7 +111,7 @@ int main()
 
       // Phase-space reduction factor
       const double deta = ( etaRange.second - etaRange.first ) / 2;
-      NangaParbat::TwoParticlePhaseSpace ps{pTMin, deta};
+      NangaParbat::TwoBodyPhaseSpace ps{pTMin, deta};
 
       // Loop over the qT-bin bounds
       const auto qTintegrand = [&] (double const& qT) -> double
@@ -155,7 +155,7 @@ int main()
                 lumi += Bq[i-1] * ( xF.at(i).Evaluate(x1) * xF.at(-i).Evaluate(x2) + xF.at(-i).Evaluate(x1) * xF.at(i).Evaluate(x2) ) / 2;
 
               // Return xi integrand
-              return ps.PhaseSpaceReduction(Q, qT, log(xi)) * lumi * fNP(x1, b, zetaf) * fNP(x2, b, zetaf) / xi;
+              return ps.PhaseSpaceReduction(Q, log(xi), qT) * lumi * fNP(x1, b, zetaf) * fNP(x2, b, zetaf) / xi;
             };
 
             // Perform the integral in xi

@@ -7,7 +7,7 @@
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/convolutiontable.h"
 #include "NangaParbat/utilities.h"
-#include "NangaParbat/twoparticlephasespace.h"
+#include "NangaParbat/twobodyphasespace.h"
 
 #include <LHAPDF/LHAPDF.h>
 #include <apfel/apfelxx.h>
@@ -136,7 +136,7 @@ int main()
 
   // Phase-space reduction factor
   const double deta = ( etaRange.second - etaRange.first ) / 2;
-  NangaParbat::TwoParticlePhaseSpace ps{pTMin, deta};
+  NangaParbat::TwoBodyPhaseSpace ps{pTMin, deta};
 
   // Define qT-distribution function using a DoubleObject
   const auto Lumi = [=] (double const& bs) -> apfel::DoubleObject<apfel::Distribution>
@@ -158,7 +158,7 @@ int main()
     // Construct the TMD luminosity in b scale to be fed to be
     // trasformed in qT space.
     const auto TMDLumibNew = [=] (double const& b) -> double{ return b * TabLumi.EvaluatexzQ(x1, x2, NangaParbat::bstar(b, 0)) * fNP(0, b, zetaf) * fNP(0, b, zetaf) / 2; };
-    return apfel::ConvFact * qT * 8 * M_PI * aem2 * hcs * ps.PhaseSpaceReduction(Q, qT, y) * bintegrand.transform(TMDLumibNew, qT) / pow(Q, 3) / 9;
+    return apfel::ConvFact * qT * 8 * M_PI * aem2 * hcs * ps.PhaseSpaceReduction(Q, y, qT) * bintegrand.transform(TMDLumibNew, qT) / pow(Q, 3) / 9;
   };
 
   apfel::Timer t;
@@ -181,8 +181,8 @@ int main()
     // trasformed in qT space.
     const auto TMDLumibPrim = [=] (double const& b) -> double{ return TabLumi.EvaluatexzQ(x1, x2, NangaParbat::bstar(b, 0)) * fNP(0, b, zetaf) * fNP(0, b, zetaf) / 2; };
     const double DqT    = (lower ? 1 : -1); // This assumes that the bin-width is equal to 2 GeV
-    const double PSRed  = ps.PhaseSpaceReduction(Q, qT, y);
-    const double dPSRed = ps.DerivePhaseSpaceReduction(Q, qT, y);
+    const double PSRed  = ps.PhaseSpaceReduction(Q, y, qT);
+    const double dPSRed = ps.DerivePhaseSpaceReduction(Q, y, qT);
     return apfel::ConvFact * qT * 8 * M_PI * aem2 * hcs * ( PSRed + dPSRed * DqT ) * qTintegrand.transform(TMDLumibPrim, qT) / pow(Q, 3) / 9;
   };
 

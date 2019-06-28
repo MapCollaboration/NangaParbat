@@ -35,10 +35,10 @@ namespace NangaParbat
     const double M      = sqrt(M2);
     const double ctgh   = 1 / tanh(y - _etamax);
 
-    // Integrand function with g^{\mu\nu}
+    // Integrand function
     const auto IntegrandP = [&] (double const& eta) -> double
     {
-      // Useful definitions
+      // More useful definitions
       const double ch    = cosh(eta - y);
       const double sh2   = ch * ch - 1;
       const double Eq    = M * ch;
@@ -88,6 +88,7 @@ namespace NangaParbat
   //_________________________________________________________________________
   double TwoBodyPhaseSpace::DerivePhaseSpaceReduction(double const& Q, double const& y, double const& qT)
   {
-    return 0;
+    const double eps = 1e-3;
+    return ( PhaseSpaceReduction(Q, y, qT * ( 1 + eps )) - PhaseSpaceReduction(Q, y, qT * ( 1 - eps )) ) / 2 / eps / qT;
   }
 }

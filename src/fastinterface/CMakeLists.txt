@@ -3,7 +3,6 @@ set(fastinterface_source
   convolutiontable.cc
   utilities.cc
   twobodyphasespace.cc
-  twoparticlephasespace.cc
   )
 
 add_library(fastinterface OBJECT ${fastinterface_source})
