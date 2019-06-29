@@ -55,7 +55,7 @@ public:
     const double g1  = Npt * pow(x, sigma) * pow((1 - x), alpha) / pow(0.1, sigma) / pow((1 - 0.1), alpha);
     const double g1a = g1;
 
-    return 1 / (2 * M_PI) * exp( - g1a * pow( b / 2 , 2)) * (1 - lambda * pow(g1a , 2 ) / (1 + lambda * g1a) * pow( b / 2 , 2)) ;
+    return exp( - g1a * pow( b / 2 , 2)) * (1 - lambda * pow(g1a , 2 ) / (1 + lambda * g1a) * pow( b / 2 , 2)) ;
   };
 
 };
