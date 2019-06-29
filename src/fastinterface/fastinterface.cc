@@ -266,10 +266,8 @@ namespace NangaParbat
         const double                                pTMin    = kin.pTMin;    // Minimum pT of the final-state leptons
         const std::pair<double,double>              etaRange = kin.etaRange; // Allowed range in eta of the final-state leptons
 
-        // Initialise two-particle phase-space object. Symmetrise the
-        // rapidity range.
-        const double deta = std::abs( etaRange.second - etaRange.first ) / 2;
-        TwoBodyPhaseSpace ps{pTMin, deta};
+        // Initialise two-particle phase-space object
+        TwoBodyPhaseSpace ps{pTMin, etaRange.first, etaRange.second};
 
         // Ogata-quadrature object of degree one or zero according to
         // weather the cross sections have to be integrated over the
@@ -555,11 +553,8 @@ namespace NangaParbat
         const double                                pTMin    = kin.pTMin;    // Minimum pT of the final-state leptons
         const std::pair<double,double>              etaRange = kin.etaRange; // Allowed range in eta of the final-state leptons
 
-        // Initialise two-particle phase-space object. Symmetrise the
-        // rapidity range.
-        //const double aveta = ( etaRange.second + etaRange.first ) / 2;
-        const double deta  = std::abs( etaRange.second - etaRange.first ) / 2;
-        TwoBodyPhaseSpace ps{pTMin, deta};
+        // Initialise two-particle phase-space object
+        TwoBodyPhaseSpace ps{pTMin, etaRange.first, etaRange.second};
 
         // Q integration bounds
         const double Qmin = kin.var1b.first;

@@ -110,8 +110,7 @@ int main()
       apfel::OgataQuadrature OgataObj{};
 
       // Phase-space reduction factor
-      const double deta = ( etaRange.second - etaRange.first ) / 2;
-      NangaParbat::TwoBodyPhaseSpace ps{pTMin, deta};
+      NangaParbat::TwoBodyPhaseSpace ps{pTMin, etaRange.first, etaRange.second};
 
       // Loop over the qT-bin bounds
       const auto qTintegrand = [&] (double const& qT) -> double

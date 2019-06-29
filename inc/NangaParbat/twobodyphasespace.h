@@ -19,11 +19,12 @@ namespace NangaParbat
   public:
     /**
      * @brief The "TwoBodyPhaseSpace" constructor.
-     * @param pTmin: the minimum cut in the p<SUB>T</SUB> of the single lepton (default = 0, i.e. no cut)
-     * @param etamax: the maximum cut in the &eta; of the single lepton (default = 100, i.e. no cut)
-     * @param eps: the integration accuracy (default = 10<SUP>-5</SUP>)
+     * @param pTmin: the minimum cut in the p<SUB>T</SUB> of the single lepton
+     * @param etamin: the minimum cut in the &eta; of the single lepton
+     * @param etamax: the maximum cut in the &eta; of the single lepton
+     * @param eps: the integration accuracy (default = 10<SUP>-9</SUP>)
      */
-    TwoBodyPhaseSpace(double const& pTmin = 0, double const& etamax = 100, double const& eps = 1e-9);
+    TwoBodyPhaseSpace(double const& pTmin, double const& etamin, double const& etamax, double const& eps = 1e-9);
 
     /**
      * @brief Function that returns the phase-space reduction factor.
@@ -54,6 +55,7 @@ namespace NangaParbat
      */
     ///@{
     double _pTmin;
+    double _etamin;
     double _etamax;
     double _eps;
     ///@}

@@ -12,8 +12,9 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________
-  TwoBodyPhaseSpace::TwoBodyPhaseSpace(double const& pTmin, double const& etamax, double const& eps):
+  TwoBodyPhaseSpace::TwoBodyPhaseSpace(double const& pTmin, double const& etamin, double const& etamax, double const& eps):
     _pTmin(pTmin),
+    _etamin(etamin),
     _etamax(etamax),
     _eps(eps)
   {
@@ -23,17 +24,18 @@ namespace NangaParbat
   double TwoBodyPhaseSpace::PhaseSpaceReduction(double const& Q, double const& y, double const& qT)
   {
     // Return automatically zero if "y" is larger that "_etamax"
-    if (y >= _etamax)
+    if (y <= _etamin || y >= _etamax)
       return 0;
 
     // Useful definitions
-    const double Q2     = Q * Q;
-    const double qT2    = qT * qT;
-    const double qT4    = qT2 * qT2;
-    const double pTmin2 = _pTmin * _pTmin;
-    const double M2     = Q2 + qT2;
-    const double M      = sqrt(M2);
-    const double ctgh   = 1 / tanh(y - _etamax);
+    const double Q2      = Q * Q;
+    const double qT2     = qT * qT;
+    const double qT4     = qT2 * qT2;
+    const double pTmin2  = _pTmin * _pTmin;
+    const double M2      = Q2 + qT2;
+    const double M       = sqrt(M2);
+    const double ctghmax = 1 / tanh(y - _etamax);
+    const double ctghmin = 1 / tanh(y - _etamin);
 
     // Integrand function
     const auto IntegrandP = [&] (double const& eta) -> double
@@ -50,12 +52,13 @@ namespace NangaParbat
 
       // Auxiliary functions
       const double f2 = ( 2 * _pTmin * Eq - Q2 ) / 2 / _pTmin / qT;
-      const double f3 = ( Eq * ( Q2 - 2 * pTmin2 + 2 * qT2 ) - Q2 * sqrt( Eq2 - M2 + pTmin2 ) ) / 2 / qT / ( M2 - pTmin2 );
-      const double f4 = Eq / qT - Q2 * ( sinh(eta - y) * ctgh + ch ) / 2 / qT / M;
+      const double f3max = Eq / qT - Q2 * ( sinh(eta - y) * ctghmax + ch ) / 2 / qT / M;
+      const double f3min = Eq / qT - Q2 * ( sinh(eta - y) * ctghmin + ch ) / 2 / qT / M;
+      const double f4 = ( Eq * ( Q2 - 2 * pTmin2 + 2 * qT2 ) - Q2 * sqrt( Eq2 - M2 + pTmin2 ) ) / 2 / qT / ( M2 - pTmin2 );
 
       // Integration limits in cos(phi)
       const double x1 = std::max(f2, -1.);
-      const double x2 = std::min(std::min(f3, f4), 1.);
+      const double x2 = std::min(std::min(f4, std::min(f3max, f3min)), 1.);
 
       // Return zero if x2 < x1
       if (x2 <= x1)
@@ -80,9 +83,12 @@ namespace NangaParbat
       return ( Fbar(x2) - Fbar(x1) ) / EmqT2;
     };
 
-    // Return integral
+    // Return integral (symmetrise to make sure that the result is the
+    // same when exchanging the sign of all rapidities involved). This
+    // "misbehaviour" is due to the fact that the integrand function
+    // is pieceswise and thus the numerical integrator struggles.
     const apfel::Integrator Ieta{IntegrandP};
-    return Q2 * Ieta.integrate(-_etamax, _etamax, _eps) / 16 / M_PI;
+    return Q2 * ( y > 0 ? Ieta.integrate(_etamin, _etamax, _eps) : - Ieta.integrate(_etamax, _etamin, _eps) ) / 16 / M_PI;
   }
 
   //_________________________________________________________________________

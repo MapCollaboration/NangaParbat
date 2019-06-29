@@ -135,8 +135,7 @@ int main()
   apfel::OgataQuadrature bintegrand{};
 
   // Phase-space reduction factor
-  const double deta = ( etaRange.second - etaRange.first ) / 2;
-  NangaParbat::TwoBodyPhaseSpace ps{pTMin, deta};
+  NangaParbat::TwoBodyPhaseSpace ps{pTMin, etaRange.first, etaRange.second};
 
   // Define qT-distribution function using a DoubleObject
   const auto Lumi = [=] (double const& bs) -> apfel::DoubleObject<apfel::Distribution>
