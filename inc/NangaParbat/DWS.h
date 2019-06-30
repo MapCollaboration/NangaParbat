@@ -37,7 +37,7 @@ class PV17: public NangaParbat::Parameterisation
 {
 public:
 
-  PV17(): Parameterisation{2, std::vector<double>{0.285 , 2.98 , 0.173 , 0.39}} { };
+  PV17(): Parameterisation{2, std::vector<double>{0.285, 2.98, 0.173, 0.39}} { };
 
   std::string name = "PV17";
   std::string GetName() const { return name; }
@@ -55,7 +55,7 @@ public:
     const double g1  = Npt * pow(x, sigma) * pow((1 - x), alpha) / pow(0.1, sigma) / pow((1 - 0.1), alpha);
     const double g1a = g1;
 
-    return exp( - g1a * pow( b / 2 , 2)) * (1 - lambda * pow(g1a , 2 ) / (1 + lambda * g1a) * pow( b / 2 , 2)) ;
+    return exp( - g1a * pow( b / 2, 2)) * (1 - lambda * pow(g1a, 2 ) / (1 + lambda * g1a) * pow( b / 2, 2)) ;
   };
 
 };

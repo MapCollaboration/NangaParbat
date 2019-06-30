@@ -143,11 +143,10 @@ namespace NangaParbat
         {
           vpred[i]  = ( pred.at(_qTmap[i][1]) - pred.at(_qTmap[i][0]) ) / ( _qTmap[i][1] - _qTmap[i][0] );
           vpred[i] -= ( pred.at(-_qTmap[i][1]) + pred.at(-_qTmap[i][0]) ) / 2;
-          vpred[i] *= _prefact * _qTfact[i];
         }
     else
       for (int i = 0; i < npred; i++)
-        vpred[i] = _prefact * _qTfact[i] * pred.at(_qTmap[i][1]);
+        vpred[i] = _qTfact[i] * pred.at(_qTmap[i][1]);
 
     return vpred;
   }
