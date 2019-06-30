@@ -33,19 +33,19 @@ public:
   };
 };
 
-class f1NP: public NangaParbat::Parameterisation
+class PV17: public NangaParbat::Parameterisation
 {
 public:
 
-  f1NP(): Parameterisation{2, std::vector<double>{0.285 , 2.98 , 0.173 , 0.39}} { };
+  PV17(): Parameterisation{2, std::vector<double>{0.285 , 2.98 , 0.173 , 0.39}} { };
 
-  std::string name = "f1NP";
+  std::string name = "PV17";
   std::string GetName() const { return name; }
 
   double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
   {
     if (ifunc < 0 || ifunc >= this->_nfuncs)
-      throw std::runtime_error("[f1NP::Evaluate]: function index out of range");
+      throw std::runtime_error("[PV17::Evaluate]: function index out of range");
 
     const double Npt = this->_pars[0];
     const double alpha = this->_pars[1];
