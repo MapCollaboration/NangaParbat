@@ -19,7 +19,7 @@ namespace NangaParbat
     /**
      * @brief The "Parameterisation" constructor
      */
-    Parameterisation(int const& nfuncs = 0, std::vector<double> pars = {});
+    Parameterisation(std::string const& name, int const& nfuncs = 0, std::vector<double> pars = {});
 
     /**
      * @brief Function that sets the free parameters of the
@@ -57,11 +57,13 @@ namespace NangaParbat
      * the feauture of the parameterisation
      */
     ///@{
+    std::string         GetName()              const { return _name; }
     int                 GetNumberOfFunctions() const { return _nfuncs; }
     std::vector<double> GetParameters()        const { return _pars; }
     ///@}
 
   protected:
+    std::string         _name;   //!< Name of the parameterisation
     int                 _nfuncs; //!< Number of output functions
     std::vector<double> _pars;   //!< The vector of free parameters
   };

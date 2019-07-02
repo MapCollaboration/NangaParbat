@@ -7,7 +7,8 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  Parameterisation::Parameterisation(int const& nfuncs, std::vector<double> pars):
+  Parameterisation::Parameterisation(std::string const& name, int const& nfuncs, std::vector<double> pars):
+    _name(name),
     _nfuncs(nfuncs),
     _pars(pars)
   {
