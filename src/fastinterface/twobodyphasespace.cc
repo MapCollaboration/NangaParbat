@@ -83,12 +83,12 @@ namespace NangaParbat
       return ( Fbar(x2) - Fbar(x1) ) / EmqT2;
     };
 
-    // Return integral (symmetrise to make sure that the result is the
-    // same when exchanging the sign of all rapidities involved). This
+    // Return integral (symmetrise with respect to the center of the
+    // rapidity range to make sure that the result is symmetric). This
     // "misbehaviour" is due to the fact that the integrand function
     // is pieceswise and thus the numerical integrator struggles.
     const apfel::Integrator Ieta{IntegrandP};
-    return Q2 * ( y > 0 ? Ieta.integrate(_etamin, _etamax, _eps) : - Ieta.integrate(_etamax, _etamin, _eps) ) / 16 / M_PI;
+    return Q2 * ( y > ( _etamin + _etamax ) / 2 ? Ieta.integrate(_etamin, _etamax, _eps) : - Ieta.integrate(_etamax, _etamin, _eps) ) / 16 / M_PI;
   }
 
   //_________________________________________________________________________
