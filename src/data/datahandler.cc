@@ -43,7 +43,6 @@ namespace NangaParbat
   DataHandler::DataHandler(std::string const& name, YAML::Node const& datafile):
     _name(name),
     _proc(UnknownProcess),
-    _obs(UnknownObservable),
     _targetiso(1),
     _prefact(1),
     _kin(DataHandler::Kinematics{})
@@ -64,17 +63,6 @@ namespace NangaParbat
                   _proc = SIDIS;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown process.");
-              }
-
-            // Observable
-            if (ql["name"].as<std::string>() == "observable")
-              {
-                if (ql["value"].as<std::string>() == "d(sigma)/dydQdqT")
-                  _obs = dydQdqT;
-                else if (ql["value"].as<std::string>() == "d(sigma)/dxFdQdqT")
-                  _obs = dxFdQdqT;
-                else
-                  throw std::runtime_error("[DataHandler::DataHandler]: Unknown observable.");
               }
 
             // Isoscalarity
@@ -207,7 +195,6 @@ namespace NangaParbat
 
     // Check that the "DataHandler" has been properly filled in
     if (_proc == UnknownProcess ||
-        _obs  == UnknownObservable ||
         _kin.empty())
       throw std::runtime_error("[DataHandler::DataHandler]: Object not properly filled in. Probably one or more required keys are missing");
 
@@ -237,13 +224,6 @@ namespace NangaParbat
       os << "- Process: SIDIS\n";
     else
       os << "- Process: Unknown\n";
-
-    if (DH._obs == DataHandler::Observable::dydQdqT)
-      os << "- Observable: d(sigma)/dydQdqT\n";
-    else if (DH._obs == DataHandler::Observable::dxFdQdqT)
-      os << "- Observable: d(sigma)/dxFdQdqT\n";
-    else
-      os << "- Observable: Unknown\n";
 
     os << "- Target isoscalarity: " << DH._targetiso << "\n";
     os << "- Overall prefactor: " << DH._prefact << "\n";

@@ -242,9 +242,6 @@ namespace NangaParbat
         // Process
         const DataHandler::Process proc = DHVect[i].GetProcess();
 
-        // Observable
-        const DataHandler::Observable obs = DHVect[i].GetObservable();
-
         // Target isoscalarity
         const double targetiso = DHVect[i].GetTargetIsoscalarity();
 
@@ -284,9 +281,9 @@ namespace NangaParbat
         const apfel::QGrid<double> Qgrid{Qg, idQ};
 
         // Construct QGrid-like grids for the integration in y or xF
-        const double xil  = (obs == DataHandler::dydQdqT ? exp(yxb.first) : yxb.first);
-        const double xiu  = (obs == DataHandler::dydQdqT ? exp(yxb.second) : yxb.second);
-        const double xiav = (obs == DataHandler::dydQdqT ? exp( ( yxb.first + yxb.second ) / 2 ): ( yxb.first + yxb.second ) / 2 );
+        const double xil  = exp(yxb.first);
+        const double xiu  = exp(yxb.second);
+        const double xiav = exp( ( yxb.first + yxb.second ) / 2 );
         const std::vector<double> xig = (Inty ? GenerateGrid(nxi, xil, xiu, idxi - 1, true) : std::vector<double> {xiav});
         const apfel::QGrid<double> xigrid{xig, idxi};
 
@@ -302,7 +299,6 @@ namespace NangaParbat
         Tabs[i] << YAML::Comment("Kinematics and grid information");
         Tabs[i] << YAML::Key << "name" << YAML::Value << name;
         Tabs[i] << YAML::Key << "process" << YAML::Value << proc;
-        Tabs[i] << YAML::Key << "observable" << YAML::Value << obs;
         Tabs[i] << YAML::Key << "CME" << YAML::Value << Vs;
         Tabs[i] << YAML::Key << "qTintegrated" << YAML::Value << IntqT;
         Tabs[i] << YAML::Key << "qT_bounds" << YAML::Value << YAML::Flow << qTv;
@@ -336,7 +332,7 @@ namespace NangaParbat
                   {
                     const double Q   = Qg[tau];
                     const double xi  = xig[alpha];
-                    const double rap = log(obs == DataHandler::dydQdqT ? xi : Vs * ( xi + sqrt( pow(xi, 2) + pow(2 * Q / Vs, 2) ) ) / Q / 2);
+                    const double rap = log(xi);
                     PS[tau][alpha] = ps.PhaseSpaceReduction(Q, rap, qT);
                     if (IntqT)
                       dPS[tau][alpha] = ps.DerivePhaseSpaceReduction(Q, rap, qT);
@@ -445,7 +441,7 @@ namespace NangaParbat
                           {
                             // Compute 'x1' and 'x2' according to the
                             // proper observable.
-                            const double x1 = (obs == DataHandler::dydQdqT ? Q * xi / Vs : ( xi + sqrt( pow(xi, 2) + pow(2 * Q / Vs, 2) ) ) / 2);
+                            const double x1 = Q * xi / Vs;
                             const double x2 = pow(Q / Vs, 2) / x1;
 
                             // Get interpolating function in xi but
@@ -458,7 +454,7 @@ namespace NangaParbat
                             const double Ixi = (Inty ? xigrid.Interpolant(0, alpha, xi) : 1);
 
                             // Return xi integrand
-                            return Ixi * TabLumi.EvaluatexzQ(x1, x2, Q) / (obs == DataHandler::dydQdqT ? xi : x1 + x2);
+                            return Ixi * TabLumi.EvaluatexzQ(x1, x2, Q) / xi;
                           };
 
                           // Perform the integral in xi
@@ -595,8 +591,7 @@ namespace NangaParbat
                 // Function to be integrated in xi
                 const auto xiintegrand = [&] (double const& xi) -> double
                 {
-                  // Compute 'x1' and 'x2' according to the
-                  // proper observable.
+                  // Compute 'x1' and 'x2'
                   const double x1 = Q * xi / Vs;
                   const double x2 = pow(Q / Vs, 2) / x1;
 

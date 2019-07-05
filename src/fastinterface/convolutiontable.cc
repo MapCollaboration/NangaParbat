@@ -18,9 +18,6 @@ namespace NangaParbat
     // Process index
     _proc = table["process"].as<int>();
 
-    // Observable index
-    _obs = table["observable"].as<int>();
-
     // C.M.E.
     _Vs = table["CME"].as<double>();
 
