@@ -88,7 +88,7 @@ namespace NangaParbat
             for (int alpha = 0; alpha < (int) _xig.size(); alpha++)
               {
                 const double x1 = Vtau * _xig[alpha];
-                const double x2 = pow(Q / _Vs, 2) / x1;
+                const double x2 = pow(Vtau, 2) / x1;
                 for (int n = 0; n < (int) _z.size(); n++)
                   {
                     const double b = _z[n] / _qTv[iqT];
@@ -119,8 +119,8 @@ namespace NangaParbat
         // Positive value of qT correspond to the non-derivative part
         // and negative to the derivative part of the phase-space
         // reduction factor.
-        pred.insert({_qTv[iqT], _prefact * cs});
-        pred.insert({-_qTv[iqT], _prefact * dcs});
+        pred.insert({_qTv[iqT], cs});
+        pred.insert({-_qTv[iqT], dcs});
       }
     return pred;
   }
@@ -143,10 +143,11 @@ namespace NangaParbat
         {
           vpred[i]  = ( pred.at(_qTmap[i][1]) - pred.at(_qTmap[i][0]) ) / ( _qTmap[i][1] - _qTmap[i][0] );
           vpred[i] -= ( pred.at(-_qTmap[i][1]) + pred.at(-_qTmap[i][0]) ) / 2;
+          vpred[i] *= _prefact * _qTfact[i];
         }
     else
       for (int i = 0; i < npred; i++)
-        vpred[i] = _qTfact[i] * pred.at(_qTmap[i][1]);
+        vpred[i] = _prefact * _qTfact[i] * pred.at(_qTmap[i][1]);
 
     return vpred;
   }

@@ -164,7 +164,10 @@ namespace NangaParbat
           // data point is not integrate over qT the first entry of
           // the map pair is set to -1. Make also sure that all bins
           // are either all integrated or all are not by checking if
-          // "_kin.IntqT" has changed after the first data point.
+          // "_kin.IntqT" has changed after the first data
+          // point. Finally, if the key "factor" is present, gather
+          // the factors to be used to multiply the single bins in
+          // qT. Set the factors to one be default.
           if (vl["low"] && vl["high"])
             {
               if (_kin.ndata > 1 and _kin.IntqT != true)
@@ -178,7 +181,6 @@ namespace NangaParbat
               if(std::find(_kin.qTv.begin(), _kin.qTv.end(), qTh) == _kin.qTv.end())
                 _kin.qTv.push_back(vl["high"].as<double>());
 
-              //_kin.qTmap.push_back(std::make_pair(qTl, qTh));
               _kin.qTmap.push_back(std::make_pair(std::max(qTl, 1e-5), qTh));
             }
           else if (vl["value"])
@@ -196,7 +198,7 @@ namespace NangaParbat
           else
             throw std::runtime_error("[DataHandler::DataHandler]: Invalid qT-bin structure");
 
-          // Now fill in vector of by-by-bin prefactors.
+          // Now fill in vector of bin-by-bin prefactors.
           if (vl["factor"])
             _kin.qTfact.push_back(vl["factor"].as<double>());
           else
