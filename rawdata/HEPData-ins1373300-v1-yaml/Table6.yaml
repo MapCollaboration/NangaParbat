@@ -1,0 +1,60 @@
+dependent_variables:
+- header: {name: '$A_{\mu}$ = [SIG(+)-SIG(-)]/[SIG(+)+SIG(-)]', units: PCT}
+  qualifiers:
+  - {name: ETARAP(MU), value: 2.0-4.5}
+  - {name: PT(MU), units: GEV, value: '> 20'}
+  - {name: RE(+), value: P P --> W+ < MU+ NU > X}
+  - {name: RE(-), value: P P --> W- < MU- NUBAR > X}
+  - {name: SQRT(S), units: GeV, value: '7000.0'}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.48}
+    - {label: sys, symerror: 0.82}
+    - {label: 'sys,beam', symerror: 0.07}
+    value: 26.74
+  - errors:
+    - {label: stat, symerror: 0.41}
+    - {label: sys, symerror: 1.09}
+    - {label: 'sys,beam', symerror: 0.07}
+    value: 26.08
+  - errors:
+    - {label: stat, symerror: 0.42}
+    - {label: sys, symerror: 0.6}
+    - {label: 'sys,beam', symerror: 0.07}
+    value: 23.25
+  - errors:
+    - {label: stat, symerror: 0.46}
+    - {label: sys, symerror: 0.84}
+    - {label: 'sys,beam', symerror: 0.07}
+    value: 16.26
+  - errors:
+    - {label: stat, symerror: 0.5}
+    - {label: sys, symerror: 0.9}
+    - {label: 'sys,beam', symerror: 0.08}
+    value: 7.81
+  - errors:
+    - {label: stat, symerror: 0.57}
+    - {label: sys, symerror: 1.35}
+    - {label: 'sys,beam', symerror: 0.08}
+    value: -5.37
+  - errors:
+    - {label: stat, symerror: 0.52}
+    - {label: sys, symerror: 0.49}
+    - {label: 'sys,beam', symerror: 0.07}
+    value: -23.04
+  - errors:
+    - {label: stat, symerror: 1.22}
+    - {label: sys, symerror: 1.3}
+    - {label: 'sys,beam', symerror: 0.06}
+    value: -50.65
+independent_variables:
+- header: {name: $\eta$}
+  values:
+  - {high: 2.25, low: 2.0}
+  - {high: 2.5, low: 2.25}
+  - {high: 2.75, low: 2.5}
+  - {high: 3.0, low: 2.75}
+  - {high: 3.25, low: 3.0}
+  - {high: 3.5, low: 3.25}
+  - {high: 4.0, low: 3.5}
+  - {high: 4.5, low: 4.0}

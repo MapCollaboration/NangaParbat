@@ -255,7 +255,7 @@ namespace NangaParbat
         const std::vector<std::pair<double,double>> qTmap    = kin.qTmap;    // Map of qT bounds to associate to the single bins
         const std::vector<double>                   qTfact   = kin.qTfact;   // Possible bin-by-bin prefactors to multiply the theoretical predictions
         const std::pair<double,double>              Qb       = kin.var1b;    // Invariant mass interval
-        const std::pair<double,double>              yxb      = kin.var2b;    // Rapidity/xF interval
+        const std::pair<double,double>              yb       = kin.var2b;    // Rapidity/xF interval
         const bool                                  IntqT    = kin.IntqT;    // Whether the bins in qTv are to be integrated over
         const bool                                  IntQ     = kin.Intv1;    // Whether the bin in Q is to be integrated over
         const bool                                  Inty     = kin.Intv2;    // Whether the bin in y is to be integrated over
@@ -281,9 +281,9 @@ namespace NangaParbat
         const apfel::QGrid<double> Qgrid{Qg, idQ};
 
         // Construct QGrid-like grids for the integration in y or xF
-        const double xil  = exp(yxb.first);
-        const double xiu  = exp(yxb.second);
-        const double xiav = exp( ( yxb.first + yxb.second ) / 2 );
+        const double xil  = exp(yb.first);
+        const double xiu  = exp(yb.second);
+        const double xiav = exp( ( yb.first + yb.second ) / 2 );
         const std::vector<double> xig = (Inty ? GenerateGrid(nxi, xil, xiu, idxi - 1, true) : std::vector<double> {xiav});
         const apfel::QGrid<double> xigrid{xig, idxi};
 

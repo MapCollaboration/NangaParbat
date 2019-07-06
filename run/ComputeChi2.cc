@@ -10,7 +10,7 @@
 int main(int argc, char* argv[])
 {
   // Check that the input is correct otherwise stop the code
-  if(argc < 3 || strcmp(argv[1], "--help") == 0)
+  if (argc < 3 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << std::endl;
       std::cout << "Invalid Parameters:" << std::endl;

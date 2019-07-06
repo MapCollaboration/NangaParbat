@@ -85,7 +85,7 @@ namespace NangaParbat
               }
 
             // Rapidity interval
-            if (ql["name"].as<std::string>() == "y" || ql["name"].as<std::string>() == "xF")
+            if (ql["name"].as<std::string>() == "y")
               {
                 _kin.var2b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
                 _kin.Intv2 = ql["integrate"].as<bool>();

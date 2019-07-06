@@ -2,12 +2,11 @@ dependent_variables:
   - header:
     qualifiers:
       - {name: process, value: DY}
-      - {name: observable, value: d(sigma)/dxFdQdqT}
       - {name: target_isoscalarity, value: 0.4603} #  isoscalarity of copper = Z/A = 29/63
       - {name: prefactor, value: 0.31830989} # this is 1/pi
       - {name: Vs, value: 38.8}
       - {name: Q, low: 7, high: 8, integrate: true}
-      - {name: xF, low: 0.1, high: 0.1, integrate: false}
+      - {name: y, low: 0.2558657092827517, high: 0.2558657092827517, integrate: false}
     values:
       - errors:
           - {label: unc, value: 0.12151363092262531}
@@ -56,14 +55,14 @@ dependent_variables:
 independent_variables:
   - header:
     values:
-      - {value: 0.1}
-      - {value: 0.3}
-      - {value: 0.5}
-      - {value: 0.7}
-      - {value: 0.9}
-      - {value: 1.1}
-      - {value: 1.3}
-      - {value: 1.5}
-      - {value: 1.7}
-      - {value: 1.9}
-      - {value: 2.1}
+      - {value: 0.1, factor: 5}
+      - {value: 0.3, factor: 1.666666666666667}
+      - {value: 0.5, factor: 1.0}
+      - {value: 0.7, factor: 0.714285714285714}
+      - {value: 0.9, factor: 0.555555555555556}
+      - {value: 1.1, factor: 0.454545454545455}
+      - {value: 1.3, factor: 0.384615384615385}
+      - {value: 1.5, factor: 0.333333333333333}
+      - {value: 1.7, factor: 0.294117647058824}
+      - {value: 1.9, factor: 0.263157894736842}
+      - {value: 2.1, factor: 0.238095238095238}
