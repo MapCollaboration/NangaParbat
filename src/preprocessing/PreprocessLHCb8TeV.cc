@@ -14,7 +14,7 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  void PreprocessLHCb8TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath)
+  std::string PreprocessLHCb8TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath)
   {
     std::cout << "Processing LHCb 8 TeV data ..." << std::endl;
 
@@ -115,5 +115,6 @@ namespace NangaParbat
               fout.close();
             }
       }
+    return "#   - {name: LHCb_8TeV,  file: LHCb_8TeV.yaml}\n";
   }
 }

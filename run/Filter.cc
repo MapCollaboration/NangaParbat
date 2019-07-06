@@ -5,6 +5,7 @@
 #include "NangaParbat/preprocessing.h"
 
 #include <iostream>
+#include <fstream>
 
 //_________________________________________________________________________________
 // Main program
@@ -26,32 +27,29 @@ int main(int argc, char* argv[])
   // Path to to the output folder as a std::string
   const std::string ProcessedDataPath = std::string(argv[2]);
 
-  // E605
-  NangaParbat::PreprocessE605(RawDataPath, ProcessedDataPath);
+  // Dataset file
+  std::ofstream fout(ProcessedDataPath + "/datasets.yaml");
 
-  // E288
-  NangaParbat::PreprocessE288(RawDataPath, ProcessedDataPath);
+  fout << "# E605:\n";
+  fout << NangaParbat::PreprocessE605(RawDataPath, ProcessedDataPath);
 
-  // CDF Run I
-  NangaParbat::PreprocessCDFRunI(RawDataPath, ProcessedDataPath);
+  fout << "# E288:\n";
+  fout << NangaParbat::PreprocessE288(RawDataPath, ProcessedDataPath);
 
-  // CDF Run II
-  NangaParbat::PreprocessCDFRunII(RawDataPath, ProcessedDataPath);
+  fout << "# CDF:\n";
+  fout << NangaParbat::PreprocessCDFRunI(RawDataPath,  ProcessedDataPath);
+  fout << NangaParbat::PreprocessCDFRunII(RawDataPath, ProcessedDataPath);
 
-  // D0 Run I
-  NangaParbat::PreprocessD0RunI(RawDataPath, ProcessedDataPath);
+  fout << "# D0:\n";
+  fout << NangaParbat::PreprocessD0RunI(RawDataPath,  ProcessedDataPath);
+  fout << NangaParbat::PreprocessD0RunII(RawDataPath, ProcessedDataPath);
 
-  // D0 Run II
-  NangaParbat::PreprocessD0RunII(RawDataPath, ProcessedDataPath);
+  fout << "# LHCb:\n";
+  fout << NangaParbat::PreprocessLHCb7TeV(RawDataPath,  ProcessedDataPath);
+  fout << NangaParbat::PreprocessLHCb8TeV(RawDataPath,  ProcessedDataPath);
+  fout << NangaParbat::PreprocessLHCb13TeV(RawDataPath, ProcessedDataPath);
 
-  // LHCb 7 TeV
-  NangaParbat::PreprocessLHCb7TeV(RawDataPath, ProcessedDataPath);
-
-  // LHCb 8 TeV
-  NangaParbat::PreprocessLHCb8TeV(RawDataPath, ProcessedDataPath);
-
-  // LHCb 13 TeV
-  NangaParbat::PreprocessLHCb13TeV(RawDataPath, ProcessedDataPath);
+  fout.close();
 
   return 0;
 }

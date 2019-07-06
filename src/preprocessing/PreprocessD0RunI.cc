@@ -14,7 +14,7 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  void PreprocessD0RunI(std::string const& RawDataPath, std::string const& ProcessedDataPath)
+  std::string PreprocessD0RunI(std::string const& RawDataPath, std::string const& ProcessedDataPath)
   {
     std::cout << "Processing D0 Run I data ..." << std::endl;
 
@@ -110,5 +110,6 @@ namespace NangaParbat
             fout.close();
           }
       }
+    return "#   - {name: D0_RunI, file: D0_RunI.yaml}\n";
   }
 }

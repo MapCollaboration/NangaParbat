@@ -12,7 +12,7 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  void PreprocessLHCb13TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath)
+  std::string PreprocessLHCb13TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath)
   {
     std::cout << "Processing LHCb 13 TeV data ..." << std::endl;
 
@@ -35,5 +35,7 @@ namespace NangaParbat
     copyfile_state_t s;
     s = copyfile_state_alloc();
     copyfile((RawDataFolder + tab).c_str(), (opath + "/" + tab).c_str(), s, COPYFILE_DATA);
+
+    return "#   - {name: LHCb_13TeV,  file: LHCb_13TeV.yaml}\n";
   }
 }

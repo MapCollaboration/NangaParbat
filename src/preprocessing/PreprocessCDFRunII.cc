@@ -14,7 +14,7 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  void PreprocessCDFRunII(std::string const& RawDataPath, std::string const& ProcessedDataPath)
+  std::string PreprocessCDFRunII(std::string const& RawDataPath, std::string const& ProcessedDataPath)
   {
     std::cout << "Processing CDF Run II data ..." << std::endl;
 
@@ -107,5 +107,6 @@ namespace NangaParbat
             fout.close();
           }
       }
+    return "#   - {name: D0_RunII, file: D0_RunII.yaml}\n";
   }
 }
