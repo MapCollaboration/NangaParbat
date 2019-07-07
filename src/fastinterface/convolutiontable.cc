@@ -75,7 +75,7 @@ namespace NangaParbat
     std::vector<std::vector<std::vector<std::vector<double>>>> fNP2g(_qTv.size(), std::vector<std::vector<std::vector<double>>>(
                                                                        _Qg.size(), std::vector<std::vector<double>>(
                                                                          _xig.size(), std::vector<double>(_z.size(), 0.))));
-    for (int iqT = 0; iqT < _qTv.size(); iqT++)
+    for (int iqT = 0; iqT < (int) _qTv.size(); iqT++)
       {
         for (int tau = 0; tau < (int) _Qg.size(); tau++)
           {
@@ -98,7 +98,7 @@ namespace NangaParbat
 
     // Compute predictions
     std::map<double,double> pred;
-    for (int iqT = 0; iqT < _qTv.size(); iqT++)
+    for (int iqT = 0; iqT < (int) _qTv.size(); iqT++)
       {
         double cs  = 0;
         double dcs = 0;
@@ -133,7 +133,7 @@ namespace NangaParbat
                                                        std::function<double(double const&, double const&, double const&)> const& fNP2) const
   {
     std::map<double,double> pred = Convolute(fNP1, fNP2);
-    const int npred = (int) _qTmap.size();
+    const int npred = _qTmap.size();
     std::vector<double> vpred(npred);
     if (_IntqT)
       for (int i = 0; i < npred; i++)

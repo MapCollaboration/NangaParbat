@@ -410,7 +410,7 @@ namespace NangaParbat
                     // Update vector of fixed points for the integration in Q
                     if (tau > 0 && tau < nQ)
                       FixPtsQ.push_back(Qg[tau]);
-                    if (FixPtsQ.size() > idQ || tau >= nQ)
+                    if ((int) FixPtsQ.size() > idQ || tau >= nQ)
                       FixPtsQ.erase(FixPtsQ.begin());
 
                     // Get integration bounds for the integration in Q
@@ -426,7 +426,7 @@ namespace NangaParbat
                         // Update vector of fixed points for the integration in xi
                         if (alpha > 0 && alpha < nxi)
                           FixPtsxi.push_back(xig[alpha]);
-                        if (FixPtsxi.size() > idxi || alpha >= nxi)
+                        if ((int) FixPtsxi.size() > idxi || alpha >= nxi)
                           FixPtsxi.erase(FixPtsxi.begin());
 
                         // Get integration bounds for the integration in xi

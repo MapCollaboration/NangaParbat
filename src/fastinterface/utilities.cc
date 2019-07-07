@@ -35,22 +35,22 @@ namespace NangaParbat
   {
     // Convert two dimentional array to one dimentional for gsl routines
     const int ndata = V.size(0);
-    double* mat = new double[ndata*ndata];
+    double* mat = new double[ndata * ndata];
     for(int i = 0; i < ndata; i++)
       for(int j = 0; j < ndata; j++)
         mat[i * ndata + j] = V(i, j);
 
-    gsl_matrix_view covmat = gsl_matrix_view_array(mat,ndata,ndata);
+    gsl_matrix_view covmat = gsl_matrix_view_array(mat, ndata, ndata);
 
     gsl_linalg_cholesky_decomp1(&covmat.matrix);
 
-    apfel::matrix<double> L{ndata, ndata};
+    apfel::matrix<double> L{(size_t) ndata, (size_t) ndata};
     for(int i = 0; i < ndata; i++)
       for(int j = 0; j < ndata; j++)
         if(j > i)
           L(i, j) = 0;
         else
-          L(i, j) = gsl_matrix_get(&covmat.matrix,i,j);
+          L(i, j) = gsl_matrix_get(&covmat.matrix, i, j);
 
     // Check that L * L^T = V
     for(int i = 0; i < ndata; i++)
@@ -131,7 +131,7 @@ namespace NangaParbat
 
     // Transpose La
     const int ndata = rho.size();
-    apfel::matrix<double> LaT{ndata, ndata};
+    apfel::matrix<double> LaT{(size_t) ndata, (size_t) ndata};
     for(int alpha = 0; alpha < ndata; alpha++)
       for(int beta = 0; beta < ndata; beta++)
         LaT(alpha, beta) = La(beta, alpha);

@@ -7,7 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <sys/stat.h>
-#include <copyfile.h>
+//#include <copyfile.h>
 
 namespace NangaParbat
 {
@@ -31,9 +31,10 @@ namespace NangaParbat
     mkdir(opath.c_str(), ACCESSPERMS);
 
     // Copy file
-    copyfile_state_t s;
-    s = copyfile_state_alloc();
-    copyfile((RawDataFolder + tab).c_str(), (opath + "/" + tab).c_str(), s, COPYFILE_DATA);
+    //copyfile_state_t s;
+    //s = copyfile_state_alloc();
+    //copyfile((RawDataFolder + tab).c_str(), (opath + "/" + tab).c_str(), s, COPYFILE_DATA);
+    system(("cp " + RawDataFolder + tab + " " + opath + "/" + tab).c_str());
 
     return "  - {name: LHCb_13TeV, file: LHCb_13TeV.yaml}\n";
   }
