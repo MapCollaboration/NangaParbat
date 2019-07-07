@@ -1,0 +1,59 @@
+dependent_variables:
+  - header: {name: "1/A*E(P=3 4,RF=CM)*D3(SIG)/D3(P(P=3 4,RF=CM))", units: FB/GEV**2}
+    qualifiers:
+      - {name: process, value: DY}
+      - {name: observable, value: d(sigma)/dydQdqT}
+      - {name: target_isoscalarity, value: 0.4603}
+      - {name: prefactor, value: 0.31830989}
+      - {name: Vs, value: 19.4}
+      - {name: Q, low: 10, high: 11, integrate: true}
+      - {name: y, low: 0.4, high: 0.4, integrate: false}
+    values:
+      - errors:
+          - {label: unc, value: 0.0021199999999999999}
+          - {label: mult, value: 0.25}
+        value: 0.0020899999999999998
+      - errors:
+          - {label: unc, value: 0.00088000000000000003}
+          - {label: mult, value: 0.25}
+        value: 0.00123
+      - errors:
+          - {label: unc, value: 0.00041999999999999996}
+          - {label: mult, value: 0.25}
+        value: 0.00041999999999999996
+      - errors:
+          - {label: unc, value: 0.00033}
+          - {label: mult, value: 0.25}
+        value: 0.00032000000000000003
+      - errors:
+          - {label: unc, value: 0.00027}
+          - {label: mult, value: 0.25}
+        value: 0.00026000000000000003
+      - errors:
+          - {label: unc, value: 0.00041999999999999996}
+          - {label: mult, value: 0.25}
+        value: 0.00070999999999999991
+      - errors:
+          - {label: unc, value: 0.00031}
+          - {label: mult, value: 0.25}
+        value: 0.00031
+      - errors:
+          - {label: unc, value: 0.00035999999999999997}
+          - {label: mult, value: 0.25}
+        value: 0.00035999999999999997
+      - errors:
+          - {label: unc, value: 0.00046000000000000001}
+          - {label: mult, value: 0.25}
+        value: 0.00060999999999999997
+independent_variables:
+  - header: {name: "PT(P=3 4,RF=CM)", units: GEV}
+    values:
+      - value: 0.10000000000000001
+      - value: 0.30000000000000004
+      - value: 0.5
+      - value: 0.69999999999999996
+      - value: 0.90000000000000002
+      - value: 1.1000000000000001
+      - value: 1.2999999999999998
+      - value: 1.5
+      - value: 1.8999999999999999

@@ -1,88 +1,86 @@
 dependent_variables:
- - header: {name: (1/SIG)*DSIG/DPT(Z0)(fiducial), units: GEV**-1}
-   qualifiers:
+  - header: {name: (1/SIG)*DSIG/DPT(Z0)(fiducial), units: GEV**-1}
+    qualifiers:
       - {name: process, value: DY}
-      - {name: observable, value: d(sigma)/dydQdqT} # this must be like that, but it's not the right observable
-      - {name: target_isoscalarity, value: 1 } # proton - proton beam?
+      - {name: target_isoscalarity, value: 1}
       - {name: prefactor, value: 1}
       - {name: Vs, value: 8000}
       - {name: Q, low: 60, high: 120, integrate: true}
       - {name: y, low: 0, high: 2.1, integrate: true}
       - {name: PS_reduction, pTmin: 15, etamin: -2.1, etamax: 2.1}
-   values:
-     - value: 0.0333549
-       errors:
-         - {label: 'unc', value: 0.00205861}
-     - value: 0.0553482
-       errors:
-         - {label: 'unc', value: 0.00264076}
-     - value: 0.051878
-       errors:
-         - {label: 'unc', value: 0.00249936}
-     - value: 0.0385965
-       errors:
-         - {label: 'unc', value: 0.00229056}
-     - value: 0.0354796
-       errors:
-         - {label: 'unc', value: 0.00215988}
-     - value: 0.0240797
-       errors:
-         - {label: 'unc', value: 0.00189679}
-     - value: 0.0225014
-       errors:
-         - {label: 'unc', value: 0.00173219}
-     - value: 0.0172383
-       errors:
-         - {label: 'unc', value: 0.00154885}
-     - value: 0.0117412
-       errors:
-         - {label: 'unc', value: 0.000482165}
-     - value: 0.00651165
-       errors:
-         - {label: 'unc', value: 0.000359578}
-     - value: 0.00401844
-       errors:
-         - {label: 'unc', value: 0.000289945}
-     - value: 0.00215843
-       errors:
-         - {label: 'unc', value: 0.000144729}
-     - value: 0.000889498
-       errors:
-         - {label: 'unc', value: 9.5768E-05}
-     - value: 0.000409535
-       errors:
-         - {label: 'unc', value: 6.58497E-05}
-     - value: 0.000164556
-       errors:
-         - {label: 'unc', value: 2.83107E-05}
-     - value: 7.64607E-05
-       errors:
-         - {label: 'unc', value: 1.88958E-05}
-     - value: 8.98327E-06
-       errors:
-         - {label: 'unc', value: 6.26627E-06}
-     - value: 4.43714E-06
-       errors:
-         - {label: 'unc', value: 1.95776E-06}
-
+    values:
+      - errors:
+          - {label: unc, value: 0.00205861}
+        value: 0.0333549
+      - errors:
+          - {label: unc, value: 0.00264076}
+        value: 0.0553482
+      - errors:
+          - {label: unc, value: 0.00249936}
+        value: 0.051878
+      - errors:
+          - {label: unc, value: 0.00229056}
+        value: 0.0385965
+      - errors:
+          - {label: unc, value: 0.00215988}
+        value: 0.0354796
+      - errors:
+          - {label: unc, value: 0.00189679}
+        value: 0.0240797
+      - errors:
+          - {label: unc, value: 0.00173219}
+        value: 0.0225014
+      - errors:
+          - {label: unc, value: 0.00154885}
+        value: 0.0172383
+      - errors:
+          - {label: unc, value: 0.000482165}
+        value: 0.0117412
+      - errors:
+          - {label: unc, value: 0.000359578}
+        value: 0.00651165
+      - errors:
+          - {label: unc, value: 0.000289945}
+        value: 0.00401844
+      - errors:
+          - {label: unc, value: 0.000144729}
+        value: 0.00215843
+      - errors:
+          - {label: unc, value: 9.5768e-05}
+        value: 0.000889498
+      - errors:
+          - {label: unc, value: 6.58497e-05}
+        value: 0.000409535
+      - errors:
+          - {label: unc, value: 2.83107e-05}
+        value: 0.000164556
+      - errors:
+          - {label: unc, value: 1.88958e-05}
+        value: 7.64607e-05
+      - errors:
+          - {label: unc, value: 6.26627e-06}
+        value: 8.98327e-06
+      - errors:
+          - {label: unc, value: 1.95776e-06}
+        value: 4.43714e-06
 independent_variables:
- - header: {name: PT(Z0), units: GEV}
-   values:
-    - {low: 0.0, high: 2.5}
-    - {low: 2.5, high: 5.0}
-    - {low: 5.0, high: 7.5}
-    - {low: 7.5, high: 10.0}
-    - {low: 10.0, high: 12.5}
-    - {low: 12.5, high: 15.0}
-    - {low: 15.0, high: 17.5}
-    - {low: 17.5, high: 20.0}
-    - {low: 20.0, high: 30.0}
-    - {low: 30.0, high: 40.0}
-    - {low: 40.0, high: 50.0}
-    - {low: 50.0, high: 70.0}
-    - {low: 70.0, high: 90.0}
-    - {low: 90.0, high: 110.0}
-    - {low: 110.0, high: 150.0}
-    - {low: 150.0, high: 190.0}
-    - {low: 190.0, high: 250.0}
-    - {low: 250.0, high: 600.0}
+  - header: "{name: PT, units: GEV}"
+    values:
+      - {high: 2.5, low: 1e-05}
+      - {high: 5, low: 2.5}
+      - {high: 7.5, low: 5}
+      - {high: 10, low: 7.5}
+      - {high: 12.5, low: 10}
+      - {high: 15, low: 12.5}
+      - {high: 17.5, low: 15}
+      - {high: 20, low: 17.5}
+      - {high: 30, low: 20}
+      - {high: 40, low: 30}
+      - {high: 50, low: 40}
+      - {high: 70, low: 50}
+      - {high: 90, low: 70}
+      - {high: 110, low: 90}
+      - {high: 150, low: 110}
+      - {high: 190, low: 150}
+      - {high: 250, low: 190}
+      - {high: 600, low: 250}
