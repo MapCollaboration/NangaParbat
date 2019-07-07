@@ -14,29 +14,29 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  std::string PreprocessCDFRunI(std::string const& RawDataPath, std::string const& ProcessedDataPath)
+  std::string PreprocessD0RunII(std::string const& RawDataPath, std::string const& ProcessedDataPath)
   {
-    std::cout << "Processing CDF Run I data ..." << std::endl;
+    std::cout << "Processing D0 Run II data ..." << std::endl;
 
     // Path to the raw-data folder
-    const std::string RawDataFolder = RawDataPath + "/HEPData-ins505738-v1-yaml/";
+    const std::string RawDataFolder = RawDataPath + "/HEPData-ins769689-v1-yaml/";
 
     // Vector of tables to process
     const std::vector<std::string> tables = {"Table1.yaml"};
 
     // Output folder
-    const std::string ofolder = "CDF";
+    const std::string ofolder = "D0";
 
     // Output file
-    const std::string ofile = "CDF_RunI.yaml";
+    const std::string ofile = "D0_RunII.yaml";
+
+    // Create directory
+    std::string opath = ProcessedDataPath + "/" + ofolder;
+    mkdir(opath.c_str(), ACCESSPERMS);
 
     // Loop over tables
     for (auto const& tab : tables)
       {
-        // Create directory
-        std::string opath = ProcessedDataPath + "/" + ofolder;
-        mkdir(opath.c_str(), ACCESSPERMS);
-
         // Reading table with YAML
         const YAML::Node exp = YAML::LoadFile(RawDataFolder + tab);
 
@@ -64,12 +64,12 @@ namespace NangaParbat
             emit << YAML::BeginSeq;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "DY" << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << -1 << YAML::EndMap;
-            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
-            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 1800 << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 0.004063388866315 << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 1960 << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
-                 << "low" << YAML::Value << 66 << YAML::Key << "high" << YAML::Value << 116 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+                 << "low" << YAML::Value << 70 << YAML::Key << "high" << YAML::Value << 110 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
-                 << "low" << YAML::Value << -3.31 << YAML::Key << "high" << YAML::Value << 3.31 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+                 << "low" << YAML::Value << -3.4 << YAML::Key << "high" << YAML::Value << 3.4 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
             emit << YAML::EndSeq;
             emit << YAML::Key << "values" << YAML::Value;
             emit << YAML::BeginSeq;
@@ -78,7 +78,8 @@ namespace NangaParbat
                 emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value"
                      << YAML::Value << v["errors"][0]["symerror"].as<double>() << YAML::EndMap;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.039 << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value"
+                     << YAML::Value << v["errors"][1]["symerror"].as<double>() / v["value"].as<double>() << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::Key << "value" << YAML::Value << v["value"].as<double>();
                 emit << YAML::EndMap;
@@ -106,6 +107,6 @@ namespace NangaParbat
             fout.close();
           }
       }
-    return "#   - {name: D0_RunI,  file: D0_RunI.yaml}\n";
+    return "#   - {name: D0_RunII, file: D0_RunII.yaml}\n";
   }
 }

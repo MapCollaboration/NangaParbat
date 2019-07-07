@@ -14,29 +14,29 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  std::string PreprocessD0RunI(std::string const& RawDataPath, std::string const& ProcessedDataPath)
+  std::string PreprocessCDFRunII(std::string const& RawDataPath, std::string const& ProcessedDataPath)
   {
-    std::cout << "Processing D0 Run I data ..." << std::endl;
+    std::cout << "Processing CDF Run II data ..." << std::endl;
 
     // Path to the raw-data folder
-    const std::string RawDataFolder = RawDataPath + "/HEPData-ins503361-v1-yaml/";
+    const std::string RawDataFolder = RawDataPath + "/HEPData-ins1124333-v1-yaml/";
 
     // Vector of tables to process
-    const std::vector<std::string> tables = {"Table1.yaml"};
+    const std::vector<std::string> tables = {"Table2.yaml"};
 
     // Output folder
-    const std::string ofolder = "D0";
+    const std::string ofolder = "CDF";
 
     // Output file
-    const std::string ofile = "D0_RunI.yaml";
+    const std::string ofile = "CDF_RunII.yaml";
+
+    // Create directory
+    std::string opath = ProcessedDataPath + "/" + ofolder;
+    mkdir(opath.c_str(), ACCESSPERMS);
 
     // Loop over tables
     for (auto const& tab : tables)
       {
-        // Create directory
-        std::string opath = ProcessedDataPath + "/" + ofolder;
-        mkdir(opath.c_str(), ACCESSPERMS);
-
         // Reading table with YAML
         const YAML::Node exp = YAML::LoadFile(RawDataFolder + tab);
 
@@ -65,24 +65,21 @@ namespace NangaParbat
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "DY" << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << -1 << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
-            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 1800 << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 1960 << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
-                 << "low" << YAML::Value << 75 << YAML::Key << "high" << YAML::Value << 105 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+                 << "low" << YAML::Value << 66 << YAML::Key << "high" << YAML::Value << 116 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
-                 << "low" << YAML::Value << -3.18 << YAML::Key << "high" << YAML::Value << 3.18 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+                 << "low" << YAML::Value << -3.4 << YAML::Key << "high" << YAML::Value << 3.4 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
             emit << YAML::EndSeq;
             emit << YAML::Key << "values" << YAML::Value;
             emit << YAML::BeginSeq;
             for (auto const& v : dv["values"])
               {
                 emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
-                if (v["errors"][0]["symerror"])
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value"
-                       << YAML::Value << v["errors"][0]["symerror"].as<double>() << YAML::EndMap;
-                else
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value"
-                       << YAML::Value << ( v["errors"][0]["asymerror"]["plus"].as<double>() - v["errors"][0]["asymerror"]["minus"].as<double>() ) / 2 << YAML::EndMap;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.044 << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value"
+                     << YAML::Value << v["errors"][0]["symerror"].as<double>() << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << 0.01 << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.058 << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::Key << "value" << YAML::Value << v["value"].as<double>();
                 emit << YAML::EndMap;
@@ -110,6 +107,6 @@ namespace NangaParbat
             fout.close();
           }
       }
-    return "#   - {name: D0_RunI,  file: D0_RunI.yaml}\n";
+    return "#   - {name: D0_RunII, file: D0_RunII.yaml}\n";
   }
 }

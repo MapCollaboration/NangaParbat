@@ -27,23 +27,23 @@ namespace NangaParbat
 
     // Initialize naming map for the Q-integration ranges
     std::map<std::string, std::string> enranges = {{"4.TO5.", "_Q_4_5"}, {"5.TO6.", "_Q_5_6"}, {"6.TO7.", "_Q_6_7"},
-      {"7.TO8.", "_Q_7_8"}, {"8.TO9.", "_Q_8_9"}, {"9.TO10.", "_Q_9_10"},
-      {"10.TO11.", "_Q_10_11"}, {"11.TO12.", "_Q_11_12"}, {"12.TO13.", "_Q_12_13"},
-      {"13.TO14.", "_Q_13_14"}
+						   {"7.TO8.", "_Q_7_8"}, {"8.TO9.", "_Q_8_9"}, {"9.TO10.", "_Q_9_10"},
+						   {"10.TO11.", "_Q_10_11"}, {"11.TO12.", "_Q_11_12"}, {"12.TO13.", "_Q_12_13"},
+						   {"13.TO14.", "_Q_13_14"}
     };
     std::map<std::string, std::pair<double, double>> enrangelims = {{"4.TO5.", {4,5}}, {"5.TO6.", {5, 6}}, {"6.TO7.", {6, 7}},
-      {"7.TO8.", {7, 8}}, {"8.TO9.", {8, 9}}, {"9.TO10.", {9, 10}},
-      {"10.TO11.", {10, 11}}, {"11.TO12.", {11, 12}}, {"12.TO13.", {12, 13}},
-      {"13.TO14.", {13, 14}}
+								    {"7.TO8.", {7, 8}}, {"8.TO9.", {8, 9}}, {"9.TO10.", {9, 10}},
+								    {"10.TO11.", {10, 11}}, {"11.TO12.", {11, 12}}, {"12.TO13.", {12, 13}},
+								    {"13.TO14.", {13, 14}}
     };
+
+    // Create directory
+    std::string opath = ProcessedDataPath + "/" + ofolder;
+    mkdir(opath.c_str(), ACCESSPERMS);
 
     // Loop over tables
     for (auto const& tab : tables)
       {
-        // Create directory
-        std::string opath = ProcessedDataPath + "/" + ofolder;
-        mkdir(opath.c_str(), ACCESSPERMS);
-
         // Reading table with YAML
         const YAML::Node exp = YAML::LoadFile(RawDataFolder + tab.first);
 

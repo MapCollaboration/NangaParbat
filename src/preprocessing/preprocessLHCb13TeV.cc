@@ -25,7 +25,6 @@ namespace NangaParbat
     // Output folder
     const std::string ofolder = "LHCb";
 
-
     // In this case just copy the file
     // Loop over tables
     std::string opath = ProcessedDataPath + "/" + ofolder;

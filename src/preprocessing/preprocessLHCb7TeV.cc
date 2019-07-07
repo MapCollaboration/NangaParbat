@@ -14,29 +14,29 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  std::string PreprocessCMS7TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath)
+  std::string PreprocessLHCb7TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath)
   {
-    std::cout << "Processing CMS 7 TeV data ..." << std::endl;
+    std::cout << "Processing LHCb 7 TeV data ..." << std::endl;
 
     // Path to the raw-data folder
-    const std::string RawDataFolder = RawDataPath + "/HEPData-ins941555-v1-yaml/";
+    const std::string RawDataFolder = RawDataPath + "/HEPData-ins1373300-v1-yaml/";
 
     // Vector of tables to process
     const std::vector<std::string> tables = {"Table2.yaml"};
 
     // Output folder
-    const std::string ofolder = "CMS";
+    const std::string ofolder = "LHCb";
 
     // Output file
-    const std::string ofile = "CMS_7TeV.yaml";
+    const std::string ofile = "LHCb_7TeV.yaml";
+
+    // Create directory
+    std::string opath = ProcessedDataPath + "/" + ofolder;
+    mkdir(opath.c_str(), ACCESSPERMS);
 
     // Loop over tables
     for (auto const& tab : tables)
       {
-        // Create directory
-        std::string opath = ProcessedDataPath + "/" + ofolder;
-        mkdir(opath.c_str(), ACCESSPERMS);
-
         // Reading table with YAML
         const YAML::Node exp = YAML::LoadFile(RawDataFolder + tab);
 
@@ -70,20 +70,27 @@ namespace NangaParbat
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
                    << "low" << YAML::Value << 60 << YAML::Key << "high" << YAML::Value << 120 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
-                   << "low" << YAML::Value << 0 << YAML::Key << "high" << YAML::Value << 2.1 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+                   << "low" << YAML::Value << 2 << YAML::Key << "high" << YAML::Value << 4.5 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
-                   << "pTmin" << YAML::Value << 20 << YAML::Key << "etamin" << YAML::Value << -2.1 << YAML::Key << "etamax" << YAML::Value << 2.1 << YAML::EndMap;
+                   << "pTmin" << YAML::Value << 20 << YAML::Key << "etamin" << YAML::Value << 2 << YAML::Key << "etamax" << YAML::Value << 4.5 << YAML::EndMap;
               emit << YAML::EndSeq;
               emit << YAML::Key << "values" << YAML::Value;
               emit << YAML::BeginSeq;
+              int i = 0;
               for (auto const& v : dv["values"])
                 {
+                  const double binw = qTb[i].second - qTb[i].first;
                   emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value"
-                       << YAML::Value << v["errors"][0]["symerror"].as<double>()<< YAML::EndMap;
+                       << YAML::Value << v["errors"][0]["symerror"].as<double>() / binw << YAML::EndMap;
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value"
+                       << YAML::Value << v["errors"][1]["symerror"].as<double>() / v["value"].as<double>() << YAML::EndMap;
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value"
+                       << YAML::Value << sqrt( pow(0.0125, 2) + pow(0.0172, 2) ) << YAML::EndMap;
                   emit << YAML::EndSeq;
-                  emit << YAML::Key << "value" << YAML::Value << v["value"].as<double>();
+                  emit << YAML::Key << "value" << YAML::Value << v["value"].as<double>() / binw;
                   emit << YAML::EndMap;
+                  i++;
                 }
               emit << YAML::EndSeq;
               emit << YAML::EndMap;
@@ -108,6 +115,6 @@ namespace NangaParbat
               fout.close();
             }
       }
-    return "#   - {name: CMS_7TeV, file: CMS_7TeV.yaml}\n";
+    return "#   - {name: LHCb_7TeV,  file: LHCb_7TeV.yaml}\n";
   }
 }

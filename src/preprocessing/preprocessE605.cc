@@ -34,13 +34,13 @@ namespace NangaParbat
       {"11.5 TO 13.5", {11.5, 13.5}}, {"13.5 TO 18.0", {13.5, 18}}
     };
 
+    // Create directory
+    std::string opath = ProcessedDataPath + "/" + ofolder;
+    mkdir(opath.c_str(), ACCESSPERMS);
+
     // Loop over tables
     for (auto const& tab : tables)
       {
-        // Create directory
-        std::string opath = ProcessedDataPath + "/" + ofolder;
-        mkdir(opath.c_str(), ACCESSPERMS);
-
         // Reading table with YAML
         const YAML::Node exp = YAML::LoadFile(RawDataFolder + tab);
 

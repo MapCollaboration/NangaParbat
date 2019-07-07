@@ -1,17 +1,17 @@
 set(preprocessing_source
-  PreprocessE288.cc
-  PreprocessE605.cc
-  PreprocessCDFRunI.cc
-  PreprocessCDFRunII.cc
-  PreprocessD0RunI.cc
-  PreprocessD0RunII.cc
-  PreprocessLHCb7TeV.cc
-  PreprocessLHCb8TeV.cc
-  PreprocessLHCb13TeV.cc
-  PreprocessCMS7TeV.cc
-  PreprocessCMS8TeV.cc
-  PreprocessATLAS7TeV.cc
-  PreprocessATLAS8TeV.cc
+  preprocessE288.cc
+  preprocessE605.cc
+  preprocessCDFRunI.cc
+  preprocessCDFRunII.cc
+  preprocessD0RunI.cc
+  preprocessD0RunII.cc
+  preprocessLHCb7TeV.cc
+  preprocessLHCb8TeV.cc
+  preprocessLHCb13TeV.cc
+  preprocessCMS7TeV.cc
+  preprocessCMS8TeV.cc
+  preprocessATLAS7TeV.cc
+  preprocessATLAS8TeV.cc
   )
 
 add_library(preprocessing OBJECT ${preprocessing_source})

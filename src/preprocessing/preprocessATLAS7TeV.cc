@@ -32,13 +32,13 @@ namespace NangaParbat
     std::map<std::string, std::string> yranges = {{"0.0-1.0", "_y_0_1"}, {"1.0-2.0", "_y_1_2"}, {"2.0-2.4", "_y_2_2.4"}};
     std::map<std::string, std::pair<double, double>> yrangelims = {{"0.0-1.0", {0, 1}}, {"1.0-2.0", {1, 2}}, {"2.0-2.4", {2, 2.4}}};
 
+    // Create directory
+    std::string opath = ProcessedDataPath + "/" + ofolder;
+    mkdir(opath.c_str(), ACCESSPERMS);
+
     // Loop over tables
     for (auto const& tab : tables)
       {
-        // Create directory
-        std::string opath = ProcessedDataPath + "/" + ofolder;
-        mkdir(opath.c_str(), ACCESSPERMS);
-
         // Reading table with YAML
         const YAML::Node exp = YAML::LoadFile(RawDataFolder + tab);
 
