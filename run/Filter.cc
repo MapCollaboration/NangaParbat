@@ -8,26 +8,23 @@
 #include <fstream>
 
 //_________________________________________________________________________________
-// Main program
 int main(int argc, char* argv[])
 {
   // Check that the input is correct otherwise stop the code
   if(argc < 3 || strcmp(argv[1], "--help") == 0)
     {
-      std::cout << std::endl;
-      std::cout << "Invalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./Filter <path to raw-data folder> <path to the processed data>" << std::endl;
-      std::cout << std::endl;
+      std::cout << "\nInvalid Parameters:" << std::endl;
+      std::cout << "Syntax: ./Filter <path to raw-data folder> <path to processed data>\n" << std::endl;
       exit(-10);
     }
 
-  // Path to raw-data as a std::string
+  // Path to the raw-data folder
   const std::string RawDataPath = std::string(argv[1]);
 
-  // Path to to the output folder as a std::string
+  // Path to to output folder
   const std::string ProcessedDataPath = std::string(argv[2]);
 
-  // Dataset file
+  // Dataset file created dunring the filtering
   std::ofstream fout(ProcessedDataPath + "/datasets.yaml");
 
   fout << "E605:\n";

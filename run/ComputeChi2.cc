@@ -6,16 +6,13 @@
 #include "NangaParbat/chisquare.h"
 
 //_________________________________________________________________________________
-// Main program
 int main(int argc, char* argv[])
 {
   // Check that the input is correct otherwise stop the code
   if (argc < 3 || strcmp(argv[1], "--help") == 0)
     {
-      std::cout << std::endl;
-      std::cout << "Invalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./ComputeChi2 <path to data folder> <path to tables folder>" << std::endl;
-      std::cout << std::endl;
+      std::cout << "\nInvalid Parameters:" << std::endl;
+      std::cout << "Syntax: ./ComputeChi2 <path to data folder> <path to tables folder>\n" << std::endl;
       exit(-10);
     }
 

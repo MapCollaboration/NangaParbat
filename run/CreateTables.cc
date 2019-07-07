@@ -11,17 +11,14 @@
 #include <apfel/timer.h>
 
 //_________________________________________________________________________________
-// Main program
 int main(int argc, char* argv[])
 {
   // Check that the input is correct otherwise stop the code
   if (argc < 5 || strcmp(argv[1], "--help") == 0)
     {
-      std::cout << std::endl;
-      std::cout << "Invalid Parameters:" << std::endl;
+      std::cout << "\nInvalid Parameters:" << std::endl;
       std::cout << "Syntax: ./CreateTables <configuration file> <path to data folder> <output folder> <test tables? [y/n]> [optional selected datasets]" << std::endl;
-      std::cout << "Example: ./CreateTables ../cards/config.yaml ../data/ ../tables/ n E605_Q_7_8 E605_Q_13.5_18" << std::endl;
-      std::cout << std::endl;
+      std::cout << "Example: ./CreateTables ../cards/config.yaml ../data/ ../tables/ n E605_Q_7_8 E605_Q_13.5_18\n" << std::endl;
       exit(-10);
     }
 
