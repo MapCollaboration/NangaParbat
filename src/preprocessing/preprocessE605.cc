@@ -137,10 +137,10 @@ namespace NangaParbat
           }
       }
     return
-      "#   - {name: E605_Q7_8,       file: E605_Q7_8.yaml}\n"
-      "#   - {name: E605_Q8_9,       file: E605_Q8_9.yaml}\n"
-      "#   - {name: E605_Q10.5_11.5, file: E605_Q10.5_11.5.yaml}\n"
-      "#   - {name: E605_Q11.5_13.5, file: E605_Q11.5_13.5.yaml}\n"
-      "#   - {name: E605_Q13.5_18,   file: E605_Q13.5_18.yaml}\n";
+      "  - {name: E605_Q_7_8,       file: E605_Q_7_8.yaml}\n"
+      "  - {name: E605_Q_8_9,       file: E605_Q_8_9.yaml}\n"
+      "  - {name: E605_Q_10.5_11.5, file: E605_Q_10.5_11.5.yaml}\n"
+      "  - {name: E605_Q_11.5_13.5, file: E605_Q_11.5_13.5.yaml}\n"
+      "  - {name: E605_Q_13.5_18,   file: E605_Q_13.5_18.yaml}\n";
   }
 }

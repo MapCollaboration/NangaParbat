@@ -138,8 +138,8 @@ namespace NangaParbat
           }
       }
     return
-      "#   - {name: ATLAS_7TeV_y_0_1,     file: ATLAS_7TeV_y_0_1.yaml}\n"
-      "#   - {name: ATLAS_7TeV_y_1_2,     file: ATLAS_7TeV_y_1_2.yaml}\n"
-      "#   - {name: ATLAS_7TeV_y_2_2.4,   file: ATLAS_7TeV_y_2_2.4.yaml}\n";
+      "  - {name: ATLAS_7TeV_y_0_1,     file: ATLAS_7TeV_y_0_1.yaml}\n"
+      "  - {name: ATLAS_7TeV_y_1_2,     file: ATLAS_7TeV_y_1_2.yaml}\n"
+      "  - {name: ATLAS_7TeV_y_2_2.4,   file: ATLAS_7TeV_y_2_2.4.yaml}\n";
   }
 }

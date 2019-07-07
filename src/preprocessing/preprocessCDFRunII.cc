@@ -107,6 +107,6 @@ namespace NangaParbat
             fout.close();
           }
       }
-    return "#   - {name: D0_RunII, file: D0_RunII.yaml}\n";
+    return "  - {name: CDF_RunII, file: CDF_RunII.yaml}\n";
   }
 }

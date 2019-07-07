@@ -19,10 +19,16 @@ int main(int argc, char* argv[])
     {
       std::cout << std::endl;
       std::cout << "Invalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./CreateTables <configuration file> <path to data folder> <output folder> <test tables? [y/n]>" << std::endl;
+      std::cout << "Syntax: ./CreateTables <configuration file> <path to data folder> <output folder> <test tables? [y/n]> [optional selected datasets]" << std::endl;
+      std::cout << "Example: ./CreateTables ../cards/config.yaml ../data/ ../tables/ n E605_Q_7_8 E605_Q_13.5_18" << std::endl;
       std::cout << std::endl;
       exit(-10);
     }
+
+  // Vector of selected datasets
+  std::vector<std::string> selsets;
+  for (int i = 5; i < argc; i++)
+    selsets.push_back(std::string(argv[i]));
 
   // Allocate "FastInterface" object reading the parameters from an
   // input card.
@@ -30,15 +36,19 @@ int main(int argc, char* argv[])
 
   // Open datasets.yaml file that contains the list of tables to be
   // produced and push data sets into the a vector of DataHandler
-  // objects.
+  // objects. If a set of selected datasets is also provided, the code
+  // produces tables only for those datasets.
+  std::cout << "Generating interpolation tables for:" << std::endl;
   const YAML::Node datasets = YAML::LoadFile(std::string(argv[2]) + "/datasets.yaml");
   std::vector<NangaParbat::DataHandler> DHVect;
   for (auto const& exp : datasets)
     for (auto const& ds : exp.second)
-      {
-        const std::string datafile = std::string(argv[2]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
-        DHVect.push_back(NangaParbat::DataHandler{ds["name"].as<std::string>(), YAML::LoadFile(datafile)});
-      }
+      if(std::find(selsets.begin(), selsets.end(), ds["name"].as<std::string>()) != selsets.end() || selsets.empty())
+        {
+          std::cout << "- " << ds["name"].as<std::string>() << std::endl;
+          const std::string datafile = std::string(argv[2]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
+          DHVect.push_back(NangaParbat::DataHandler{ds["name"].as<std::string>(), YAML::LoadFile(datafile)});
+        }
 
   // Compute tables
   const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect, NangaParbat::bstarmin);

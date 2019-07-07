@@ -108,6 +108,6 @@ namespace NangaParbat
               fout.close();
             }
       }
-    return "#   - {name: CMS_8TeV, file: CMS_8TeV.yaml}\n";
+    return "  - {name: CMS_8TeV, file: CMS_8TeV.yaml}\n";
   }
 }

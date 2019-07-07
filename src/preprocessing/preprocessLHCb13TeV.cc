@@ -35,6 +35,6 @@ namespace NangaParbat
     s = copyfile_state_alloc();
     copyfile((RawDataFolder + tab).c_str(), (opath + "/" + tab).c_str(), s, COPYFILE_DATA);
 
-    return "#   - {name: LHCb_13TeV, file: LHCb_13TeV.yaml}\n";
+    return "  - {name: LHCb_13TeV, file: LHCb_13TeV.yaml}\n";
   }
 }

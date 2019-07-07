@@ -115,6 +115,6 @@ namespace NangaParbat
               fout.close();
             }
       }
-    return "#   - {name: LHCb_8TeV,  file: LHCb_8TeV.yaml}\n";
+    return "  - {name: LHCb_8TeV,  file: LHCb_8TeV.yaml}\n";
   }
 }

@@ -30,30 +30,30 @@ int main(int argc, char* argv[])
   // Dataset file
   std::ofstream fout(ProcessedDataPath + "/datasets.yaml");
 
-  fout << "# E605:\n";
+  fout << "E605:\n";
   fout << NangaParbat::PreprocessE605(RawDataPath, ProcessedDataPath);
 
-  fout << "# E288:\n";
+  fout << "E288:\n";
   fout << NangaParbat::PreprocessE288(RawDataPath, ProcessedDataPath);
 
-  fout << "# CDF:\n";
+  fout << "CDF:\n";
   fout << NangaParbat::PreprocessCDFRunI(RawDataPath,  ProcessedDataPath);
   fout << NangaParbat::PreprocessCDFRunII(RawDataPath, ProcessedDataPath);
 
-  fout << "# D0:\n";
+  fout << "D0:\n";
   fout << NangaParbat::PreprocessD0RunI(RawDataPath,  ProcessedDataPath);
   fout << NangaParbat::PreprocessD0RunII(RawDataPath, ProcessedDataPath);
 
-  fout << "# LHCb:\n";
+  fout << "LHCb:\n";
   fout << NangaParbat::PreprocessLHCb7TeV(RawDataPath,  ProcessedDataPath);
   fout << NangaParbat::PreprocessLHCb8TeV(RawDataPath,  ProcessedDataPath);
   fout << NangaParbat::PreprocessLHCb13TeV(RawDataPath, ProcessedDataPath);
 
-  fout << "# CMS:\n";
+  fout << "CMS:\n";
   fout << NangaParbat::PreprocessCMS7TeV(RawDataPath, ProcessedDataPath);
   fout << NangaParbat::PreprocessCMS8TeV(RawDataPath, ProcessedDataPath);
 
-  fout << "# ATLAS:\n";
+  fout << "ATLAS:\n";
   fout << NangaParbat::PreprocessATLAS7TeV(RawDataPath, ProcessedDataPath);
   fout << NangaParbat::PreprocessATLAS8TeV(RawDataPath, ProcessedDataPath);
 

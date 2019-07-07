@@ -136,11 +136,11 @@ namespace NangaParbat
             }
       }
     return
-      "#   - {name: ATLAS_8TeV_y_0_0.4,   file: ATLAS_8TeV_y_0_0.4.yaml}\n"
-      "#   - {name: ATLAS_8TeV_y_0.4_0.8, file: ATLAS_8TeV_y_0.4_0.8.yaml}\n"
-      "#   - {name: ATLAS_8TeV_y_0.8_1.2, file: ATLAS_8TeV_y_0.8_1.2.yaml}\n"
-      "#   - {name: ATLAS_8TeV_y_1.2_1.6, file: ATLAS_8TeV_y_1.2_1.6.yaml}\n"
-      "#   - {name: ATLAS_8TeV_y_1.6_2,   file: ATLAS_8TeV_y_1.6_2.yaml}\n"
-      "#   - {name: ATLAS_8TeV_y_2_2.4,   file: ATLAS_8TeV_y_2_2.4.yaml}\n";
+      "  - {name: ATLAS_8TeV_y_0_0.4,   file: ATLAS_8TeV_y_0_0.4.yaml}\n"
+      "  - {name: ATLAS_8TeV_y_0.4_0.8, file: ATLAS_8TeV_y_0.4_0.8.yaml}\n"
+      "  - {name: ATLAS_8TeV_y_0.8_1.2, file: ATLAS_8TeV_y_0.8_1.2.yaml}\n"
+      "  - {name: ATLAS_8TeV_y_1.2_1.6, file: ATLAS_8TeV_y_1.2_1.6.yaml}\n"
+      "  - {name: ATLAS_8TeV_y_1.6_2,   file: ATLAS_8TeV_y_1.6_2.yaml}\n"
+      "  - {name: ATLAS_8TeV_y_2_2.4,   file: ATLAS_8TeV_y_2_2.4.yaml}\n";
   }
 }
