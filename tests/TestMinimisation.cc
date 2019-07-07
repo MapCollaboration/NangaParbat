@@ -20,7 +20,7 @@
 int main()
 {
   // Allocate "Parameterisation" derived object
-  DWS NPFunc{};
+  NangaParbat::DWS NPFunc{};
 
   // Datafile
   const NangaParbat::DataHandler DHand{"TestData", YAML::LoadFile("../data/TestData/Table1.yaml")};
