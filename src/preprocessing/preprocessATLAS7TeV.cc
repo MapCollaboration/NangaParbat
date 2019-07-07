@@ -54,11 +54,11 @@ namespace NangaParbat
             std::string ofile;
             std::pair<double, double> ylims;
             for (auto const& q : dv["qualifiers"])
-	      if (q["name"].as<std::string>() == "ABS(YRAP(Z))")
-		{
-		  ofile  = ofolder + "_7TeV" + yranges[q["value"].as<std::string>()] + ".yaml";
-		  ylims = yrangelims[q["value"].as<std::string>()];
-		}
+              if (q["name"].as<std::string>() == "ABS(YRAP(Z))")
+                {
+                  ofile  = ofolder + "_7TeV" + yranges[q["value"].as<std::string>()] + ".yaml";
+                  ylims = yrangelims[q["value"].as<std::string>()];
+                }
 
             // Allocate emitter
             YAML::Emitter emit;
@@ -78,11 +78,11 @@ namespace NangaParbat
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 7000 << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
-		 << "low" << YAML::Value << 66 << YAML::Key << "high" << YAML::Value << 116 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+                 << "low" << YAML::Value << 66 << YAML::Key << "high" << YAML::Value << 116 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
                  << "low" << YAML::Value << ylims.first << YAML::Key << "high" << YAML::Value << ylims.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
-	    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
-                   << "pTmin" << YAML::Value << 20 << YAML::Key << "etamin" << YAML::Value << -2.4 << YAML::Key << "etamax" << YAML::Value << 2.4 << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
+                 << "pTmin" << YAML::Value << 20 << YAML::Key << "etamin" << YAML::Value << -2.4 << YAML::Key << "etamax" << YAML::Value << 2.4 << YAML::EndMap;
             emit << YAML::EndSeq;
             emit << YAML::Key << "values" << YAML::Value;
             emit << YAML::BeginSeq;
@@ -92,16 +92,16 @@ namespace NangaParbat
               {
                 if (v["value"].as<std::string>() != "-")
                   {
-		    std::string stat = v["errors"][0]["symerror"].as<std::string>();
-		    std::string sysu = v["errors"][1]["symerror"].as<std::string>();
-		    std::string sysc = v["errors"][2]["symerror"].as<std::string>();
-		    stat.erase(std::remove(stat.begin(), stat.end(), '%'), stat.end());
-		    sysu.erase(std::remove(sysu.begin(), sysu.end(), '%'), sysu.end());
-		    sysc.erase(std::remove(sysc.begin(), sysc.end(), '%'), sysc.end());
+                    std::string stat = v["errors"][0]["symerror"].as<std::string>();
+                    std::string sysu = v["errors"][1]["symerror"].as<std::string>();
+                    std::string sysc = v["errors"][2]["symerror"].as<std::string>();
+                    stat.erase(std::remove(stat.begin(), stat.end(), '%'), stat.end());
+                    sysu.erase(std::remove(sysu.begin(), sysu.end(), '%'), sysu.end());
+                    sysc.erase(std::remove(sysc.begin(), sysc.end(), '%'), sysc.end());
 
-		    const double val = v["value"].as<double>();
-		    const double unc = sqrt( pow(val * std::stod(stat) / 100, 2) + pow(val * std::stod(sysu) / 100, 2));
-		    const double cor = std::stod(sysc) / 100;
+                    const double val = v["value"].as<double>();
+                    const double unc = sqrt( pow(val * std::stod(stat) / 100, 2) + pow(val * std::stod(sysu) / 100, 2));
+                    const double cor = std::stod(sysc) / 100;
 
                     emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
                     emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value"
@@ -123,9 +123,9 @@ namespace NangaParbat
             emit << YAML::Key << "header" << YAML::Value << "{name: 'PT(P=3 4,RF=CM)', units: GEV}";
             emit << YAML::Key << "values" << YAML::Value;
             emit << YAML::BeginSeq;
-              for (auto const& qT : qTb)
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << qT.second
-                     << YAML::Key << "low" << YAML::Value << std::max(qT.first, 1e-5) << YAML::EndMap;
+            for (auto const& qT : qTb)
+              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << qT.second
+                   << YAML::Key << "low" << YAML::Value << std::max(qT.first, 1e-5) << YAML::EndMap;
             emit << YAML::EndSeq;
             emit << YAML::EndMap;
             emit << YAML::EndSeq;
