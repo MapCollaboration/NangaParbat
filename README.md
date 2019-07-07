@@ -44,12 +44,12 @@ ccmake .
 
 ## Documetation
 
-General documentation of the code can be found in the relevant subfolders:
+Some general documentation can be found in the relevant subfolders:
 
-- [data files](data/README.md)
+- [raw data files](rawdata/)
+- [preprocessed data files](data/)
 
-Code documentation generated with Doxygen can be found here:
-https://vbertone.github.io/NangaParbat/html/index.html.
+Code documentation generated with Doxygen can be found [here](https://vbertone.github.io/NangaParbat/html/index.html).
 
 ## Relevant references
 
