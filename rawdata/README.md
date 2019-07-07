@@ -3,7 +3,8 @@
 This folder contains the raw data files as downloaded from
 [HepData](https://www.hepdata.net). The relevant files have to be
 preprocessed to format them suitably to be used for the production of
-the interpolation grids and the fits. The name of the subfolders
+the interpolation grids and the fits. The result of the preprocessing
+is the datafiles the the [data](data/README.md) folder The name of the subfolders
 identifies the dataset through an ID code used in HepData. Here is the
 list of IDs along with the dataset it refers to and respective
 link to the HepData page:
