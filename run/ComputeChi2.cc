@@ -20,8 +20,8 @@ int main(int argc, char* argv[])
     }
 
   // Allocate "Parameterisation" derived object
-  //DWS NPFunc{};
-  PV17 NPFunc{};
+  //NangaParbat::DWS NPFunc{};
+  NangaParbat::PV17 NPFunc{};
 
   // Define "ChiSquare" object with a given qT / Q cut
   const double qToQmax = 0.3;
