@@ -1,0 +1,64 @@
+additional_resources:
+- {description: web page with auxiliary material, location: 'http://atlas.web.cern.ch/Atlas/GROUPS/PHYSICS/PAPERS/STDM-2012-23/'}
+- {description: Rivet analysis, location: 'http://rivet.hepforge.org/analyses#ATLAS_2014_I1300647'}
+- {description: Link to correlations.tar file containing correlation matrices, location: /resource/6194/correlations.tar}
+comment: |
+  CERN-LHC. This paper describes a measurement of the Z/GAMMA* boson transverse momentum spectrum, using proton-proton collision data at a centre-of-mass energy of sqrt(s) = 7 TeV collected during 2011 by ATLAS at the LHC. The measurement is performed in the Z/GAMMA* --> E+ E- and Z/GAMMA* --> MU+ MU- channels, using data corresponding to an integrated luminosity of 4.7 fb^{-1}.  Normalized differential cross sections as a function of the Z/GAMMA* boson transverse momentum, PT(Z), are measured for transverse momenta up to 800 GeV. The measurement is performed inclusively for Z/GAMMA* rapidities, YRAP(Z), up to 2.4, as well as in three rapidity bins.
+dateupdated: 10/07/2014 18:22:43
+hepdata_doi: 10.17182/hepdata.64354.v1
+modifications:
+- {action: Encoded, date: 10 JUL 2014, who: Stephen Webster}
+record_ids:
+- {id: 1300647, type: inspire}
+- {id: 6194, type: red}
+---
+data_file: Table1.yaml
+description: |
+  The measured normalized cross section (1/SIG(FID))*D(SIG(FID))/DPT(Z) at the Born level in bins of PT(Z) for the Z/GAMMA* --> E+ E- and Z/GAMMA* --> MU+ MU- channels, and correction factors to the bare- and dressed-level cross sections. The relative statistical and total uncorrelated systematic uncertainties are given for each channel as well as the correlated systematic uncertainties.
+keywords:
+- name: reactions
+  values: [P P --> Z0 X, P P --> GAMMA* X]
+- name: observables
+  values: [DSIG/DPT]
+- name: phrases
+  values: [Inclusive, Single Differential Cross Section, Transverse Momentum Dependence,
+    Proton-Proton Scattering, Z Production, Muon production, Electron production]
+- name: cmenergies
+  values: [7000.0]
+location: Data from Table 1
+name: Table 1
+table_doi: 10.17182/hepdata.64354.v1/t1
+---
+data_file: Table2.yaml
+description: |
+  The measured normalized combined (electron and muon channels) cross section (1/SIG(FID))*D(SIG(FID))/DPT(Z) inclusive in rapidity. The cross sections at Born and dressed levels are given as well as the relative statistical and total uncorrelated systematic uncertainties as well as the correlated systematic uncertainties.
+keywords:
+- name: reactions
+  values: [P P --> Z0 X, P P --> GAMMA* X]
+- name: observables
+  values: [DSIG/DPT]
+- name: phrases
+  values: [Inclusive, Single Differential Cross Section, Transverse Momentum Dependence,
+    Proton-Proton Scattering, Z Production, Muon production, Electron production]
+- name: cmenergies
+  values: [7000.0]
+location: Data from Table 2
+name: Table 2
+table_doi: 10.17182/hepdata.64354.v1/t2
+---
+data_file: Table3.yaml
+description: |
+  The measured normalized combined (electron and muon channels) cross section (1/SIG(FID))*D(SIG(FID))/DPT(Z) for 0 <= ABS(YRAP(Z)) < 1, 1 <= ABS(YRAP(Z)) < 2 and 2 <= ABS(YRAP(Z)) < 2.4. The cross sections at Born and dressed levels are given as well as the relative statistical and systematic uncertainties for uncorrelated and correlated sources.
+keywords:
+- name: reactions
+  values: [P P --> Z0 X, P P --> GAMMA* X]
+- name: observables
+  values: [DSIG/DPT]
+- name: phrases
+  values: [Inclusive, Single Differential Cross Section, Transverse Momentum Dependence,
+    Proton-Proton Scattering, Z Production, Muon production, Electron production]
+- name: cmenergies
+  values: [7000.0]
+location: Data from Table 3
+name: Table 3
+table_doi: 10.17182/hepdata.64354.v1/t3

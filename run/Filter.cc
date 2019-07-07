@@ -49,6 +49,14 @@ int main(int argc, char* argv[])
   fout << NangaParbat::PreprocessLHCb8TeV(RawDataPath,  ProcessedDataPath);
   fout << NangaParbat::PreprocessLHCb13TeV(RawDataPath, ProcessedDataPath);
 
+  fout << "# CMS:\n";
+  fout << NangaParbat::PreprocessCMS7TeV(RawDataPath, ProcessedDataPath);
+  fout << NangaParbat::PreprocessCMS8TeV(RawDataPath, ProcessedDataPath);
+
+  fout << "# ATLAS:\n";
+  fout << NangaParbat::PreprocessATLAS7TeV(RawDataPath, ProcessedDataPath);
+  fout << NangaParbat::PreprocessATLAS8TeV(RawDataPath, ProcessedDataPath);
+
   fout.close();
 
   return 0;

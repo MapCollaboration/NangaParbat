@@ -1,0 +1,58 @@
+dependent_variables:
+- header: {name: (1/SIG*DSIG/DPT(W-))/(1/SIG*DSIG/DPT(W+))(fiducial), units: RATIO}
+  qualifiers:
+  - {name: RE, value: P P --> W+ X}
+  - {name: RE, value: P P --> W- X}
+  values:
+  - errors:
+    - {symerror: 0.0190575}
+    value: 0.960958
+  - errors:
+    - {symerror: 0.0235}
+    value: 0.993927
+  - errors:
+    - {symerror: 0.0278697}
+    value: 1.01679
+  - errors:
+    - {symerror: 0.0406176}
+    value: 1.02831
+  - errors:
+    - {symerror: 0.0428401}
+    value: 1.05646
+  - errors:
+    - {symerror: 0.0413596}
+    value: 1.06869
+  - errors:
+    - {symerror: 0.0500727}
+    value: 1.06531
+  - errors:
+    - {symerror: 0.0520935}
+    value: 1.06374
+  - errors:
+    - {symerror: 0.0926244}
+    value: 1.06059
+  - errors:
+    - {symerror: 0.203641}
+    value: 1.10559
+  - errors:
+    - {symerror: 0.247268}
+    value: 1.00231
+  - errors:
+    - {symerror: 0.37894}
+    value: 0.911768
+independent_variables:
+- header: {name: PT(W), units: GEV}
+  values:
+  - {high: 7.5, low: 0.0}
+  - {high: 12.5, low: 7.5}
+  - {high: 17.5, low: 12.5}
+  - {high: 30.0, low: 17.5}
+  - {high: 40.0, low: 30.0}
+  - {high: 50.0, low: 40.0}
+  - {high: 70.0, low: 50.0}
+  - {high: 110.0, low: 70.0}
+  - {high: 150.0, low: 110.0}
+  - {high: 190.0, low: 150.0}
+  - {high: 250.0, low: 190.0}
+  - {high: 600.0, low: 250.0}
+name: WminusOvWplus.yaml

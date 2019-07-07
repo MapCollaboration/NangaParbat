@@ -1,0 +1,116 @@
+comment: "CERN-LHC.  Measurements of the transverse momentum spectra of weak vector
+  bosons production in proton-proton collisions \nat a centre-of-mass energy of 8
+  TeV. Using a data sample of integrated luminosity of 18.4 pb-1, the production of
+  W bosons \nis studied in both electron and muon decay modes, while the production
+  of Z bosons is studied using only the dimuon decay \nchannel. The ratios of W- to
+  W+ and Z to W differential cross sections are also measured.\n\n The W boson electron
+  decay channel fiducial region is defined as:\n - e, nu\n - ptLepton > 25 GeV for
+  electrons\n - |etaLepton| < 2.5, 1.566 < |etaLepton| < 1.4442\n\n The W boson muon
+  decay channel fiducial region is defined as:\n - mu, nu\n - ptLepton > 20 GeV for
+  muons\n - |etaLepton| < 2.1\n\n The Z boson muon decay channel fiducial region is
+  defined as:\n - mu, mu\n - 60 GeV < M_{mu, mu} < 120 GeV dimuon invariant mass \n
+  - ptLepton > 20 GeV for muons\n - |etaLepton| < 2.1\n"
+hepdata_doi: 10.17182/hepdata.77221.v1
+---
+data_file: WtoENu.yaml
+description: Normalized fiducial differential cross sections of W+ boson and W- boson
+  decaying to electron plus neutrino and positron plus neutrino respectively at the
+  pre-FSR level.
+keywords:
+- name: reactions
+  values: [P P --> W X]
+- name: observables
+  values: [DSIG/DPT]
+- name: cmenergies
+  values: [8000]
+location: Data from Figure 4A
+name: Table 1
+table_doi: 10.17182/hepdata.77221.v1/t1
+---
+data_file: WtoMuNu.yaml
+description: Normalized fiducial differential cross sections of W+ boson and W- boson
+  decaying to muon and neutrino at pre-FSR level.
+keywords:
+- name: reactions
+  values: [P P --> W X]
+- name: observables
+  values: [DSIG/DPT]
+- name: cmenergies
+  values: [8000]
+location: Data from Figure 4B
+name: Table 2
+table_doi: 10.17182/hepdata.77221.v1/t2
+---
+data_file: ZtoMuMu.yaml
+description: Normalized fiducial differential cross sections of Z0 boson decaying
+  to dimuon at pre-FSR level.
+keywords:
+- name: reactions
+  values: [P P --> Z0 X]
+- name: observables
+  values: [DSIG/DPT]
+- name: cmenergies
+  values: [8000]
+location: Data from Figure 5
+name: Table 3
+table_doi: 10.17182/hepdata.77221.v1/t3
+---
+data_file: WminusOvWplus.yaml
+description: Ratio of normalized fiducial differential cross sections of W- boson
+  to W+ boson decaying to muons at pre-FSR level.
+keywords:
+- name: reactions
+  values: [P P --> W X]
+- name: observables
+  values: [DSIG/DPT]
+- name: cmenergies
+  values: [8000]
+location: Data from Figure 6
+name: Table 4
+table_doi: 10.17182/hepdata.77221.v1/t4
+---
+data_file: ZtoMuMuOvWtoMuNu.yaml
+description: Ratio of normalized fiducial differential cross section of Z0 boson to
+  W+ boson and W- boson at pre-FSR level of muon decay channel.
+keywords:
+- name: reactions
+  values: [P P --> Z0 X]
+- name: reactions
+  values: [P P --> W X]
+- name: observables
+  values: [DSIG/DPT]
+- name: cmenergies
+  values: [8000]
+location: Data from Figure 7
+name: Table 5
+table_doi: 10.17182/hepdata.77221.v1/t5
+---
+data_file: ZtoMuMu8Ov7_upto_20.yaml
+description: Ratio of the normalized fiducial differential cross section of Z0 boson
+  production at center-of-energy 8 TeV to Z0 boson production at center-of-energy
+  7 TeV decaying to dimuon for boson PT < 20 GeV.
+keywords:
+- name: reactions
+  values: [P P --> Z0 X]
+- name: observables
+  values: [DSIG/DPT]
+- name: cmenergies
+  values: [8000, 7000]
+location: Data from Figure 8A
+name: Table 6
+table_doi: 10.17182/hepdata.77221.v1/t6
+---
+data_file: ZtoMuMu8Ov7_gt_20.yaml
+description: Ratio of the normalized fiducial differential cross section of Z0 boson
+  production at center-of-energy 8 TeV to Z0 boson production at center-of-energy
+  7 TeV decaying to dimuon for boson PT > 20 GeV.
+keywords:
+- name: reactions
+  values: [P P --> Z0 X]
+- name: observables
+  values: [DSIG/DPT]
+- name: cmenergies
+  values: [8000, 7000]
+location: Data from Figure 8B
+name: Table 7
+table_doi: 10.17182/hepdata.77221.v1/t7
