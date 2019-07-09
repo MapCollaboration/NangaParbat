@@ -59,6 +59,13 @@ namespace NangaParbat
             std::string ofile;
             std::pair<double, double> enlims;
             double y = 0;
+	    double Vs = 0;
+	    if (tab.second == "E288_200")
+	      Vs = 19.4;
+	    else if (tab.second == "E288_300")
+	      Vs = 23.8;
+	    else if (tab.second == "E288_400")
+	      Vs = 27.4;
             for (auto const& q : dv["qualifiers"])
               {
                 if (q["name"].as<std::string>() == "W(P=3 4)")
@@ -86,7 +93,7 @@ namespace NangaParbat
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "DY" << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << 0.4603 << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 / M_PI << YAML::EndMap;
-            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 19.4 << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << Vs << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
                  << "low" << YAML::Value << enlims.first << YAML::Key << "high" << YAML::Value << enlims.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
