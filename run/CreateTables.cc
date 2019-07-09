@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
   // produced and push data sets into the a vector of DataHandler
   // objects. If a set of selected datasets is also provided, the code
   // produces tables only for those datasets.
-  std::cout << "Generating interpolation tables for:" << std::endl;
+  std::cout << "\nGenerating interpolation tables for:" << std::endl;
   const YAML::Node datasets = YAML::LoadFile(std::string(argv[2]) + "/datasets.yaml");
   std::vector<NangaParbat::DataHandler> DHVect;
   for (auto const& exp : datasets)

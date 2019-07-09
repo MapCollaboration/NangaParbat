@@ -13,3 +13,6 @@ target_link_libraries(Filter NangaParbat)
 
 add_executable(AvailableDataSets AvailableDataSets.cc)
 target_link_libraries(AvailableDataSets NangaParbat)
+
+add_executable(DirectPredictions DirectPredictions.cc)
+target_link_libraries(DirectPredictions NangaParbat)
