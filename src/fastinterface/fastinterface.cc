@@ -442,7 +442,7 @@ namespace NangaParbat
                             // Compute 'x1' and 'x2' according to the
                             // proper observable.
                             const double x1 = Q * xi / Vs;
-                            const double x2 = pow(Q / Vs, 2) / x1;
+                            const double x2 = Q / xi / Vs;
 
                             // Get interpolating function in xi but
                             // return 1 if no integration over xi is
@@ -451,10 +451,10 @@ namespace NangaParbat
                             // Q is required, this function should be
                             // called in xig[alpha] where the
                             // interpolating function is already one.
-                            const double Ixi = (Inty ? xigrid.Interpolant(0, alpha, xi) : 1);
+                            const double Ixi = (Inty ? xigrid.Interpolant(0, alpha, xi) / xi : 1);
 
                             // Return xi integrand
-                            return Ixi * TabLumi.EvaluatexzQ(x1, x2, Q) / xi;
+                            return Ixi * TabLumi.EvaluatexzQ(x1, x2, Q);
                           };
 
                           // Perform the integral in xi
@@ -593,7 +593,7 @@ namespace NangaParbat
                 {
                   // Compute 'x1' and 'x2'
                   const double x1 = Q * xi / Vs;
-                  const double x2 = pow(Q / Vs, 2) / x1;
+                  const double x2 = Q / xi / Vs;
 
                   // Return xi integrand
                   const double qTm = (IntqT ? ( kin.qTmap[i].first + kin.qTmap[i].second ) / 2 : kin.qTmap[i].second);
@@ -602,7 +602,7 @@ namespace NangaParbat
 
                 // Perform the integral in xi
                 const apfel::Integrator xiIntObj{xiintegrand};
-                const double xiintegral = (Inty ? xiIntObj.integrate(ximin, ximax, epsxi) : xiintegrand(xiav));
+                const double xiintegral = (Inty ? xiIntObj.integrate(ximin, ximax, epsxi) : xiav * xiintegrand(xiav));
                 return xiintegral;
               };
 
