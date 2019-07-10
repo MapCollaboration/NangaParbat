@@ -22,6 +22,11 @@ namespace NangaParbat
     Parameterisation(std::string const& name, int const& nfuncs = 0, std::vector<double> pars = {});
 
     /**
+     * @brief The "Parameterisation" destructor
+     */
+    virtual ~Parameterisation() {};
+
+    /**
      * @brief Function that sets the free parameters of the
      * parameterisation.
      * @param pars: the vector of parameters
