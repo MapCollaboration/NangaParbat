@@ -1,0 +1,17 @@
+# Parameterisation to be fitted to data. This has to correspond to a
+# derivarion of the "Parameterisation" class.
+Parameterisation: PV17
+
+# Cut on qT / Q. This has to be smaller than the production cut used
+# to produce the tables.
+qToQmax: 0.3
+
+# List of parameters to be fitted to data. This requires that the
+# number and order of parameters matches those expected by the
+# particular parameterisation being used.
+Parameters:
+  - {name: "Npt",    starting_value: 0.285, step: 0.003, lower_bound: 0, upper_bound: 10, fix: false}
+  - {name: "alpha",  starting_value: 2.98,  step: 0.030, lower_bound: 0, upper_bound: 10, fix: false}
+  - {name: "sigma",  starting_value: 0.173, step: 0.002, lower_bound: 0, upper_bound: 10, fix: false}
+  - {name: "lambda", starting_value: 0.39,  step: 0.005, lower_bound: 0, upper_bound: 10, fix: false}
+
