@@ -59,13 +59,13 @@ namespace NangaParbat
             std::string ofile;
             std::pair<double, double> enlims;
             double y = 0;
-	    double Vs = 0;
-	    if (tab.second == "E288_200")
-	      Vs = 19.4;
-	    else if (tab.second == "E288_300")
-	      Vs = 23.8;
-	    else if (tab.second == "E288_400")
-	      Vs = 27.4;
+            double Vs = 0;
+            if (tab.second == "E288_200")
+              Vs = 19.4;
+            else if (tab.second == "E288_300")
+              Vs = 23.8;
+            else if (tab.second == "E288_400")
+              Vs = 27.4;
             for (auto const& q : dv["qualifiers"])
               {
                 if (q["name"].as<std::string>() == "W(P=3 4)")

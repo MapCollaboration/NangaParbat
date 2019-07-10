@@ -74,14 +74,14 @@ int main(int argc, char* argv[])
 
       // Set limits if required
       if (p["lower_bound"])
-	upar.SetLowerLimit(p["name"].as<std::string>(), p["lower_bound"].as<double>());
+        upar.SetLowerLimit(p["name"].as<std::string>(), p["lower_bound"].as<double>());
 
       if (p["upper_bound"])
-	upar.SetUpperLimit(p["name"].as<std::string>(), p["upper_bound"].as<double>());
+        upar.SetUpperLimit(p["name"].as<std::string>(), p["upper_bound"].as<double>());
 
       // Fix parameter if required
       if (p["fix"] && p["fix"].as<bool>())
-	  upar.Fix(p["name"].as<std::string>());
+        upar.Fix(p["name"].as<std::string>());
     }
 
   // Create MIGRAD minimiser
