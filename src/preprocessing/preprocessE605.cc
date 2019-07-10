@@ -74,7 +74,7 @@ namespace NangaParbat
               }
 
             // Overall factor
-            const double factor = Vs / 2 / Qav / cosh(y) / M_PI;
+            const double factor = Vs / 2 / Qav / cosh(y) / M_PI / 2;
 
             // Allocate emitter
             YAML::Emitter emit;
@@ -140,7 +140,7 @@ namespace NangaParbat
       "  - {name: E605_Q_7_8,       file: E605_Q_7_8.yaml}\n"
       "  - {name: E605_Q_8_9,       file: E605_Q_8_9.yaml}\n"
       "  - {name: E605_Q_10.5_11.5, file: E605_Q_10.5_11.5.yaml}\n"
-      "  - {name: E605_Q_11.5_13.5, file: E605_Q_11.5_13.5.yaml}\n"
-      "  - {name: E605_Q_13.5_18,   file: E605_Q_13.5_18.yaml}\n";
+      "#   - {name: E605_Q_11.5_13.5, file: E605_Q_11.5_13.5.yaml}\n"
+      "#   - {name: E605_Q_13.5_18,   file: E605_Q_13.5_18.yaml}\n";
   }
 }

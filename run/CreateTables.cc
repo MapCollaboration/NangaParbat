@@ -62,7 +62,8 @@ int main(int argc, char* argv[])
   if (std::strncmp(argv[4], "y", 1) == 0)
     {
       // Allocate "Parameterisation" derived object
-      NangaParbat::DWS NPFunc{};
+      //NangaParbat::DWS NPFunc{};
+      NangaParbat::PV17 NPFunc{};
 
       // Compute direct predictions
       auto const fNP = [=] (double const& x, double const& b, double const& zeta) -> double { return NPFunc.Evaluate(x, b, zeta, 0); };
