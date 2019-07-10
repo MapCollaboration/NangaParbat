@@ -32,10 +32,11 @@ int main(int argc, char* argv[])
   const YAML::Node fitconfig = YAML::LoadFile(argv[1]);
 
   // Allocate "Parameterisation" derived object
-  //NangaParbat::DWS NPFunc{};
   NangaParbat::Parameterisation *NPFunc;
   if (fitconfig["Parameterisation"].as<std::string>() == "DWS")
     NPFunc = new NangaParbat::DWS{};
+  if (fitconfig["Parameterisation"].as<std::string>() == "PV17")
+    NPFunc = new NangaParbat::PV17{};
   else
     throw std::runtime_error("[RunFit]: Unknown parameterisation");
 
@@ -86,6 +87,9 @@ int main(int argc, char* argv[])
 
   // Create MIGRAD minimiser
   ROOT::Minuit2::MnMigrad migrad(fcn, upar);
+
+  // Increase verbosity of Minuit
+  migrad.Minimizer().Builder().SetPrintLevel(2);
 
   // Minimise
   ROOT::Minuit2::FunctionMinimum min = migrad();
