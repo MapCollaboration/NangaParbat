@@ -1,7 +1,7 @@
 #LIBPATH =  -L/sw/lib -L/usr/local/lib
-#LIB = -lmathlib -lpacklib -lkernlib -lLHAPDF -lAPFEL
+LIB = -lmathlib -lpacklib -lkernlib -lLHAPDF -lAPFEL
+#LIB = -lLHAPDF -lAPFEL
 LIBPATH =  -L/usr/local/lib
-LIB = -lLHAPDF -lAPFEL
 COMP = gfortran
 FFLAGS = -O3
 RUNFLAGS = -ffixed-line-length-none -cpp -fbacktrace -fcheck=all
@@ -13,10 +13,10 @@ fit:
 	$(COMP) $(SOURCE) $(FFLAGS) $(LIBPATH) $(LIB) -o fit.exe
 	rm -rf fit.dSYM
 
-grid:   
+grid:
 	$(COMP) comvar.f90  LeptonCutsDY.f90 integrands.f kernel.f bin.f90 reading.f fragmentation.f utilities.f wilsonCoeff.f gridmaker.f maingrid.f $(FFLAGS) $(LIBPATH) $(LIB) -o makegrids.exe
 
-denom:   
+denom:
 	$(COMP) comvar.f90 bin.f90 reading.f denommaker.f $(FFLAGS) $(LIBPATH) $(LIB) -o makedenom.exe
 
 clean:
@@ -24,4 +24,3 @@ clean:
 	-rm *mod
 	-rm *.out
 	-rm fort.*
-

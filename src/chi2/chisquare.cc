@@ -220,9 +220,11 @@ namespace NangaParbat
           }
         exp->SetLineColor(1);
         exp->SetMarkerStyle(20);
-        theo->SetLineColor(2);
+        // theo->SetLineColor(2);
+        theo->SetLineColor(kBlue-7);
         theo->SetLineWidth(3);
-        theoshift->SetLineColor(3);
+        // theoshift->SetLineColor(3);
+        theoshift->SetLineColor(kPink-6);
         theoshift->SetLineWidth(3);
 
         // Adjust legend

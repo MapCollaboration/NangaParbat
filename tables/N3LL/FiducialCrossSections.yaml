@@ -1,13 +1,16 @@
+## Prefactors for the convolution tables
+## fidcs = 2 / FiducialCrossSection@NNLO
+
 CMS:
   - {file: CMS_7TeV.yaml, fidcs: 0.005014}
-  - {file: CMS_8TeV.yaml, fidcs: 0.004464} # from Scimemi-Vladimirov
+  - {file: CMS_8TeV.yaml, fidcs: 0.004225} # 0.004464 from Scimemi-Vladimirov
 ATLAS:
   - {file: ATLAS_7TeV_y_0_1.yaml,     fidcs: 0.00788}
   - {file: ATLAS_7TeV_y_1_2.yaml,     fidcs: 0.01102}
   - {file: ATLAS_7TeV_y_2_2.4.yaml,   fidcs: 0.11693}
-  - {file: ATLAS_8TeV_y_0_0.4.yaml,   fidcs: 0.01756}
-  - {file: ATLAS_8TeV_y_0.4_0.8.yaml, fidcs: 0.01768}
-  - {file: ATLAS_8TeV_y_0.8_1.2.yaml, fidcs: 0.01829}
-  - {file: ATLAS_8TeV_y_1.2_1.6.yaml, fidcs: 0.02175}
-  - {file: ATLAS_8TeV_y_1.6_2.yaml,   fidcs: 0.0332984}
-  - {file: ATLAS_8TeV_y_2_2.4.yaml,   fidcs: 0.0990859}
+  - {file: ATLAS_8TeV_y_0_0.4.yaml,   fidcs: 0.01756} ## with NNPDF30nnlo_118
+  - {file: ATLAS_8TeV_y_0.4_0.8.yaml, fidcs: 0.01768} ## with NNPDF30nnlo_118
+  - {file: ATLAS_8TeV_y_0.8_1.2.yaml, fidcs: 0.01829} ## with NNPDF30nnlo_118
+  - {file: ATLAS_8TeV_y_1.2_1.6.yaml, fidcs: 0.02175} ## with NNPDF30nnlo_118
+  - {file: ATLAS_8TeV_y_1.6_2.yaml,   fidcs: 0.0332984} ## with NNPDF30nnlo_118
+  - {file: ATLAS_8TeV_y_2_2.4.yaml,   fidcs: 0.0990859} ## with NNPDF30nnlo_118
