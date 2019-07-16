@@ -23,6 +23,7 @@ int main(int argc, char* argv[])
   // Define "ChiSquare" object with a given qT / Q cut
   const double qToQmax = 0.3;
   NangaParbat::ChiSquare chi2{NPFunc, qToQmax};
+  //chi2.SetParameters({0.065, 0.285, 2.98, 0.173, 0.39});
 
   // Open datasets.yaml file that contains the list of tables to be
   // produced and push data sets into the a vector of DataHandler

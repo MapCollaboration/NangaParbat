@@ -35,8 +35,10 @@ int main(int argc, char* argv[])
   NangaParbat::Parameterisation *NPFunc;
   if (fitconfig["Parameterisation"].as<std::string>() == "DWS")
     NPFunc = new NangaParbat::DWS{};
-  if (fitconfig["Parameterisation"].as<std::string>() == "PV17")
+  else if (fitconfig["Parameterisation"].as<std::string>() == "PV17")
     NPFunc = new NangaParbat::PV17{};
+  else if (fitconfig["Parameterisation"].as<std::string>() == "PV19")
+    NPFunc = new NangaParbat::PV19{};
   else
     throw std::runtime_error("[RunFit]: Unknown parameterisation");
 
@@ -86,13 +88,13 @@ int main(int argc, char* argv[])
     }
 
   // Create MIGRAD minimiser
-  ROOT::Minuit2::MnMigrad migrad(fcn, upar);
+  ROOT::Minuit2::MnMigrad minimiser(fcn, upar);
 
   // Increase verbosity of Minuit
-  migrad.Minimizer().Builder().SetPrintLevel(2);
+  minimiser.Minimizer().Builder().SetPrintLevel(2);
 
   // Minimise
-  ROOT::Minuit2::FunctionMinimum min = migrad();
+  ROOT::Minuit2::FunctionMinimum min = minimiser();
 
   // Output of Minuit
   std::cout << "minimum: " << min << std::endl;
