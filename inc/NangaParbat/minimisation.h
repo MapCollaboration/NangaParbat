@@ -35,6 +35,7 @@ namespace NangaParbat
     double operator()(const std::vector<double>& pars) const;
 
     double Up() const { return 4; }
+
   private:
     mutable ChiSquare _chi2; //!< The "ChiSquare" object that returns the values of all chi2's
   };

@@ -60,6 +60,38 @@ namespace NangaParbat
   };
 
   //_________________________________________________________________________________
+  std::vector<double> ChiSquare::GetResiduals(int const& ids) const
+  {
+    if (ids < 0 || ids >= _DSVect.size())
+      throw std::runtime_error("[ChiSquare::GetResiduals]: index out of range");
+
+    // Get "DataHandler" and "ConvolutionTable" objects
+    const DataHandler      dh = _DSVect[ids].first;
+    const ConvolutionTable ct = _DSVect[ids].second;
+
+    // Get experimental central values
+    const std::vector<double> mean = dh.GetMeanValues();
+
+    // Get predictions
+    auto const fNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return _NPFunc.Evaluate(x, b, zeta, ifun); };
+    const std::vector<double> pred = ct.GetPredictions(fNP);
+
+    // Check that the number of points in the DataHandler and
+    // Convolution table objects is the same.
+    if (mean.size() != pred.size())
+      throw std::runtime_error("[ChiSquare::GetResiduals]: mismatch in the number of points");
+
+    // Compute residuals only for the points that pass the cut qT
+    // / Q, set the others to zero.
+    std::vector<double> res(_ndata[ids], 0.);
+    for (int j = 0; j < _ndata[ids]; j++)
+      res[j] = mean[j] - pred[j];
+
+    // Solve lower-diagonal system and return the result
+    return SolveLowerSystem(dh.GetCholeskyDecomposition(), res);
+  }
+
+  //_________________________________________________________________________________
   double ChiSquare::Evaluate(int const& ids) const
   {
     // Define index range
@@ -70,8 +102,6 @@ namespace NangaParbat
         istart = ids;
         iend   = ids + 1;
       }
-    else if (ids >= iend)
-      throw std::runtime_error("[ChiSquare::Evaluate]: index out of range");
 
     // Initialise chi2 and number of data points
     double chi2 = 0;
@@ -80,30 +110,8 @@ namespace NangaParbat
     // Loop over the the blocks
     for (int i = istart; i < iend; i++)
       {
-        // Get "DataHandler" and "ConvolutionTable" objects
-        const DataHandler      dh = _DSVect[i].first;
-        const ConvolutionTable ct = _DSVect[i].second;
-
-        // Get experimental central values
-        const std::vector<double> mean = dh.GetMeanValues();
-
-        // Get predictions
-        auto const fNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return _NPFunc.Evaluate(x, b, zeta, ifun); };
-        const std::vector<double> pred = ct.GetPredictions(fNP);
-
-        // Check that the number of points in the DataHandler and
-        // Convolution table objects is the same.
-        if (mean.size() != pred.size())
-          throw std::runtime_error("[ChiSquare::Evaluate]: mismatch in the number of points");
-
-        // Compute residuals only for the points that pass the cut qT
-        // / Q, set the others to zero.
-        std::vector<double> res(_ndata[i], 0.);
-        for (int j = 0; j < _ndata[i]; j++)
-          res[j] = mean[j] - pred[j];
-
-        // Solve lower-diagonal system
-        const std::vector<double> x = SolveLowerSystem(dh.GetCholeskyDecomposition(), res);
+        // Get residuals
+        const std::vector<double> x = GetResiduals(i);
 
         // Compute contribution to the chi2 as absolute value of "x"
         chi2 += std::inner_product(x.begin(), x.end(), x.begin(), 0.);
@@ -220,10 +228,8 @@ namespace NangaParbat
           }
         exp->SetLineColor(1);
         exp->SetMarkerStyle(20);
-        // theo->SetLineColor(2);
         theo->SetLineColor(kBlue-7);
         theo->SetLineWidth(3);
-        // theoshift->SetLineColor(3);
         theoshift->SetLineColor(kPink-6);
         theoshift->SetLineWidth(3);
 

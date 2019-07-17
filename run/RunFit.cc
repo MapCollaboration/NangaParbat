@@ -99,8 +99,18 @@ int main(int argc, char* argv[])
   // Output of Minuit
   std::cout << "minimum: " << min << std::endl;
 
-  // Now print (This also produces plots in pdf with ROOT)
-  std::cout << "Total chi2 = " << chi2() << std::endl;
+  // Now print the total chi2
+  std::cout << "Total chi2 = " << chi2() << "\n" << std::endl;
+
+  // Get number of data points for each experiment
+  const std::vector<int> ndata = chi2.GetDataPointNumbers();
+
+  // Print individual chi2's
+  for (int iexp = 0; iexp < (int) ndata.size(); iexp++)
+    std::cout << iexp << ") Partial chi2 / #d.p.= " << chi2(iexp) << " (#d.p. = " << ndata[iexp] << ")" << std::endl;
+  std::cout << "\n";
+
+  // Finally, this also produces plots
   std::cout << chi2;
 
   // Delete parameterisation

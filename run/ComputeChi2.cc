@@ -18,12 +18,14 @@ int main(int argc, char* argv[])
 
   // Allocate "Parameterisation" derived object
   //NangaParbat::DWS NPFunc{};
-  NangaParbat::PV17 NPFunc{};
+  //NangaParbat::PV17 NPFunc{};
+  NangaParbat::PV19 NPFunc{};
 
   // Define "ChiSquare" object with a given qT / Q cut
-  const double qToQmax = 0.3;
+  const double qToQmax = 0.2;
   NangaParbat::ChiSquare chi2{NPFunc, qToQmax};
   //chi2.SetParameters({0.065, 0.285, 2.98, 0.173, 0.39});
+  //chi2.SetParameters({0.01245723634707, 0.1180391594513, 3.418214687464, 1.050830257625, 0, 0});
 
   // Open datasets.yaml file that contains the list of tables to be
   // produced and push data sets into the a vector of DataHandler
@@ -48,11 +50,11 @@ int main(int argc, char* argv[])
   // Get number of data points for each experiment
   const std::vector<int> ndata = chi2.GetDataPointNumbers();
 
-  // // Compute total chi2 with the initial parameters
-  // std::cout << "\nTotal chi2 = " << chi2() << std::endl;
-  // for (int iexp = 0; iexp < (int) ndata.size(); iexp++)
-  //   std::cout << iexp << ") Partial chi2 / #d.p.= " << chi2(iexp) << " (#d.p = " << ndata[iexp] << ")" << std::endl;
-  // std::cout << "\n";
+  // Compute total chi2 with the initial parameters
+  std::cout << "\nTotal chi2 = " << chi2() << std::endl;
+  for (int iexp = 0; iexp < (int) ndata.size(); iexp++)
+    std::cout << iexp << ") Partial chi2 / #d.p.= " << chi2(iexp) << " (#d.p = " << ndata[iexp] << ")" << std::endl;
+  std::cout << "\n";
 
   // // Update parameters and recompute chi2's
   // chi2.SetParameters({1e-3, 1e-3, 1e-3, 1e-3});

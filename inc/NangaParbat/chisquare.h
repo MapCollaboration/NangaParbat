@@ -40,6 +40,14 @@ namespace NangaParbat
     void AddBlock(std::pair<DataHandler,ConvolutionTable> const& DSBlock);
 
     /**
+     * @brief Function that returns the residuals of the chi2 deriving
+     * from the Cholesky decomposition of the covariance matrix.
+     * @param ids: the dataset index
+     * @return the vector of residuals
+     */
+    std::vector<double> GetResiduals(int const& ids) const;
+
+    /**
      * @brief Function that evaluates the &chi;<SUP>2</SUP>'s
      * @param ids: the dataset index (default: -1, the global &chi;<SUP>2</SUP> is computed)
      * @return the value of the &chi;<SUP>2</SUP> of the "ids"-th block normalised to the number of data points.

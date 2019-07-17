@@ -100,12 +100,13 @@ namespace NangaParbat
 
       // Correction to 'b' due to the bmin prescription. Notice that
       // the non-perturbative function does not tend to one anymore
-      // for 'b' tending to zero.
-      const double bmin  = 2 * exp( - apfel::emc) / sqrt(zeta);
-      const double power = 4;
-      const double bc    = b / pow( ( 1 - exp( - pow(b / bmin, power) ) ), 1 / power);
+      // for 'b' tending to zero. (Not sure this is correct).
+      //const double bmin  = 2 * exp( - apfel::emc) / sqrt(zeta);
+      //const double power = 4;
+      //const double bc    = b / pow( ( 1 - exp( - pow(b / bmin, power) ) ), 1 / power);
 
-      return exp( - ( g1 + g2 * log(zeta / Q02) / 2 ) * bc * bc ) * ( 1 - lambda * pow(g1 * bc / 2, 2) / ( 1 + lambda * g1 ) );
+      //return exp( - ( g1 + g2 * log(zeta / Q02) / 2 ) * bc * bc ) * ( 1 - lambda * pow(g1 * bc / 2, 2) / ( 1 + lambda * g1 ) );
+      return exp( - ( g1 + g2 * log(zeta / Q02) / 2 ) * b * b ) * ( 1 - lambda * pow(g1 * b / 2, 2) / ( 1 + lambda * g1 ) );
     };
   };
 }
