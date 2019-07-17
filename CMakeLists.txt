@@ -29,6 +29,10 @@ configure_file(
 
 find_package(PkgConfig REQUIRED)
 pkg_search_module(YAML REQUIRED yaml-cpp)
+pkg_search_module(EIGEN3 REQUIRED eigen3)
+pkg_search_module(CERES REQUIRED ceres-solver)
+pkg_search_module(GLOG REQUIRED libglog)
+pkg_search_module(GFLAGS REQUIRED gflags)
 
 # Configuration script
 set(prefix ${CMAKE_INSTALL_PREFIX})
@@ -106,7 +110,7 @@ endif(ROOT_CONFIG)
 set(ROOT_LIBRARIES ${ROOT_LIBRARIES} -lMinuit2 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LHAPDF_CXX_FLAGS} ${APFELXX_CXX_FLAGS} ${GSL_CXX_FLAGS} ${YAMLCPP_CXX_FLAGS} ${ROOT_CXX_FLAGS} -std=c++11 -Wall -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LHAPDF_CXX_FLAGS} ${APFELXX_CXX_FLAGS} ${GSL_CXX_FLAGS} ${YAMLCPP_CXX_FLAGS} ${ROOT_CXX_FLAGS} ${EIGEN3_CFLAGS} ${CERES_CFLAGS} ${GLOG_CFLAGS} ${GFLAGS_CFLAGS} -std=c++11 -Wall -fPIC")
 
 # build target library
 add_subdirectory(src)

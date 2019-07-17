@@ -6,11 +6,6 @@
 #include "NangaParbat/chisquare.h"
 #include "NangaParbat/minimisation.h"
 
-#include <ROOT/Minuit2/MnUserParameters.h>
-#include <ROOT/Minuit2/MnMigrad.h>
-#include <ROOT/Minuit2/FunctionMinimum.h>
-#include <ROOT/Minuit2/MnPrint.h>
-
 #include <apfel/timer.h>
 
 //_________________________________________________________________________________
@@ -65,39 +60,14 @@ int main(int argc, char* argv[])
         chi2.AddBlock(std::make_pair(dh, ct));
       }
 
-  // Define "Minuit" object
-  NangaParbat::FcnMinuit fcn{chi2};
-
-  // Create Minuit parameters with name, starting value, step and,
-  // when available, upper and lower bounds.
-  ROOT::Minuit2::MnUserParameters upar;
-  for (auto const p : fitconfig["Parameters"])
-    {
-      upar.Add(p["name"].as<std::string>(), p["starting_value"].as<double>(), p["step"].as<double>());
-
-      // Set limits if required
-      if (p["lower_bound"])
-        upar.SetLowerLimit(p["name"].as<std::string>(), p["lower_bound"].as<double>());
-
-      if (p["upper_bound"])
-        upar.SetUpperLimit(p["name"].as<std::string>(), p["upper_bound"].as<double>());
-
-      // Fix parameter if required
-      if (p["fix"] && p["fix"].as<bool>())
-        upar.Fix(p["name"].as<std::string>());
-    }
-
-  // Create MIGRAD minimiser
-  ROOT::Minuit2::MnMigrad minimiser(fcn, upar);
-
-  // Increase verbosity of Minuit
-  minimiser.Minimizer().Builder().SetPrintLevel(2);
-
-  // Minimise
-  ROOT::Minuit2::FunctionMinimum min = minimiser();
-
-  // Output of Minuit
-  std::cout << "minimum: " << min << std::endl;
+  // Minimise the chi2
+  bool status;
+  if (fitconfig["Minimiser"].as<std::string>() == "minuit")
+    status = MinuitMinimiser(chi2, fitconfig["Parameters"]);
+  else if (fitconfig["Minimiser"].as<std::string>() == "ceres")
+    status = CeresMinimiser(chi2, fitconfig["Parameters"]);
+  else
+    throw std::runtime_error("[RunFit]: Unknown minimiser");
 
   // Now print the total chi2
   std::cout << "Total chi2 = " << chi2() << "\n" << std::endl;

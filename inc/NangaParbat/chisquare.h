@@ -82,6 +82,20 @@ namespace NangaParbat
      */
     int GetNumberOfExperiments() const { return (int) _ndata.size(); };
 
+    /**
+     * @brief Function that returns the number of parameters of the
+     * parameterisation objects.
+     * @return The number of parameters.
+     */
+    int GetNumberOfParameters() const { return (int) _NPFunc.GetParameters().size(); };
+
+    /**
+     * @brief Function that returns the parameters of the
+     * parameterisation objects.
+     * @return The vector containing the parameters.
+     */
+    std::vector<double> GetParameters() const { return _NPFunc.GetParameters(); };
+
   protected:
     std::vector<std::pair<DataHandler,ConvolutionTable>> _DSVect;  //!< Vector of "DataHandler-ConcolutionTable" pairs
     Parameterisation&                                    _NPFunc;  //!< Parameterisation of the non-perturbative component
