@@ -82,12 +82,6 @@ namespace NangaParbat
      */
     bool operator()(double const* const* parameters, double* residuals) const;
 
-    /**
-     * @brief Function that sets the parameter of the "ChiSquare" object.
-     * @param pars: the vector of parameters
-     */
-    void SetParameters(std::vector<double> const& pars) { _chi2.SetParameters(pars); };
-
   private:
     mutable ChiSquare _chi2; //!< The "ChiSquare" object that returns the values of all chi2's
   };

@@ -74,7 +74,7 @@ namespace NangaParbat
     const int npars = parameters.size();
 
     // Define cost function
-    ceres::DynamicNumericDiffCostFunction<FcnCeres>* cost_function = new ceres::DynamicNumericDiffCostFunction<FcnCeres>(new FcnCeres{chi2});
+    ceres::DynamicNumericDiffCostFunction<FcnCeres> *cost_function = new ceres::DynamicNumericDiffCostFunction<FcnCeres>(new FcnCeres{chi2});
 
     // Add one single parameter block
     cost_function->AddParameterBlock(npars);
@@ -132,13 +132,6 @@ namespace NangaParbat
 
     // Full report
     std::cout << summary.FullReport() << std::endl;
-
-    // Before returning, retrieve best-fit parameters and set them in
-    // the chi2 to make sure they will be used outside this function.
-    //std::vector<double> BestFitParameters;
-    //for (auto const p : upar.Parameters())
-    //  BestFitParameters.push_back(p.Value());
-    //chi2.SetParameters(BestFitParameters);
 
     // Return minimisation status
     return summary.IsSolutionUsable();
