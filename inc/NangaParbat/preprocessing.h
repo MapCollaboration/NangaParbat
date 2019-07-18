@@ -30,6 +30,14 @@ namespace NangaParbat
    * @param ProcessedDataPath: the path to the folder where the processed data will be stored
    * @return the coordinate string
    */
+  std::string PreprocessPHENIX200(std::string const& RawDataPath, std::string const& ProcessedDataPath);
+
+  /**
+   * @brief Preprocessing of the STAR dataset at 510 GeV
+   * @param RawDataPath: the path to the raw-data folder
+   * @param ProcessedDataPath: the path to the folder where the processed data will be stored
+   * @return the coordinate string
+   */
   std::string PreprocessSTAR510(std::string const& RawDataPath, std::string const& ProcessedDataPath);
 
   /**
