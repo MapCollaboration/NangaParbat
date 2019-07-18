@@ -51,6 +51,13 @@ namespace NangaParbat
     // Output of Minuit
     std::cout << "minimum: " << min << std::endl;
 
+    // Before returning, retrieve best-fit parameters and set them in
+    // the chi2 to make sure they will be used outside this function.
+    std::vector<double> BestFitParameters;
+    for (auto const p : upar.Parameters())
+      BestFitParameters.push_back(p.Value());
+    fcn.SetParameters(BestFitParameters);
+
     // Return minimisation status
     return min.IsValid();
   }
@@ -126,6 +133,13 @@ namespace NangaParbat
     // Full report
     std::cout << summary.FullReport() << std::endl;
 
+    // Before returning, retrieve best-fit parameters and set them in
+    // the chi2 to make sure they will be used outside this function.
+    //std::vector<double> BestFitParameters;
+    //for (auto const p : upar.Parameters())
+    //  BestFitParameters.push_back(p.Value());
+    //chi2.SetParameters(BestFitParameters);
+
     // Return minimisation status
     return summary.IsSolutionUsable();
   }
@@ -137,7 +151,7 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  double FcnMinuit::operator()(const std::vector<double>& pars) const
+  double FcnMinuit::operator()(std::vector<double> const& pars) const
   {
     // Set the parameters of the parameterisation
     _chi2.SetParameters(pars);

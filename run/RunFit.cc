@@ -22,8 +22,7 @@ int main(int argc, char* argv[])
   // Timer
   apfel::Timer t;
 
-  // Allocate "FastInterface" object reading the parameters from an
-  // input card.
+  // Reading fit  parameters from an input card.
   const YAML::Node fitconfig = YAML::LoadFile(argv[1]);
 
   // Allocate "Parameterisation" derived object
@@ -40,9 +39,9 @@ int main(int argc, char* argv[])
   // Define "ChiSquare" object with a given qT / Q cut
   NangaParbat::ChiSquare chi2{*NPFunc, fitconfig["qToQmax"].as<double>()};
 
-  // Open datasets.yaml file that contains the list of tables to be
-  // produced and push data sets into the a vector of DataHandler
-  // objects.
+  // Open datasets.yaml file that contains the list of datasets to be
+  // fitted and push the corresponding pairs of "DataHandler" and
+  // "ConvolutionTable" objects into the a vector.
   const YAML::Node datasets = YAML::LoadFile(std::string(argv[2]) + "/datasets.yaml");
   for (auto const& exp : datasets)
     for (auto const& ds : exp.second)
@@ -60,7 +59,7 @@ int main(int argc, char* argv[])
         chi2.AddBlock(std::make_pair(dh, ct));
       }
 
-  // Minimise the chi2
+  // Minimise the chi2 using the minimiser indicated in the input card
   bool status;
   if (fitconfig["Minimiser"].as<std::string>() == "minuit")
     status = MinuitMinimiser(chi2, fitconfig["Parameters"]);
@@ -69,7 +68,7 @@ int main(int argc, char* argv[])
   else
     throw std::runtime_error("[RunFit]: Unknown minimiser");
 
-  // Now print the total chi2
+  // Print the total chi2
   std::cout << "Total chi2 = " << chi2() << "\n" << std::endl;
 
   // Get number of data points for each experiment
@@ -77,13 +76,14 @@ int main(int argc, char* argv[])
 
   // Print individual chi2's
   for (int iexp = 0; iexp < (int) ndata.size(); iexp++)
-    std::cout << iexp << ") Partial chi2 / #d.p.= " << chi2(iexp) << " (#d.p. = " << ndata[iexp] << ")" << std::endl;
+    std::cout << iexp << ") " << chi2.GetBlocks()[iexp].first.GetName() << ", partial chi2 / #d.p.= " << chi2(iexp) << " (#d.p. = " << ndata[iexp] << ")" << std::endl;
   std::cout << "\n";
 
-  // Finally, this also produces plots
+  // Finally, print the number for the single data points. This also
+  // produces plots.
   std::cout << chi2;
 
-  // Delete parameterisation
+  // Delete "Parameterisation" object
   delete NPFunc;
 
   // Report time elapsed

@@ -68,6 +68,27 @@ namespace NangaParbat
     void SetParameters(std::vector<double> const& pars) { _NPFunc.SetParameters(pars); };
 
     /**
+     * @brief Function that returns the vector of ("DataHandler",
+     * "ConvolutionTable") object-pairs for all the datasets.
+     * @return The vector of ("DataHandler", "ConvolutionTable")
+     * object-pairs
+     */
+    std::vector<std::pair<DataHandler, ConvolutionTable>> GetBlocks() const { return _DSVect; };
+
+    /**
+     * @brief Function that returns the "Parameterisation" object
+     * associated to this chisquare object.
+     * @return The "Parameterisation" object
+     */
+    Parameterisation& GetNonPerturbativeFunction() const { return _NPFunc; };
+
+    /**
+     * @brief Function that returns value of the cut in qT / Q.
+     * @return The cut in qT / Q
+     */
+    double GetCutqToverQ() const { return _qToQMax; };
+
+    /**
      * @brief Function that gets the number of data points that pass
      * the qT / Q cut for each data set in the form of a vector of
      * integers.
@@ -97,10 +118,10 @@ namespace NangaParbat
     std::vector<double> GetParameters() const { return _NPFunc.GetParameters(); };
 
   protected:
-    std::vector<std::pair<DataHandler,ConvolutionTable>> _DSVect;  //!< Vector of "DataHandler-ConcolutionTable" pairs
-    Parameterisation&                                    _NPFunc;  //!< Parameterisation of the non-perturbative component
-    double                                               _qToQMax; //!< Max value of the ratio qT / Q allowed in the computation of the chi2
-    std::vector<int>                                     _ndata;   //!< Vector constaining the number of data points per dataset that pass the qT/Q cut
+    std::vector<std::pair<DataHandler, ConvolutionTable>> _DSVect;  //!< Vector of "DataHandler-ConcolutionTable" pairs
+    Parameterisation&                                     _NPFunc;  //!< Parameterisation of the non-perturbative component
+    double                                                _qToQMax; //!< Max value of the ratio qT / Q allowed in the computation of the chi2
+    std::vector<int>                                      _ndata;   //!< Vector constaining the number of data points per dataset that pass the qT/Q cut
 
     friend std::ostream& operator<<(std::ostream& os, ChiSquare const& chi2);
   };

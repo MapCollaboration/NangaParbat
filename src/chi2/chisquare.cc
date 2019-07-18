@@ -192,19 +192,24 @@ namespace NangaParbat
         chi2n += penalty;
         chi2n /= nd;
 
+        // Get values of qT
+        const std::vector<double> qT = dh.GetKinematics().qTv;
+
         // Print predictions, experimental central value, uncorrelated
         // uncertainty and systemetic shift.
         os << std::scientific;
         os << "# Dataset name: " << dh.GetName() << " [chi2 (using the shifts) = " << chi2n << "]\n";
         os << "#\t"
+           << "  qT [GeV]  \t"
            << "   pred.    \t"
-           << "   mean.    \t"
-           << "  unc. unc. \t"
-           << "   shift    \t"
+           << "    exp.    \t"
+           << "    unc.    \t"
+           << "    shift   \t"
            << "shifted pred.\t"
            << "\n";
         for (int j = 0; j < nd; j++)
           os << j << "\t"
+             << (dh.GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]) << "\t"
              << pred[j] << "\t"
              << mean[j] << "\t"
              << uncu[j] << "\t"
@@ -214,7 +219,6 @@ namespace NangaParbat
         os << "\n";
 
         // Now produce plots with ROOT
-        const std::vector<double> qT = dh.GetKinematics().qTv;
         TGraphErrors* exp = new TGraphErrors{};
         TGraph* theo      = new TGraph{};
         TGraph* theoshift = new TGraph{};
