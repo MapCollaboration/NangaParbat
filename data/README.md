@@ -64,11 +64,11 @@ contains information on the uncertanties (`errors`). There can be more uncertain
 - `add`: relative *additive correlated* uncertainty.
 - `mult`: relative *multiplicative correlated* uncertainty (typically, the luminosity uncertainty).
 
-Distinguishing between additive and multiplicative uncertainties is required when implementing some prescription to avoid the so-called *D'Agostini bias* induced by correlated multiplicative uncertainties. The information contained in the `error` blocks should be sufficient to construct the `_unc` and `_cov` blocks of the `DataHandler` class. Finally, the `value` block of `errors` contains the central value of the experimental point and will be stored in the `_mean` vector.
+Distinguishing between additive and multiplicative uncertainties is required when implementing some prescription to avoid the so-called *D'Agostini bias* induced by correlated multiplicative uncertainties.
 
 The `independent_variables` block, instead, provides infomation on the binning in *q*<sub>T</sub> (notice that the number of items in the `value` sub-block in the `independent_variables` block has to match the number of items in the `value` sub-block in the `dependent_variables` block discussed above).
 
-In the particular case displayed above, the corresponding `value` sub-block contains the upper (`high`) and lower (`low`) bounds of each bin in *q*<sub>T</sub>. This implies that the cross section has to be integrated over the *q*<sub>T</sub> bins causing the `IntqT` flag to be `true`. In case no integration in *q*<sub>T</sub> is required, the `independent_variables` block may look like this:
+In the particular case displayed above, the corresponding `value` sub-block contains the upper (`high`) and lower (`low`) bounds of each bin in *q*<sub>T</sub>. This implies that the cross section has to be integrated over the *q*<sub>T</sub> bins. In case no integration in *q*<sub>T</sub> is required, the `independent_variables` block would look like this:
 ```Shell
 independent_variables:
 - header: {name: PT, units: GEV}
@@ -80,4 +80,4 @@ independent_variables:
   - {value: 0.9}
   ...
 ```
-where only the central value in *q*<sub>T</sub> is reported, implying that the `IntqT` flag is to be `false`.
+where only the central value in *q*<sub>T</sub> is reported.
