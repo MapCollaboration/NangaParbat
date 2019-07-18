@@ -51,7 +51,8 @@ namespace NangaParbat
 
   private:
     /**
-     * @defgroup Cuts Variables that define the cuts on the single leptons
+     * @name Cut variables
+     * Cut Variables that define the cuts on the single leptons
      */
     ///@{
     double _pTmin;

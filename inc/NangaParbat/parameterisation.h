@@ -58,8 +58,8 @@ namespace NangaParbat
     virtual double Derive(double const& x, double const& b, double const& zeta, int const& ifunc, int const& ipar) const { return 0; };
 
     /**
-     * @defgroup ParameterisationGetters Getter functions to retrieve
-     * the feauture of the parameterisation
+     * @name Getters
+     * Functions to retrieve the feauture of the parameterisation
      */
     ///@{
     std::string         GetName()              const { return _name; }

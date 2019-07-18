@@ -77,14 +77,14 @@ namespace NangaParbat
     std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP) const;
 
     /**
-     * @defgroup ConvolutionTableGetters Getter functions to retrieve
-     * the feauture of the convolution table
+     * @name Getters
+     * Functions to retrieve the feauture of the convolution table
      */
     ///@{
-    std::string                      GetName()       const { return _name; }
-    int                              GetProcess()    const { return _proc; }
-    double                           GetCME()        const { return _Vs; }
-    std::vector<std::vector<double>> GetqTBins()     const { return _qTmap; }
+    std::string                      GetName()    const { return _name; }
+    int                              GetProcess() const { return _proc; }
+    double                           GetCME()     const { return _Vs; }
+    std::vector<std::vector<double>> GetqTBins()  const { return _qTmap; }
     ///@}
 
   private:
