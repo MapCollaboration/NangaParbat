@@ -206,6 +206,7 @@ namespace NangaParbat
            << "    unc.    \t"
            << "    shift   \t"
            << "shifted pred.\t"
+           << "  residuals \t"
            << "\n";
         for (int j = 0; j < nd; j++)
           os << j << "\t"
@@ -215,6 +216,7 @@ namespace NangaParbat
              << uncu[j] << "\t"
              << shifts[j] << "\t"
              << pred[j] + shifts[j] << "\t"
+             << ( mean[j] - pred[j] - shifts[j] ) / uncu[j] << "\t"
              << "\n";
         os << "\n";
 

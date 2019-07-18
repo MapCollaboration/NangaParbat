@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 
   // List datasets reported in the datasets.yaml file in the data
   // folder.
-  std::cout << "\nAvaliable datasets:" << std::endl;
+  std::cout << "\nAvailable datasets:" << std::endl;
   const YAML::Node datasets = YAML::LoadFile(std::string(argv[1]) + "/datasets.yaml");
   for (auto const& exp : datasets)
     for (auto const& ds : exp.second)
