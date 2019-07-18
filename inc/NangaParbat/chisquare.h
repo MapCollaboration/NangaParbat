@@ -24,7 +24,7 @@ namespace NangaParbat
      * @param DSVect: vector of pairs of "DataHandler" and "ConvolutionTable" objects
      * @param NPFunc: "Parameterisation" object containing the non-perturbative function(s)
      */
-    ChiSquare(std::vector<std::pair<DataHandler,ConvolutionTable>> const& DSVect, Parameterisation& NPFunc, double const& qToQMax = 100);
+    ChiSquare(std::vector<std::pair<DataHandler, ConvolutionTable>> const& DSVect, Parameterisation& NPFunc, double const& qToQMax = 100);
 
     /**
      * @brief The default "ChiSquare" constructor.
@@ -37,7 +37,7 @@ namespace NangaParbat
      * "DSVect" vector.
      * @param DSBlock: the ("DataHandler","ConvolutionTable")-pair block to be appended
      */
-    void AddBlock(std::pair<DataHandler,ConvolutionTable> const& DSBlock);
+    void AddBlock(std::pair<DataHandler, ConvolutionTable> const& DSBlock);
 
     /**
      * @brief Function that returns the residuals of the chi2 deriving

@@ -18,7 +18,7 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  ChiSquare::ChiSquare(std::vector<std::pair<DataHandler,ConvolutionTable>> const& DSVect, Parameterisation& NPFunc, double const& qToQMax):
+  ChiSquare::ChiSquare(std::vector<std::pair<DataHandler, ConvolutionTable>> const& DSVect, Parameterisation& NPFunc, double const& qToQMax):
     _NPFunc(NPFunc),
     _qToQMax(qToQMax)
   {
@@ -29,7 +29,7 @@ namespace NangaParbat
 
     // Loop over the the blocks and and push them into the "_DSVect"
     // container.
-    for (auto const& ds : _DSVect)
+    for (auto const& ds : DSVect)
       AddBlock(ds);
   }
 
@@ -40,7 +40,7 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  void ChiSquare::AddBlock(std::pair<DataHandler,ConvolutionTable> const& DSBlock)
+  void ChiSquare::AddBlock(std::pair<DataHandler, ConvolutionTable> const& DSBlock)
   {
     // Push "DataHandler-ConvolutionTable" back
     _DSVect.push_back(DSBlock);
@@ -125,7 +125,7 @@ namespace NangaParbat
   //_________________________________________________________________________________
   std::ostream& operator << (std::ostream& os, ChiSquare const& chi2)
   {
-    // Loop over the the blocks
+    // Loop over the blocks
     for (int i = 0; i < (int) chi2._DSVect.size(); i++)
       {
         // Number of data points
