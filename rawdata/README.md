@@ -11,6 +11,7 @@ link to the HepData page:
 
 - [HEPData-ins153009-v1-yaml](https://www.hepdata.net/search/?q=ins153009): E288 at 200, 300, and 400 GeV,
 - [HEPData-ins302822-v1-yaml](https://www.hepdata.net/search/?q=ins302822): E605,
+- STAR_510: STAR at 510 GeV
 - [HEPData-ins505738-v1-yaml](https://www.hepdata.net/search/?q=ins505738): CDF Run I,
 - [HEPData-ins1124333-v1-yaml](https://www.hepdata.net/search/?q=ins1124333): CDF Run II,
 - [HEPData-ins503361-v1-yaml](https://www.hepdata.net/search/?q=ins503361): D0 RunI,

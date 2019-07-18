@@ -1,0 +1,70 @@
+dependent_variables:
+  - header: {name: D(SIG)/DPT, units: NB/GEV}
+    qualifiers:
+      - {name: process, value: DY}
+      - {name: observable, value: d(sigma)/dydQdqT}
+      - {name: target_isoscalarity, value: 1}
+      - {name: prefactor, value: 1}
+      - {name: Vs, value: 510}
+      - {name: Q, low: 73, high: 114, integrate: true}
+      - {name: y, low: -1, high: 1, integrate: true}
+      - {name: PS_reduction, pTmin: 25, etamin: -1, etamax: 1}
+    values:
+      - errors:
+          - {label: unc, value: 0.123}
+          - {label: mult, value: 0.085}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.123}
+          - {label: mult, value: 0.085}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.123}
+          - {label: mult, value: 0.085}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.123}
+          - {label: mult, value: 0.085}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.123}
+          - {label: mult, value: 0.085}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.123}
+          - {label: mult, value: 0.085}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.123}
+          - {label: mult, value: 0.085}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.123}
+          - {label: mult, value: 0.085}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.123}
+          - {label: mult, value: 0.085}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.123}
+          - {label: mult, value: 0.085}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.123}
+          - {label: mult, value: 0.085}
+        value: 0
+independent_variables:
+  - header: "{name: PT, units: GEV}"
+    values:
+      - {high:  1.25, low:  0.00}
+      - {high:  2.50, low:  1.25}
+      - {high:  3.75, low:  2.50}
+      - {high:  5.00, low:  3.75}
+      - {high:  7.50, low:  5.00}
+      - {high: 10.00, low:  7.50}
+      - {high: 12.50, low: 10.00}
+      - {high: 15.00, low: 12.50}
+      - {high: 17.50, low: 15.00}
+      - {high: 20.00, low: 17.50}
+      - {high: 25.00, low: 20.00}

@@ -5,6 +5,7 @@ set(preprocessing_source
   preprocessCDFRunII.cc
   preprocessD0RunI.cc
   preprocessD0RunII.cc
+  preprocessSTAR510.cc
   preprocessLHCb7TeV.cc
   preprocessLHCb8TeV.cc
   preprocessLHCb13TeV.cc

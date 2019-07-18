@@ -33,6 +33,9 @@ int main(int argc, char* argv[])
   fout << "E288:\n";
   fout << NangaParbat::PreprocessE288(RawDataPath, ProcessedDataPath);
 
+  fout << "STAR:\n";
+  fout << NangaParbat::PreprocessSTAR510(RawDataPath, ProcessedDataPath);
+
   fout << "CDF:\n";
   fout << NangaParbat::PreprocessCDFRunI(RawDataPath,  ProcessedDataPath);
   fout << NangaParbat::PreprocessCDFRunII(RawDataPath, ProcessedDataPath);
