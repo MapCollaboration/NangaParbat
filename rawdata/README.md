@@ -1,7 +1,7 @@
 ## Raw datasets
 
 This folder contains the raw data files as downloaded from
-[HepData](https://www.hepdata.net). The relevant files have to be
+[HepData](https://www.hepdata.net) (when available). The relevant files have to be
 preprocessed to format them suitably to be used for the production of
 the interpolation grids and the fits. The result of the preprocessing
 is the datafiles the the [data](../data/README.md) folder The name of the
