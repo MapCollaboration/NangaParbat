@@ -48,6 +48,7 @@ Some general documentation can be found in the relevant subfolders:
 
 - [raw data files](rawdata/)
 - [preprocessed data files](data/)
+- [Utilities](run/)
 
 Code documentation generated with Doxygen can be found [here](https://vbertone.github.io/NangaParbat/html/index.html).
 
