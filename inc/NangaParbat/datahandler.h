@@ -34,19 +34,19 @@ namespace NangaParbat
     {
       Kinematics();
       bool empty() const;
-      int                                   ndata;    //!< Number of data points
-      double                                Vs;       //!< Center of mass energy
-      std::vector<double>                   qTv;      //!< Vector of qT values
-      std::vector<std::pair<double,double>> qTmap;    //!< Map of qT bounds to associate to the single bins
-      std::vector<double>                   qTfact;   //!< Possible bin-by-bin prefactors to multiply the theoretical predictions
-      std::pair<double,double>              var1b;    //!< Variable 1 integration bounds
-      std::pair<double,double>              var2b;    //!< Variable 1 integration bounds
-      bool                                  IntqT;    //!< Whether the bins in qTv are integrated over
-      bool                                  Intv1;    //!< Whether the bins in Q are integrated over
-      bool                                  Intv2;    //!< Whether the bins in y are integrated over
-      bool                                  PSRed;    //!< Whether there is a final-state PS reduction
-      double                                pTMin;    //!< Minimum pT of the final-state leptons
-      std::pair<double,double>              etaRange; //!< Allowed range in eta of the final-state leptons
+      int                                    ndata;    //!< Number of data points
+      double                                 Vs;       //!< Center of mass energy
+      std::vector<double>                    qTv;      //!< Vector of qT values
+      std::vector<std::pair<double, double>> qTmap;    //!< Map of qT bounds to associate to the single bins
+      std::vector<double>                    qTfact;   //!< Possible bin-by-bin prefactors to multiply the theoretical predictions
+      std::pair<double, double>              var1b;    //!< Variable 1 integration bounds
+      std::pair<double, double>              var2b;    //!< Variable 1 integration bounds
+      bool                                   IntqT;    //!< Whether the bins in qTv are integrated over
+      bool                                   Intv1;    //!< Whether the bins in Q are integrated over
+      bool                                   Intv2;    //!< Whether the bins in y are integrated over
+      bool                                   PSRed;    //!< Whether there is a final-state PS reduction
+      double                                 pTMin;    //!< Minimum pT of the final-state leptons
+      std::pair<double, double>              etaRange; //!< Allowed range in eta of the final-state leptons
     };
 
     /**
@@ -126,19 +126,25 @@ namespace NangaParbat
      */
     apfel::matrix<double> GetCholeskyDecomposition() const { return _CholL; };
 
+    /**
+     * @brief Function that returns the plotting labels.
+     */
+    std::map<std::string, std::string> GetLabels() const { return _labels; };
+
   protected:
-    std::string                      _name;        //!< Name of the dataset
-    Process                          _proc;        //!< The process
-    double                           _targetiso;   //!< Isoscalarity of the target
-    double                           _prefact;     //!< Possible overall prefactor to multiply the theoretical predictions
-    Kinematics                       _kin;         //!< Kinematics block
-    std::vector<double>              _mean;        //!< Vector of central values
-    std::vector<double>              _uncor;       //!< Vector of uncorrelated uncertainties
-    std::vector<std::vector<double>> _corra;       //!< Additive correlated uncertainties
-    std::vector<std::vector<double>> _corrm;       //!< Multiplicative correlated uncertainties
-    std::vector<std::vector<double>> _corr;        //!< All correlated uncertainties
-    apfel::matrix<double>            _covmat;      //!< Covariance matrix
-    apfel::matrix<double>            _CholL;       //!< Cholesky decomposition of the covariance matrix
+    std::string                        _name;        //!< Name of the dataset
+    Process                            _proc;        //!< The process
+    double                             _targetiso;   //!< Isoscalarity of the target
+    double                             _prefact;     //!< Possible overall prefactor to multiply the theoretical predictions
+    Kinematics                         _kin;         //!< Kinematics block
+    std::vector<double>                _mean;        //!< Vector of central values
+    std::vector<double>                _uncor;       //!< Vector of uncorrelated uncertainties
+    std::vector<std::vector<double>>   _corra;       //!< Additive correlated uncertainties
+    std::vector<std::vector<double>>   _corrm;       //!< Multiplicative correlated uncertainties
+    std::vector<std::vector<double>>   _corr;        //!< All correlated uncertainties
+    apfel::matrix<double>              _covmat;      //!< Covariance matrix
+    apfel::matrix<double>              _CholL;       //!< Cholesky decomposition of the covariance matrix
+    std::map<std::string, std::string> _labels;      //!< Labels used for plotting
 
     friend std::ostream& operator << (std::ostream& os, DataHandler const& DH);
   };

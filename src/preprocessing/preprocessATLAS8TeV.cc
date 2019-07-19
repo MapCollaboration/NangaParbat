@@ -58,6 +58,13 @@ namespace NangaParbat
               const std::string ofile = ofolder + "_8TeV" + tab.second + ".yaml";
               const std::pair<double, double> ylims = yrangelims[tab.first];
 
+              // Plot labels
+              std::map<std::string, std::string> labels
+              {
+                {"xlabel", "#it{q}_{T} [GeV]"},
+                {"ylabel", "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"},
+                {"title", "ATLAS at 8 TeV, 66 GeV < Q < 116 GeV, |#it{y}| < 2.4"}};
+
               // Allocate emitter
               YAML::Emitter emit;
 
@@ -68,7 +75,7 @@ namespace NangaParbat
               emit << YAML::Key << "dependent_variables";
               emit << YAML::BeginSeq;
               emit << YAML::BeginMap;
-              emit << YAML::Key << "header" << YAML::Value << dv["header"];
+              emit << YAML::Key << "header" << YAML::Value << YAML::Flow << labels;
               emit << YAML::Key << "qualifiers" << YAML::Value;
               emit << YAML::BeginSeq;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "DY" << YAML::EndMap;

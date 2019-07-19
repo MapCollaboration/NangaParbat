@@ -31,10 +31,10 @@ namespace NangaParbat
       {"10.TO11.", "_Q_10_11"}, {"11.TO12.", "_Q_11_12"}, {"12.TO13.", "_Q_12_13"},
       {"13.TO14.", "_Q_13_14"}
     };
-    std::map<std::string, std::pair<double, double>> enrangelims = {{"4.TO5.", {4,5}}, {"5.TO6.", {5, 6}}, {"6.TO7.", {6, 7}},
-      {"7.TO8.", {7, 8}}, {"8.TO9.", {8, 9}}, {"9.TO10.", {9, 10}},
-      {"10.TO11.", {10, 11}}, {"11.TO12.", {11, 12}}, {"12.TO13.", {12, 13}},
-      {"13.TO14.", {13, 14}}
+    std::map<std::string, std::pair<std::string, std::string>> enrangelims = {{"4.TO5.", {"4", "5"}}, {"5.TO6.", {"5", "6"}}, {"6.TO7.", {"6", "7"}},
+      {"7.TO8.", {"7", "8"}}, {"8.TO9.", {"8", "9"}}, {"9.TO10.", {"9", "10"}},
+      {"10.TO11.", {"10", "11"}}, {"11.TO12.", {"11", "12"}}, {"12.TO13.", {"12", "13"}},
+      {"13.TO14.", {"13", "14"}}
     };
 
     // Create directory
@@ -57,15 +57,25 @@ namespace NangaParbat
         for (auto const& dv : exp["dependent_variables"])
           {
             std::string ofile;
-            std::pair<double, double> enlims;
-            double y = 0;
+            std::pair<std::string, std::string> enlims;
             double Vs = 0;
+            std::string y;
+            std::string energy;
             if (tab.second == "E288_200")
-              Vs = 19.4;
+              {
+                Vs = 19.4;
+                energy = " at 200 GeV, ";
+              }
             else if (tab.second == "E288_300")
-              Vs = 23.8;
+              {
+                Vs = 23.8;
+                energy = " at 300 GeV, ";
+              }
             else if (tab.second == "E288_400")
-              Vs = 27.4;
+              {
+                Vs = 27.4;
+                energy = " at 400 GeV, ";
+              }
             for (auto const& q : dv["qualifiers"])
               {
                 if (q["name"].as<std::string>() == "W(P=3 4)")
@@ -74,8 +84,19 @@ namespace NangaParbat
                     enlims = enrangelims[q["value"].as<std::string>()];
                   }
                 if (q["name"].as<std::string>() == "YRAP(P=3 4,RF=CM)")
-                  y = q["value"].as<double>();
+                  y = q["value"].as<std::string>();
               }
+
+            // Plot labels
+            std::map<std::string, std::string> labels
+            {
+              {"xlabel", "#it{q}_{T} [GeV]"},
+              {"ylabel", "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"},
+              {
+                "title", "E288 " + energy
+                + enlims.first + " GeV < Q < "
+                + enlims.second + " GeV, #it{y} = " + y
+              }};
 
             // Allocate emitter
             YAML::Emitter emit;
@@ -87,7 +108,7 @@ namespace NangaParbat
             emit << YAML::Key << "dependent_variables";
             emit << YAML::BeginSeq;
             emit << YAML::BeginMap;
-            emit << YAML::Key << "header" << YAML::Value << dv["header"];
+            emit << YAML::Key << "header" << YAML::Value << YAML::Flow << labels;
             emit << YAML::Key << "qualifiers" << YAML::Value;
             emit << YAML::BeginSeq;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "DY" << YAML::EndMap;

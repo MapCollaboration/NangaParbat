@@ -30,8 +30,8 @@ namespace NangaParbat
       {"11.5 TO 13.5", "_Q_11.5_13.5"}, {"13.5 TO 18.0", "_Q_13.5_18"}
     };
 
-    std::map<std::string, std::pair<double, double>> enrangelims = {{"7 TO 8", {7, 8}}, {"8 TO 9", {8, 9}}, {"10.5 TO 11.5", {10.5, 11.5}},
-      {"11.5 TO 13.5", {11.5, 13.5}}, {"13.5 TO 18.0", {13.5, 18}}
+    std::map<std::string, std::pair<std::string, std::string>> enrangelims = {{"7 TO 8", {"7", "8"}}, {"8 TO 9", {"8", "9"}}, {"10.5 TO 11.5", {"10.5", "11.5"}},
+      {"11.5 TO 13.5", {"11.5", "13.5"}}, {"13.5 TO 18.0", {"13.5", "18"}}
     };
 
     // Create directory
@@ -54,7 +54,7 @@ namespace NangaParbat
         for (auto const& dv : exp["dependent_variables"])
           {
             std::string ofile;
-            std::pair<double, double> enlims;
+            std::pair<std::string, std::string> enlims;
             double y = 0;
             double Qav = 0;
             const double Vs = 38.8;
@@ -68,13 +68,24 @@ namespace NangaParbat
                 if (q["name"].as<std::string>() == "XL")
                   {
                     const double xF = - q["value"].as<double>();
-                    Qav = ( enlims.first + enlims.second ) / 2;
+                    Qav = ( std::stod(enlims.first) + std::stod(enlims.second) ) / 2;
                     y = log(Vs * ( xF + sqrt( pow(xF, 2) + pow(2 * Qav / Vs, 2 ) ) ) / 2 / Qav );
                   }
               }
 
             // Overall factor
             const double factor = Vs / 2 / Qav / cosh(y) / M_PI / 2;
+
+            // Plot labels
+            std::map<std::string, std::string> labels
+            {
+              {"xlabel", "#it{q}_{T} [GeV]"},
+              {"ylabel", "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"},
+              {
+                "title", "E605, "
+                + enlims.first + " GeV < Q < "
+                + enlims.second + " GeV, #it{x}_{F} = 0.1"
+              }};
 
             // Allocate emitter
             YAML::Emitter emit;
@@ -86,7 +97,7 @@ namespace NangaParbat
             emit << YAML::Key << "dependent_variables";
             emit << YAML::BeginSeq;
             emit << YAML::BeginMap;
-            emit << YAML::Key << "header" << YAML::Value << dv["header"];
+            emit << YAML::Key << "header" << YAML::Value << YAML::Flow << labels;
             emit << YAML::Key << "qualifiers" << YAML::Value;
             emit << YAML::BeginSeq;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "DY" << YAML::EndMap;

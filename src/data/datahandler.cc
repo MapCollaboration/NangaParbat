@@ -45,11 +45,15 @@ namespace NangaParbat
     _proc(UnknownProcess),
     _targetiso(1),
     _prefact(1),
-    _kin(DataHandler::Kinematics{})
+    _kin(DataHandler::Kinematics{}),
+    _labels({})
   {
     // Retrieve kinematics
     for (auto const& dv : datafile["dependent_variables"])
       {
+        // Get labels
+        _labels = dv["header"].as<std::map<std::string, std::string>>();
+
         // Run over the qualifiers and make sure that all necessary
         // parameters are found.
         for (auto const& ql : dv["qualifiers"])

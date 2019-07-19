@@ -50,6 +50,13 @@ namespace NangaParbat
         for (auto const& dv : exp["dependent_variables"])
           if (dv["header"]["units"])
             {
+              // Plot labels
+              std::map<std::string, std::string> labels
+              {
+                {"xlabel", "#it{q}_{T} [GeV]"},
+                {"ylabel", "#frac{d#it{#sigma}}{d#it{q}_{T}}  [pb GeV^{-1}]"},
+                {"title", "LHCb at 7 TeV, 60 GeV < Q < 120 GeV, 2 < #it{y} < 4.5"}};
+
               // Allocate emitter
               YAML::Emitter emit;
 
@@ -60,7 +67,7 @@ namespace NangaParbat
               emit << YAML::Key << "dependent_variables";
               emit << YAML::BeginSeq;
               emit << YAML::BeginMap;
-              emit << YAML::Key << "header" << YAML::Value << dv["header"];
+              emit << YAML::Key << "header" << YAML::Value << YAML::Flow << labels;
               emit << YAML::Key << "qualifiers" << YAML::Value;
               emit << YAML::BeginSeq;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "DY" << YAML::EndMap;

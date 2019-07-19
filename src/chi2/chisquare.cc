@@ -7,6 +7,7 @@
 
 #include <numeric>
 #include <math.h>
+#include <sys/stat.h>
 
 #include <ROOT/TGraph.h>
 #include <ROOT/TGraphErrors.h>
@@ -125,6 +126,9 @@ namespace NangaParbat
   //_________________________________________________________________________________
   std::ostream& operator << (std::ostream& os, ChiSquare const& chi2)
   {
+    // Create folder to store the plots
+    mkdir("plots", ACCESSPERMS);
+
     // Loop over the blocks
     for (int i = 0; i < (int) chi2._DSVect.size(); i++)
       {
@@ -220,6 +224,9 @@ namespace NangaParbat
              << "\n";
         os << "\n";
 
+        // Get plotting labels
+        const std::map<std::string, std::string> labels = dh.GetLabels();
+
         // Now produce plots with ROOT
         TGraphErrors* exp = new TGraphErrors{};
         TGraph* theo      = new TGraph{};
@@ -234,32 +241,50 @@ namespace NangaParbat
           }
         exp->SetLineColor(1);
         exp->SetMarkerStyle(20);
+        exp->SetLineWidth(2);
+        exp->SetMarkerSize(1.2);
         theo->SetLineColor(kBlue-7);
         theo->SetLineWidth(3);
         theoshift->SetLineColor(kPink-6);
         theoshift->SetLineWidth(3);
 
         // Adjust legend
-        TLegend* leg = new TLegend{0.7, 0.89, 0.89, 0.75};
+        TLegend* leg = new TLegend{0.6, 0.92, 0.89, 0.72};
         leg->SetFillColor(0);
+        leg->SetBorderSize(0);
         leg->AddEntry(exp, "Data", "lp");
-        leg->AddEntry(theo, "Theory");
-        leg->AddEntry(theoshift, "Theory + shifts");
-        leg->AddEntry((TObject*)0,("#chi^{2} = " + std::to_string(chi2n)).c_str(), "");
+        leg->AddEntry(theo, "Predictions");
+        leg->AddEntry(theoshift, "Shifted predictions");
+        leg->AddEntry((TObject*)0,("#it{#chi}^{2} = " + std::to_string(chi2n)).c_str(), "");
 
         // Produce graph
         TMultiGraph* mg = new TMultiGraph{};
         TCanvas* c = new TCanvas{};
+        c->SetLeftMargin(0.17);
+        c->SetTopMargin(0.07);
+        c->SetBottomMargin(0.15);
+        c->SetFrameLineWidth(2);
         mg->Add(exp, "AP");
         mg->Add(theo, "AL");
         mg->Add(theoshift, "AL");
-        mg->SetTitle(dh.GetName().c_str());
+        mg->SetTitle(labels.at("title").c_str());
         mg->Draw("AL");
-        mg->GetXaxis()->SetTitle("q_{T} [GeV]");
+        // X axis
+        mg->GetXaxis()->CenterTitle();
+        mg->GetXaxis()->SetLabelSize(0.045);
+        mg->GetXaxis()->SetTitleSize(0.05);
+        mg->GetXaxis()->SetTickLength(0.02);
+        mg->GetXaxis()->SetTitle(labels.at("xlabel").c_str());
+        // Y axis
+        mg->GetYaxis()->CenterTitle();
+        mg->GetYaxis()->SetLabelSize(0.045);
+        mg->GetYaxis()->SetTitleSize(0.05);
+        mg->GetYaxis()->SetTickLength(0.015);
+        mg->GetYaxis()->SetTitle(labels.at("ylabel").c_str());
         leg->Draw("SAME");
 
         // Save graph on file
-        std::string outfile = dh.GetName() + ".pdf";
+        std::string outfile = "./plots/" + dh.GetName() + ".pdf";
         c->SaveAs(outfile.c_str());
 
         delete exp;
