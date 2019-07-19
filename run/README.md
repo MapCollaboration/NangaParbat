@@ -32,4 +32,4 @@ where ```<path to raw-data folder>``` is the path to the raw data files and ```<
 ```Shell
 ./RunFit <fit configuration file> <path to data folder> <path to tables folder>
 ```
-where ```<configuration file>``` points to the fit configuration file (*e.g.* see [config.yaml](../cards/fitPV17.yaml), ```<path to data folder>``` is the path to the data files to be fitted , and ```<path to tables folder> ```is the path to the corresponding interpolation tables to be used.
+where ```<configuration file>``` points to the fit configuration file (*e.g.* see [fitPV17.yaml](../cards/fitPV17.yaml), ```<path to data folder>``` is the path to the data files to be fitted , and ```<path to tables folder> ```is the path to the corresponding interpolation tables to be used.
