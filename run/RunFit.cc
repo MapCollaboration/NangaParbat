@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
   // Timer
   apfel::Timer t;
 
-  // Reading fit  parameters from an input card.
+  // Reading fit  parameters from an input card
   const YAML::Node fitconfig = YAML::LoadFile(argv[1]);
 
   // Allocate "Parameterisation" derived object
@@ -60,11 +60,13 @@ int main(int argc, char* argv[])
       }
 
   // Minimise the chi2 using the minimiser indicated in the input card
-  bool status;
+  bool status = true;
   if (fitconfig["Minimiser"].as<std::string>() == "minuit")
     status = MinuitMinimiser(chi2, fitconfig["Parameters"]);
   else if (fitconfig["Minimiser"].as<std::string>() == "ceres")
     status = CeresMinimiser(chi2, fitconfig["Parameters"]);
+  else if (fitconfig["Minimiser"].as<std::string>() == "none")
+    std::cout << "\nNo minimiser, computing predictions only...\n" << std::endl;
   else
     throw std::runtime_error("[RunFit]: Unknown minimiser");
 
@@ -75,8 +77,9 @@ int main(int argc, char* argv[])
   const std::vector<int> ndata = chi2.GetDataPointNumbers();
 
   // Print individual chi2's
+  const auto blocks = chi2.GetBlocks();
   for (int iexp = 0; iexp < (int) ndata.size(); iexp++)
-    std::cout << iexp << ") " << chi2.GetBlocks()[iexp].first.GetName() << ", partial chi2 / #d.p.= " << chi2(iexp) << " (#d.p. = " << ndata[iexp] << ")" << std::endl;
+    std::cout << iexp << ") " << blocks[iexp].first.GetName() << ", partial chi2 / #d.p.= " << chi2(iexp) << " (#d.p. = " << ndata[iexp] << ")" << std::endl;
   std::cout << "\n";
 
   // Finally, print the number for the single data points. This also
