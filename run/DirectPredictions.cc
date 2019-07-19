@@ -3,6 +3,8 @@
 //
 
 #include "NangaParbat/DWS.h"
+#include "NangaParbat/PV17.h"
+#include "NangaParbat/PV19.h"
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/utilities.h"
 
@@ -13,12 +15,16 @@
 int main(int argc, char* argv[])
 {
   // Check that the input is correct otherwise stop the code
-  if (argc < 3 || strcmp(argv[1], "--help") == 0)
+  if (argc < 4 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./DirectPredictions <configuration file> <path to data folder>" << std::endl;
+      std::cout << "Syntax: ./DirectPredictions <configuration file> <path to data folder> <parametrisation [DWS, PV17, PV19]>\n" << std::endl;
       exit(-10);
     }
+  std::cout << "\nWARNING: This could be unbearably slow!\n" << std::endl;
+
+  // Timer
+  apfel::Timer t;
 
   // Allocate "FastInterface" object reading the parameters from an
   // input card.
@@ -38,11 +44,18 @@ int main(int argc, char* argv[])
       }
 
   // Allocate "Parameterisation" derived object
-  //NangaParbat::DWS NPFunc{};
-  NangaParbat::PV17 NPFunc{};
+  NangaParbat::Parameterisation *NPFunc;
+  if (std::string(argv[3]) == "DWS")
+    NPFunc = new NangaParbat::DWS{};
+  else if (std::string(argv[3]) == "PV17")
+    NPFunc = new NangaParbat::PV17{};
+  else if (std::string(argv[3]) == "PV19")
+    NPFunc = new NangaParbat::PV19{};
+  else
+    throw std::runtime_error("[DirectPredictions]: Unknown parameterisation");
 
   // Compute direct predictions
-  auto const fNP = [=] (double const& x, double const& b, double const& zeta) -> double { return NPFunc.Evaluate(x, b, zeta, 0); };
+  auto const fNP = [=] (double const& x, double const& b, double const& zeta) -> double { return (*NPFunc).Evaluate(x, b, zeta, 0); };
   const std::vector<std::vector<double>> dc = FIObj.DirectComputation(DHVect, NangaParbat::bstarmin, fNP, fNP);
 
   // Report results
@@ -57,6 +70,12 @@ int main(int argc, char* argv[])
         std::cout << j << "\t" << qTv[j] << "\t" << dc[i][j] << std::endl;
       std::cout << "\n";
     }
+
+  // Delete "Parameterisation" object
+  delete NPFunc;
+
+  // Report time elapsed
+  t.stop();
 
   return 0;
 }

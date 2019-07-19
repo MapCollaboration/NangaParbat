@@ -17,8 +17,7 @@ int main(int argc, char* argv[])
   if (argc < 5 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./CreateTables <configuration file> <path to data folder> <output folder> <test tables? [y/n]> [optional selected datasets]" << std::endl;
-      std::cout << "Example: ./CreateTables ../cards/config.yaml ../data/ ../tables/ n E605_Q_7_8 E605_Q_13.5_18\n" << std::endl;
+      std::cout << "Syntax: ./CreateTables <configuration file> <path to data folder> <output folder> <test tables? [y/n]> [optional selected datasets]\n" << std::endl;
       exit(-10);
     }
 
@@ -61,9 +60,9 @@ int main(int argc, char* argv[])
   // Now test tables if required
   if (std::strncmp(argv[4], "y", 1) == 0)
     {
-      // Allocate "Parameterisation" derived object
-      //NangaParbat::DWS NPFunc{};
-      NangaParbat::PV17 NPFunc{};
+      // Allocate "Parameterisation" derived object. Use DWS for the
+      // test.
+      NangaParbat::DWS NPFunc{};
 
       // Compute direct predictions
       auto const fNP = [=] (double const& x, double const& b, double const& zeta) -> double { return NPFunc.Evaluate(x, b, zeta, 0); };

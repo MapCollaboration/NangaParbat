@@ -3,6 +3,8 @@
 //
 
 #include "NangaParbat/DWS.h"
+#include "NangaParbat/PV17.h"
+#include "NangaParbat/PV19.h"
 #include "NangaParbat/chisquare.h"
 #include "NangaParbat/minimisation.h"
 
