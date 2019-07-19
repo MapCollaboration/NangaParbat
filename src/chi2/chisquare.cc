@@ -8,6 +8,7 @@
 #include <numeric>
 #include <math.h>
 #include <sys/stat.h>
+#include <fstream>
 
 #include <ROOT/TGraph.h>
 #include <ROOT/TGraphErrors.h>
@@ -129,7 +130,17 @@ namespace NangaParbat
     // Create folder to store the plots
     mkdir("plots", ACCESSPERMS);
 
+    // File with data and predictions
+    std::ofstream fout("Predictions.dat");
+
+    // header of the chi2 table
+    os << "# Table of $\\chi^2$'s\n";
+    os << "| Experiment | num. of points | $\\chi_D^2$ | $\\chi_\\lambda^2$ | $\\chi^2$ / n.d.p.|\n";
+    os << "|:----------:|:--------------:|:-----------:|:------------------:|:-----------------:|\n";
+
     // Loop over the blocks
+    int ntot = 0;
+    double chi2tot = 0;
     for (int i = 0; i < (int) chi2._DSVect.size(); i++)
       {
         // Number of data points
@@ -185,25 +196,30 @@ namespace NangaParbat
         double chi2n = 0;
         for(int j = 0; j < nd; j++)
           chi2n += pow( ( res[j] - shifts[j] ) / uncu[j], 2);
+	os << "| " << dh.GetName() << " | " << nd << " | " << chi2n;
 
         // Compute penalty
         double penalty = 0;
         for(int alpha = 0; alpha < nsys; alpha++)
           penalty += pow(lambda[alpha], 2);
+	os << " | " << penalty;
 
         // Add penalty to the chi2 and divide by the number of data
         // points.
         chi2n += penalty;
+	chi2tot += chi2n;
         chi2n /= nd;
+	ntot += nd;
+	os << " | " << chi2n << " |\n";
 
         // Get values of qT
         const std::vector<double> qT = dh.GetKinematics().qTv;
 
         // Print predictions, experimental central value, uncorrelated
         // uncertainty and systemetic shift.
-        os << std::scientific;
-        os << "# Dataset name: " << dh.GetName() << " [chi2 (using the shifts) = " << chi2n << "]\n";
-        os << "#\t"
+        fout << std::scientific;
+        fout << "# Dataset name: " << dh.GetName() << " [chi2 (using the shifts) = " << chi2n << "]\n";
+        fout << "#\t"
            << "  qT [GeV]  \t"
            << "   pred.    \t"
            << "    exp.    \t"
@@ -213,7 +229,7 @@ namespace NangaParbat
            << "  residuals \t"
            << "\n";
         for (int j = 0; j < nd; j++)
-          os << j << "\t"
+          fout << j << "\t"
              << (dh.GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]) << "\t"
              << pred[j] << "\t"
              << mean[j] << "\t"
@@ -222,7 +238,7 @@ namespace NangaParbat
              << pred[j] + shifts[j] << "\t"
              << ( mean[j] - pred[j] - shifts[j] ) / uncu[j] << "\t"
              << "\n";
-        os << "\n";
+        fout << "\n";
 
         // Get plotting labels
         const std::map<std::string, std::string> labels = dh.GetLabels();
@@ -294,6 +310,10 @@ namespace NangaParbat
         delete mg;
         delete c;
       }
+
+    os << "| **Total** | **" << ntot << "** | - | - | **" << chi2tot / ntot << "** |\n";
+
+    fout.close();
     return os;
   }
 }

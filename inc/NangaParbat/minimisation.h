@@ -29,6 +29,14 @@ namespace NangaParbat
   bool CeresMinimiser(ChiSquare const& chi2, YAML::Node const& parameters);
 
   /**
+   * @brief The "NoMinimiser" function simply returns predictions
+   * @param chi2: the "ChiSquare" object that returns the values of all chi2's
+   * @param parameters: the "YAML::Node" object that contains the
+   * parameters to be minimised along with the relevant information
+   */
+  bool NoMinimiser(ChiSquare const& chi2, YAML::Node const& parameters);
+
+  /**
    * @brief The "FcnMinuit" class is a derived class of of the
    * "FCNBase" mother class of Minuit that returns the figure of merit
    * (&chi;<SUP>2</SUP>) to be minimised.

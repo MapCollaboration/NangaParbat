@@ -9,6 +9,7 @@
 #include "NangaParbat/minimisation.h"
 
 #include <apfel/timer.h>
+#include <fstream>
 
 //_________________________________________________________________________________
 int main(int argc, char* argv[])
@@ -62,13 +63,13 @@ int main(int argc, char* argv[])
       }
 
   // Minimise the chi2 using the minimiser indicated in the input card
-  bool status = true;
+  bool status;
   if (fitconfig["Minimiser"].as<std::string>() == "minuit")
     status = MinuitMinimiser(chi2, fitconfig["Parameters"]);
   else if (fitconfig["Minimiser"].as<std::string>() == "ceres")
     status = CeresMinimiser(chi2, fitconfig["Parameters"]);
   else if (fitconfig["Minimiser"].as<std::string>() == "none")
-    std::cout << "\nNo minimiser, computing predictions only...\n" << std::endl;
+    status = NoMinimiser(chi2, fitconfig["Parameters"]);
   else
     throw std::runtime_error("[RunFit]: Unknown minimiser");
 
@@ -84,9 +85,26 @@ int main(int argc, char* argv[])
     std::cout << iexp << ") " << blocks[iexp].first.GetName() << ", partial chi2 / #d.p.= " << chi2(iexp) << " (#d.p. = " << ndata[iexp] << ")" << std::endl;
   std::cout << "\n";
 
-  // Finally, print the number for the single data points. This also
-  // produces plots.
-  std::cout << chi2;
+  // Produce the report in markdown
+  std::ofstream fout("Report.md");
+
+  // Fitted parameters
+  const std::vector<double> pars = chi2.GetParameters();
+  fout << "# Fitted parameters\n";
+  for (auto const p : fitconfig["Parameters"])
+    fout << "| " << p["name"].as<std::string>();;
+  fout << "|\n";
+  for (int i = 0; i < (int) pars.size(); i++)
+    fout << "|:---:";
+  fout << "|\n";
+  for (auto const& p : pars)
+    fout << " | " << p;
+  fout << "|\n";
+
+  // Table of chi2's and plots
+  fout << chi2;
+
+  fout.close();
 
   // Delete "Parameterisation" object
   delete NPFunc;

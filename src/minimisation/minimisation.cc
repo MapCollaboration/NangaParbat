@@ -138,6 +138,24 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
+  bool NoMinimiser(ChiSquare const& chi2, YAML::Node const& parameters)
+  {
+    std::cout << "\nNo minimiser, computing predictions only...\n" << std::endl;
+
+    // Fill in initial parameter array
+    std::vector<double> initPars;
+    for (auto const p : parameters)
+      initPars.push_back(p["starting_value"].as<double>());
+
+    // Set the parameters of the parameterisation
+    NangaParbat::FcnMinuit fcn{chi2};
+    fcn.SetParameters(initPars);
+
+    // Return minimisation status
+    return true;
+  }
+
+  //_________________________________________________________________________________
   FcnMinuit::FcnMinuit(ChiSquare const& chi2):
     _chi2(chi2)
   {
