@@ -196,21 +196,21 @@ namespace NangaParbat
         double chi2n = 0;
         for(int j = 0; j < nd; j++)
           chi2n += pow( ( res[j] - shifts[j] ) / uncu[j], 2);
-	os << "| " << dh.GetName() << " | " << nd << " | " << chi2n;
+        os << "| " << dh.GetName() << " | " << nd << " | " << chi2n;
 
         // Compute penalty
         double penalty = 0;
         for(int alpha = 0; alpha < nsys; alpha++)
           penalty += pow(lambda[alpha], 2);
-	os << " | " << penalty;
+        os << " | " << penalty;
 
         // Add penalty to the chi2 and divide by the number of data
         // points.
         chi2n += penalty;
-	chi2tot += chi2n;
+        chi2tot += chi2n;
         chi2n /= nd;
-	ntot += nd;
-	os << " | " << chi2n << " |\n";
+        ntot += nd;
+        os << " | " << chi2n << " |\n";
 
         // Get values of qT
         const std::vector<double> qT = dh.GetKinematics().qTv;
@@ -220,24 +220,24 @@ namespace NangaParbat
         fout << std::scientific;
         fout << "# Dataset name: " << dh.GetName() << " [chi2 (using the shifts) = " << chi2n << "]\n";
         fout << "#\t"
-           << "  qT [GeV]  \t"
-           << "   pred.    \t"
-           << "    exp.    \t"
-           << "    unc.    \t"
-           << "    shift   \t"
-           << "shifted pred.\t"
-           << "  residuals \t"
-           << "\n";
+             << "  qT [GeV]  \t"
+             << "   pred.    \t"
+             << "    exp.    \t"
+             << "    unc.    \t"
+             << "    shift   \t"
+             << "shifted pred.\t"
+             << "  residuals \t"
+             << "\n";
         for (int j = 0; j < nd; j++)
           fout << j << "\t"
-             << (dh.GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]) << "\t"
-             << pred[j] << "\t"
-             << mean[j] << "\t"
-             << uncu[j] << "\t"
-             << shifts[j] << "\t"
-             << pred[j] + shifts[j] << "\t"
-             << ( mean[j] - pred[j] - shifts[j] ) / uncu[j] << "\t"
-             << "\n";
+               << (dh.GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]) << "\t"
+               << pred[j] << "\t"
+               << mean[j] << "\t"
+               << uncu[j] << "\t"
+               << shifts[j] << "\t"
+               << pred[j] + shifts[j] << "\t"
+               << ( mean[j] - pred[j] - shifts[j] ) / uncu[j] << "\t"
+               << "\n";
         fout << "\n";
 
         // Get plotting labels
