@@ -141,6 +141,7 @@ namespace NangaParbat
     // Loop over the blocks
     int ntot = 0;
     double chi2tot = 0;
+    std::vector<std::string> plots;
     for (int i = 0; i < (int) chi2._DSVect.size(); i++)
       {
         // Number of data points
@@ -302,6 +303,7 @@ namespace NangaParbat
         // Save graph on file
         std::string outfile = "./plots/" + dh.GetName() + ".pdf";
         c->SaveAs(outfile.c_str());
+	plots.push_back(outfile);
 
         delete exp;
         delete theo;
@@ -312,6 +314,10 @@ namespace NangaParbat
       }
 
     os << "| **Total** | **" << ntot << "** | - | - | **" << chi2tot / ntot << "** |\n";
+
+    os << "# Comparison plots\n";
+    for (auto const p : plots)
+      os << "<img src=" << p << ">\n";
 
     fout.close();
     return os;
