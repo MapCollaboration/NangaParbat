@@ -21,42 +21,71 @@ namespace NangaParbat
   public:
     /**
      * @brief The "ChiSquare" constructor.
-     * @param DSVect: vector of pairs of "DataHandler" and "ConvolutionTable" objects
-     * @param NPFunc: "Parameterisation" object containing the non-perturbative function(s)
+     * @param DSVect: vector of pairs of "DataHandler" and
+     * "ConvolutionTable" objects
+     * @param NPFunc: "Parameterisation" object containing the
+     * non-perturbative function(s)
      */
     ChiSquare(std::vector<std::pair<DataHandler, ConvolutionTable>> const& DSVect, Parameterisation& NPFunc, double const& qToQMax = 100);
 
     /**
      * @brief The default "ChiSquare" constructor.
-     * @param NPFunc: "Parameterisation" object containing the non-perturbative function(s)
+
+     * @param NPFunc: "Parameterisation" object containing the
+     * non-perturbative function(s)
      */
     ChiSquare(Parameterisation& NPFunc, double const& qToQMax = 100);
 
     /**
      * @brief Add ("DataHandler","ConvolutionTable") pair block to the
      * "DSVect" vector.
-     * @param DSBlock: the ("DataHandler","ConvolutionTable")-pair block to be appended
+     * @param DSBlock: the ("DataHandler","ConvolutionTable")-pair
+     * block to be appended
      */
     void AddBlock(std::pair<DataHandler, ConvolutionTable> const& DSBlock);
 
     /**
-     * @brief Function that returns the residuals of the chi2 deriving
-     * from the Cholesky decomposition of the covariance matrix.
+     * @brief Function that returns the residuals of the
+     * &chi;<SUP>2</SUP> deriving from the Cholesky decomposition of
+     * the covariance matrix.
      * @param ids: the dataset index
      * @return the vector of residuals
      */
     std::vector<double> GetResiduals(int const& ids) const;
 
     /**
+     * @brief Function that returns the derivative of the residuals of
+     * the &chi;<SUP>2</SUP> deriving from the Cholesky decomposition
+     * of the covariance matrix w.r.t. the "ipar"-th parameter.
+     * @param ids: the dataset index
+     * @param ipar: the parameter index
+     * @return the vector of derivatives of the residuals
+     */
+    std::vector<double> GetResidualDerivatives(int const& ids, int const& ipar) const;
+
+    /**
      * @brief Function that evaluates the &chi;<SUP>2</SUP>'s
-     * @param ids: the dataset index (default: -1, the global &chi;<SUP>2</SUP> is computed)
-     * @return the value of the &chi;<SUP>2</SUP> of the "ids"-th block normalised to the number of data points.
+     * @param ids: the dataset index (default: -1, the global
+     * &chi;<SUP>2</SUP> is computed)
+     * @return the value of the &chi;<SUP>2</SUP> of the "ids"-th
+     * block normalised to the number of data points.
      */
     double Evaluate(int const& ids = -1) const;
 
     /**
-     * @brief Utility operator that replaces the Evaluate method
-     * above.
+     * @brief Function that evaluates the (analytic) derivative of the
+     * &chi;<SUP>2</SUP>'s w.r.t. the "ipar"-th parameter.
+     * @return a vector containing the value of the derivatives w.r.t.
+     * the parameters of global &chi;<SUP>2</SUP> normalised to the
+     * number of data points.
+     * @note As opposed to the Evaluate function, there seems to be no
+     * need to allow for the computation of the derivarive of the
+     * &chi;<SUP>2</SUP> of the single dataset.
+     */
+    std::vector<double> Derive() const;
+
+    /**
+     * @brief Utility operator that shortcuts the Evaluate method.
      */
     double operator()(int const& ids = -1) { return Evaluate(ids); };
 
@@ -120,7 +149,7 @@ namespace NangaParbat
   protected:
     std::vector<std::pair<DataHandler, ConvolutionTable>> _DSVect;  //!< Vector of "DataHandler-ConcolutionTable" pairs
     Parameterisation&                                     _NPFunc;  //!< Parameterisation of the non-perturbative component
-    double                                                _qToQMax; //!< Max value of the ratio qT / Q allowed in the computation of the chi2
+    double                                                _qToQMax; //!< Max value of the ratio qT / Q allowed in the computation of the &chi;<SUP>2</SUP>
     std::vector<int>                                      _ndata;   //!< Vector constaining the number of data points per dataset that pass the qT/Q cut
 
     friend std::ostream& operator<<(std::ostream& os, ChiSquare const& chi2);

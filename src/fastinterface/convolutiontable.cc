@@ -172,7 +172,7 @@ namespace NangaParbat
         return GetPredictions(fNP1, fNP2);
       }
     // e+e- annihilation (two FFs)
-    if (_proc == 0)
+    else if (_proc == 2)
       {
         const auto fNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 1); };
         return GetPredictions(fNP2, fNP2);
@@ -183,6 +183,57 @@ namespace NangaParbat
         const auto fNP1 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); };
         const auto fNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 1); };
         return GetPredictions(fNP1, fNP2);
+      }
+  }
+
+  //_________________________________________________________________________________
+  std::vector<double> ConvolutionTable::GetPredictions(std::function<double(double const&, double const&, double const&, int const&)> const& fNP,
+                                                       std::function<double(double const&, double const&, double const&, int const&)> const& dNP) const
+  {
+
+    // Drell-Yan (two PDFs)
+    if (_proc == 0)
+      {
+        const auto fNP1 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); };
+        const auto dNP1 = [=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 0); };
+        std::vector<double> p1 = GetPredictions(fNP1, dNP1);
+        const std::vector<double> p2 = GetPredictions(dNP1, fNP1);
+        std::transform(p1.begin(), p1.end(), p2.begin(), p1.begin(), std::plus<double>());
+        return p1;
+      }
+    // SIDIS (one PDF and one FF)
+    else if (_proc == 1)
+      {
+        const auto fNP1 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); };
+        const auto dNP1 = [=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 0); };
+        const auto fNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 1); };
+        const auto dNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 1); };
+        std::vector<double> p1 = GetPredictions(fNP1, dNP2);
+        const std::vector<double> p2 = GetPredictions(dNP1, fNP2);
+        std::transform(p1.begin(), p1.end(), p2.begin(), p1.begin(), std::plus<double>());
+        return p1;
+      }
+    // e+e- annihilation (two FFs)
+    else if (_proc == 2)
+      {
+        const auto fNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 1); };
+        const auto dNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return 2 * dNP(x, b, zeta, 1); }; // Factor 2 for due to the derivative
+        std::vector<double> p1 = GetPredictions(fNP2, dNP2);
+        const std::vector<double> p2 = GetPredictions(dNP2, fNP2);
+        std::transform(p1.begin(), p1.end(), p2.begin(), p1.begin(), std::plus<double>());
+        return p1;
+      }
+    // Generic (one PDF and one FF)
+    else
+      {
+        const auto fNP1 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); };
+        const auto dNP1 = [=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 0); };
+        const auto fNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 1); };
+        const auto dNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 1); };
+        std::vector<double> p1 = GetPredictions(fNP1, dNP1);
+        const std::vector<double> p2 = GetPredictions(fNP2, dNP2);
+        std::transform(p1.begin(), p1.end(), p2.begin(), p1.begin(), std::plus<double>());
+        return p1;
       }
   }
 }

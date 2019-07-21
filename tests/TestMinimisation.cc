@@ -3,7 +3,7 @@
 //
 
 #include "NangaParbat/chisquare.h"
-#include "NangaParbat/minimisation.h"
+#include "NangaParbat/fcnminuit.h"
 #include "NangaParbat/DWS.h"
 
 #include <math.h>

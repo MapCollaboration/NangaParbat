@@ -19,7 +19,7 @@ namespace NangaParbat
     /**
      * @brief The "Parameterisation" constructor
      */
-    Parameterisation(std::string const& name, int const& nfuncs = 0, std::vector<double> pars = {});
+    Parameterisation(std::string const& name, int const& nfuncs = 0, std::vector<double> pars = {}, bool const& anders = false);
 
     /**
      * @brief The "Parameterisation" destructor
@@ -65,11 +65,13 @@ namespace NangaParbat
     std::string         GetName()              const { return _name; }
     int                 GetNumberOfFunctions() const { return _nfuncs; }
     std::vector<double> GetParameters()        const { return _pars; }
+    bool                HasGradient()          const { return _anders; }
     ///@}
 
   protected:
     std::string         _name;   //!< Name of the parameterisation
     int                 _nfuncs; //!< Number of output functions
     std::vector<double> _pars;   //!< The vector of free parameters
+    bool                _anders; //!< Whether the parametersation provides analytic derivatives
   };
 }

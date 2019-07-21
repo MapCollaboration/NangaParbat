@@ -47,8 +47,8 @@ namespace NangaParbat
     std::map<double,double> Convolute(std::function<double(double const&, double const&, double const&)> const& fNP) const;
 
     /**
-     * @brief This function returns a vector of predictions with a
-     * two user-given non-perturbative functions.
+     * @brief This function returns a vector of predictions given two
+     * user-given non-perturbative functions.
      * @param fNP1: the first non-perturbative input function
      * @param fNP2: the second non-perturbative input function
      * @return a vector of predictions.
@@ -57,24 +57,41 @@ namespace NangaParbat
                                        std::function<double(double const&, double const&, double const&)> const& fNP2) const;
 
     /**
+     * @brief This function returns a vector of predictions given a
+     * single user-given non-perturbative function.
+     * @param fNP: the non-perturbative input functions parameterised by an index
+     * @return a vector of predictions.
+     */
+    std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP) const;
+
+    /**
      * @brief This function returns a vector of predictions with a
-     * two user-given non-perturbative functions.
+     * single user-given non-perturbative function.
      * @param fNP: the (indexed) non-perturbative input function
      * @return a vector of predictions.
+     * @note WARNING: This function is meant to be used for internal
+     * purposes because it "decides" internally how to use the
+     * function "fNP" and may behave unexpectedly.
      */
     std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&, int const&)> const& fNP) const;
 
     /**
-     * @brief This function returns a vector of predictions with a
-     * a user-given non-perturbative function assuming that first
-     * and second functions are equal.
-     * @param fNP: the first non-perturbative input function
+     * @brief This function returns a vector of predictions given two
+     * user-given non-perturbative function.
+     * @param fNP: the non-perturbative input functions parameterised by an index
+     * @param dNP: a second non-perturbative input function
+     * parameterised by an index that is meant to return the
+     * derivarive of the first function w.r.t. to some parameter of
+     * "fNP"
      * @return a vector of predictions.
-     * @note WARNING: This function is meant to be used for internal purposes
-     * because it "decides" how to use the function "fNP" and may
-     * behave in an unexpected way.
+     * @note WARNING: This function is meant to be used for internal
+     * purposes because it "decides" internally how to use the
+     * function "fNP" and may behave unexpectedly. Specifically, this
+     * is used to compute the anaylitic derivative of the chi2 used
+     * duering the minimisation.
      */
-    std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP) const;
+    std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&, int const&)> const& fNP,
+                                       std::function<double(double const&, double const&, double const&, int const&)> const& dNP) const;
 
     /**
      * @name Getters

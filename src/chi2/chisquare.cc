@@ -94,6 +94,39 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
+  std::vector<double> ChiSquare::GetResidualDerivatives(int const& ids, int const& ipar) const
+  {
+    if (ids < 0 || ids >= _DSVect.size())
+      throw std::runtime_error("[ChiSquare::GetResiduals]: index out of range");
+
+    // Get "DataHandler" and "ConvolutionTable" objects
+    const DataHandler      dh = _DSVect[ids].first;
+    const ConvolutionTable ct = _DSVect[ids].second;
+
+    // Get experimental central values
+    const std::vector<double> mean = dh.GetMeanValues();
+
+    // Get predictions
+    auto const fNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return _NPFunc.Evaluate(x, b, zeta, ifun); };
+    auto const dNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return _NPFunc.Derive(x, b, zeta, ifun, ipar); };
+    const std::vector<double> dpred = ct.GetPredictions(fNP, dNP);
+
+    // Check that the number of points in the DataHandler and
+    // Convolution table objects is the same.
+    if (mean.size() != dpred.size())
+      throw std::runtime_error("[ChiSquare::GetResidualDerivatives]: mismatch in the number of points");
+
+    // Compute residuals only for the points that pass the cut qT
+    // / Q, set the others to zero.
+    std::vector<double> res(_ndata[ids], 0.);
+    for (int j = 0; j < _ndata[ids]; j++)
+      res[j] = - dpred[j];
+
+    // Solve lower-diagonal system and return the result
+    return SolveLowerSystem(dh.GetCholeskyDecomposition(), res);
+  }
+
+  //_________________________________________________________________________________
   double ChiSquare::Evaluate(int const& ids) const
   {
     // Define index range
@@ -122,6 +155,48 @@ namespace NangaParbat
         ntot += _ndata[i];
       }
     return chi2 / ntot;
+  }
+
+  //_________________________________________________________________________________
+  std::vector<double> ChiSquare::Derive() const
+  {
+    // Get number of parameters of the parametersation
+    const int npars = _NPFunc.GetParameters().size();
+
+    // Number of data sets
+    const int nsets = _DSVect.size();
+
+    // Allocate vector of derivatives
+    std::vector<double> ders(npars);
+
+    // Get all residuals at once
+    std::vector<std::vector<double>> vx(nsets);
+    for (int i = 0; i < nsets; i++)
+      vx[i] = GetResiduals(i);
+
+    // Loop over parameters
+    for (int ipar = 0; ipar < npars; ipar++)
+      {
+        // Initialise chi2 and number of data points
+        double dchi2 = 0;
+        int ntot = 0;
+
+        // Loop over the the blocks
+        for (int i = 0; i < nsets; i++)
+          {
+            // Get residuals and its derivatives to construct the
+            // derivative of the chi2.
+            const std::vector<double> dx = GetResidualDerivatives(i, ipar);
+
+            for (int j = 0; j < (int) dx.size(); j++)
+              dchi2 += 2 * vx[i][j] * dx[j];
+
+            // Increment number of points
+            ntot += _ndata[i];
+          }
+        ders[ipar] = dchi2 / ntot;
+      }
+    return ders;
   }
 
   //_________________________________________________________________________________
@@ -303,7 +378,7 @@ namespace NangaParbat
         // Save graph on file
         std::string outfile = "./plots/" + dh.GetName() + ".pdf";
         c->SaveAs(outfile.c_str());
-	plots.push_back(outfile);
+        plots.push_back(outfile);
 
         delete exp;
         delete theo;
