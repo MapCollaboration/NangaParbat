@@ -30,7 +30,7 @@ namespace NangaParbat
 
     // Initialize naming map for the Q-integration ranges
     std::map<std::string, std::string> yranges = {{"0.0-1.0", "_y_0_1"}, {"1.0-2.0", "_y_1_2"}, {"2.0-2.4", "_y_2_2.4"}};
-    std::map<std::string, std::pair<double, double>> yrangelims = {{"0.0-1.0", {0, 1}}, {"1.0-2.0", {1, 2}}, {"2.0-2.4", {2, 2.4}}};
+    std::map<std::string, std::pair<std::string, std::string>> yrangelims = {{"0.0-1.0", {"0", "1"}}, {"1.0-2.0", {"1", "2"}}, {"2.0-2.4", {"2", "2.4"}}};
 
     // Create directory
     std::string opath = ProcessedDataPath + "/" + ofolder;
@@ -52,7 +52,7 @@ namespace NangaParbat
         for (auto const& dv : exp["dependent_variables"])
           {
             std::string ofile;
-            std::pair<double, double> ylims;
+            std::pair<std::string, std::string> ylims;
             for (auto const& q : dv["qualifiers"])
               if (q["name"].as<std::string>() == "ABS(YRAP(Z))")
                 {
@@ -65,7 +65,7 @@ namespace NangaParbat
             {
               {"xlabel", "#it{q}_{T} [GeV]"},
               {"ylabel", "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"},
-              {"title", "ATLAS at 7 TeV, 66 GeV < Q < 116 GeV, |#it{y}| < 2.4"}};
+              {"title", "ATLAS at 7 TeV, 66 GeV < Q < 116 GeV, " + ylims.first + " < |#it{y}| < " + ylims.second}};
 
             // Allocate emitter
             YAML::Emitter emit;

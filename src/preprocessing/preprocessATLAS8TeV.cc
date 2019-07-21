@@ -27,9 +27,9 @@ namespace NangaParbat
       {"Table19.yaml", "_y_0.8_1.2"}, {"Table20.yaml", "_y_1.2_1.6"},
       {"Table21.yaml", "_y_1.6_2"}, {"Table22.yaml", "_y_2_2.4"}
     };
-    std::map<std::string, std::pair<double, double>> yrangelims = {{"Table17.yaml", {0, 0.4}}, {"Table18.yaml", {0.4, 0.8}},
-      {"Table19.yaml", {0.8, 1.2}}, {"Table20.yaml", {1.2, 1.6}},
-      {"Table21.yaml", {1.6, 2}}, {"Table22.yaml", {2, 2.4}}
+    std::map<std::string, std::pair<std::string, std::string>> yrangelims = {{"Table17.yaml", {"0", "0.4"}}, {"Table18.yaml", {"0.4", "0.8"}},
+      {"Table19.yaml", {"0.8", "1.2"}}, {"Table20.yaml", {"1.2", "1.6"}},
+      {"Table21.yaml", {"1.6", "2"}}, {"Table22.yaml", {"2", "2.4"}}
     };
 
     // Vector of tables to process
@@ -56,14 +56,14 @@ namespace NangaParbat
           if (dv["header"]["name"].as<std::string>() == "Combination Born")
             {
               const std::string ofile = ofolder + "_8TeV" + tab.second + ".yaml";
-              const std::pair<double, double> ylims = yrangelims[tab.first];
+              const std::pair<std::string, std::string> ylims = yrangelims[tab.first];
 
               // Plot labels
               std::map<std::string, std::string> labels
               {
                 {"xlabel", "#it{q}_{T} [GeV]"},
                 {"ylabel", "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"},
-                {"title", "ATLAS at 8 TeV, 66 GeV < Q < 116 GeV, |#it{y}| < 2.4"}};
+                {"title", "ATLAS at 7 TeV, 66 GeV < Q < 116 GeV, " + ylims.first + " < |#it{y}| < " + ylims.second}};
 
               // Allocate emitter
               YAML::Emitter emit;
