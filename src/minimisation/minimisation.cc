@@ -130,7 +130,8 @@ namespace NangaParbat
     problem.AddResidualBlock(cost_function, NULL, initPars);
 
     // Fix constant parameters
-    problem.SetParameterization(initPars, new ceres::SubsetParameterization{npars, fixedpars});
+    if (!fixedpars.empty())
+      problem.SetParameterization(initPars, new ceres::SubsetParameterization{npars, fixedpars});
 
     // Set upper and lower bounds if required
     i = 0;
@@ -148,7 +149,7 @@ namespace NangaParbat
     // Option object
     ceres::Solver::Options options;
     options.minimizer_progress_to_stdout = true;
-    options.function_tolerance = 1e-5;
+    //options.function_tolerance = 1e-5;
     options.max_num_iterations = 1000;
 
     // Summary object
