@@ -73,6 +73,9 @@ int main(int argc, char* argv[])
   else
     throw std::runtime_error("[RunFit]: Unknown minimiser");
 
+  // =================================================================
+  // Report section (should I separate it from the rest of this code?)
+  // =================================================================
   // Print the total chi2
   std::cout << "Total chi2 = " << chi2() << "\n" << std::endl;
 
@@ -88,9 +91,16 @@ int main(int argc, char* argv[])
   // Produce the report in markdown
   std::ofstream fout("Report.md");
 
+  // Summary
+  fout << "# Summary\n";
+  fout << "Minimiser: **" << fitconfig["Minimiser"].as<std::string>() << "**\n";
+  fout << "Parameterisation: **" << fitconfig["Parameterisation"].as<std::string>() << "**\n";
+  fout << "Cut on transverse momentum: **$\\mathbf{q_T/Q}$ > " << fitconfig["qToQmax"].as<std::string>() << "**\n";
+  fout << "Global $\\chi^2$ per number of data points: **" << chi2() << "**\n";
+
   // Fitted parameters
   const std::vector<double> pars = chi2.GetParameters();
-  fout << "# Fitted parameters\n";
+  fout << "# Parameters of the non-perturbative function\n";
   for (auto const p : fitconfig["Parameters"])
     fout << "| " << p["name"].as<std::string>();;
   fout << "|\n";
@@ -103,6 +113,26 @@ int main(int argc, char* argv[])
 
   // Table of chi2's and plots
   fout << chi2;
+  fout << "\n";
+
+  fout << "# Fit card\n";
+  fout << "```\n";
+  fout << fitconfig << "\n";
+  fout << "```\n";
+
+  fout << "# Dataset card\n";
+  fout << "```\n";
+  fout << datasets << "\n";
+  fout << "```\n";
+
+  fout << "# Configuration card\n";
+  fout << "This card is (and has to be) in the folder where the interpolation"
+       << " tables are stored (" << std::string(argv[3]) << "). This is actually"
+       << " not used in the fit but it reports the parameters used to compute"
+       << " the interpolation tables.\n";
+  fout << "```\n";
+  fout << YAML::LoadFile(std::string(argv[3]) + "/config.yaml") << "\n";
+  fout << "```\n";
 
   fout.close();
 
@@ -111,6 +141,7 @@ int main(int argc, char* argv[])
 
   // Report time elapsed
   t.stop();
+  // =================================================================
 
   return 0;
 }
