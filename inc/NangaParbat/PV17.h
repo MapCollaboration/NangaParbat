@@ -42,5 +42,16 @@ namespace NangaParbat
 
       return exp( - ( g1 + g2 * log(zeta / Q02) / 2 ) * b * b ) * ( 1 - lambda * pow(g1 * b / 2, 2) / ( 1 + lambda * g1 ) );
     };
+
+    std::string LatexFormula() const
+    {
+      std::string formula;
+      formula  = "$$f_{\\rm NP}(x,\\zeta, b_T)=\\exp\\left[ - \\left( g_1(x) + \\frac{1}{2}g_2 \\log\\left(\\frac{\\zeta}{Q_0^2}\\right) \\right) b_T^2 \\right]";
+      formula += "\\left[1  - \\frac{\\lambda g_1^2(x) b_T^2}{4(1 + \\lambda g_1(x))}\\right]$$\n";
+      formula += "$$g_1(x) = N_1 \\frac{x^{\\sigma}(1-x)^{\\alpha}}{\\hat{x}^{\\sigma}(1-\\hat{x})^{\\alpha}}$$\n";
+      formula += "$$Q_0^2 = 1\\;{\\rm GeV}^2$$\n";
+      formula += "$$\\hat{x} = 0.1$$";
+      return formula;
+    };
   };
 }

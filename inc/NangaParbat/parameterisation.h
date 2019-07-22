@@ -58,6 +58,12 @@ namespace NangaParbat
     virtual double Derive(double const& x, double const& b, double const& zeta, int const& ifunc, int const& ipar) const { return 0; };
 
     /**
+     * @brief Virtual function that returns a string with the formula
+     * of the non-perturbative function(s) in LaTex format.
+     */
+    virtual std::string LatexFormula() const { return ""; };
+
+    /**
      * @name Getters
      * Functions to retrieve the feauture of the parameterisation
      */

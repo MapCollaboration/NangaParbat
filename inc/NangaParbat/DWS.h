@@ -52,6 +52,11 @@ namespace NangaParbat
         return 0;
     };
 
+    std::string LatexFormula() const
+    {
+      return "$$f_{\\rm NP}(x,\\zeta, b_T)=\\exp\\left[ - \\frac{1}{2}\\left( g_1 + \\frac{1}{2}g_2 \\log\\left(\\frac{\\zeta}{Q_0^2}\\right) \\right) b_T^2 \\right]$$";
+    };
+
   private:
     double const _Q02;
   };

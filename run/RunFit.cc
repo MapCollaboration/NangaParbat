@@ -100,7 +100,9 @@ int main(int argc, char* argv[])
 
   // Fitted parameters
   const std::vector<double> pars = chi2.GetParameters();
-  fout << "# Parameters of the non-perturbative function\n";
+  fout << "# Non-perturbative function\n";
+  fout << chi2.GetNonPerturbativeFunction().LatexFormula() << "\n";
+  fout << "## Parameters\n";
   for (auto const p : fitconfig["Parameters"])
     fout << "| " << p["name"].as<std::string>();;
   fout << "|\n";
