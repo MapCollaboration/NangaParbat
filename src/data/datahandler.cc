@@ -264,7 +264,6 @@ namespace NangaParbat
         os << "- Lepton minimun pT: " << DH._kin.pTMin << " GeV \n";
         os << "- Lepton range in eta: [" << DH._kin.etaRange.first << ": " << DH._kin.etaRange.second << "]\n";
       }
-
     os << "\n";
 
     return os;

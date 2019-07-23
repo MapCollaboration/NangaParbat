@@ -33,7 +33,7 @@ namespace NangaParbat
      */
     double operator()(std::vector<double> const& pars) const;
 
-    double Up() const { return 4; }
+    double Up() const { return 1; }
 
     /**
      * @brief Function that sets the parameter of the "ChiSquare" object.

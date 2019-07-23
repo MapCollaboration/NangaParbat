@@ -16,6 +16,7 @@
 #include <ROOT/TMultiGraph.h>
 #include <ROOT/TCanvas.h>
 #include <ROOT/TAxis.h>
+#include <ROOT/TStyle.h>
 
 namespace NangaParbat
 {
@@ -320,6 +321,7 @@ namespace NangaParbat
         const std::map<std::string, std::string> labels = dh.GetLabels();
 
         // Now produce plots with ROOT
+        gStyle->SetImageScaling(3.);
         TGraphErrors* exp = new TGraphErrors{};
         TGraph* theo      = new TGraph{};
         TGraph* theoshift = new TGraph{};
@@ -376,8 +378,9 @@ namespace NangaParbat
         leg->Draw("SAME");
 
         // Save graph on file
-        std::string outfile = "./plots/" + dh.GetName() + ".pdf";
-        c->SaveAs(outfile.c_str());
+        std::string outfile = "./plots/" + dh.GetName();
+        c->SaveAs((outfile + ".pdf").c_str());
+        c->SaveAs((outfile + ".png").c_str());
         plots.push_back(outfile);
 
         delete exp;
@@ -392,7 +395,11 @@ namespace NangaParbat
 
     os << "# Comparison plots\n";
     for (auto const p : plots)
-      os << "<img src=" << p << ">\n";
+      os << "<img src=" << p << ".pdf>\n";
+    os << "\n";
+
+    for (auto const p : plots)
+      os << "![](" << p << ".png)\n";
 
     fout.close();
     return os;

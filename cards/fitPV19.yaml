@@ -1,3 +1,7 @@
+# Short descrition of the fit that will appear in the report of the
+# fit
+Description: "Test fit with the Pavia 19 parameterisation."
+
 # Minimiser to be used for the fit. Possible options so far are
 # 'minuit', 'ceres', and 'none'.
 Minimiser: minuit
@@ -14,10 +18,10 @@ qToQmax: 0.2
 # number and order of parameters matches those expected by the
 # particular parameterisation being used.
 Parameters:
-  - {name: "$g_2$",     starting_value: 0.03, step: 0.001, fix: false}#, lower_bound: 0, upper_bound: 10}
-  - {name: "$N_1$",     starting_value: 0.1,  step: 0.003, fix: false}#, lower_bound: 0, upper_bound: 10}
-  - {name: "$\\alpha$",  starting_value: 3.7,  step: 0.010, fix: false}#, lower_bound: 0, upper_bound: 10}
-  - {name: "$\\sigma$",  starting_value: 0.7,  step: 0.007, fix: false}#, lower_bound: 0, upper_bound: 10}
-  - {name: "$\\lambda$", starting_value: 0,    step: 0.005, fix: true }#, lower_bound: 0, upper_bound: 10}
-  - {name: "$\\delta$",  starting_value: 0,    step: 0.002, fix: true }#, lower_bound: 0, upper_bound: 10}
+  - {name: "$g_2$",      starting_value: 0.0327043, step: 0.001, fix: false}#, lower_bound: 0, upper_bound: 10}
+  - {name: "$N_1$",      starting_value: 0.46221,   step: 0.003, fix: false}#, lower_bound: 0, upper_bound: 10}
+  - {name: "$\\alpha$",  starting_value: 0.450088,  step: 0.010, fix: false}#, lower_bound: 0, upper_bound: 10}
+  - {name: "$\\sigma$",  starting_value: 0.5,       step: 0.005, fix: false}#, lower_bound: 0, upper_bound: 10}
+  - {name: "$\\lambda$", starting_value: 0,         step: 0.005, fix: true }#, lower_bound: 0, upper_bound: 10}
+  - {name: "$\\delta$",  starting_value: 0,         step: 0.002, fix: true }#, lower_bound: 0, upper_bound: 10}
 

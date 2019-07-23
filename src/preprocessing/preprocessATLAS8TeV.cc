@@ -15,12 +15,15 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  std::string PreprocessATLAS8TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath)
+  std::string PreprocessATLAS8TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError)
   {
     std::cout << "Processing ATLAS 8 TeV data ..." << std::endl;
 
     // Path to the raw-data folder
     const std::string RawDataFolder = RawDataPath + "/HEPData-ins1408516-v1-yaml/";
+
+    // Path to the PDF-error folder
+    const std::string PDFErrorFolder = RawDataPath + "/PDFErrors/";
 
     // Initialize naming map for the Q-integration ranges
     std::map<std::string, std::string> tables = {{"Table17.yaml", "_y_0_0.4"}, {"Table18.yaml", "_y_0.4_0.8"},
@@ -55,8 +58,16 @@ namespace NangaParbat
         for (auto const& dv : exp["dependent_variables"])
           if (dv["header"]["name"].as<std::string>() == "Combination Born")
             {
-              const std::string ofile = ofolder + "_8TeV" + tab.second + ".yaml";
+              std::string ofile = ofolder + "_8TeV" + tab.second;
               const std::pair<std::string, std::string> ylims = yrangelims[tab.first];
+
+              // Open PDF-error file
+              std::ifstream pdferr(PDFErrorFolder + ofile + ".out");
+              std::string line;
+              getline(pdferr, line);
+              getline(pdferr, line);
+
+              ofile += ".yaml";
 
               // Plot labels
               std::map<std::string, std::string> labels
@@ -91,33 +102,33 @@ namespace NangaParbat
               emit << YAML::EndSeq;
               emit << YAML::Key << "values" << YAML::Value;
               emit << YAML::BeginSeq;
-              std::vector<std::pair<double,double>> qTav;
-              int i = 0;
               for (auto const& v : dv["values"])
                 {
-                  if (v["value"].as<std::string>() != "-")
-                    {
-                      std::string stat = v["errors"][0]["symerror"].as<std::string>();
-                      std::string sysu = v["errors"][1]["symerror"].as<std::string>();
-                      std::string sysc = v["errors"][2]["symerror"].as<std::string>();
-                      stat.erase(std::remove(stat.begin(), stat.end(), '%'), stat.end());
-                      sysu.erase(std::remove(sysu.begin(), sysu.end(), '%'), sysu.end());
-                      sysc.erase(std::remove(sysc.begin(), sysc.end(), '%'), sysc.end());
+                  std::string stat = v["errors"][0]["symerror"].as<std::string>();
+                  std::string sysu = v["errors"][1]["symerror"].as<std::string>();
+                  std::string sysc = v["errors"][2]["symerror"].as<std::string>();
+                  stat.erase(std::remove(stat.begin(), stat.end(), '%'), stat.end());
+                  sysu.erase(std::remove(sysu.begin(), sysu.end(), '%'), sysu.end());
+                  sysc.erase(std::remove(sysc.begin(), sysc.end(), '%'), sysc.end());
 
-                      const double val = v["value"].as<double>();
-                      const double unc = sqrt( pow(val * std::stod(stat) / 100, 2) + pow(val * std::stod(sysu) / 100, 2));
-                      const double cor = std::stod(sysc) / 100;
+                  const double val = v["value"].as<double>();
+                  const double unc = sqrt( pow(val * std::stod(stat) / 100, 2) + pow(val * std::stod(sysu) / 100, 2));
+                  const double cor = std::stod(sysc) / 100;
 
-                      emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
-                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value"
-                           << YAML::Value << unc << YAML::EndMap;
-                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << cor << YAML::EndMap;
-                      emit << YAML::EndSeq;
-                      emit << YAML::Key << "value" << YAML::Value << val;
-                      emit << YAML::EndMap;
-                      qTav.push_back(qTb[i]);
-                    }
-                  i++;
+                  // Now read PDF errors
+                  getline(pdferr, line);
+                  std::stringstream stream(line);
+                  double dum, pe;
+                  stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
+
+                  emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << unc << YAML::EndMap;
+                  if (PDFError)
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << cor << YAML::EndMap;
+                  emit << YAML::EndSeq;
+                  emit << YAML::Key << "value" << YAML::Value << val;
+                  emit << YAML::EndMap;
                 }
               emit << YAML::EndSeq;
               emit << YAML::EndMap;
@@ -135,6 +146,9 @@ namespace NangaParbat
               emit << YAML::EndMap;
               emit << YAML::EndSeq;
               emit << YAML::EndMap;
+
+              // Close PDF-error file
+              pdferr.close();
 
               // Dump table to file
               std::ofstream fout(opath + "/" + ofile);
