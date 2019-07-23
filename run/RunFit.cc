@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
   fout << fitconfig["Description"].as<std::string>() << "\n";
   fout << "Minimiser: **" << fitconfig["Minimiser"].as<std::string>() << "**\n";
   fout << "Parameterisation: **" << fitconfig["Parameterisation"].as<std::string>() << "**\n";
-  fout << "Cut on transverse momentum: **$\\mathbf{q_T/Q}$ > " << fitconfig["qToQmax"].as<std::string>() << "**\n";
+  fout << "Cut on transverse momentum: **$\\mathbf{q_T/Q}$ < " << fitconfig["qToQmax"].as<std::string>() << "**\n";
   fout << "Global $\\chi^2$ per number of data points: **" << chi2() << "**\n";
 
   // Fitted parameters
