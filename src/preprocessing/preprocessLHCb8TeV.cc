@@ -14,12 +14,15 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  std::string PreprocessLHCb8TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath)
+  std::string PreprocessLHCb8TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError)
   {
     std::cout << "Processing LHCb 8 TeV data ..." << std::endl;
 
     // Path to the raw-data folder
     const std::string RawDataFolder = RawDataPath + "/HEPData-ins1406555-v1-yaml/";
+
+    // Path to the PDF-error folder
+    const std::string PDFErrorFolder = RawDataPath + "/PDFErrors/";
 
     // Vector of tables to process
     const std::vector<std::string> tables = {"Table3.yaml"};
@@ -50,6 +53,12 @@ namespace NangaParbat
         for (auto const& dv : exp["dependent_variables"])
           if (dv["header"]["units"])
             {
+              // Open PDF-error file
+              std::ifstream pdferr(PDFErrorFolder + "LHCb_7TeV.out");
+              std::string line;
+              getline(pdferr, line);
+              getline(pdferr, line);
+
               // Plot labels
               std::map<std::string, std::string> labels
               {
@@ -86,10 +95,18 @@ namespace NangaParbat
               int i = 0;
               for (auto const& v : dv["values"])
                 {
+                  // Now read PDF errors
+                  getline(pdferr, line);
+                  std::stringstream stream(line);
+                  double dum, pe;
+                  stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
+
                   const double binw = qTb[i].second - qTb[i].first;
                   emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value"
                        << YAML::Value << v["errors"][0]["symerror"].as<double>() / binw << YAML::EndMap;
+                  if (PDFError)
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value"
                        << YAML::Value << v["errors"][1]["symerror"].as<double>() / v["value"].as<double>() << YAML::EndMap;
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value"
@@ -115,6 +132,9 @@ namespace NangaParbat
               emit << YAML::EndMap;
               emit << YAML::EndSeq;
               emit << YAML::EndMap;
+
+              // Close PDF-error file
+              pdferr.close();
 
               // Dump table to file
               std::ofstream fout(opath + "/" + ofile);

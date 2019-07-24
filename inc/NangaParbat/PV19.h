@@ -34,7 +34,7 @@ namespace NangaParbat
       const double Npt    = this->_pars[1];
       const double alpha  = this->_pars[2];
       const double sigma  = this->_pars[3];
-      const double lambda = this->_pars[4];
+      //const double lambda = this->_pars[4];
       const double delta  = this->_pars[5];
 
       // TMD PDFs
@@ -50,7 +50,18 @@ namespace NangaParbat
       //const double bc    = b / pow( ( 1 - exp( - pow(b / bmin, power) ) ), 1 / power);
 
       //return exp( - ( g1 + g2 * log(zeta / Q02) / 2 ) * bc * bc ) * ( 1 - lambda * pow(g1 * bc / 2, 2) / ( 1 + lambda * g1 ) );
-      return exp( - ( g1 + g2 * log(zeta / Q02) / 2 ) * b * b ) * ( 1 - lambda * pow(g1 * b / 2, 2) / ( 1 + lambda * g1 ) );
+      //return exp( - ( g1 + g2 * log(zeta / Q02) / 2 ) * b * b ) * ( 1 - lambda * pow(g1 * b / 2, 2) / ( 1 + lambda * g1 ) );
+      return 1 / ( 1 + pow(g1 * b, 2) ) * exp( - g2 * log(zeta / Q02) * b * b / 2 );
+    };
+
+    std::string LatexFormula() const
+    {
+      std::string formula;
+      formula  = "$$f_{\\rm NP}(x,\\zeta, b_T)=\\frac{\\exp\\left[ - \\frac{1}{2} g_2 \\log\\left(\\frac{\\zeta}{Q_0^2}\\right) b_T^2 \\right]}{1 + g_1^2(x) b_T^2}$$\n";
+      formula += "$$g_1(x) = N_1 \\frac{x^{\\sigma}(1-x)^{\\alpha}}{\\hat{x}^{\\sigma}(1-\\hat{x})^{\\alpha}}$$\n";
+      formula += "$$Q_0^2 = 1\\;{\\rm GeV}^2$$\n";
+      formula += "$$\\hat{x} = 0.1$$";
+      return formula;
     };
   };
 }

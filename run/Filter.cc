@@ -27,38 +27,41 @@ int main(int argc, char* argv[])
   // Dataset file created dunring the filtering
   std::ofstream fout(ProcessedDataPath + "/datasets.yaml");
 
+  // Include on not PDF uncertainties
+  const bool pdferr = true;
+
   fout << "E605:\n";
-  fout << NangaParbat::PreprocessE605(RawDataPath, ProcessedDataPath);
+  fout << NangaParbat::PreprocessE605(RawDataPath, ProcessedDataPath, pdferr);
 
   fout << "E288:\n";
-  fout << NangaParbat::PreprocessE288(RawDataPath, ProcessedDataPath);
+  fout << NangaParbat::PreprocessE288(RawDataPath, ProcessedDataPath, pdferr);
 
   fout << "PHENIX:\n";
-  fout << NangaParbat::PreprocessPHENIX200(RawDataPath, ProcessedDataPath);
+  fout << NangaParbat::PreprocessPHENIX200(RawDataPath, ProcessedDataPath, pdferr);
 
   fout << "STAR:\n";
-  fout << NangaParbat::PreprocessSTAR510(RawDataPath, ProcessedDataPath);
+  fout << NangaParbat::PreprocessSTAR510(RawDataPath, ProcessedDataPath, pdferr);
 
   fout << "CDF:\n";
-  fout << NangaParbat::PreprocessCDFRunI(RawDataPath,  ProcessedDataPath);
-  fout << NangaParbat::PreprocessCDFRunII(RawDataPath, ProcessedDataPath);
+  fout << NangaParbat::PreprocessCDFRunI(RawDataPath,  ProcessedDataPath, pdferr);
+  fout << NangaParbat::PreprocessCDFRunII(RawDataPath, ProcessedDataPath, pdferr);
 
   fout << "D0:\n";
-  fout << NangaParbat::PreprocessD0RunI(RawDataPath,  ProcessedDataPath);
-  fout << NangaParbat::PreprocessD0RunII(RawDataPath, ProcessedDataPath);
+  fout << NangaParbat::PreprocessD0RunI(RawDataPath,  ProcessedDataPath, pdferr);
+  fout << NangaParbat::PreprocessD0RunII(RawDataPath, ProcessedDataPath, pdferr);
 
   fout << "LHCb:\n";
-  fout << NangaParbat::PreprocessLHCb7TeV(RawDataPath,  ProcessedDataPath);
-  fout << NangaParbat::PreprocessLHCb8TeV(RawDataPath,  ProcessedDataPath);
-  fout << NangaParbat::PreprocessLHCb13TeV(RawDataPath, ProcessedDataPath);
+  fout << NangaParbat::PreprocessLHCb7TeV(RawDataPath,  ProcessedDataPath, pdferr);
+  fout << NangaParbat::PreprocessLHCb8TeV(RawDataPath,  ProcessedDataPath, pdferr);
+  fout << NangaParbat::PreprocessLHCb13TeV(RawDataPath, ProcessedDataPath, pdferr);
 
   fout << "CMS:\n";
-  fout << NangaParbat::PreprocessCMS7TeV(RawDataPath, ProcessedDataPath);
-  fout << NangaParbat::PreprocessCMS8TeV(RawDataPath, ProcessedDataPath);
+  fout << NangaParbat::PreprocessCMS7TeV(RawDataPath, ProcessedDataPath, pdferr);
+  fout << NangaParbat::PreprocessCMS8TeV(RawDataPath, ProcessedDataPath, pdferr);
 
   fout << "ATLAS:\n";
-  fout << NangaParbat::PreprocessATLAS7TeV(RawDataPath, ProcessedDataPath);
-  fout << NangaParbat::PreprocessATLAS8TeV(RawDataPath, ProcessedDataPath);
+  fout << NangaParbat::PreprocessATLAS7TeV(RawDataPath, ProcessedDataPath, pdferr);
+  fout << NangaParbat::PreprocessATLAS8TeV(RawDataPath, ProcessedDataPath, pdferr);
 
   fout.close();
 

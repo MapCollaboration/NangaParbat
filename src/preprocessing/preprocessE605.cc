@@ -14,12 +14,15 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  std::string PreprocessE605(std::string const& RawDataPath, std::string const& ProcessedDataPath)
+  std::string PreprocessE605(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError)
   {
     std::cout << "Processing E605 data ..." << std::endl;
 
     // Path to the raw-data folder
     const std::string RawDataFolder = RawDataPath + "/HEPData-ins302822-v1-yaml/";
+
+    // Path to the PDF-error folder
+    const std::string PDFErrorFolder = RawDataPath + "/PDFErrors/";
 
     // Vector of tables to process
     const std::string ofolder = "E605";
@@ -62,7 +65,7 @@ namespace NangaParbat
               {
                 if (q["name"].as<std::string>() == "M(P=3 4)")
                   {
-                    ofile  = ofolder + enranges[q["value"].as<std::string>()] + ".yaml";
+                    ofile  = ofolder + enranges[q["value"].as<std::string>()];
                     enlims = enrangelims[q["value"].as<std::string>()];
                   }
                 if (q["name"].as<std::string>() == "XL")
@@ -72,6 +75,14 @@ namespace NangaParbat
                     y = log(Vs * ( xF + sqrt( pow(xF, 2) + pow(2 * Qav / Vs, 2 ) ) ) / 2 / Qav );
                   }
               }
+
+            // Open PDF-error file
+            std::ifstream pdferr(PDFErrorFolder + ofile + ".out");
+            std::string line;
+            getline(pdferr, line);
+            getline(pdferr, line);
+
+            ofile += ".yaml";
 
             // Overall factor
             const double factor = Vs / 2 / Qav / cosh(y) / M_PI / 2;
@@ -113,12 +124,19 @@ namespace NangaParbat
             emit << YAML::BeginSeq;
             for (auto const& v : dv["values"])
               {
+                // Now read PDF errors
+                getline(pdferr, line);
+                std::stringstream stream(line);
+                double dum, pe = 0;
+                stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
+
                 const double val = v["value"].as<double>();
                 const double uncsys = 0.05 * val;
                 const double unc = sqrt( pow(v["errors"][0]["symerror"].as<double>(), 2) + pow(uncsys, 2) );
                 emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value"
-                     << YAML::Value << unc << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << unc << YAML::EndMap;
+                if (PDFError)
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.15 << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::Key << "value" << YAML::Value << val;
@@ -140,6 +158,9 @@ namespace NangaParbat
             emit << YAML::EndMap;
             emit << YAML::EndSeq;
             emit << YAML::EndMap;
+
+            // Close PDF-error file
+            pdferr.close();
 
             // Dump table to file
             std::ofstream fout(opath + "/" + ofile);
