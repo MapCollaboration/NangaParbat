@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstring>
 
 //_________________________________________________________________________________
 int main(int argc, char* argv[])

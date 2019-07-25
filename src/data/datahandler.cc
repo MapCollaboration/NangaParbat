@@ -8,6 +8,7 @@
 #include <iostream>
 #include <math.h>
 #include <numeric>
+#include <algorithm>
 
 namespace NangaParbat
 {
@@ -40,7 +41,7 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  DataHandler::DataHandler(std::string const& name, YAML::Node const& datafile):
+  DataHandler::DataHandler(std::string const& name, YAML::Node const& datafile, int const& fluctuation, int const& seed):
     _name(name),
     _proc(UnknownProcess),
     _targetiso(1),
@@ -108,7 +109,7 @@ namespace NangaParbat
         for (auto const& vl : dv["values"])
           {
             // Read central values
-            _mean.push_back(vl["value"].as<double>());
+            _means.push_back(vl["value"].as<double>());
 
             // Read uncertainties
             double u = 0;
@@ -207,12 +208,41 @@ namespace NangaParbat
     for (int i = 0; i < _kin.ndata; i++)
       for (int j = 0; j < _kin.ndata; j++)
         _covmat(i, j) =
-          std::inner_product(_corra[i].begin(), _corra[i].end(), _corra[j].begin(), 0.) * _mean[i] * _mean[j]    // Additive component
-          + std::inner_product(_corrm[i].begin(), _corrm[i].end(), _corrm[j].begin(), 0.) * _mean[i] * _mean[j]  // Multiplicative component
-          + (i == j ? pow(_uncor[i], 2) : 0);                                                                    // Uncorrelated component
+          std::inner_product(_corra[i].begin(), _corra[i].end(), _corra[j].begin(), 0.) * _means[i] * _means[j]    // Additive component
+          + std::inner_product(_corrm[i].begin(), _corrm[i].end(), _corrm[j].begin(), 0.) * _means[i] * _means[j]  // Multiplicative component
+          + (i == j ? pow(_uncor[i], 2) : 0);                                                                      // Uncorrelated component
 
     // Cholesky decomposition of the covariance matrix
     _CholL = CholeskyDecomposition(_covmat);
+
+    // Fluctuate data given the replica ID and the random seed
+    FluctuateData(fluctuation, seed);
+  }
+
+  //_________________________________________________________________________
+  void DataHandler::FluctuateData(int const& fluctuation, int const& seed)
+  {
+    if (fluctuation <= 0)
+      _fluctuations = _means;
+    else
+      {
+        // The size of the fluctuated-data vector has to be the same
+        // as the vector of mean values.
+        _fluctuations.resize(_means.size());
+
+        // Initialise random-number generator
+
+        // Fluctuate the full data-set "fluctuation" times and keep
+        // only the last fluctuation. This is non efficient but allows
+        // one to identify a given random replica by its ID and the
+        // random seed.
+        for (int irep = 0; irep < fluctuation; irep++)
+          for (int i = 0; i < (int) _means.size(); i++)
+            {
+              _fluctuations[i] = _means[i];
+            }
+        //_fluctuations = _means;
+      }
   }
 
   //_________________________________________________________________________

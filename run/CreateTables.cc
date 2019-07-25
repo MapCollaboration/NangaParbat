@@ -8,6 +8,8 @@
 #include "NangaParbat/utilities.h"
 
 #include <fstream>
+#include <cstring>
+#include <algorithm>
 #include <apfel/timer.h>
 
 //_________________________________________________________________________________

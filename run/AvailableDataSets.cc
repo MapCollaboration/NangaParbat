@@ -4,6 +4,8 @@
 
 #include <yaml-cpp/yaml.h>
 #include <iostream>
+#include <algorithm>
+#include <cstring>
 
 //_________________________________________________________________________________
 int main(int argc, char* argv[])

@@ -9,6 +9,8 @@
 #include "NangaParbat/utilities.h"
 #include "NangaParbat/twobodyphasespace.h"
 
+#include <fstream>
+
 #include <LHAPDF/LHAPDF.h>
 #include <apfel/apfelxx.h>
 

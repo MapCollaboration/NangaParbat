@@ -9,6 +9,7 @@
 #include "NangaParbat/minimisation.h"
 
 #include <apfel/timer.h>
+#include <algorithm>
 #include <fstream>
 
 //_________________________________________________________________________________

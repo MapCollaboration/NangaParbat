@@ -53,8 +53,18 @@ namespace NangaParbat
      * @brief The "DataHandler" constructor.
      * @param name: the name associated to the data set
      * @param datafile: the YAML:Node with the interpolation table
+     * @param fluctuation: ID of the fluctuation (i.e. Monte-Carlo replica ID) (default: 0, i.e. no fluctuations)
+     * @param seed: seed of the randon-number generator (default: 1234)
      */
-    DataHandler(std::string const& name, YAML::Node const& datafile);
+    DataHandler(std::string const& name, YAML::Node const& datafile, int const& fluctuation = 0, int const& seed = 1234);
+
+    /**
+     * @brief Function that produces a random fluctuation of the
+     * experimantal data.
+     * @param fluctuation: ID of the fluctuation (i.e. Monte-Carlo replica ID) (default: 0, i.e. no fluctuations)
+     * @param seed: seed of the randon-number generator (default: 1234)
+     */
+    void FluctuateData(int const& fluctuation, int const& seed);
 
     /**
      * @brief Function that returns the name of the dataset
@@ -88,7 +98,12 @@ namespace NangaParbat
     /**
      * @brief Function that returns the mean values
      */
-    std::vector<double> GetMeanValues() const { return _mean; };
+    std::vector<double> GetMeanValues() const { return _means; };
+
+    /**
+     * @brief Function that returns the fluctuated data
+     */
+    std::vector<double> GetFluctutatedData() const { return _fluctuations; };
 
     /**
      * @brief Function that returns the sum in quadrature of the
@@ -132,19 +147,20 @@ namespace NangaParbat
     std::map<std::string, std::string> GetLabels() const { return _labels; };
 
   protected:
-    std::string                        _name;        //!< Name of the dataset
-    Process                            _proc;        //!< The process
-    double                             _targetiso;   //!< Isoscalarity of the target
-    double                             _prefact;     //!< Possible overall prefactor to multiply the theoretical predictions
-    Kinematics                         _kin;         //!< Kinematics block
-    std::vector<double>                _mean;        //!< Vector of central values
-    std::vector<double>                _uncor;       //!< Vector of uncorrelated uncertainties
-    std::vector<std::vector<double>>   _corra;       //!< Additive correlated uncertainties
-    std::vector<std::vector<double>>   _corrm;       //!< Multiplicative correlated uncertainties
-    std::vector<std::vector<double>>   _corr;        //!< All correlated uncertainties
-    apfel::matrix<double>              _covmat;      //!< Covariance matrix
-    apfel::matrix<double>              _CholL;       //!< Cholesky decomposition of the covariance matrix
-    std::map<std::string, std::string> _labels;      //!< Labels used for plotting
+    std::string                        _name;         //!< Name of the dataset
+    Process                            _proc;         //!< The process
+    double                             _targetiso;    //!< Isoscalarity of the target
+    double                             _prefact;      //!< Possible overall prefactor to multiply the theoretical predictions
+    Kinematics                         _kin;          //!< Kinematics block
+    std::vector<double>                _means;         //!< Vector of central values
+    std::vector<double>                _uncor;        //!< Vector of uncorrelated uncertainties
+    std::vector<std::vector<double>>   _corra;        //!< Additive correlated uncertainties
+    std::vector<std::vector<double>>   _corrm;        //!< Multiplicative correlated uncertainties
+    std::vector<std::vector<double>>   _corr;         //!< All correlated uncertainties
+    apfel::matrix<double>              _covmat;       //!< Covariance matrix
+    apfel::matrix<double>              _CholL;        //!< Cholesky decomposition of the covariance matrix
+    std::map<std::string, std::string> _labels;       //!< Labels used for plotting
+    std::vector<double>                _fluctuations; //!< Vector of fluctuated data
 
     friend std::ostream& operator << (std::ostream& os, DataHandler const& DH);
   };
