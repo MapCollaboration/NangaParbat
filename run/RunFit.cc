@@ -147,5 +147,5 @@ int main(int argc, char* argv[])
   t.stop();
   // =================================================================
 
-  return 0;
+  return status;
 }

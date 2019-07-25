@@ -65,7 +65,7 @@ namespace NangaParbat
   //_________________________________________________________________________________
   std::vector<double> ChiSquare::GetResiduals(int const& ids) const
   {
-    if (ids < 0 || ids >= _DSVect.size())
+    if (ids < 0 || ids >= (int) _DSVect.size())
       throw std::runtime_error("[ChiSquare::GetResiduals]: index out of range");
 
     // Get "DataHandler" and "ConvolutionTable" objects
@@ -97,7 +97,7 @@ namespace NangaParbat
   //_________________________________________________________________________________
   std::vector<double> ChiSquare::GetResidualDerivatives(int const& ids, int const& ipar) const
   {
-    if (ids < 0 || ids >= _DSVect.size())
+    if (ids < 0 || ids >= (int) _DSVect.size())
       throw std::runtime_error("[ChiSquare::GetResiduals]: index out of range");
 
     // Get "DataHandler" and "ConvolutionTable" objects
