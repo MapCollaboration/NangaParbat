@@ -10,9 +10,10 @@
 
 namespace NangaParbat
 {
-  //_________________________________________________________________________________
-  // Pavia 2017 Parameterisation derived from the "Parameterisation"
-  // mother class
+  /**
+   * @brief Pavia 20117 parameterisation derived from the
+   * "Parameterisation" mother class.
+   */
   class PV17: public NangaParbat::Parameterisation
   {
   public:

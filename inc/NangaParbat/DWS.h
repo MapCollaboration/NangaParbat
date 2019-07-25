@@ -10,9 +10,10 @@
 
 namespace NangaParbat
 {
-  //_________________________________________________________________________________
-  // Davies-Webber-Stirling Parameterisation derived from the
-  // "Parameterisation" mother class
+  /**
+   * @brief Davies-Webber-Stirling parameterisation derived from the
+   * "Parameterisation" mother class.
+   */
   class DWS: public NangaParbat::Parameterisation
   {
   public:

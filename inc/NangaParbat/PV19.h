@@ -11,9 +11,10 @@
 
 namespace NangaParbat
 {
-  //_________________________________________________________________________________
-  // Pavia 2019 Parameterisation derived from the "Parameterisation"
-  // mother class
+  /**
+   * @brief Pavia 2019 parameterisation derived from the
+   * "Parameterisation" mother class.
+   */
   class PV19: public NangaParbat::Parameterisation
   {
   public:

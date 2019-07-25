@@ -13,6 +13,11 @@
 
 namespace NangaParbat
 {
+  /**
+   * @brief Class that implements the methods of the computation of
+   * the interpolation tables. This also provides method for the
+   * direct calculation of the observables.
+   */
   class FastInterface
   {
   public:

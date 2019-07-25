@@ -12,6 +12,11 @@
 
 namespace NangaParbat
 {
+  /**
+   * @brief Class that implements the methods fot the numerical
+   * convolution of the interpolation tables with user-given
+   * non-perturbative functions.
+   */
   class ConvolutionTable
   {
   public:

@@ -8,11 +8,13 @@
 namespace NangaParbat
 {
   /**
-   * @note Calculate the phase-space volume within cuts relative to total phase-space for:
-   * 		q -> k + kb
-   * 	with:
-   * 		k_T   > pTmin 	&&  kb_T   > pTmin
-   * 		|eta| < etamax	&&  |etab| < etamax
+   * @brief Class for the calculation of the phase-space reduction
+   * factor due to cuts on the single outgoing lepton in Drell-Yan
+   * production. The relevant process is:<br>
+   * 		&gamma;(q) &rarr; l<SUP>+</SUP>(k<SUB>1</SUB>) + l<SUP>-</SUP>(k<SUB>2</SUB>) <br>
+   *  with:<br>
+   * 		k<SUB>T,1(2)</SUB> > p<SUB>T,min</SUB><br>
+   * 		|&eta;<SUB>1(2)</SUB>| < &eta;<SUB>max</SUB><br>
    */
   class TwoBodyPhaseSpace
   {
