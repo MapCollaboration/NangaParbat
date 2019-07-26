@@ -1,6 +1,11 @@
-## Prefactors for the convolution tables
+## Prefactors for the convolution tables N3LL.
+## For Tevatron (only D0 RunII)
+## fidcs = 1 / FiducialCrossSection@NNLO 
+## For LHC experiments:
 ## fidcs = 2 / FiducialCrossSection@NNLO
 
+D0:
+  - {file: D0_RunII.yaml, fidcs: 0.00394}
 CMS:
   - {file: CMS_7TeV.yaml, fidcs: 0.005014}
   - {file: CMS_8TeV.yaml, fidcs: 0.004225} # 0.004464 from Scimemi-Vladimirov
