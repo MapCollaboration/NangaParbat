@@ -45,6 +45,12 @@ namespace NangaParbat
     virtual double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const { return 0; };
 
     /**
+     * @brief Function that returns the parametrisation in the form of
+     * a std::function.
+     */
+    std::function<double(double const&, double const&, double const&, int const&)> Function() const;
+
+    /**
      * @brief Virtual function that returns the value of the
      * derivative of one of the functions.
      * @param x: momentum fraction
@@ -56,6 +62,12 @@ namespace NangaParbat
      * ipar-th parameter of the ifunc-th function at (x, b, &zeta;)
      */
     virtual double Derive(double const& x, double const& b, double const& zeta, int const& ifunc, int const& ipar) const { return 0; };
+
+    /**
+     * @brief Function that returns the derivative of the
+     * parametrisation in the form of a std::function.
+     */
+    std::function<double(double const&, double const&, double const&, int const&, int const&)> Derivative() const;
 
     /**
      * @brief Virtual function that returns a string with the formula

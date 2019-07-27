@@ -5,6 +5,8 @@
 #include "NangaParbat/datahandler.h"
 #include "NangaParbat/utilities.h"
 
+#include <gsl/gsl_randist.h>
+
 #include <iostream>
 #include <math.h>
 #include <numeric>
@@ -41,13 +43,14 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  DataHandler::DataHandler(std::string const& name, YAML::Node const& datafile, int const& fluctuation, int const& seed):
+  DataHandler::DataHandler(std::string const& name, YAML::Node const& datafile, gsl_rng* rng, int const& fluctuation, std::vector<double> const& t0):
     _name(name),
     _proc(UnknownProcess),
     _targetiso(1),
     _prefact(1),
     _kin(DataHandler::Kinematics{}),
-    _labels({})
+    _labels({}),
+  _t0(t0)
   {
     // Retrieve kinematics
     for (auto const& dv : datafile["dependent_variables"])
@@ -203,26 +206,41 @@ namespace NangaParbat
         _kin.empty())
       throw std::runtime_error("[DataHandler::DataHandler]: Object not properly filled in. Probably one or more required keys are missing");
 
-    // Now construct the covariance matrix
+    // Check that the t0 vector is either empty or contains exactly
+    // "_kin.ndata" elements.
+    if (!_t0.empty() && _t0.size() != _kin.ndata)
+      throw std::runtime_error("[DataHandler::DataHandler]: t0 vector has wrong size");
+
+    // Now construct the covariance matrix. First include uncorrelated
+    // and additive correlated uncertainties.
     _covmat.resize(_kin.ndata, _kin.ndata);
     for (int i = 0; i < _kin.ndata; i++)
       for (int j = 0; j < _kin.ndata; j++)
         _covmat(i, j) =
-          std::inner_product(_corra[i].begin(), _corra[i].end(), _corra[j].begin(), 0.) * _means[i] * _means[j]    // Additive component
-          + std::inner_product(_corrm[i].begin(), _corrm[i].end(), _corrm[j].begin(), 0.) * _means[i] * _means[j]  // Multiplicative component
-          + (i == j ? pow(_uncor[i], 2) : 0);                                                                      // Uncorrelated component
+          + (i == j ? pow(_uncor[i], 2) : 0)                                                                         // Uncorrelated component (diagonal)
+          + std::inner_product(_corra[i].begin(), _corra[i].end(), _corra[j].begin(), 0.) * _means[i] * _means[j];   // Additive component
+
+    // Then include multiplicative uncertainties using the t0
+    // prescription. If the t0 vector is empty or the fit is to the
+    // central values, use the experimental central values.
+    if (_t0.empty() || fluctuation <= 0)
+      for (int i = 0; i < _kin.ndata; i++)
+        for (int j = 0; j < _kin.ndata; j++)
+          _covmat(i, j) +=
+            std::inner_product(_corrm[i].begin(), _corrm[i].end(), _corrm[j].begin(), 0.) * _means[i] * _means[j];
+    else
+      for (int i = 0; i < _kin.ndata; i++)
+        for (int j = 0; j < _kin.ndata; j++)
+          _covmat(i, j) +=
+            std::inner_product(_corrm[i].begin(), _corrm[i].end(), _corrm[j].begin(), 0.) * _t0[i] * _t0[j];
 
     // Cholesky decomposition of the covariance matrix
     _CholL = CholeskyDecomposition(_covmat);
 
-    // Fluctuate data given the replica ID and the random seed
-    FluctuateData(fluctuation, seed);
-  }
-
-  //_________________________________________________________________________
-  void DataHandler::FluctuateData(int const& fluctuation, int const& seed)
-  {
-    if (fluctuation <= 0)
+    // Fluctuate data given the replica ID and the random-number
+    // generator. See Eqs. (13) and (14) of
+    // https://arxiv.org/pdf/0808.1231.pdf for details.
+    if (fluctuation <= 0 || rng == NULL)
       _fluctuations = _means;
     else
       {
@@ -230,18 +248,51 @@ namespace NangaParbat
         // as the vector of mean values.
         _fluctuations.resize(_means.size());
 
-        // Initialise random-number generator
-
         // Fluctuate the full data-set "fluctuation" times and keep
         // only the last fluctuation. This is non efficient but allows
         // one to identify a given random replica by its ID and the
         // random seed.
+        //double mi = 0;
+        //double mj = 0;
+        //double cij = 0;
+        //int i = 0;
+        //int j = 5;
         for (int irep = 0; irep < fluctuation; irep++)
-          for (int i = 0; i < (int) _means.size(); i++)
-            {
-              _fluctuations[i] = _means[i];
-            }
-        //_fluctuations = _means;
+          {
+            // Additive correlation random numbers
+            std::vector<double> radd(_corra[0].size());
+            for (int j = 0; j < _corra[0].size(); j++)
+              radd[j] = gsl_ran_gaussian(rng, 1);
+
+            // Multiplicative correlation random numbers
+            std::vector<double> rmult(_corrm[0].size());
+            for (int j = 0; j < _corrm[0].size(); j++)
+              rmult[j] = gsl_ran_gaussian(rng, 1);
+
+            for (int i = 0; i < (int) _means.size(); i++)
+              {
+                // Uncorrelated uncertainty fluctuation
+                const double Func = _uncor[i] * gsl_ran_gaussian(rng, 1) / _means[i];
+
+                // Additive correlated uncertainty fluctuation
+                double Fadd = 0;
+                for (int j = 0; j < _corra[i].size(); j++)
+                  Fadd += _corra[i][j] * radd[j];
+
+                // Mulplicative correlated uncertainty fluctuation
+                double Fmult = 1;
+                for (int j = 0; j < _corrm[i].size(); j++)
+                  Fmult *= 1 + _corrm[i][j] * rmult[j];
+
+                // Generate fluctuation
+                _fluctuations[i] = _means[i] * Fmult * ( 1 + Func + Fadd );
+              }
+            //mi += _fluctuations[i];
+            //mj += _fluctuations[j];
+            //cij += _fluctuations[i] * _fluctuations[j];
+          }
+        //std::cout << mi / fluctuation / _means[i] << "  " << mj / fluctuation / _means[j]
+        //	  << "  " << ( cij / fluctuation - (mi / fluctuation) * (mj / fluctuation) ) / _covmat(i, j) << std::endl;
       }
   }
 

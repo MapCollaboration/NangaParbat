@@ -11,6 +11,8 @@
 #include <apfel/matrix.h>
 #include <yaml-cpp/yaml.h>
 
+#include <gsl/gsl_rng.h>
+
 namespace NangaParbat
 {
   /**
@@ -53,18 +55,11 @@ namespace NangaParbat
      * @brief The "DataHandler" constructor.
      * @param name: the name associated to the data set
      * @param datafile: the YAML:Node with the interpolation table
+     * @param rng: GSL random number object
      * @param fluctuation: ID of the fluctuation (i.e. Monte-Carlo replica ID) (default: 0, i.e. no fluctuations)
-     * @param seed: seed of the randon-number generator (default: 1234)
+     * @param t0: vector of predictions to be used for the t0-prescription
      */
-    DataHandler(std::string const& name, YAML::Node const& datafile, int const& fluctuation = 0, int const& seed = 1234);
-
-    /**
-     * @brief Function that produces a random fluctuation of the
-     * experimantal data.
-     * @param fluctuation: ID of the fluctuation (i.e. Monte-Carlo replica ID) (default: 0, i.e. no fluctuations)
-     * @param seed: seed of the randon-number generator (default: 1234)
-     */
-    void FluctuateData(int const& fluctuation, int const& seed);
+    DataHandler(std::string const& name, YAML::Node const& datafile, gsl_rng* rng = NULL, int const& fluctuation = 0, std::vector<double> const& t0 = {});
 
     /**
      * @brief Function that returns the name of the dataset
@@ -142,6 +137,11 @@ namespace NangaParbat
     apfel::matrix<double> GetCholeskyDecomposition() const { return _CholL; };
 
     /**
+     * @brief Function that returns the set of t0 predictions
+     */
+    std::vector<double> GetT0() const { return _t0; };
+
+    /**
      * @brief Function that returns the plotting labels.
      */
     std::map<std::string, std::string> GetLabels() const { return _labels; };
@@ -161,6 +161,7 @@ namespace NangaParbat
     apfel::matrix<double>              _CholL;        //!< Cholesky decomposition of the covariance matrix
     std::map<std::string, std::string> _labels;       //!< Labels used for plotting
     std::vector<double>                _fluctuations; //!< Vector of fluctuated data
+    std::vector<double>                _t0;           //!< Vector of t0-predictions
 
     friend std::ostream& operator << (std::ostream& os, DataHandler const& DH);
   };

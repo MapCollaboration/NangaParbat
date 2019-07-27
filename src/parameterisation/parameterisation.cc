@@ -14,4 +14,16 @@ namespace NangaParbat
     _anders(anders)
   {
   }
+
+  //_________________________________________________________________________________
+  std::function<double(double const&, double const&, double const&, int const&)> Parameterisation::Function() const
+  {
+    return [this] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return Evaluate(x, b, zeta, ifun); };
+  }
+
+  //_________________________________________________________________________________
+  std::function<double(double const&, double const&, double const&, int const&, int const&)> Parameterisation::Derivative() const
+  {
+    return [this] (double const& x, double const& b, double const& zeta, int const& ifun, int const& ipar) -> double{ return Derive(x, b, zeta, ifun, ipar); };
+  }
 }

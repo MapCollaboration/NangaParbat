@@ -16,10 +16,10 @@
 int main(int argc, char* argv[])
 {
   // Check that the input is correct otherwise stop the code
-  if (argc < 4 || strcmp(argv[1], "--help") == 0)
+  if (argc < 5 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./RunFit <fit configuration file> <path to data folder> <path to tables folder>\n" << std::endl;
+      std::cout << "Syntax: ./RunFit <fit configuration file> <path to data folder> <path to tables folder> <replica ID>\n" << std::endl;
       exit(-10);
     }
 
@@ -40,8 +40,19 @@ int main(int argc, char* argv[])
   else
     throw std::runtime_error("[RunFit]: Unknown parameterisation");
 
+  // Initialise GSL random-number generator
+  gsl_rng *rng = gsl_rng_alloc(gsl_rng_ranlxs2);
+  gsl_rng_set(rng, fitconfig["Seed"].as<int>());
+
+  // Rplica ID number
+  const int ReplicaID = atoi(argv[4]);
+
   // Define "ChiSquare" object with a given qT / Q cut
   NangaParbat::ChiSquare chi2{*NPFunc, fitconfig["qToQmax"].as<double>()};
+
+  // Set parameters for the t0 predictions using "t0parameters" in the
+  // configuration card.
+  NPFunc->SetParameters(fitconfig["t0parameters"].as<std::vector<double>>());
 
   // Open datasets.yaml file that contains the list of datasets to be
   // fitted and push the corresponding pairs of "DataHandler" and
@@ -51,13 +62,14 @@ int main(int argc, char* argv[])
     for (auto const& ds : exp.second)
       {
         std::cout << "Reading " << ds["name"].as<std::string>() << " ..." << std::endl;
-        // Datafile
-        const std::string datafile = std::string(argv[2]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
-        const NangaParbat::DataHandler dh{ds["name"].as<std::string>(), YAML::LoadFile(datafile)};
 
         // Convolution table
         const std::string table = std::string(argv[3]) + "/" + ds["name"].as<std::string>() + ".yaml";
         const NangaParbat::ConvolutionTable ct{YAML::LoadFile(table)};
+
+        // Datafile
+        const std::string datafile = std::string(argv[2]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
+        const NangaParbat::DataHandler dh{ds["name"].as<std::string>(), YAML::LoadFile(datafile), rng, ReplicaID, ct.GetPredictions(NPFunc->Function())};
 
         // Add chi2 block
         chi2.AddBlock(std::make_pair(dh, ct));
@@ -139,13 +151,17 @@ int main(int argc, char* argv[])
   fout << "```\n";
 
   fout.close();
+  // =================================================================
+
+  // Delete random-number generator
+  gsl_rng_free(rng);
+
 
   // Delete "Parameterisation" object
   delete NPFunc;
 
   // Report time elapsed
   t.stop();
-  // =================================================================
 
   return status;
 }

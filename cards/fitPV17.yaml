@@ -14,6 +14,15 @@ Parameterisation: PV17
 # to produce the tables.
 qToQmax: 0.2
 
+# Seed used with the random-number generator for the generation of the
+# Monte Carlo replicas
+Seed: 1234
+
+# Set of parameters to be used to compute the t0 predictions for the
+# treatment of normalisation uncertantities. They have to be as many
+# and ordered as the "Parameters" below.
+t0parameters: [0.13, 0.285, 2.98, 0.173, 0.39]
+
 # List of parameters to be fitted to data. This requires that the
 # number and order of parameters matches those expected by the
 # particular parameterisation being used.

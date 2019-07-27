@@ -72,12 +72,11 @@ namespace NangaParbat
     const DataHandler      dh = _DSVect[ids].first;
     const ConvolutionTable ct = _DSVect[ids].second;
 
-    // Get experimental central values
-    const std::vector<double> mean = dh.GetMeanValues();
+    // Get (fluctuated) experimental central values
+    const std::vector<double> mean = dh.GetFluctutatedData();
 
     // Get predictions
-    auto const fNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return _NPFunc.Evaluate(x, b, zeta, ifun); };
-    const std::vector<double> pred = ct.GetPredictions(fNP);
+    const std::vector<double> pred = ct.GetPredictions(_NPFunc.Function());
 
     // Check that the number of points in the DataHandler and
     // Convolution table objects is the same.
@@ -98,19 +97,18 @@ namespace NangaParbat
   std::vector<double> ChiSquare::GetResidualDerivatives(int const& ids, int const& ipar) const
   {
     if (ids < 0 || ids >= (int) _DSVect.size())
-      throw std::runtime_error("[ChiSquare::GetResiduals]: index out of range");
+      throw std::runtime_error("[ChiSquare::GetResidualDerivatives]: index out of range");
 
     // Get "DataHandler" and "ConvolutionTable" objects
     const DataHandler      dh = _DSVect[ids].first;
     const ConvolutionTable ct = _DSVect[ids].second;
 
-    // Get experimental central values
-    const std::vector<double> mean = dh.GetMeanValues();
+    // Get (fluctuated) experimental central values
+    const std::vector<double> mean = dh.GetFluctutatedData();
 
     // Get predictions
-    auto const fNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return _NPFunc.Evaluate(x, b, zeta, ifun); };
     auto const dNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return _NPFunc.Derive(x, b, zeta, ifun, ipar); };
-    const std::vector<double> dpred = ct.GetPredictions(fNP, dNP);
+    const std::vector<double> dpred = ct.GetPredictions(_NPFunc.Function(), dNP);
 
     // Check that the number of points in the DataHandler and
     // Convolution table objects is the same.
@@ -228,14 +226,27 @@ namespace NangaParbat
         const ConvolutionTable ct = chi2._DSVect[i].second;
 
         // Get experimental central values uncorrelated and correlated
-        // uncertainties.
-        const std::vector<double> mean = dh.GetMeanValues();
+        // uncertainties. Rescale the multiplicative correlation if
+        // the t0 prescription is being used.
+        const std::vector<double> mean = dh.GetFluctutatedData();
         const std::vector<double> uncu = dh.GetUncorrelatedUnc();
-        const std::vector<std::vector<double>> corr = dh.GetCorrelatedUnc();
+        const std::vector<double> t0   = dh.GetT0();
+        const std::vector<std::vector<double>> corra = dh.GetAddCorrelatedUnc();
+        const std::vector<std::vector<double>> corrm = dh.GetMultCorrelatedUnc();
+        std::vector<std::vector<double>> corr(mean.size());
+        for (int j = 0; j < nd; j++)
+          {
+            std::vector<double> c = corra[j];
+            double t0fact = 1;
+            if (!t0.empty())
+              t0fact = t0[j] / mean[j];
+            for (auto const m : corrm[j])
+              c.push_back(t0fact * m);
+            corr[j] = c;
+          }
 
         // Get predictions
-        auto const fNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return chi2._NPFunc.Evaluate(x, b, zeta, ifun); };
-        const std::vector<double> pred = ct.GetPredictions(fNP);
+        const std::vector<double> pred = ct.GetPredictions(chi2._NPFunc.Function());
 
         // Now compute systematic shifts. Compute residuals only for
         // the points that pass the cut qT / Q, set the others to
@@ -380,7 +391,7 @@ namespace NangaParbat
         // Save graph on file
         std::string outfile = "./plots/" + dh.GetName();
         c->SaveAs((outfile + ".pdf").c_str());
-        c->SaveAs((outfile + ".png").c_str());
+        //c->SaveAs((outfile + ".png").c_str());
         plots.push_back(outfile);
 
         delete exp;
@@ -398,8 +409,8 @@ namespace NangaParbat
       os << "<img src=" << p << ".pdf>\n";
     os << "\n";
 
-    for (auto const p : plots)
-      os << "![](" << p << ".png)\n";
+    //for (auto const p : plots)
+    //  os << "![](" << p << ".png)\n";
 
     fout.close();
     return os;
