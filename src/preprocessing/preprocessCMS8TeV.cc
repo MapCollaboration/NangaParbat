@@ -92,6 +92,7 @@ namespace NangaParbat
               emit << YAML::EndSeq;
               emit << YAML::Key << "values" << YAML::Value;
               emit << YAML::BeginSeq;
+              int it = 0;
               for (auto const& v : dv["values"])
                 {
                   // Now read PDF errors
@@ -100,14 +101,23 @@ namespace NangaParbat
                   double dum, pe;
                   stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
 
+                  // Vectors of uncorrelated and correlated errors
+                  // from article https://arxiv.org/pdf/1606.05864.pdf Tab.4
+                  std::vector<double> uncart = {0.00184452597, 0.00254048238, 0.0024849562, 0.00223087769, 0.002096844359, 0.00181079344, 0.00170785626, 0.00153076104, 0.00047904096, 0.000357489585, 0.000284907396, 0.000140513793, 9.2774641399999996e-05, 6.4174134500000004e-05, 2.75466744e-05, 1.8862854690000001e-05, 6.1849813950000005e-06, 1.957222454e-06};
+                  std::vector<double> addart = {0.0274, 0.0138, 0.005, 0.0134, 0.0274, 0.0233, 0.0130, 0.0165, 0.0041, 0.067, 0.0129, 0.0156, 0.0272, 0.0357, 0.0372, 0.0201, 0.1166, 0.0209};
+
                   emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value"
-                       << YAML::Value << v["errors"][0]["symerror"].as<double>()<< YAML::EndMap;
+                       << YAML::Value << uncart[it]<< YAML::EndMap;
+                       // << YAML::Value << v["errors"][0]["symerror"].as<double>()<< YAML::EndMap; // read unc errors from HEPData file
                   if (PDFError)
                     emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value"
+                       << YAML::Value << addart[it] << YAML::EndMap;
                   emit << YAML::EndSeq;
                   emit << YAML::Key << "value" << YAML::Value << v["value"].as<double>();
                   emit << YAML::EndMap;
+                  it++;
                 }
               emit << YAML::EndSeq;
               emit << YAML::EndMap;
