@@ -124,6 +124,7 @@ namespace NangaParbat
 
     // EW charges
     const std::vector<double> Bq = apfel::ElectroWeakCharges(Q, true);
+    // const std::vector<double> Bq = apfel::ElectroWeakChargesNWA(); // for narrow-width approx.
 
     // Electromagnetic coupling squared
     const double aem2 = pow((arun ? _TabAlphaem->Evaluate(Q) : aref), 2);
