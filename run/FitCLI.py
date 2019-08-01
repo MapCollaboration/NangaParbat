@@ -162,29 +162,29 @@ questions = [
     },
     {
         "type": "input",
-        "name": "qToQmax",
-        "message": "Enter the maximum value qT / Q allowed in the fit:",
-        "default": "0.2",
-        "validate": FloatValidator
-    },
-    {
-        "type": "input",
         "name": "Seed",
         "message": "Enter the random-number seed for the generation of the Monte-Carlo replicas:",
         "default": "1234",
         "validate": IntegerValidator
     },
     {
-        "type": "list",
-        "name": "Parameterisation",
-        "message": "Select minimiser:",
-        "choices": ["DWS", "PV17", "PV19"],
+        "type": "input",
+        "name": "qToQmax",
+        "message": "Enter the maximum value qT / Q allowed in the fit:",
+        "default": "0.2",
+        "validate": FloatValidator
     },
     {
         "type": "confirm",
         "name": "t0prescription",
         "message": "Do you want to use the t0 prescription?",
         "default": True
+    },
+    {
+        "type": "list",
+        "name": "Parameterisation",
+        "message": "Select minimiser:",
+        "choices": ["DWS", "PV17", "PV19"],
     }
 ]
 fitconfig = prompt(questions, style=custom_style_3)
@@ -193,27 +193,27 @@ fitconfig = prompt(questions, style=custom_style_3)
 if fitconfig["Parameterisation"] == "DWS":
     fitconfig["t0parameters"] = [0.01, 0.1]
     fitconfig["Parameters"] = [
-        {"name": "$g_1$", "starting_value": 0.01, "step": 0.001, "fix": False},
-        {"name": "$g_2$", "starting_value": 0.1,  "step": 0.005, "fix": False}
+        {"name": "g1", "starting_value": 0.01, "step": 0.001, "fix": False},
+        {"name": "g2", "starting_value": 0.1,  "step": 0.005, "fix": False}
         ]
 elif fitconfig["Parameterisation"] == "PV17":
     fitconfig["t0parameters"] = [0.13, 0.285, 2.98, 0.173, 0.39]
     fitconfig["Parameters"] = [
-        {"name": "$g_2$",      "starting_value": 0.13,  "step": 0.001, "fix": False},
-        {"name": "$N_1$",      "starting_value": 0.285, "step": 0.003, "fix": False},
-        {"name": "$\\alpha$",  "starting_value": 2.98,  "step": 0.030, "fix": False},
-        {"name": "$\\sigma$",  "starting_value": 0.173, "step": 0.002, "fix": False},
-        {"name": "$\\lambda$", "starting_value": 0.39,  "step": 0.005, "fix": True }
+        {"name": "g2",     "starting_value": 0.13,  "step": 0.001, "fix": False},
+        {"name": "N1",     "starting_value": 0.285, "step": 0.003, "fix": False},
+        {"name": "alpha",  "starting_value": 2.98,  "step": 0.030, "fix": False},
+        {"name": "sigma",  "starting_value": 0.173, "step": 0.002, "fix": False},
+        {"name": "lambda", "starting_value": 0.39,  "step": 0.005, "fix": True }
         ]
 elif fitconfig["Parameterisation"] == "PV19":
     fitconfig["t0parameters"] = [0.0327043, 0.46221, 0.450088, 0.5, 0, 0]
     fitconfig["Parameters"] = [
-        {"name": "$g_2$",      "starting_value": 0.0327043, "step": 0.001, "fix": False},
-        {"name": "$N_1$",      "starting_value": 0.46221,   "step": 0.003, "fix": False},
-        {"name": "$\\alpha$",  "starting_value": 0.450088,  "step": 0.010, "fix": False},
-        {"name": "$\\sigma$",  "starting_value": 0.5,       "step": 0.005, "fix": False},
-        {"name": "$\\lambda$", "starting_value": 0,         "step": 0.005, "fix": True },
-        {"name": "$\\delta$",  "starting_value": 0,         "step": 0.002, "fix": True }
+        {"name": "g2",     "starting_value": 0.0327043, "step": 0.001, "fix": False},
+        {"name": "N1",     "starting_value": 0.46221,   "step": 0.003, "fix": False},
+        {"name": "alpha",  "starting_value": 0.450088,  "step": 0.010, "fix": False},
+        {"name": "sigma",  "starting_value": 0.5,       "step": 0.005, "fix": False},
+        {"name": "lambda", "starting_value": 0,         "step": 0.005, "fix": True },
+        {"name": "delta",  "starting_value": 0,         "step": 0.002, "fix": True }
         ]
 
 # Report default parameters
@@ -316,12 +316,6 @@ questions = [
         "validate": IntegerValidator
     },
     {
-        "type": "confirm",
-        "name": "Confirm Replica 0",
-        "message": "Do you want to run a fit to the central values?",
-        "default": True
-    },
-    {
         "type": "list",
         "name": "Host",
         "message": "Where do you want to run?",
@@ -340,11 +334,7 @@ elif answer["Host"] == "Slurm":
 
 print(bcolours.OKBLUE + "\nLaunching the fits...\n" + bcolours.ENDC)
 
-# First launch fit to the central values, if requested
-if answer["Confirm Replica 0"]:
-    #print(command + " " + RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables 0")
-    os.system(command + " " + RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables 0")
-
-# Now launch fits to Monte-Carlo replicas
-for i in range(1, int(answer["Number of replicas"]) + 1):
+# Now launch fits to Monte-Carlo replicas (this includes a fit to the
+# central values, i.e. replica 0)
+for i in range(int(answer["Number of replicas"]) + 1):
     os.system(command + " " + RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables " + str(i))

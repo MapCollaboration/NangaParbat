@@ -305,7 +305,7 @@ namespace NangaParbat
         Tabs[i] << YAML::Key << "qT_bounds" << YAML::Value << YAML::Flow << qTv;
         Tabs[i] << YAML::Key << "qT_map" << YAML::Value << YAML::Flow << YAML::BeginSeq;
         for (auto const& qTp : qTmap)
-          Tabs[i] << YAML::Flow << YAML::BeginSeq << qTp.first <<  qTp.second << YAML::EndSeq;
+          Tabs[i] << YAML::Flow << YAML::BeginSeq << qTp.first << qTp.second << YAML::EndSeq;
         Tabs[i] << YAML::EndSeq;
         Tabs[i] << YAML::Key << "bin_factors" << YAML::Value << YAML::Flow << qTfact;
         Tabs[i] << YAML::Key << "prefactor" << YAML::Value << prefactor;

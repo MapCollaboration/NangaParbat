@@ -156,8 +156,12 @@ namespace NangaParbat
     std::vector<double> GetParameters() const { return _NPFunc.GetParameters(); };
 
     /**
-     * @brief That produces data-theory comparison plots using ROOT.
+     * @brief Function that produces data-theory comparison plots
+     * using ROOT.
      * @param path: path to where the "plots" folder will be placed
+     * @note This function is parlticularly lengthy and relies on ROOT
+     * and is not particularly useful. It may be convenient to remove
+     * it.
      */
     void MakePlots(std::string const& path) const;
 
@@ -167,11 +171,13 @@ namespace NangaParbat
     double                                                _qToQMax; //!< Max value of the ratio qT / Q allowed in the computation of the &chi;<SUP>2</SUP>
     std::vector<int>                                      _ndata;   //!< Vector constaining the number of data points per dataset that pass the qT/Q cut
 
-    friend std::ostream& operator<<(std::ostream& os, ChiSquare const& chi2);
+    friend std::ostream& operator << (std::ostream& os, ChiSquare const& chi2);
+    friend YAML::Emitter& operator << (YAML::Emitter& os, ChiSquare const& chi2);
   };
 
   /**
    * @brief Method which prints ChiSquare feautures with cout <<.
    */
   std::ostream& operator << (std::ostream& os, ChiSquare const& chi2);
+  YAML::Emitter& operator << (YAML::Emitter& os, ChiSquare const& chi2);
 }

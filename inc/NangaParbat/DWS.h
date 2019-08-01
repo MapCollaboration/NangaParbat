@@ -55,7 +55,12 @@ namespace NangaParbat
 
     std::string LatexFormula() const
     {
-      return "$$f_{\\rm NP}(x,\\zeta, b_T)=\\exp\\left[ - \\frac{1}{2}\\left( g_1 + \\frac{1}{2}g_2 \\log\\left(\\frac{\\zeta}{Q_0^2}\\right) \\right) b_T^2 \\right]$$";
+      return R"delimiter($$f_{\rm NP}(x,\zeta, b_T)=\exp\left[ - \frac{1}{2}\left( g_1 + \frac{1}{2}g_2 \log\left(\frac{\zeta}{Q_0^2}\right) \right) b_T^2 \right]$$)delimiter";
+    };
+
+    std::vector<std::string> GetParameterNames() const
+    {
+      return {R"delimiter($g_1$)delimiter", R"delimiter($g_2$)delimiter"};
     };
 
   private:

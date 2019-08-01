@@ -276,91 +276,32 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  std::ostream& operator << (std::ostream& os, ChiSquare const& chi2)
+  void ChiSquare::MakePlots(std::string const& path) const
   {
     // Create folder to store the plots
-    mkdir("plots", ACCESSPERMS);
+    const std::string outdir = path + "/plots/";
+    mkdir(outdir.c_str(), ACCESSPERMS);
 
-    // File with data and predictions
-    std::ofstream fout("Predictions.dat");
-
-    // header of the chi2 table
-    os << "# Table of $\\chi^2$'s\n";
-    os << "| Experiment | num. of points | $\\chi_D^2$ | $\\chi_\\lambda^2$ | $\\chi^2$ / n.d.p.|\n";
-    os << "|:----------:|:--------------:|:-----------:|:------------------:|:-----------------:|\n";
-
-    // Loop over the blocks
-    int ntot = 0;
-    double chi2tot = 0;
-    std::vector<std::string> plots;
-    for (int i = 0; i < (int) chi2._DSVect.size(); i++)
+    for (int i = 0; i < (int) _DSVect.size(); i++)
       {
         // Number of data points
-        const int nd = chi2._ndata[i];
+        const int nd = _ndata[i];
 
         // Get "DataHandler" and "ConvolutionTable" objects
-        const DataHandler      dh = chi2._DSVect[i].first;
-        const ConvolutionTable ct = chi2._DSVect[i].second;
+        const DataHandler      dh = _DSVect[i].first;
+        const ConvolutionTable ct = _DSVect[i].second;
 
         // Get predictions
-        const std::vector<double> pred = ct.GetPredictions(chi2._NPFunc.Function());
+        const std::vector<double> pred = ct.GetPredictions(_NPFunc.Function());
 
-        // Get systematic shifts and associated penalty
-        const std::pair<std::vector<double>, double> sp = chi2.GetSystematicShifts(i);
-        const std::vector<double> shifts = sp.first;
-        const double penalty = sp.second;
-
-        // Get experimental central values and uncorrelated
-        // uncertainties.
-        const std::vector<double> mean = dh.GetFluctutatedData();
-        const std::vector<double> uncu = dh.GetUncorrelatedUnc();
-
-        // Compute chi2 using the shifts
-        double chi2n = 0;
-        for(int j = 0; j < nd; j++)
-          chi2n += pow( ( mean[j] - pred[j] - shifts[j] ) / uncu[j], 2);
-        os << "| " << dh.GetName() << " | " << nd << " | " << chi2n;
-
-        // Compute penalty
-        os << " | " << penalty;
-
-        // Add penalty to the chi2 and divide by the number of data
-        // points.
-        chi2n += penalty;
-        chi2tot += chi2n;
-        chi2n /= nd;
-        ntot += nd;
-        os << " | " << chi2n << " |\n";
-
-        std::cout << chi2n << " " << chi2.Evaluate(i) << std::endl;
+        // Get experimental central values, uncorrelated
+        // uncertainties, and correlated shifts.
+        const std::vector<double> mean   = dh.GetFluctutatedData();
+        const std::vector<double> uncu   = dh.GetUncorrelatedUnc();
+        const std::vector<double> shifts = GetSystematicShifts(i).first;
 
         // Get values of qT
         const std::vector<double> qT = dh.GetKinematics().qTv;
-
-        // Print predictions, experimental central value, uncorrelated
-        // uncertainty and systemetic shift.
-        fout << std::scientific;
-        fout << "# Dataset name: " << dh.GetName() << " [chi2 (using the shifts) = " << chi2n << "]\n";
-        fout << "#\t"
-             << "  qT [GeV]  \t"
-             << "   pred.    \t"
-             << "    exp.    \t"
-             << "    unc.    \t"
-             << "    shift   \t"
-             << "shifted pred.\t"
-             << "  residuals \t"
-             << "\n";
-        for (int j = 0; j < nd; j++)
-          fout << j << "\t"
-               << (dh.GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]) << "\t"
-               << pred[j] << "\t"
-               << mean[j] << "\t"
-               << uncu[j] << "\t"
-               << shifts[j] << "\t"
-               << pred[j] + shifts[j] << "\t"
-               << ( mean[j] - pred[j] - shifts[j] ) / uncu[j] << "\t"
-               << "\n";
-        fout << "\n";
 
         // Get plotting labels
         const std::map<std::string, std::string> labels = dh.GetLabels();
@@ -394,7 +335,7 @@ namespace NangaParbat
         leg->AddEntry(exp, "Data", "lp");
         leg->AddEntry(theo, "Predictions");
         leg->AddEntry(theoshift, "Shifted predictions");
-        leg->AddEntry((TObject*)0,("#it{#chi}^{2} = " + std::to_string(chi2n)).c_str(), "");
+        leg->AddEntry((TObject*)0,("#it{#chi}^{2} = " + std::to_string(Evaluate(i))).c_str(), "");
 
         // Produce graph
         TMultiGraph* mg = new TMultiGraph{};
@@ -423,10 +364,7 @@ namespace NangaParbat
         leg->Draw("SAME");
 
         // Save graph on file
-        std::string outfile = "./plots/" + dh.GetName();
-        c->SaveAs((outfile + ".pdf").c_str());
-        //c->SaveAs((outfile + ".png").c_str());
-        plots.push_back(outfile);
+        c->SaveAs((outdir + dh.GetName() + ".pdf").c_str());
 
         delete exp;
         delete theo;
@@ -435,24 +373,185 @@ namespace NangaParbat
         delete mg;
         delete c;
       }
+  }
 
-    os << "| **Total** | **" << ntot << "** | - | - | **" << chi2tot / ntot << "** |\n";
-    std::cout << "| **Total** | **" << ntot << "** | - | - | **" << chi2tot / ntot << "** |\n";
+  //_________________________________________________________________________________
+  std::ostream& operator << (std::ostream& os, ChiSquare const& chi2)
+  {
+    // Report total chi2
+    os << "# Global chi2 / n.d.p.: " << chi2.Evaluate() << "\n\n";
 
-    os << "# Comparison plots\n";
-    for (auto const p : plots)
-      os << "<img src=" << p << ".pdf>\n";
+    // Report parameters
+    os << "# Non-perturbative function:\n" << chi2.GetNonPerturbativeFunction().LatexFormula() << "\n\n";
+    os << "# Parameters:\n";
+    for (auto const p : chi2.GetNonPerturbativeFunction().GetParameterNames())
+      os << p << "\t";
     os << "\n";
+    for (auto const p : chi2.GetParameters())
+      os << p << "\t";
+    os << "\n\n";
 
-    //for (auto const p : plots)
-    //  os << "![](" << p << ".png)\n";
+    // Loop over the blocks
+    for (int i = 0; i < (int) chi2._DSVect.size(); i++)
+      {
+        // Number of data points
+        const int nd = chi2._ndata[i];
 
-    fout.close();
+        // Get "DataHandler" and "ConvolutionTable" objects
+        const DataHandler      dh = chi2._DSVect[i].first;
+        const ConvolutionTable ct = chi2._DSVect[i].second;
+
+        // Get predictions
+        const std::vector<double> pred = ct.GetPredictions(chi2._NPFunc.Function());
+
+        // Get systematic shifts and associated penalty
+        const std::pair<std::vector<double>, double> sp = chi2.GetSystematicShifts(i);
+        const std::vector<double> shifts = sp.first;
+
+        // Get experimental central values and uncorrelated
+        // uncertainties.
+        const std::vector<double> mean = dh.GetFluctutatedData();
+        const std::vector<double> uncu = dh.GetUncorrelatedUnc();
+
+        // Compute chi2 starting from the penalty
+        double chi2n = sp.second;
+        for(int j = 0; j < nd; j++)
+          chi2n += pow( ( mean[j] - pred[j] - shifts[j] ) / uncu[j], 2);
+        chi2n /= nd;
+
+        // Make sure that the chi2 computed in terms of the nuisance
+        // parameters agrees with that computed using the covariance
+        // matrix.
+        const double chi2c = chi2.Evaluate(i);
+        if (std::abs(( chi2c - chi2n ) / chi2c) > 1e-3)
+          throw std::runtime_error("[ChiSquare::operator<<]: chi2 reconstruction failed");
+
+        // Get values of qT
+        const std::vector<double> qT = dh.GetKinematics().qTv;
+
+        // Get plotting labels
+        const std::map<std::string, std::string> labels = dh.GetLabels();
+
+        // Print predictions, experimental central value, uncorrelated
+        // uncertainty and systemetic shift.
+        os << "# Dataset name: " << dh.GetName() << "\n";
+        os << "# Plot title: " << labels.at("title") << "\n";
+        os << "# xlabel: " << labels.at("xlabel") << "\n";
+        os << "# ylabel: " << labels.at("ylabel") << "\n";
+        os << "# partial chi2 / n.d.p.: " << chi2n << "\n";
+        os << "#\t"
+           << "  qT [GeV]  \t"
+           << "   pred.    \t"
+           << "    exp.    \t"
+           << "    unc.    \t"
+           << "    shift   \t"
+           << "shifted pred.\t"
+           << "  residuals \t"
+           << "\n";
+        for (int j = 0; j < nd; j++)
+          os << j << "\t"
+             << (dh.GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]) << "\t"
+             << pred[j] << "\t"
+             << mean[j] << "\t"
+             << uncu[j] << "\t"
+             << shifts[j] << "\t"
+             << pred[j] + shifts[j] << "\t"
+             << ( mean[j] - pred[j] - shifts[j] ) / uncu[j] << "\t"
+             << "\n";
+        os << "\n";
+      }
     return os;
   }
 
   //_________________________________________________________________________________
-  void ChiSquare::MakePlots(std::string const& path) const
+  YAML::Emitter& operator << (YAML::Emitter& os, ChiSquare const& chi2)
   {
+    os.SetFloatPrecision(8);
+    os.SetDoublePrecision(8);
+    os << YAML::BeginMap;
+    os << YAML::Key << "Global chi2 / n.d.p." << YAML::Value << chi2.Evaluate();
+    os << YAML::Key << "Non-perturbative function" << YAML::Value << chi2.GetNonPerturbativeFunction().LatexFormula();
+
+    os << YAML::Key << "Parameters" << YAML::Value << YAML::Flow;
+    os << YAML::BeginMap;
+    for (int i = 0; i < (int) chi2.GetParameters().size(); i++)
+      os << YAML::Key << chi2.GetNonPerturbativeFunction().GetParameterNames()[i] << YAML::Value << chi2.GetParameters()[i];
+    os << YAML::EndMap;
+
+    // Loop over the blocks
+    os << YAML::Key << "Experiments" << YAML::Value << YAML::BeginSeq;
+    for (int i = 0; i < (int) chi2._DSVect.size(); i++)
+      {
+        // Number of data points
+        const int nd = chi2._ndata[i];
+
+        // Get "DataHandler" and "ConvolutionTable" objects
+        const DataHandler      dh = chi2._DSVect[i].first;
+        const ConvolutionTable ct = chi2._DSVect[i].second;
+
+        // Get predictions
+        const std::vector<double> pred = ct.GetPredictions(chi2._NPFunc.Function());
+
+        // Get systematic shifts and associated penalty
+        const std::pair<std::vector<double>, double> sp = chi2.GetSystematicShifts(i);
+        const std::vector<double> shifts = sp.first;
+
+        // Get experimental central values and uncorrelated
+        // uncertainties.
+        const std::vector<double> mean = dh.GetFluctutatedData();
+        const std::vector<double> uncu = dh.GetUncorrelatedUnc();
+
+        // Compute chi2 starting from the penalty
+        double chi2n = sp.second;
+        for(int j = 0; j < nd; j++)
+          chi2n += pow( ( mean[j] - pred[j] - shifts[j] ) / uncu[j], 2);
+        chi2n /= nd;
+
+        // Make sure that the chi2 computed in terms of the nuisance
+        // parameters agrees with that computed using the covariance
+        // matrix.
+        const double chi2c = chi2.Evaluate(i);
+        if (std::abs(( chi2c - chi2n ) / chi2c) > 1e-5)
+          throw std::runtime_error("[ChiSquare::operator<<]: chi2 reconstruction failed");
+
+        // Get values of qT
+        const std::vector<double> qT = dh.GetKinematics().qTv;
+
+        // Get plotting labels
+        const std::map<std::string, std::string> labels = dh.GetLabels();
+
+        // Print predictions, experimental central value, uncorrelated
+        // uncertainty and systemetic shift.
+        os << YAML::BeginMap;
+        os << YAML::Key << "Name" << YAML::Value << dh.GetName();
+        os << YAML::Key << "Plot title" << YAML::Value << labels.at("title");
+        os << YAML::Key << "xlabel" << YAML::Value << labels.at("xlabel");
+        os << YAML::Key << "ylabel" << YAML::Value << labels.at("ylabel");
+        os << YAML::Key << "partial chi2 / n.d.p." << YAML::Value << chi2n;
+        os << YAML::Key << "qT" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+        for (int j = 0; j < nd; j++)
+          os << (dh.GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]);
+        os << YAML::EndSeq;
+        os << YAML::Key << "Predictions" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+        for (int j = 0; j < nd; j++)
+          os << pred[j];
+        os << YAML::EndSeq;
+        os << YAML::Key << "Central values" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+        for (int j = 0; j < nd; j++)
+          os << mean[j];
+        os << YAML::EndSeq;
+        os << YAML::Key << "Uncorrelated uncertainties" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+        for (int j = 0; j < nd; j++)
+          os << uncu[j];
+        os << YAML::EndSeq;
+        os << YAML::Key << "Systematic shifts" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+        for (int j = 0; j < nd; j++)
+          os << shifts[j];
+        os << YAML::EndSeq;
+        os << YAML::EndMap;
+      }
+    os << YAML::EndSeq;
+    os << YAML::EndMap;
+    return os;
   }
 }

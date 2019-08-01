@@ -76,6 +76,12 @@ namespace NangaParbat
     virtual std::string LatexFormula() const { return ""; };
 
     /**
+     * @brief Virtual function that returns a vector of strings
+     * containing the names of the parameters in LaTex format.
+     */
+    virtual std::vector<std::string> GetParameterNames() const { return {}; };
+
+    /**
      * @name Getters
      * Functions to retrieve the feauture of the parameterisation
      */

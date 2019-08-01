@@ -6,17 +6,13 @@ Description: "Test fit with the Pavia 17 parameterisation."
 # 'minuit', 'ceres', and 'none'.
 Minimiser: minuit
 
-# Parameterisation to be fitted to data. This has to correspond to a
-# derivarion of the "Parameterisation" class.
-Parameterisation: PV17
+# Seed used with the random-number generator for the generation of the
+# Monte Carlo replicas
+Seed: 1234
 
 # Cut on qT / Q. This has to be smaller than the production cut used
 # to produce the tables.
 qToQmax: 0.2
-
-# Seed used with the random-number generator for the generation of the
-# Monte Carlo replicas
-Seed: 1234
 
 # Enable or disable the t0 prescription for the treatment of
 # normalisation uncertantities and define the set of parameters to be
@@ -26,13 +22,17 @@ Seed: 1234
 t0prescription: true
 t0parameters: [0.13, 0.285, 2.98, 0.173, 0.39]
 
+# Parameterisation to be fitted to data. This has to correspond to a
+# derivarion of the "Parameterisation" class.
+Parameterisation: PV17
+
 # List of parameters to be fitted to data. This requires that the
 # number and order of parameters matches those expected by the
 # particular parameterisation being used.
 Parameters:
-  - {name: "$g_2$",      starting_value: 0.13,  step: 0.001, fix: false}#, lower_bound: 0, upper_bound: 10}
-  - {name: "$N_1$",      starting_value: 0.285, step: 0.003, fix: false}#, lower_bound: 0, upper_bound: 10}
-  - {name: "$\\alpha$",  starting_value: 2.98,  step: 0.030, fix: false}#, lower_bound: 0, upper_bound: 10}
-  - {name: "$\\sigma$",  starting_value: 0.173, step: 0.002, fix: false}#, lower_bound: 0, upper_bound: 10}
-  - {name: "$\\lambda$", starting_value: 0.39,  step: 0.005, fix: true }#, lower_bound: 0, upper_bound: 10}
+  - {name: "g2",     starting_value: 0.13,  step: 0.001, fix: false}#, lower_bound: 0, upper_bound: 10}
+  - {name: "N1",     starting_value: 0.285, step: 0.003, fix: false}#, lower_bound: 0, upper_bound: 10}
+  - {name: "alpha",  starting_value: 2.98,  step: 0.030, fix: false}#, lower_bound: 0, upper_bound: 10}
+  - {name: "sigma",  starting_value: 0.173, step: 0.002, fix: false}#, lower_bound: 0, upper_bound: 10}
+  - {name: "lambda", starting_value: 0.39,  step: 0.005, fix: true }#, lower_bound: 0, upper_bound: 10}
 
