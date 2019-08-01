@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <sys/stat.h>
 
 //_________________________________________________________________________________
 int main(int argc, char* argv[])
@@ -24,6 +25,9 @@ int main(int argc, char* argv[])
 
   // Path to to output folder
   const std::string ProcessedDataPath = std::string(argv[2]);
+
+  // Create output folder
+  mkdir(ProcessedDataPath.c_str(), ACCESSPERMS);
 
   // Dataset file created dunring the filtering
   std::ofstream fout(ProcessedDataPath + "/datasets.yaml");

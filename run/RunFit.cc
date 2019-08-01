@@ -11,15 +11,16 @@
 #include <apfel/timer.h>
 #include <algorithm>
 #include <fstream>
+#include <sys/stat.h>
 
 //_________________________________________________________________________________
 int main(int argc, char* argv[])
 {
   // Check that the input is correct otherwise stop the code
-  if (argc < 5 || strcmp(argv[1], "--help") == 0)
+  if (argc < 6 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./RunFit <fit configuration file> <path to data folder> <path to tables folder> <replica ID>\n" << std::endl;
+      std::cout << "Syntax: ./RunFit <output dir> <fit configuration file> <path to data folder> <path to tables folder> <replica ID>\n" << std::endl;
       exit(-10);
     }
 
@@ -27,7 +28,7 @@ int main(int argc, char* argv[])
   apfel::Timer t;
 
   // Reading fit  parameters from an input card
-  const YAML::Node fitconfig = YAML::LoadFile(argv[1]);
+  const YAML::Node fitconfig = YAML::LoadFile(argv[2]);
 
   // Allocate "Parameterisation" derived object
   NangaParbat::Parameterisation *NPFunc;
@@ -44,8 +45,12 @@ int main(int argc, char* argv[])
   gsl_rng *rng = gsl_rng_alloc(gsl_rng_ranlxs2);
   gsl_rng_set(rng, fitconfig["Seed"].as<int>());
 
-  // Rplica ID number
-  const int ReplicaID = atoi(argv[4]);
+  // Replica ID number
+  const int ReplicaID = atoi(argv[5]);
+
+  // Create replica folder
+  std::string ReplicaFolder = std::string(argv[1]) + "/replica_" + std::string(argv[5]);
+  mkdir((ReplicaFolder).c_str(), ACCESSPERMS);
 
   // Define "ChiSquare" object with a given qT / Q cut
   NangaParbat::ChiSquare chi2{*NPFunc, fitconfig["qToQmax"].as<double>()};
@@ -57,18 +62,18 @@ int main(int argc, char* argv[])
   // Open datasets.yaml file that contains the list of datasets to be
   // fitted and push the corresponding pairs of "DataHandler" and
   // "ConvolutionTable" objects into the a vector.
-  const YAML::Node datasets = YAML::LoadFile(std::string(argv[2]) + "/datasets.yaml");
+  const YAML::Node datasets = YAML::LoadFile(std::string(argv[3]) + "/datasets.yaml");
   for (auto const& exp : datasets)
     for (auto const& ds : exp.second)
       {
         std::cout << "Reading " << ds["name"].as<std::string>() << " ..." << std::endl;
 
         // Convolution table
-        const std::string table = std::string(argv[3]) + "/" + ds["name"].as<std::string>() + ".yaml";
+        const std::string table = std::string(argv[4]) + "/" + ds["name"].as<std::string>() + ".yaml";
         const NangaParbat::ConvolutionTable ct{YAML::LoadFile(table)};
 
         // Datafile
-        const std::string datafile = std::string(argv[2]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
+        const std::string datafile = std::string(argv[3]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
         const NangaParbat::DataHandler dh{ds["name"].as<std::string>(), YAML::LoadFile(datafile), rng, ReplicaID, ct.GetPredictions(NPFunc->Function())};
 
         // Add chi2 block
@@ -88,21 +93,17 @@ int main(int argc, char* argv[])
 
   // =================================================================
   // Report section (should I separate it from the rest of this code?)
+  // It needs:
+  // - chi2
+  // - fitconfig
+  // - datasets
+  // - path to config.yaml
   // =================================================================
   // Print the total chi2
   std::cout << "Total chi2 = " << chi2() << "\n" << std::endl;
 
-  // Get number of data points for each experiment
-  const std::vector<int> ndata = chi2.GetDataPointNumbers();
-
-  // Print individual chi2's
-  const auto blocks = chi2.GetBlocks();
-  for (int iexp = 0; iexp < (int) ndata.size(); iexp++)
-    std::cout << iexp << ") " << blocks[iexp].first.GetName() << ", partial chi2 / #d.p.= " << chi2(iexp) << " (#d.p. = " << ndata[iexp] << ")" << std::endl;
-  std::cout << "\n";
-
   // Produce the report in markdown
-  std::ofstream fout("Report.md");
+  std::ofstream fout(ReplicaFolder + "/Report.md");
 
   // Summary
   fout << "# Summary\n";
@@ -128,8 +129,7 @@ int main(int argc, char* argv[])
   fout << "|\n";
 
   // Table of chi2's and plots
-  fout << chi2;
-  fout << "\n";
+  fout << chi2 << "\n";
 
   fout << "# Fit card\n";
   fout << "```\n";
@@ -143,11 +143,11 @@ int main(int argc, char* argv[])
 
   fout << "# Configuration card\n";
   fout << "This card is (and has to be) in the folder where the interpolation"
-       << " tables are stored (" << std::string(argv[3]) << "). This is actually"
+       << " tables are stored (" << std::string(argv[4]) << "). This is actually"
        << " not used in the fit but it reports the parameters used to compute"
        << " the interpolation tables.\n";
   fout << "```\n";
-  fout << YAML::LoadFile(std::string(argv[3]) + "/config.yaml") << "\n";
+  fout << YAML::LoadFile(std::string(argv[4]) + "/config.yaml") << "\n";
   fout << "```\n";
 
   fout.close();
@@ -155,7 +155,6 @@ int main(int argc, char* argv[])
 
   // Delete random-number generator
   gsl_rng_free(rng);
-
 
   // Delete "Parameterisation" object
   delete NPFunc;

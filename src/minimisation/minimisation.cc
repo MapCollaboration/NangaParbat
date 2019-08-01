@@ -6,10 +6,10 @@
 #include "NangaParbat/fcnminuit.h"
 #include "NangaParbat/fcnceres.h"
 
-#include <ROOT/Minuit2/MnUserParameters.h>
-#include <ROOT/Minuit2/MnMigrad.h>
-#include <ROOT/Minuit2/FunctionMinimum.h>
-#include <ROOT/Minuit2/MnPrint.h>
+#include <root/Minuit2/MnUserParameters.h>
+#include <root/Minuit2/MnMigrad.h>
+#include <root/Minuit2/FunctionMinimum.h>
+#include <root/Minuit2/MnPrint.h>
 
 #include <ceres/ceres.h>
 
