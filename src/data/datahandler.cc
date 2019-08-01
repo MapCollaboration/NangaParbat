@@ -223,7 +223,7 @@ namespace NangaParbat
     // Then include multiplicative uncertainties using the t0
     // prescription. If the t0 vector is empty or the fit is to the
     // central values, use the experimental central values.
-    if (_t0.empty() || fluctuation <= 0)
+    if (_t0.empty())
       for (int i = 0; i < _kin.ndata; i++)
         for (int j = 0; j < _kin.ndata; j++)
           _covmat(i, j) +=
@@ -252,11 +252,6 @@ namespace NangaParbat
         // only the last fluctuation. This is non efficient but allows
         // one to identify a given random replica by its ID and the
         // random seed.
-        //double mi = 0;
-        //double mj = 0;
-        //double cij = 0;
-        //int i = 0;
-        //int j = 5;
         for (int irep = 0; irep < fluctuation; irep++)
           {
             // Additive correlation random numbers
@@ -287,12 +282,7 @@ namespace NangaParbat
                 // Generate fluctuation
                 _fluctuations[i] = _means[i] * Fmult * ( 1 + Func + Fadd );
               }
-            //mi += _fluctuations[i];
-            //mj += _fluctuations[j];
-            //cij += _fluctuations[i] * _fluctuations[j];
           }
-        //std::cout << mi / fluctuation / _means[i] << "  " << mj / fluctuation / _means[j]
-        //	  << "  " << ( cij / fluctuation - (mi / fluctuation) * (mj / fluctuation) ) / _covmat(i, j) << std::endl;
       }
   }
 

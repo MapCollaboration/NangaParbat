@@ -64,6 +64,15 @@ namespace NangaParbat
     std::vector<double> GetResidualDerivatives(int const& ids, int const& ipar) const;
 
     /**
+     * @brief Function that returns the systematic shifts and the
+     * associated penalty term of the &chi;<SUP>2</SUP>.
+     * @param ids: the dataset index
+     * @return a pair with the vector of nuisance parameters as a
+     * first entry and the penalty as a second.
+     */
+    std::pair<std::vector<double>, double> GetSystematicShifts(int const& ids) const;
+
+    /**
      * @brief Function that evaluates the &chi;<SUP>2</SUP>'s
      * @param ids: the dataset index (default: -1, the global
      * &chi;<SUP>2</SUP> is computed)
@@ -145,6 +154,12 @@ namespace NangaParbat
      * @return The vector containing the parameters.
      */
     std::vector<double> GetParameters() const { return _NPFunc.GetParameters(); };
+
+    /**
+     * @brief That produces data-theory comparison plots using ROOT.
+     * @param path: path to where the "plots" folder will be placed
+     */
+    void MakePlots(std::string const& path) const;
 
   protected:
     std::vector<std::pair<DataHandler, ConvolutionTable>> _DSVect;  //!< Vector of "DataHandler-ConcolutionTable" pairs

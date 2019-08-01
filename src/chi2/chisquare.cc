@@ -126,6 +126,83 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
+  std::pair<std::vector<double>, double> ChiSquare::GetSystematicShifts(int const& ids) const
+  {
+    if (ids < 0 || ids >= (int) _DSVect.size())
+      throw std::runtime_error("[ChiSquare::GetResiduals]: index out of range");
+
+    // Number of data points
+    const int nd = _ndata[ids];
+
+    // Get "DataHandler" and "ConvolutionTable" objects
+    const DataHandler      dh = _DSVect[ids].first;
+    const ConvolutionTable ct = _DSVect[ids].second;
+
+    // Get experimental central values, uncorrelated and correlated
+    // uncertainties. Rescale the multiplicative correlation if the t0
+    // prescription is being used.
+    const std::vector<double> mean = dh.GetFluctutatedData();
+    const std::vector<double> uncu = dh.GetUncorrelatedUnc();
+    const std::vector<double> t0   = dh.GetT0();
+    const std::vector<std::vector<double>> corra = dh.GetAddCorrelatedUnc();
+    const std::vector<std::vector<double>> corrm = dh.GetMultCorrelatedUnc();
+    std::vector<std::vector<double>> corr(mean.size());
+    for (int j = 0; j < nd; j++)
+      {
+        std::vector<double> c = corra[j];
+        double t0fact = 1;
+        if (!t0.empty())
+          t0fact = t0[j] / mean[j];
+        for (auto const m : corrm[j])
+          c.push_back(t0fact * m);
+        corr[j] = c;
+      }
+
+    // Get predictions
+    const std::vector<double> pred = ct.GetPredictions(_NPFunc.Function());
+
+    // Compute residuals only for the points that pass the cut qT / Q,
+    // set the others to zero.
+    std::vector<double> res(mean.size(), 0.);
+    for (int j = 0; j < nd; j++)
+      res[j] = mean[j] - pred[j];
+
+    // Construct matrix A and vector rho
+    const int nsys = corr[0].size();
+    apfel::matrix<double> A;
+    A.resize(nsys, nsys, 0.);
+    std::vector<double> rho(nsys, 0.);
+    for(int alpha = 0; alpha < nsys; alpha++)
+      {
+        for(int j = 0; j < nd; j++)
+          rho[alpha] += res[j] * corr[j][alpha] * mean[j] / pow(uncu[j], 2);
+
+        A(alpha, alpha) = 1;
+        for(int beta = 0; beta < nsys; beta++)
+          for(int j = 0; j < nd; j++)
+            A(alpha, beta) += corr[j][alpha] * corr[j][beta] * pow(mean[j], 2) / pow(uncu[j], 2);
+      }
+
+    // Solve A * lambda = rho to obtain the nuisance parameters
+    const std::vector<double> lambda = SolveSymmetricSystem(A, rho);
+
+    // Compute systematic shifs
+    std::vector<double> shifts(mean.size(), 0.);
+    for (int j = 0; j < nd; j++)
+      for(int alpha = 0; alpha < nsys; alpha++)
+        shifts[j] += lambda[alpha] * corr[j][alpha] * mean[j];
+
+    // Compute penalty
+    double penalty = 0;
+    for(int alpha = 0; alpha < nsys; alpha++)
+      penalty += pow(lambda[alpha], 2);
+
+    // Solve A * lambda = rho to obtain the nuisance parameters lambda
+    // and return the result.
+    return std::make_pair(shifts, penalty);
+  }
+
+  //_________________________________________________________________________________
   double ChiSquare::Evaluate(int const& ids) const
   {
     // Define index range
@@ -225,71 +302,26 @@ namespace NangaParbat
         const DataHandler      dh = chi2._DSVect[i].first;
         const ConvolutionTable ct = chi2._DSVect[i].second;
 
-        // Get experimental central values uncorrelated and correlated
-        // uncertainties. Rescale the multiplicative correlation if
-        // the t0 prescription is being used.
-        const std::vector<double> mean = dh.GetFluctutatedData();
-        const std::vector<double> uncu = dh.GetUncorrelatedUnc();
-        const std::vector<double> t0   = dh.GetT0();
-        const std::vector<std::vector<double>> corra = dh.GetAddCorrelatedUnc();
-        const std::vector<std::vector<double>> corrm = dh.GetMultCorrelatedUnc();
-        std::vector<std::vector<double>> corr(mean.size());
-        for (int j = 0; j < nd; j++)
-          {
-            std::vector<double> c = corra[j];
-            double t0fact = 1;
-            if (!t0.empty())
-              t0fact = t0[j] / mean[j];
-            for (auto const m : corrm[j])
-              c.push_back(t0fact * m);
-            corr[j] = c;
-          }
-
         // Get predictions
         const std::vector<double> pred = ct.GetPredictions(chi2._NPFunc.Function());
 
-        // Now compute systematic shifts. Compute residuals only for
-        // the points that pass the cut qT / Q, set the others to
-        // zero.
-        std::vector<double> res(mean.size(), 0.);
-        for (int j = 0; j < nd; j++)
-          res[j] = mean[j] - pred[j];
+        // Get systematic shifts and associated penalty
+        const std::pair<std::vector<double>, double> sp = chi2.GetSystematicShifts(i);
+        const std::vector<double> shifts = sp.first;
+        const double penalty = sp.second;
 
-        // Construct matrix A and vector rho
-        const int nsys = corr[0].size();
-        apfel::matrix<double> A;
-        A.resize(nsys, nsys, 0.);
-        std::vector<double>   rho(nsys, 0.);
-        for(int alpha = 0; alpha < nsys; alpha++)
-          {
-            for(int j = 0; j < nd; j++)
-              rho[alpha] += res[j] * corr[j][alpha] * mean[j] / pow(uncu[j], 2);
-
-            A(alpha, alpha) = 1;
-            for(int beta = 0; beta < nsys; beta++)
-              for(int j = 0; j < nd; j++)
-                A(alpha, beta) += corr[j][alpha] * corr[j][beta] * pow(mean[j], 2) / pow(uncu[j], 2);
-          }
-
-        // Solve A * lambda = rho to obtain the nuisance parameters
-        const std::vector<double> lambda = SolveSymmetricSystem(A, rho);
-
-        // Compute systematic shifs
-        std::vector<double> shifts(mean.size(), 0.);
-        for (int j = 0; j < nd; j++)
-          for(int alpha = 0; alpha < nsys; alpha++)
-            shifts[j] += lambda[alpha] * corr[j][alpha] * mean[j];
+        // Get experimental central values and uncorrelated
+        // uncertainties.
+        const std::vector<double> mean = dh.GetFluctutatedData();
+        const std::vector<double> uncu = dh.GetUncorrelatedUnc();
 
         // Compute chi2 using the shifts
         double chi2n = 0;
         for(int j = 0; j < nd; j++)
-          chi2n += pow( ( res[j] - shifts[j] ) / uncu[j], 2);
+          chi2n += pow( ( mean[j] - pred[j] - shifts[j] ) / uncu[j], 2);
         os << "| " << dh.GetName() << " | " << nd << " | " << chi2n;
 
         // Compute penalty
-        double penalty = 0;
-        for(int alpha = 0; alpha < nsys; alpha++)
-          penalty += pow(lambda[alpha], 2);
         os << " | " << penalty;
 
         // Add penalty to the chi2 and divide by the number of data
@@ -299,6 +331,8 @@ namespace NangaParbat
         chi2n /= nd;
         ntot += nd;
         os << " | " << chi2n << " |\n";
+
+        std::cout << chi2n << " " << chi2.Evaluate(i) << std::endl;
 
         // Get values of qT
         const std::vector<double> qT = dh.GetKinematics().qTv;
@@ -403,6 +437,7 @@ namespace NangaParbat
       }
 
     os << "| **Total** | **" << ntot << "** | - | - | **" << chi2tot / ntot << "** |\n";
+    std::cout << "| **Total** | **" << ntot << "** | - | - | **" << chi2tot / ntot << "** |\n";
 
     os << "# Comparison plots\n";
     for (auto const p : plots)
@@ -414,5 +449,10 @@ namespace NangaParbat
 
     fout.close();
     return os;
+  }
+
+  //_________________________________________________________________________________
+  void ChiSquare::MakePlots(std::string const& path) const
+  {
   }
 }

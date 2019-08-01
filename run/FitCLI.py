@@ -179,6 +179,12 @@ questions = [
         "name": "Parameterisation",
         "message": "Select minimiser:",
         "choices": ["DWS", "PV17", "PV19"],
+    },
+    {
+        "type": "confirm",
+        "name": "t0prescription",
+        "message": "Do you want to use the t0 prescription?",
+        "default": True
     }
 ]
 fitconfig = prompt(questions, style=custom_style_3)
@@ -262,44 +268,45 @@ if answer["ConfirmParameters"]:
     for p in fitconfig["Parameters"]:
         print(p["name"] + " = " + str(p["starting_value"]) + " (step = " + str(p["step"]) + ", fixed: " + str(p["fix"]) + ")")
 
-# Report default t0 parameters
-print(bcolours.HEADER + bcolours.BOLD + "\nT0 parameters: " + bcolours.ENDC, fitconfig["t0parameters"])
+if fitconfig["t0prescription"]:
+    # Report default t0 parameters
+    print(bcolours.HEADER + bcolours.BOLD + "\nT0 parameters: " + bcolours.ENDC, fitconfig["t0parameters"])
 
-# Allow the user to change the parameters
-questions = [
-    {
-        "type": "confirm",
-        "name": "Confirmt0parameters",
-        "message": "Do you want to change the t0 parameters?",
-        "default": False
-    }
-]
-answer = prompt(questions, style=custom_style_3)
+    # Allow the user to change the parameters
+    questions = [
+        {
+            "type": "confirm",
+            "name": "Confirmt0parameters",
+            "message": "Do you want to change the t0 parameters?",
+            "default": False
+        }
+    ]
+    answer = prompt(questions, style=custom_style_3)
 
-if answer["Confirmt0parameters"]:
-    newpars = []
-    for p in t0["t0parameters"]:
-        questions = [
-            {
-                "type": "input",
-                "name": "value",
-                "message": "Enter new value for the " + str(t0["t0parameters"].index(p)) + "-th parameter:",
-                "validate": FloatValidator,
-                "default": str(p)
-            }
-        ]
-        np = prompt(questions, style=custom_style_3)
-        newpars.append(np["value"])
+    if answer["Confirmt0parameters"]:
+        newpars = []
+        for p in t0["t0parameters"]:
+            questions = [
+                {
+                    "type": "input",
+                    "name": "value",
+                    "message": "Enter new value for the " + str(t0["t0parameters"].index(p)) + "-th parameter:",
+                    "validate": FloatValidator,
+                    "default": str(p)
+                }
+            ]
+            np = prompt(questions, style=custom_style_3)
+            newpars.append(np["value"])
 
-    fitconfig["t0parameters"] = newpars
-    print(bcolours.HEADER + bcolours.BOLD + "\nNew T0 parameters: " + bcolours.ENDC, fitconfig["t0parameters"])
+        fitconfig["t0parameters"] = newpars
+        print(bcolours.HEADER + bcolours.BOLD + "\nNew T0 parameters: " + bcolours.ENDC, fitconfig["t0parameters"])
 
 # Print configuration in yaml
 with open(outfolder + "/fitconfig.yaml", "w") as outfile:
     yaml.dump(fitconfig, outfile, Dumper=yaml.RoundTripDumper)
 
 # Questions concerning the fit
-print(bcolours.HEADER + bcolours.BOLD + "\nFit parameters: " + bcolours.ENDC, fitconfig["t0parameters"])
+print(bcolours.HEADER + bcolours.BOLD + "\nFit parameters: " + bcolours.ENDC)
 questions = [
     {
         "type": "input",
@@ -335,6 +342,7 @@ print(bcolours.OKBLUE + "\nLaunching the fits...\n" + bcolours.ENDC)
 
 # First launch fit to the central values, if requested
 if answer["Confirm Replica 0"]:
+    #print(command + " " + RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables 0")
     os.system(command + " " + RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables 0")
 
 # Now launch fits to Monte-Carlo replicas
