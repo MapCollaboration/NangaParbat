@@ -30,6 +30,6 @@ where ```<path to raw-data folder>``` is the path to the raw data files and ```<
 
 - **RunFit**: this codes runs a fit and is run as follows:
 ```Shell
-./RunFit <fit configuration file> <path to data folder> <path to tables folder>
+./RunFit <output dir> <fit configuration file> <path to data folder> <path to tables folder> <replica ID>
 ```
-where ```<configuration file>``` points to the fit configuration file (*e.g.* see [fitPV17.yaml](../cards/fitPV17.yaml), ```<path to data folder>``` is the path to the data files to be fitted , and ```<path to tables folder> ```is the path to the corresponding interpolation tables to be used.
+where ```<output dir>``` is the output directory, ```<configuration file>``` points to the fit configuration file (*e.g.* see [fitPV17.yaml](../cards/fitPV17.yaml), ```<path to data folder>``` is the path to the data files to be fitted , ```<path to tables folder> ```is the path to the corresponding interpolation tables to be used, and ```<replica ID>``` is the replica ID number (0 correcponds to central values).
