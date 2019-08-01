@@ -44,11 +44,13 @@ ccmake .
 
 ## Documetation
 
-Some general documentation can be found in the relevant subfolders:
+Some general documentation can be found at the following links:
 
+- [command line interface](doc/CommandLineInterface.md)
 - [raw data files](rawdata/)
 - [preprocessed data files](data/)
 - [utilities](run/)
+- [convolution prefactors](doc/N3LLConvTabPrefactors.md)
 
 Code documentation generated with Doxygen can be found [here](https://vbertone.github.io/NangaParbat/html/index.html).
 
