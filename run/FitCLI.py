@@ -152,7 +152,7 @@ questions = [
     {
         "type": "input",
         "name": "Description",
-        "message": "Type a short descrition of the fit:"
+        "message": "Type a short description of the fit:"
     },
     {
         "type": "list",
@@ -183,7 +183,7 @@ questions = [
     {
         "type": "list",
         "name": "Parameterisation",
-        "message": "Select minimiser:",
+        "message": "Select NP function:",
         "choices": ["DWS", "PV17", "PV19"],
     }
 ]
