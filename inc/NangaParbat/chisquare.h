@@ -49,9 +49,12 @@ namespace NangaParbat
      * &chi;<SUP>2</SUP> deriving from the Cholesky decomposition of
      * the covariance matrix.
      * @param ids: the dataset index
+     * @param central: if true, the residuals are computed using the
+     * experimental central values rather than the fluctuated data
+     * (default: false)
      * @return the vector of residuals
      */
-    std::vector<double> GetResiduals(int const& ids) const;
+    std::vector<double> GetResiduals(int const& ids, bool const& central = false) const;
 
     /**
      * @brief Function that returns the derivative of the residuals of
@@ -76,10 +79,13 @@ namespace NangaParbat
      * @brief Function that evaluates the &chi;<SUP>2</SUP>'s
      * @param ids: the dataset index (default: -1, the global
      * &chi;<SUP>2</SUP> is computed)
+     * @param central: if true, the &chi;<SUP>2</SUP> is computed
+     * using the experimental central values rather than the
+     * fluctuated data (default: false)
      * @return the value of the &chi;<SUP>2</SUP> of the "ids"-th
      * block normalised to the number of data points.
      */
-    double Evaluate(int const& ids = -1) const;
+    double Evaluate(int const& ids = -1, bool const& central = false) const;
 
     /**
      * @brief Function that evaluates the (analytic) derivative of the
@@ -171,13 +177,11 @@ namespace NangaParbat
     double                                                _qToQMax; //!< Max value of the ratio qT / Q allowed in the computation of the &chi;<SUP>2</SUP>
     std::vector<int>                                      _ndata;   //!< Vector constaining the number of data points per dataset that pass the qT/Q cut
 
-    friend std::ostream& operator << (std::ostream& os, ChiSquare const& chi2);
     friend YAML::Emitter& operator << (YAML::Emitter& os, ChiSquare const& chi2);
   };
 
   /**
    * @brief Method which prints ChiSquare feautures with cout <<.
    */
-  std::ostream& operator << (std::ostream& os, ChiSquare const& chi2);
   YAML::Emitter& operator << (YAML::Emitter& os, ChiSquare const& chi2);
 }

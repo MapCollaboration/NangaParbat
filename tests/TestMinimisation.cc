@@ -9,11 +9,11 @@
 #include <math.h>
 #include <iostream>
 
-#include <root/Minuit2/MnUserParameters.h>
-#include <root/Minuit2/MnMachinePrecision.h>
-#include <root/Minuit2/MnMigrad.h>
-#include <root/Minuit2/FunctionMinimum.h>
-#include <root/Minuit2/MnPrint.h>
+#include <ROOT/Minuit2/MnUserParameters.h>
+#include <ROOT/Minuit2/MnMachinePrecision.h>
+#include <ROOT/Minuit2/MnMigrad.h>
+#include <ROOT/Minuit2/FunctionMinimum.h>
+#include <ROOT/Minuit2/MnPrint.h>
 
 //_________________________________________________________________________________
 // Main program

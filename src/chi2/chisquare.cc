@@ -10,13 +10,13 @@
 #include <sys/stat.h>
 #include <fstream>
 
-#include <root/TGraph.h>
-#include <root/TGraphErrors.h>
-#include <root/TLegend.h>
-#include <root/TMultiGraph.h>
-#include <root/TCanvas.h>
-#include <root/TAxis.h>
-#include <root/TStyle.h>
+#include <ROOT/TGraph.h>
+#include <ROOT/TGraphErrors.h>
+#include <ROOT/TLegend.h>
+#include <ROOT/TMultiGraph.h>
+#include <ROOT/TCanvas.h>
+#include <ROOT/TAxis.h>
+#include <ROOT/TStyle.h>
 
 namespace NangaParbat
 {
@@ -63,7 +63,7 @@ namespace NangaParbat
   };
 
   //_________________________________________________________________________________
-  std::vector<double> ChiSquare::GetResiduals(int const& ids) const
+  std::vector<double> ChiSquare::GetResiduals(int const& ids, bool const& central) const
   {
     if (ids < 0 || ids >= (int) _DSVect.size())
       throw std::runtime_error("[ChiSquare::GetResiduals]: index out of range");
@@ -72,8 +72,12 @@ namespace NangaParbat
     const DataHandler      dh = _DSVect[ids].first;
     const ConvolutionTable ct = _DSVect[ids].second;
 
-    // Get (fluctuated) experimental central values
-    const std::vector<double> mean = dh.GetFluctutatedData();
+    // Get experimental values
+    std::vector<double> mean;
+    if (central)
+      mean = dh.GetMeanValues();
+    else
+      mean = dh.GetFluctutatedData();
 
     // Get predictions
     const std::vector<double> pred = ct.GetPredictions(_NPFunc.Function());
@@ -141,7 +145,8 @@ namespace NangaParbat
     // Get experimental central values, uncorrelated and correlated
     // uncertainties. Rescale the multiplicative correlation if the t0
     // prescription is being used.
-    const std::vector<double> mean = dh.GetFluctutatedData();
+    const std::vector<double> fluc = dh.GetFluctutatedData();
+    const std::vector<double> mean = dh.GetMeanValues();
     const std::vector<double> uncu = dh.GetUncorrelatedUnc();
     const std::vector<double> t0   = dh.GetT0();
     const std::vector<std::vector<double>> corra = dh.GetAddCorrelatedUnc();
@@ -165,7 +170,7 @@ namespace NangaParbat
     // set the others to zero.
     std::vector<double> res(mean.size(), 0.);
     for (int j = 0; j < nd; j++)
-      res[j] = mean[j] - pred[j];
+      res[j] = fluc[j] - pred[j];
 
     // Construct matrix A and vector rho
     const int nsys = corr[0].size();
@@ -203,7 +208,7 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  double ChiSquare::Evaluate(int const& ids) const
+  double ChiSquare::Evaluate(int const& ids, bool const& central) const
   {
     // Define index range
     int istart = 0;
@@ -222,7 +227,7 @@ namespace NangaParbat
     for (int i = istart; i < iend; i++)
       {
         // Get residuals
-        const std::vector<double> x = GetResiduals(i);
+        const std::vector<double> x = GetResiduals(i, central);
 
         // Compute contribution to the chi2 as absolute value of "x"
         chi2 += std::inner_product(x.begin(), x.end(), x.begin(), 0.);
@@ -376,100 +381,13 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  std::ostream& operator << (std::ostream& os, ChiSquare const& chi2)
-  {
-    // Report total chi2
-    os << "# Global chi2 / n.d.p.: " << chi2.Evaluate() << "\n\n";
-
-    // Report parameters
-    os << "# Non-perturbative function:\n" << chi2.GetNonPerturbativeFunction().LatexFormula() << "\n\n";
-    os << "# Parameters:\n";
-    for (auto const p : chi2.GetNonPerturbativeFunction().GetParameterNames())
-      os << p << "\t";
-    os << "\n";
-    for (auto const p : chi2.GetParameters())
-      os << p << "\t";
-    os << "\n\n";
-
-    // Loop over the blocks
-    for (int i = 0; i < (int) chi2._DSVect.size(); i++)
-      {
-        // Number of data points
-        const int nd = chi2._ndata[i];
-
-        // Get "DataHandler" and "ConvolutionTable" objects
-        const DataHandler      dh = chi2._DSVect[i].first;
-        const ConvolutionTable ct = chi2._DSVect[i].second;
-
-        // Get predictions
-        const std::vector<double> pred = ct.GetPredictions(chi2._NPFunc.Function());
-
-        // Get systematic shifts and associated penalty
-        const std::pair<std::vector<double>, double> sp = chi2.GetSystematicShifts(i);
-        const std::vector<double> shifts = sp.first;
-
-        // Get experimental central values and uncorrelated
-        // uncertainties.
-        const std::vector<double> mean = dh.GetFluctutatedData();
-        const std::vector<double> uncu = dh.GetUncorrelatedUnc();
-
-        // Compute chi2 starting from the penalty
-        double chi2n = sp.second;
-        for(int j = 0; j < nd; j++)
-          chi2n += pow( ( mean[j] - pred[j] - shifts[j] ) / uncu[j], 2);
-        chi2n /= nd;
-
-        // Make sure that the chi2 computed in terms of the nuisance
-        // parameters agrees with that computed using the covariance
-        // matrix.
-        const double chi2c = chi2.Evaluate(i);
-        if (std::abs(( chi2c - chi2n ) / chi2c) > 1e-3)
-          throw std::runtime_error("[ChiSquare::operator<<]: chi2 reconstruction failed");
-
-        // Get values of qT
-        const std::vector<double> qT = dh.GetKinematics().qTv;
-
-        // Get plotting labels
-        const std::map<std::string, std::string> labels = dh.GetLabels();
-
-        // Print predictions, experimental central value, uncorrelated
-        // uncertainty and systemetic shift.
-        os << "# Dataset name: " << dh.GetName() << "\n";
-        os << "# Plot title: " << labels.at("title") << "\n";
-        os << "# xlabel: " << labels.at("xlabel") << "\n";
-        os << "# ylabel: " << labels.at("ylabel") << "\n";
-        os << "# partial chi2 / n.d.p.: " << chi2n << "\n";
-        os << "#\t"
-           << "  qT [GeV]  \t"
-           << "   pred.    \t"
-           << "    exp.    \t"
-           << "    unc.    \t"
-           << "    shift   \t"
-           << "shifted pred.\t"
-           << "  residuals \t"
-           << "\n";
-        for (int j = 0; j < nd; j++)
-          os << j << "\t"
-             << (dh.GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]) << "\t"
-             << pred[j] << "\t"
-             << mean[j] << "\t"
-             << uncu[j] << "\t"
-             << shifts[j] << "\t"
-             << pred[j] + shifts[j] << "\t"
-             << ( mean[j] - pred[j] - shifts[j] ) / uncu[j] << "\t"
-             << "\n";
-        os << "\n";
-      }
-    return os;
-  }
-
-  //_________________________________________________________________________________
   YAML::Emitter& operator << (YAML::Emitter& os, ChiSquare const& chi2)
   {
     os.SetFloatPrecision(8);
     os.SetDoublePrecision(8);
     os << YAML::BeginMap;
-    os << YAML::Key << "Global chi2 / n.d.p." << YAML::Value << chi2.Evaluate();
+    os << YAML::Key << "Global error function" << YAML::Value << chi2.Evaluate();
+    os << YAML::Key << "Global chi2" << YAML::Value << chi2.Evaluate(-1, true);
     os << YAML::Key << "Non-perturbative function" << YAML::Value << chi2.GetNonPerturbativeFunction().LatexFormula();
 
     os << YAML::Key << "Parameters" << YAML::Value << YAML::Flow;
@@ -498,13 +416,14 @@ namespace NangaParbat
 
         // Get experimental central values and uncorrelated
         // uncertainties.
-        const std::vector<double> mean = dh.GetFluctutatedData();
+        const std::vector<double> mean = dh.GetMeanValues();
+        const std::vector<double> fluc = dh.GetFluctutatedData();
         const std::vector<double> uncu = dh.GetUncorrelatedUnc();
 
         // Compute chi2 starting from the penalty
         double chi2n = sp.second;
         for(int j = 0; j < nd; j++)
-          chi2n += pow( ( mean[j] - pred[j] - shifts[j] ) / uncu[j], 2);
+          chi2n += pow( ( fluc[j] - pred[j] - shifts[j] ) / uncu[j], 2);
         chi2n /= nd;
 
         // Make sure that the chi2 computed in terms of the nuisance
@@ -527,7 +446,8 @@ namespace NangaParbat
         os << YAML::Key << "Plot title" << YAML::Value << labels.at("title");
         os << YAML::Key << "xlabel" << YAML::Value << labels.at("xlabel");
         os << YAML::Key << "ylabel" << YAML::Value << labels.at("ylabel");
-        os << YAML::Key << "partial chi2 / n.d.p." << YAML::Value << chi2n;
+        os << YAML::Key << "partial error function" << YAML::Value << chi2c;
+        os << YAML::Key << "partial chi2" << YAML::Value << chi2.Evaluate(i, true);
         os << YAML::Key << "qT" << YAML::Value << YAML::Flow << YAML::BeginSeq;
         for (int j = 0; j < nd; j++)
           os << (dh.GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]);
@@ -539,6 +459,10 @@ namespace NangaParbat
         os << YAML::Key << "Central values" << YAML::Value << YAML::Flow << YAML::BeginSeq;
         for (int j = 0; j < nd; j++)
           os << mean[j];
+        os << YAML::EndSeq;
+        os << YAML::Key << "Fluctuated data" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+        for (int j = 0; j < nd; j++)
+          os << fluc[j];
         os << YAML::EndSeq;
         os << YAML::Key << "Uncorrelated uncertainties" << YAML::Value << YAML::Flow << YAML::BeginSeq;
         for (int j = 0; j < nd; j++)

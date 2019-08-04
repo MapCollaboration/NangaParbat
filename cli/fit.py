@@ -1,56 +1,18 @@
-from __future__ import print_function, unicode_literals
-
-import pyfiglet
-import regex
-from pprint import pprint
-from PyInquirer import style_from_dict, Token, prompt, Separator
-from PyInquirer import Validator, ValidationError
+import banner
+from PyInquirer import prompt, Separator
 from examples import custom_style_3
-import os
 from ruamel import yaml
+import os
+from bcolours import *
+from validators import *
 
-class bcolours:
-    HEADER    = "\033[95m"
-    OKBLUE    = "\033[94m"
-    OKGREEN   = "\033[92m"
-    WARNING   = "\033[93m"
-    FAIL      = "\033[91m"
-    ENDC      = "\033[0m"
-    BOLD      = "\033[1m"
-    UNDERLINE = "\033[4m"
-
-banner = pyfiglet.figlet_format("NangaParbat", font = "slant")
-print(bcolours.OKGREEN + bcolours.BOLD + "\nWelcome to:")
-print(banner + bcolours.ENDC)
+# Print banner
+print(banner.banner())
 
 # Folder containing the utilities
-RunFolder = os.path.dirname(os.path.realpath(__file__))
+RunFolder = os.path.dirname(os.path.realpath(__file__)) + "/../run"
 
-# Validators
-class OutputFolderValidator(Validator):
-    def validate(self, document):
-        dir = RunFolder + "/../" + document.text
-        exists = os.path.isdir(dir)
-        if exists:
-            raise ValidationError(message = "The folder '" + document.text + "' already exists", cursor_position = len(document.text))
-
-class FloatValidator(Validator):
-    def validate(self, document):
-        try:
-            float(document.text)
-        except ValueError:
-            raise ValidationError(message = "Please enter a number", cursor_position = len(document.text))
-
-class IntegerValidator(Validator):
-    def validate(self, document):
-        try:
-            int(document.text)
-            if int(document.text) < 0:
-                raise ValidationError(message = "The number has to be non negative", cursor_position = len(document.text))
-        except ValueError:
-            raise ValidationError(message = "Please enter an integer number", cursor_position = len(document.text))
-
-# Output folder
+# Create output folder
 questions = [
     {
         "type": "input",
@@ -152,7 +114,7 @@ questions = [
     {
         "type": "input",
         "name": "Description",
-        "message": "Type a short descrition of the fit:"
+        "message": "Type a short description of the fit:"
     },
     {
         "type": "list",
@@ -183,7 +145,7 @@ questions = [
     {
         "type": "list",
         "name": "Parameterisation",
-        "message": "Select minimiser:",
+        "message": "Select parameterisation:",
         "choices": ["DWS", "PV17", "PV19"],
     }
 ]
@@ -235,7 +197,7 @@ answer = prompt(questions, style=custom_style_3)
 if answer["ConfirmParameters"]:
     newpars = []
     print()
-    for p in pars["Parameters"]:
+    for p in fitconfig["Parameters"]:
         print( bcolours.OKBLUE + "Modify parameter " + p["name"] + ":" + bcolours.ENDC)
         questions = [
             {
@@ -285,12 +247,12 @@ if fitconfig["t0prescription"]:
 
     if answer["Confirmt0parameters"]:
         newpars = []
-        for p in t0["t0parameters"]:
+        for p in fitconfig["t0parameters"]:
             questions = [
                 {
                     "type": "input",
                     "name": "value",
-                    "message": "Enter new value for the " + str(t0["t0parameters"].index(p)) + "-th parameter:",
+                    "message": "Enter new value for the " + str(fitconfig["t0parameters"].index(p)) + "-th parameter:",
                     "validate": FloatValidator,
                     "default": str(p)
                 }

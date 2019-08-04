@@ -100,6 +100,7 @@ int main(int argc, char* argv[])
   out << chi2;
   std::ofstream fout(ReplicaFolder + "/Report.yaml");
   //fout << chi2 << "\n";
+  fout << "Status: " << status << std::endl;
   fout << out.c_str() << std::endl;
   fout.close();
 
