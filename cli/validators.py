@@ -11,7 +11,7 @@ class OutputFolderValidator(Validator):
 
 class NotOutputFolderValidator(Validator):
     def validate(self, document):
-        dir = os.path.dirname(os.path.realpath(__file__)) + "/" + document.text
+        dir = os.path.dirname(os.path.realpath(__file__)) + "/../" + document.text
         exists = os.path.isdir(dir)
         if not exists:
             os.listdir()
