@@ -32,7 +32,79 @@ Details and more information on the tables and how their prefactors are calculat
 
 At the end of the notes an appendix with the details about ``DY@NNLO`` and how the fiducial cross sections were produced is also provided.
 
-# NLL and LL convolution tables and their prefactors
+# LL and NLL convolution tables and their prefactors
+
+The convolution tables at ``LL`` are computed with ``NangaParbat/run/CreateTables.cc`` using the following configuration file (``NangaParbat/cards/config.yaml``), which is also copied in the folder ``NangaParbat/tables/LL/``.
+
+``` yaml
+# Collinear PDF set and member to be used for the generation of the
+# tables. They are assumed to be in the LHAPDF format.
+pdfset:
+  name: "MMHT2014lo68cl"
+  member: 0
+
+# Collinear FF set and member to be used for the generation of the
+# tables. They are assumed to be in the LHAPDF format.
+ffset:
+  name: "MMHT2014nlo68cl"
+  member: 0
+
+# Perturbative order of the computation. 0: LL, 1: NLL, 2: NNLL, 3:
+# NNNLL, -1: NLL', -2: NNLL'
+PerturbativeOrder: 0
+
+# Initial and final scale-variation factors around mub = 2e^{-gamma_E}
+# / b and Q, respectively.
+TMDscales:
+  Ci: 1
+  Cf: 1
+
+# Reference value of alpha_em.
+alphaem:
+  aref: 0.00776578395589
+  Qref: 91.1876
+  run: true
+
+# Parameters of the x-space subgrids on which collinear PDFs are
+# tabulated.
+xgridpdf:
+  - [60, 1e-4, 3]
+  - [60, 1e-1, 3]
+  - [50, 6e-1, 3]
+  - [50, 8e-1, 3]
+
+# Parameters of the x-space subgrids on which collinear FFs are
+# tabulated.
+xgridff:
+  - [60, 1e-2, 3]
+  - [50, 6e-1, 3]
+  - [50, 8e-1, 3]
+
+# Maximum number of Ogata-quadrature points (no more than 1000).
+nOgata: 200
+
+# Number of points, interpolation degree, and integration accuracy of
+# the grid in Q.
+Qgrid:
+  n: 10
+  InterDegree: 3
+  eps: 1e-3
+
+# Number of points, interpolation degree, and integration accuracy of
+# the grid in xi = exp(y) or xF (depending on the observable).
+xigrid:
+  n: 10
+  InterDegree: 3
+  eps: 1e-3
+
+# Maximum value allowed for the ratio qT / Q. This has to be intended
+# as a "generation-level" cut meaning that only data points with qT /
+# Q below this value are generated. Those above are simply set to
+# zero. However, a more restrictive cut can still be applied at the
+# fit level. This avoids computing predictions for points whose
+# kinematics is such that TMD factorisation is not valid.
+qToverQmax: 0.3
+```
 
 The convolution tables at ``NLL`` are computed with ``NangaParbat/run/CreateTables.cc`` using the following configuration file (``NangaParbat/cards/config.yaml``), which is also copied in the folder ``NangaParbat/tables/NLL/``.
 
@@ -40,7 +112,7 @@ The convolution tables at ``NLL`` are computed with ``NangaParbat/run/CreateTabl
 # Collinear PDF set and member to be used for the generation of the
 # tables. They are assumed to be in the LHAPDF format.
 pdfset:
-  name: "MMHT2014nlo68cl"
+  name: "MMHT2014lo68cl"
   member: 0
 
 # Collinear FF set and member to be used for the generation of the
@@ -105,8 +177,7 @@ xigrid:
 # kinematics is such that TMD factorisation is not valid.
 qToverQmax: 0.3
 ```
-
-The convolution tables at ``LL`` are computed with ``NangaParbat/run/CreateTables.cc`` using the following configuration file (``NangaParbat/cards/config.yaml``), which is also copied in the folder ``NangaParbat/tables/LL/``.
+We also computed convolution tables at ``NLL`` using ``nlo`` PDFs. Those tables are in ``NangaParbat/tables/NLLnlo/`` and are computed with ``NangaParbat/run/CreateTables.cc`` using the following configuration file (``NangaParbat/cards/config.yaml``):
 
 ``` yaml
 # Collinear PDF set and member to be used for the generation of the
@@ -123,7 +194,7 @@ ffset:
 
 # Perturbative order of the computation. 0: LL, 1: NLL, 2: NNLL, 3:
 # NNNLL, -1: NLL', -2: NNLL'
-PerturbativeOrder: 0
+PerturbativeOrder: 1
 
 # Initial and final scale-variation factors around mub = 2e^{-gamma_E}
 # / b and Q, respectively.
