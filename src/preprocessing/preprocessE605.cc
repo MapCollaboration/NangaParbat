@@ -96,7 +96,15 @@ namespace NangaParbat
                 "title", "E605, "
                 + enlims.first + " GeV < Q < "
                 + enlims.second + " GeV, #it{x}_{F} = 0.1"
-              }};
+              },
+              {"xlabelpy", "$q_T \\rm{ [GeV]}$"},
+              {"ylabelpy", "$\\rm{E }\\frac{d^{3}\\sigma}{d^{3}q}{[\\rm{pb GeV}^{-2}]}$"},
+              {
+                "titlepy", "E605, "
+                + enlims.first + " GeV < Q < "
+                + enlims.second + " GeV, $x_{F}$ = 0.1"
+              }
+            };
 
             // Allocate emitter
             YAML::Emitter emit;

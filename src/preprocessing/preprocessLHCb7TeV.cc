@@ -64,7 +64,11 @@ namespace NangaParbat
               {
                 {"xlabel", "#it{q}_{T} [GeV]"},
                 {"ylabel", "#frac{d#it{#sigma}}{d#it{q}_{T}}  [pb GeV^{-1}]"},
-                {"title", "LHCb at 7 TeV, 60 GeV < Q < 120 GeV, 2 < #it{y} < 4.5"}};
+                {"title", "LHCb at 7 TeV, 60 GeV < Q < 120 GeV, 2 < #it{y} < 4.5"},
+                {"xlabelpy", "$q_T\\rm{ [GeV]}$"},
+                {"ylabelpy", "$\\frac{d\\sigma}{dq_{T}}[\\rm{pb GeV}^{-1}]$"},
+                {"titlepy", "LHCb at 7 TeV, 60 GeV < Q < 120 GeV, 2 < $y$ < 4.5"}
+              };
 
               // Allocate emitter
               YAML::Emitter emit;
