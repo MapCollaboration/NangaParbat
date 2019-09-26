@@ -10,7 +10,6 @@
 
 #include <apfel/matrix.h>
 #include <yaml-cpp/yaml.h>
-
 #include <gsl/gsl_rng.h>
 
 namespace NangaParbat

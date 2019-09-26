@@ -17,10 +17,10 @@
 int main(int argc, char* argv[])
 {
   // Check that the input is correct otherwise stop the code
-  if (argc < 6 || strcmp(argv[1], "--help") == 0)
+  if (argc < 7 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./RunFit <output dir> <fit configuration file> <path to data folder> <path to tables folder> <replica ID>\n" << std::endl;
+      std::cout << "Syntax: ./RunFit <output dir> <fit configuration file> <path to data folder> <path to tables folder> <replica ID> <fluctuate initial parameters? [y/n]>\n" << std::endl;
       exit(-10);
     }
 
@@ -81,14 +81,18 @@ int main(int argc, char* argv[])
         chi2.AddBlock(std::make_pair(dh, ct));
       }
 
+  // Fluctuate parameters, if required, only for replicas different
+  // from zero.
+  const bool fulctpar = (ReplicaID == 0 ? false : std::strncmp(argv[6], "y", 1) == 0);
+
   // Minimise the chi2 using the minimiser indicated in the input card
   bool status;
   if (fitconfig["Minimiser"].as<std::string>() == "minuit")
-    status = MinuitMinimiser(chi2, fitconfig["Parameters"]);
+    status = MinuitMinimiser(chi2, fitconfig["Parameters"], (fulctpar ? rng : NULL));
   else if (fitconfig["Minimiser"].as<std::string>() == "ceres")
-    status = CeresMinimiser(chi2, fitconfig["Parameters"]);
+    status = CeresMinimiser(chi2, fitconfig["Parameters"], (fulctpar ? rng : NULL));
   else if (fitconfig["Minimiser"].as<std::string>() == "none")
-    status = NoMinimiser(chi2, fitconfig["Parameters"]);
+    status = NoMinimiser(chi2, fitconfig["Parameters"], (fulctpar ? rng : NULL));
   else
     throw std::runtime_error("[RunFit]: Unknown minimiser");
 

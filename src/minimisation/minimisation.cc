@@ -10,13 +10,13 @@
 #include <root/Minuit2/MnMigrad.h>
 #include <root/Minuit2/FunctionMinimum.h>
 #include <root/Minuit2/MnPrint.h>
-
 #include <ceres/ceres.h>
+#include <gsl/gsl_randist.h>
 
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  bool MinuitMinimiser(ChiSquare const& chi2, YAML::Node const& parameters)
+  bool MinuitMinimiser(ChiSquare const& chi2, YAML::Node const& parameters, gsl_rng* rng)
   {
     std::cout << "\nMinimising with Minuit...\n" << std::endl;
 
@@ -25,7 +25,14 @@ namespace NangaParbat
     ROOT::Minuit2::MnUserParameters upar;
     for (auto const p : parameters)
       {
-        upar.Add(p["name"].as<std::string>(), p["starting_value"].as<double>(), p["step"].as<double>());
+        // If the GSL random-number generator object is NULL use the
+        // central value as starting parameters, otherwise fluctuate
+        // them (gaussianly) according to the step.
+        double pstart = p["starting_value"].as<double>();
+        if (rng !=  NULL)
+          pstart += gsl_ran_gaussian(rng, p["step"].as<double>());
+
+        upar.Add(p["name"].as<std::string>(), pstart, p["step"].as<double>());
 
         // Set limits if required
         if (p["lower_bound"])
@@ -90,7 +97,7 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  bool CeresMinimiser(ChiSquare const& chi2, YAML::Node const& parameters)
+  bool CeresMinimiser(ChiSquare const& chi2, YAML::Node const& parameters, gsl_rng* rng)
   {
     std::cout << "\nMinimising with Ceres...\n" << std::endl;
 
@@ -118,8 +125,15 @@ namespace NangaParbat
     int i = 0;
     for (auto const p : parameters)
       {
+        // If the GSL random-number generator object is NULL use the
+        // central value as starting parameters, otherwise fluctuate
+        // them (gaussianly) according to the step.
+        double pstart = p["starting_value"].as<double>();
+        if (rng !=  NULL)
+          pstart += gsl_ran_gaussian(rng, p["step"].as<double>());
+
         // Fill in initial parameter array
-        initPars[i++] = p["starting_value"].as<double>();
+        initPars[i++] = pstart;
 
         // Fix parameter if required
         if (p["fix"] && p["fix"].as<bool>())
@@ -166,14 +180,23 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  bool NoMinimiser(ChiSquare const& chi2, YAML::Node const& parameters)
+  bool NoMinimiser(ChiSquare const& chi2, YAML::Node const& parameters, gsl_rng* rng)
   {
     std::cout << "\nNo minimiser, computing predictions only...\n" << std::endl;
 
     // Fill in initial parameter array
     std::vector<double> initPars;
     for (auto const p : parameters)
-      initPars.push_back(p["starting_value"].as<double>());
+      {
+        // If the GSL random-number generator object is NULL use the
+        // central value as starting parameters, otherwise fluctuate
+        // them (gaussianly) according to the step.
+        double pstart = p["starting_value"].as<double>();
+        if (rng !=  NULL)
+          pstart += gsl_ran_gaussian(rng, p["step"].as<double>());
+
+        initPars.push_back(pstart);
+      }
 
     // Set the parameters of the parameterisation
     NangaParbat::FcnMinuit fcn{chi2};

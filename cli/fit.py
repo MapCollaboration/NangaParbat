@@ -147,6 +147,12 @@ questions = [
         "name": "Parameterisation",
         "message": "Select parameterisation:",
         "choices": ["DWS", "PV17", "PV19"],
+    },
+    {
+        "type": "confirm",
+        "name": "Paramfluct",
+        "message": "Do you want to fluctuate the initial parameters?",
+        "default": False
     }
 ]
 fitconfig = prompt(questions, style=custom_style_3)
@@ -177,6 +183,13 @@ elif fitconfig["Parameterisation"] == "PV19":
         {"name": "lambda", "starting_value": 0,         "step": 0.005, "fix": True },
         {"name": "delta",  "starting_value": 0,         "step": 0.002, "fix": True }
         ]
+
+# Switch to fluctuate the initial parameters guassianly around the
+# central value according to the step.
+if fitconfig["Paramfluct"]:
+    Paramfluct = "y"
+else:
+    Paramfluct = "n"
 
 # Report default parameters
 print(bcolours.HEADER + bcolours.BOLD + "\nDefault starting parameters:" + bcolours.ENDC)
@@ -299,4 +312,4 @@ print(bcolours.OKBLUE + "\nLaunching the fits...\n" + bcolours.ENDC)
 # Now launch fits to Monte-Carlo replicas (this includes a fit to the
 # central values, i.e. replica 0)
 for i in range(int(answer["Number of replicas"]) + 1):
-    os.system(command + " " + RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables " + str(i))
+    os.system(command + " " + RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables " + str(i) + " " + Paramfluct)

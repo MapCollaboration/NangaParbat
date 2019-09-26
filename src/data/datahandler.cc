@@ -5,12 +5,11 @@
 #include "NangaParbat/datahandler.h"
 #include "NangaParbat/utilities.h"
 
-#include <gsl/gsl_randist.h>
-
 #include <iostream>
 #include <math.h>
 #include <numeric>
 #include <algorithm>
+#include <gsl/gsl_randist.h>
 
 namespace NangaParbat
 {
