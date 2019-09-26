@@ -102,12 +102,20 @@ namespace NangaParbat
             std::map<std::string, std::string> labels
             {
               {"xlabel", "#it{q}_{T} [GeV]"},
+              {"xlabelpy", "$q_T \\rm{ [GeV]}$"},
               {"ylabel", "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"},
+              {"ylabelpy", "$\\rm{E }\\frac{d^{3}\\sigma}{d^{3}q}{[\\rm{pb GeV}^{-2}]}$"},
               {
                 "title", "E288 " + energy
                 + enlims.first + " GeV < Q < "
                 + enlims.second + " GeV, #it{y} = " + y
-              }};
+              },
+              {
+                "titlepy", "E288 " + energy
+                + enlims.first + " GeV < Q < "
+                + enlims.second + " GeV, $y$ = " + y
+              }
+            };
 
             // Allocate emitter
             YAML::Emitter emit;

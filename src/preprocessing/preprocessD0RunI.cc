@@ -63,7 +63,11 @@ namespace NangaParbat
             {
               {"xlabel", "#it{q}_{T} [GeV]"},
               {"ylabel", "#frac{d#it{#sigma}}{d#it{q}_{T}}  [pb GeV^{-1}]"},
-              {"title", "D0 Run I, 75 GeV < Q < 105 GeV"}};
+              {"title", "D0 Run I, 75 GeV < Q < 105 GeV"},
+              {"xlabelpy", "$q_T\\rm{ [GeV]}$"},
+              {"ylabelpy", "$\\frac{d\\sigma}{dq_{T}}[\\rm{pb GeV}^{-1}]$"},
+              {"titlepy", "D0 Run I, 75 GeV < Q < 105 GeV"}
+            };
 
             // Allocate emitter
             YAML::Emitter emit;

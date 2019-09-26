@@ -446,6 +446,9 @@ namespace NangaParbat
         os << YAML::Key << "Plot title" << YAML::Value << labels.at("title");
         os << YAML::Key << "xlabel" << YAML::Value << labels.at("xlabel");
         os << YAML::Key << "ylabel" << YAML::Value << labels.at("ylabel");
+        os << YAML::Key << "Plot title python" << YAML::Value << labels.at("titlepy");
+        os << YAML::Key << "xlabelpy" << YAML::Value << labels.at("xlabelpy");
+        os << YAML::Key << "ylabelpy" << YAML::Value << labels.at("ylabelpy");
         os << YAML::Key << "partial error function" << YAML::Value << chi2c;
         os << YAML::Key << "partial chi2" << YAML::Value << chi2.Evaluate(i, true);
         os << YAML::Key << "qT" << YAML::Value << YAML::Flow << YAML::BeginSeq;

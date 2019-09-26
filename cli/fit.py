@@ -79,7 +79,7 @@ questions = [
     {
         "type": "list",
         "name": "tables",
-        "message": "Choose amogst the following sets of tables:",
+        "message": "Choose amongst the following sets of tables:",
         "choices": tables,
     }
 ]
