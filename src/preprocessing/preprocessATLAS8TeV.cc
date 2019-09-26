@@ -82,7 +82,11 @@ namespace NangaParbat
               {
                 {"xlabel", "#it{q}_{T} [GeV]"},
                 {"ylabel", "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"},
-                {"title", "ATLAS at 8 TeV, " + Qlims.first + " GeV < Q < " + Qlims.second + " GeV, " + ylims.first + " < |#it{y}| < " + ylims.second}};
+                {"title", "ATLAS at 8 TeV, " + Qlims.first + " GeV < Q < " + Qlims.second + " GeV, " + ylims.first + " < |#it{y}| < " + ylims.second},
+                {"xlabelpy", "$q_T \\rm{ [GeV]}$"},
+                {"ylabelpy", "$\\frac{1}{\\sigma}\\frac{d\\sigma}{dq_{T}}[\\rm{GeV}^{-1}]$"},
+                {"titlepy", "ATLAS at 8 TeV, " + Qlims.first + " GeV < Q < " + Qlims.second + " GeV, " + ylims.first + " < $|y|$ < " + ylims.second}
+              };
 
               // Allocate emitter
               YAML::Emitter emit;
