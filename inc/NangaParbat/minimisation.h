@@ -7,8 +7,8 @@
 #include "NangaParbat/chisquare.h"
 #include "NangaParbat/parameterisation.h"
 
-#include <ROOT/Minuit2/FCNBase.h>
-#include <ROOT/Minuit2/MnMigrad.h>
+#include <root/Minuit2/FCNBase.h>
+#include <root/Minuit2/MnMigrad.h>
 
 namespace NangaParbat
 {

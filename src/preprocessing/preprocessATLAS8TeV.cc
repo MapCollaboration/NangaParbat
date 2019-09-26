@@ -28,11 +28,18 @@ namespace NangaParbat
     // Initialize naming map for the Q-integration ranges
     std::map<std::string, std::string> tables = {{"Table17.yaml", "_y_0_0.4"}, {"Table18.yaml", "_y_0.4_0.8"},
       {"Table19.yaml", "_y_0.8_1.2"}, {"Table20.yaml", "_y_1.2_1.6"},
-      {"Table21.yaml", "_y_1.6_2"}, {"Table22.yaml", "_y_2_2.4"}
+      {"Table21.yaml", "_y_1.6_2"}, {"Table22.yaml", "_y_2_2.4"},
+      {"Table26.yaml", "_Q_46_66"}, {"Table28.yaml", "_Q_116_150"}
     };
     std::map<std::string, std::pair<std::string, std::string>> yrangelims = {{"Table17.yaml", {"0", "0.4"}}, {"Table18.yaml", {"0.4", "0.8"}},
       {"Table19.yaml", {"0.8", "1.2"}}, {"Table20.yaml", {"1.2", "1.6"}},
-      {"Table21.yaml", {"1.6", "2"}}, {"Table22.yaml", {"2", "2.4"}}
+      {"Table21.yaml", {"1.6", "2"}}, {"Table22.yaml", {"2", "2.4"}},
+      {"Table26.yaml", {"0", "2.4"}}, {"Table28.yaml", {"0", "2.4"}}
+    };
+    std::map<std::string, std::pair<std::string, std::string>> Qrangelims = {{"Table17.yaml", {"66", "116"}}, {"Table18.yaml", {"66", "116"}},
+      {"Table19.yaml", {"66", "116"}}, {"Table20.yaml", {"66", "116"}},
+      {"Table21.yaml", {"66", "116"}}, {"Table22.yaml", {"66", "116"}},
+      {"Table26.yaml", {"46", "66"}}, {"Table28.yaml", {"116", "150"}}
     };
 
     // Vector of tables to process
@@ -60,6 +67,7 @@ namespace NangaParbat
             {
               std::string ofile = ofolder + "_8TeV" + tab.second;
               const std::pair<std::string, std::string> ylims = yrangelims[tab.first];
+              const std::pair<std::string, std::string> Qlims = Qrangelims[tab.first];
 
               // Open PDF-error file
               std::ifstream pdferr(PDFErrorFolder + ofile + ".out");
@@ -74,7 +82,7 @@ namespace NangaParbat
               {
                 {"xlabel", "#it{q}_{T} [GeV]"},
                 {"ylabel", "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"},
-                {"title", "ATLAS at 8 TeV, 66 GeV < Q < 116 GeV, " + ylims.first + " < |#it{y}| < " + ylims.second}};
+                {"title", "ATLAS at 8 TeV, " + Qlims.first + " GeV < Q < " + Qlims.second + " GeV, " + ylims.first + " < |#it{y}| < " + ylims.second}};
 
               // Allocate emitter
               YAML::Emitter emit;
@@ -94,7 +102,7 @@ namespace NangaParbat
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 8000 << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
-                   << "low" << YAML::Value << 66 << YAML::Key << "high" << YAML::Value << 116 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+                   << "low" << YAML::Value << Qlims.first << YAML::Key << "high" << YAML::Value << Qlims.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
                    << "low" << YAML::Value << ylims.first << YAML::Key << "high" << YAML::Value << ylims.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
@@ -162,6 +170,8 @@ namespace NangaParbat
       "  - {name: ATLAS_8TeV_y_0.8_1.2, file: ATLAS_8TeV_y_0.8_1.2.yaml}\n"
       "  - {name: ATLAS_8TeV_y_1.2_1.6, file: ATLAS_8TeV_y_1.2_1.6.yaml}\n"
       "  - {name: ATLAS_8TeV_y_1.6_2,   file: ATLAS_8TeV_y_1.6_2.yaml}\n"
-      "  - {name: ATLAS_8TeV_y_2_2.4,   file: ATLAS_8TeV_y_2_2.4.yaml}\n";
+      "  - {name: ATLAS_8TeV_y_2_2.4,   file: ATLAS_8TeV_y_2_2.4.yaml}\n"
+      "  - {name: ATLAS_8TeV_Q_46_66,   file: ATLAS_8TeV_Q_46_66.yaml}\n"
+      "  - {name: ATLAS_8TeV_Q_116_150, file: ATLAS_8TeV_Q_116_150.yaml}\n";
   }
 }

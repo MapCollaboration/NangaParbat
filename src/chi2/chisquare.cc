@@ -10,13 +10,13 @@
 #include <sys/stat.h>
 #include <fstream>
 
-#include <ROOT/TGraph.h>
-#include <ROOT/TGraphErrors.h>
-#include <ROOT/TLegend.h>
-#include <ROOT/TMultiGraph.h>
-#include <ROOT/TCanvas.h>
-#include <ROOT/TAxis.h>
-#include <ROOT/TStyle.h>
+#include <root/TGraph.h>
+#include <root/TGraphErrors.h>
+#include <root/TLegend.h>
+#include <root/TMultiGraph.h>
+#include <root/TCanvas.h>
+#include <root/TAxis.h>
+#include <root/TStyle.h>
 
 namespace NangaParbat
 {
