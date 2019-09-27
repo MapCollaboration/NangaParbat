@@ -1,0 +1,49 @@
+additional_resources:
+- {description: Rivet analysis, location: 'http://rivet.hepforge.org/analyses#D0_2010_S8671338'}
+comment: |
+  Fermilab-Tevatron. Measurement of the Z/GAMMA* transverse momentum distribution in the range 0 to 330 GeV in proton-antiproton collisions at centre of mass energy 1960 GeV. The measurement uses data collected between April 2002 and February 2006 with an integrated luminosity of 0.97 fb-1 and measures the Z/GAMMA* --> MU+ MU- decay channels.     The first DSYS error is the uncorrelated systematic error and the second to fourth are respectively from the muon 1/PT resolution, the muon detection efficiency and the efficiency of all other selections.  The record also contains, at the authors request, the absolute cross section obtained by multiplying by the measured total cross section of 118 PB.  This also has an 8 PCT overall normalisation error.
+dateupdated: 20/07/2010 00:00:00
+hepdata_doi: 10.17182/hepdata.55457.v1
+modifications:
+- {action: Encoded, date: 20 Jul 2010, who: Mike Whalley}
+record_ids:
+- {id: 856972, type: inspire}
+- {id: 4816, type: red}
+---
+data_file: Table1.yaml
+description: |
+  Normalized differential cross section.
+keywords:
+- name: reactions
+  values: [PBAR P --> Z0 X, PBAR P --> GAMMA* X, PBAR P --> MU+ MU- X]
+- name: observables
+  values: [DSIG/DPT]
+- name: plabs
+  values: ['2047761,2047761']
+- name: phrases
+  values: [Inclusive, Single Differential Cross Section, Transverse Momentum Dependence,
+    Di-Muon Production, Z Production, Muon production]
+- name: cmenergies
+  values: [1960.0]
+location: Data from T 1,F 2,3
+name: Table 1
+table_doi: 10.17182/hepdata.55457.v1/t1
+---
+data_file: Table2.yaml
+description: |
+  Absolute  differential cross section produced by multiplying by the measuredtotal cross section (118 pb).
+keywords:
+- name: reactions
+  values: [PBAR P --> Z0 X, PBAR P --> GAMMA* X, PBAR P --> MU+ MU- X]
+- name: observables
+  values: [DSIG/DPT]
+- name: plabs
+  values: ['2047761,2047761']
+- name: phrases
+  values: [Inclusive, Single Differential Cross Section, Transverse Momentum Dependence,
+    Di-Muon Production, Z Production, Muon production]
+- name: cmenergies
+  values: [1960.0]
+location: Data from F ?
+name: Table 2
+table_doi: 10.17182/hepdata.55457.v1/t2

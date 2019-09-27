@@ -141,6 +141,6 @@ namespace NangaParbat
             fout.close();
           }
       }
-    return "  - {name: D0_RunI,  file: D0_RunI.yaml}\n";
+    return "  - {name: D0_RunI,    file: D0_RunI.yaml}\n";
   }
 }

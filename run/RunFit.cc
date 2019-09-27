@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sys/stat.h>
+#include <cstring>
 
 //_________________________________________________________________________________
 int main(int argc, char* argv[])

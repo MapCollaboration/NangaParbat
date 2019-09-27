@@ -72,6 +72,15 @@ namespace NangaParbat
   std::string PreprocessD0RunI(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = true);
 
   /**
+   * @brief Preprocessing of the D0 RunII dataset for muons
+   * @param RawDataPath: the path to the raw-data folder
+   * @param ProcessedDataPath: the path to the folder where the processed data will be stored
+   * @param PDFError: whether PDF uncertainties have to be included in the processed datafiles (default: true)
+   * @return the coordinate string
+   */
+  std::string PreprocessD0RunIImu(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = true);
+
+  /**
    * @brief Preprocessing of the D0 RunII dataset
    * @param RawDataPath: the path to the raw-data folder
    * @param ProcessedDataPath: the path to the folder where the processed data will be stored

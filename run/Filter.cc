@@ -41,8 +41,8 @@ int main(int argc, char* argv[])
   fout << "E288:\n";
   fout << NangaParbat::PreprocessE288(RawDataPath, ProcessedDataPath, pdferr);
 
-  fout << "PHENIX:\n";
-  fout << NangaParbat::PreprocessPHENIX200(RawDataPath, ProcessedDataPath, pdferr);
+  //fout << "PHENIX:\n";
+  //fout << NangaParbat::PreprocessPHENIX200(RawDataPath, ProcessedDataPath, pdferr);
 
   fout << "STAR:\n";
   fout << NangaParbat::PreprocessSTAR510(RawDataPath, ProcessedDataPath, pdferr);
@@ -52,8 +52,9 @@ int main(int argc, char* argv[])
   fout << NangaParbat::PreprocessCDFRunII(RawDataPath, ProcessedDataPath, pdferr);
 
   fout << "D0:\n";
-  fout << NangaParbat::PreprocessD0RunI(RawDataPath,  ProcessedDataPath, pdferr);
-  fout << NangaParbat::PreprocessD0RunII(RawDataPath, ProcessedDataPath, pdferr);
+  fout << NangaParbat::PreprocessD0RunI(RawDataPath,    ProcessedDataPath, pdferr);
+  fout << NangaParbat::PreprocessD0RunII(RawDataPath,   ProcessedDataPath, pdferr);
+  fout << NangaParbat::PreprocessD0RunIImu(RawDataPath, ProcessedDataPath, pdferr);
 
   fout << "LHCb:\n";
   fout << NangaParbat::PreprocessLHCb7TeV(RawDataPath,  ProcessedDataPath, pdferr);
