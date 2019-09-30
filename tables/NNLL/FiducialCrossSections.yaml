@@ -1,14 +1,14 @@
 ## Prefactors for the convolution tables NNLL and NLLp.
 ## PDFs used to compute the fiducial cross section: MMHT2014nlo68cl.
 ##
-## For Tevatron (only D0 RunII)
+## For Tevatron (D0 RunII and D0 RunIImu)
 ## fidcs = 1 / FiducialCrossSection@NLO
 ## For LHC experiments:
 ## fidcs = 2 / FiducialCrossSection@NLO
 
 D0:
   - {file: D0_RunII.yaml,   fidcs: 0.00413}
-  - {file: D0_RunIImu.yaml, fidcs: 0.008474576271186}
+  - {file: D0_RunIImu.yaml, fidcs: 0.008403}
 CMS:
   - {file: CMS_7TeV.yaml, fidcs: 0.00520}
   - {file: CMS_8TeV.yaml, fidcs: 0.00438}
@@ -22,5 +22,5 @@ ATLAS:
   - {file: ATLAS_8TeV_y_1.2_1.6.yaml, fidcs: 0.02177}
   - {file: ATLAS_8TeV_y_1.6_2.yaml,   fidcs: 0.03383}
   - {file: ATLAS_8TeV_y_2_2.4.yaml,   fidcs: 0.10218}
-  - {file: ATLAS_8TeV_Q_46_66.yaml,   fidcs: 0.1336898}
-  - {file: ATLAS_8TeV_Q_116_150.yaml, fidcs: 0.3577818}
+  - {file: ATLAS_8TeV_Q_46_66.yaml,   fidcs: 0.13841}
+  - {file: ATLAS_8TeV_Q_116_150.yaml, fidcs: 0.37615}

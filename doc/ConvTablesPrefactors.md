@@ -2,7 +2,7 @@
 
 # Convolution tables and their prefactors
 
-This note reports how the convolution tables currently (15th august 2019) used in NangaParbat are produced and gathers some information about them.
+This note reports how the convolution tables currently (september 2019) used in NangaParbat are produced and gathers some information about them.
 
 In ``NangaParbat/tables`` there are six folders, one for each "*level*" of perturbative precision that we can reach. Here there is a summary:
 
@@ -262,7 +262,7 @@ and thus need the prefactor in the convolution table are the following.
 
 ## :lemon: Tevatron
 ### D0 RunII
-The result from ``DY@NNLO`` for D0 RunII with ``MHT2014nlo68cl`` at ``order = 0 `` (which is `` lo ``) is:
+The result from ``DY@NNLO`` for D0 RunII with ``MHT2014lo68cl`` at ``order = 0 `` (which is `` lo ``) is:
 `` Cross-section is:    170332.76191439579      +/-   13.918136517821676 ``
 
 The integration interval in $y$ is fully specified in the data file:
@@ -275,6 +275,21 @@ so there is no need to multiply by 2 the final result.
 $$ \frac{1}{170.332} = 0.00587 $$
 
     0.00587
+
+### D0 RunIImu
+The result from ``DY@NNLO`` for D0 RunIImu with ``MHT2014lo68cl`` at ``order = 0 `` (which is `` lo ``) is:
+`` Cross-section is:    100765.11493751251      +/-   38.862595091920959 ``
+
+The integration interval in $y$ is fully specified in the data file:
+```c++
+- {name: y, low: -1.7, high: 1.7, integrate: true}
+```
+so there is no need to multiply by 2 the final result.
+:lemon: So the prefactor for the table at ``NLL`` (and  ``LL``) is:
+
+$$ \frac{1}{100.765} = 0.009924 $$
+
+    0.009924
 
 ---
 
@@ -376,6 +391,24 @@ $$ \frac{2}{43.597} = 0.04587 $$
 $$ \frac{2}{14.398} = 0.13891 $$
 
     0.13891
+
+
+#### ATLAS 8 TeV Q_66_46
+``DY@NNLO`` at ``lo`` gives:
+`` Cross-section is:    15199.231347749161      +/-   2.4629112248646132``
+
+:hibiscus: The prefactor for the table at ``NLL``(and ``LL``)  is:
+$$ \frac{2}{15.199} = 0.13159 $$
+
+    0.13159 
+#### ATLAS 8 TeV Q_116_150
+``DY@NNLO`` at ``lo`` gives:
+`` Cross-section is:    3805.6339000789130      +/-  0.60537681454360681``
+
+:hibiscus: So the prefactor for the table at ``NLL``(and ``LL``)  is:
+$$ \frac{2}{3.805} = 0.52562 $$
+
+    0.52562
 
 
 # NNLL and NLL' convolution tables and their prefactors
@@ -551,6 +584,21 @@ $$ \frac{1}{242.077} = 0.00413 $$
 
     0.00413
 
+### D0 RunIImu
+The result from ``DY@NNLO`` for D0 RunII with ``MHT2014nlo68cl`` at ``order = 1 `` (which is `` nlo ``) is:
+`` Cross-section is:    119002.12573796565      +/-   42.164877104672641 ``
+
+The integration interval in $y$ is fully specified in the data file:
+```c++
+- {name: y, low: -1.7, high: 1.7, integrate: true}
+```
+so there is no need to multiply by 2 the final result.
+:lemon: The prefactor for the table at ``NNLL`` is:
+
+$$ \frac{1}{119.002} = 0.008403 $$
+
+    0.008403
+
 ---
 
 ## CMS
@@ -652,6 +700,24 @@ $$ \frac{2}{59.114} = 0.03383 $$
 $$ \frac{2}{19.574} = 0.10218 $$
 
     0.10218
+#### ATLAS 8 TeV Q_46_66
+``DY@NNLO`` at ``nlo`` gives:
+`` Cross-section is:    14449.524495331434      +/-   11.254869793518386 ``
+
+so there is no need to multiply by 2 the final result.
+:hibiscus: The prefactor for the table at ``NNLL`` is:
+
+$$ \frac{2}{14.450} = 0.13841 $$
+
+    0.13841
+#### ATLAS 8 TeV Q_116_150
+``DY@NNLO`` at ``nlo`` gives:
+``Cross-section is:    5317.1789546893469      +/-   2.9230067728915339 ``
+
+:hibiscus: So the prefactor for the table at ``NNLL`` is:
+$$ \frac{2}{5.317} = 0.37615 $$
+
+    0.37615
 
 
 # N3LL and NNLL' convolution tables and their prefactors
@@ -829,6 +895,21 @@ $$ \frac{1}{253.573} = 0.00394 $$
 
     0.00394
 
+### D0 RunIImu
+Result from ``DY@NNLO`` for D0 RunII with ``MHT2014nnlo68cl`` at ``NNLO `` is:
+`` Cross-section is:    124675.92919716387      +/-   119.21893023041801   fb ``
+
+The integration interval in $y$ is fully specified in the data file:
+```c++
+- {name: y, low: -1.7, high: 1.7, integrate: true}
+```
+so there is no need to multiply by 2 the final result.
+:lemon: The prefactor for the table at ``N3LL``  is:
+
+$$ \frac{1}{124.676} = 0.008021 $$
+
+    0.008021
+
 ## :hibiscus: LHC
 
 ## CMS
@@ -904,6 +985,20 @@ For ATLAS 8 TeV all the fiducial cross section come from ``DY@NNLO`` (Fulvio com
 :hibiscus: The prefactor for the table at ``N3LL`` is:
 
     0.0990859
+#### ATLAS 8 TeV Q_46_66
+ ``Cross-section is:    14368.536748977429      +/-   92.646463735253263 fb ``
+
+:hibiscus: The prefactor for the table at ``N3LL`` is:
+$$ \frac{2}{14.369} = 0.13918 $$
+
+    0.06959
+#### ATLAS 8 TeV Q_116_150
+ ``Cross-section is:    5521.9970400057391      +/-   17.039237866983186 fb``
+
+:hibiscus: The prefactor for the table at ``N3LL`` is:
+$$ \frac{2}{5.523} = 0.36212 $$
+
+    0.36212
 
 # Observables, cuts and relevant kinematical info for DY@NNLO fiducial cross sections
 
@@ -975,6 +1070,38 @@ There are no lepton cuts for ``Tevatron, D0 Run II``, and the ``src/User/cuts.f`
 ``` fortran
 C     Cuts for Z production - D0 Run II
       if(m34.lt.70d0.or.m34.gt.110d0) cuts=.true.
+```
+## Tevatron: D0 RunIImu
+:lemon: The cuts and the relevant kinematical variables for D0 Run IImu are:
+$$ \sqrt{s} = 1960 \text{ GeV} $$
+$$65 < Q < 115 \text{ GeV} $$
+:lemon: Tevatron has proton-antiproton collisions, so in the ``bin/infile`` there must be a $-1$ for ``ih2``:
+```
+1960d0                        ! sroot
+1 -1                          ! ih1, ih2
+3                             ! nproc
+91.1876d0 91.1876d0           ! mur, muf
+1                             ! order
+'tota'                        ! part
+.false.                       ! zerowidth
+65d0 115d0                    ! mwmin, mwmax
+15 10000000                   ! itmx1, ncall1
+30 10000000                   ! itmx2, ncall2
+581                           ! rseed
+92 0                          ! set, member (native PDFs)
+'MMHT2014nlo68cl.LHgrid'   0  ! set, member (LHAPDFs)
+'nlo_D0_RunIImu'              ! runstring
+```
+There are no lepton cuts for ``Tevatron, D0 Run II``, and the ``src/User/cuts.f`` for the calculation looks like this:
+
+``` fortran
+C     ---- D0_RunIImu
+      if(ptmin.le.15d0) cuts=.true.
+
+      if(dabs(eta3).ge.1.7d0.or.dabs(eta4).ge.1.7d0) cuts=.true.
+      if(dabs(y34).ge.1.7d0) cuts=.true.
+
+      if(m34.lt.65d0.or.m34.gt.115d0) cuts=.true.
 ```
 ## CMS 7 TeV
 :hibiscus: The kinematical cuts for CMS 7 TeV are:
