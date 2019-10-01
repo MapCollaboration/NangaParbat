@@ -400,7 +400,7 @@ $$ \frac{2}{14.398} = 0.13891 $$
 :hibiscus: The prefactor for the table at ``NLL``(and ``LL``)  is:
 $$ \frac{2}{15.199} = 0.13159 $$
 
-    0.13159 
+    0.13159
 #### ATLAS 8 TeV Q_116_150
 ``DY@NNLO`` at ``lo`` gives:
 `` Cross-section is:    3805.6339000789130      +/-  0.60537681454360681``
@@ -1195,3 +1195,31 @@ $$ 1.6 \le|y|< 2 \text{ GeV} $$
 $$ 2 \le|y|< 2.4 \text{ GeV} $$
 
 The cuts in ``src/User/cuts.f`` work as in  ``ATLAS 7 TeV``, uncommenting one of the last six $y34$ interval at a time.
+
+For ATLAS 8 TeV with $Q\in[46,66]$ and ATLAS 8 TeV with $Q\in[116,150]$, the bin is inclusive in rapidity:
+$$46 < M_{ll} < 66 \text{ GeV} $$ or
+$$66 < M_{ll} < 150 \text{ GeV} $$ and
+$$ p_T > 20 \text{ GeV}$$
+$$|\eta| < 2.4 \text{ GeV} $$
+$$|y|< 2.4 \text{ GeV} $$
+```
+C     ---- ATLAS
+      if(ptmin.le.20d0) cuts=.true.
+
+      if(dabs(eta3).ge.2.4d0.or.dabs(eta4).ge.2.4d0) cuts=.true.
+
+c$$$      if(dabs(y34).lt.0.0d0.or.dabs(y34).ge.1.0d0) cuts=.true.
+c$$$      if(dabs(y34).lt.1.0d0.or.dabs(y34).ge.2.0d0) cuts=.true.
+c$$$      if(dabs(y34).lt.2.0d0.or.dabs(y34).ge.2.4d0) cuts=.true.
+c$$$
+c$$$      if(dabs(y34).lt.0.0d0.or.dabs(y34).ge.0.4d0) cuts=.true.
+c$$$      if(dabs(y34).lt.0.4d0.or.dabs(y34).ge.0.8d0) cuts=.true.
+c$$$      if(dabs(y34).lt.0.8d0.or.dabs(y34).ge.1.2d0) cuts=.true.
+c$$$      if(dabs(y34).lt.1.2d0.or.dabs(y34).ge.1.6d0) cuts=.true.
+c$$$      if(dabs(y34).lt.1.6d0.or.dabs(y34).ge.2.0d0) cuts=.true.
+c$$$      if(dabs(y34).lt.2.0d0.or.dabs(y34).ge.2.4d0) cuts=.true.
+
+      if(dabs(y34).ge.2.4d0) cuts=.true.
+      if(m34.lt.46d0.or.m34.gt.66d0) cuts=.true.                                                                                                                       
+c$$$      if(m34.lt.116d0.or.m34.gt.150d0) cuts=.true.
+```
