@@ -50,7 +50,7 @@ Some general documentation can be found at the following links:
 - [raw data files](rawdata/)
 - [preprocessed data files](data/)
 - [utilities](run/)
-- [convolution prefactors](doc/ConvTabPrefactors.md)
+- [convolution prefactors](doc/ConvTablesPrefactors.md)
 
 Code documentation generated with Doxygen can be found [here](https://vbertone.github.io/NangaParbat/html/index.html).
 
