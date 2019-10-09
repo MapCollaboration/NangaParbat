@@ -34,6 +34,7 @@ int main(int argc, char* argv[])
   const bool mr = std::string(argv[7]) == "y";
   NangaParbat::Parameterisation *NPFunc = (mr ? new NangaParbat::MeanReplica{std::string(argv[1]), std::string(argv[2])} :
                                                                           NangaParbat::GetParametersation(fitconfig["Parameterisation"].as<std::string>()));
+  // NangaParbat::Parameterisation *NPFunc = NangaParbat::GetParametersation(fitconfig["Parameterisation"].as<std::string>());
 
   // Initialise GSL random-number generator
   gsl_rng *rng = gsl_rng_alloc(gsl_rng_ranlxs2);
@@ -81,12 +82,14 @@ int main(int argc, char* argv[])
 
   // Fluctuate parameters, if required, only for replicas different
   // from zero.
-  const bool fulctpar = (mr ? 0 : (ReplicaID == 0 ? false : std::strncmp(argv[6], "y", 1) == 0));
+  const bool fulctpar = (ReplicaID == 0 ? false : std::strncmp(argv[6], "y", 1) == 0);
+  // const bool fulctpar = (mr ? 0 : (ReplicaID == 0 ? false : std::strncmp(argv[6], "y", 1) == 0));
 
   // Minimise the chi2 using the minimiser indicated in the input card
-  bool status;  
+  bool status;
   if (std::string(argv[7]) == "y")
-      status = NoMinimiser(chi2, fitconfig["Parameters"], (fulctpar ? rng : NULL));
+      status = 1;
+      // status = NoMinimiser(chi2, fitconfig["Parameters"], (fulctpar ? rng : NULL));
   else
     {
   if (fitconfig["Minimiser"].as<std::string>() == "minuit")
@@ -106,9 +109,7 @@ int main(int argc, char* argv[])
   YAML::Emitter out;
   out << chi2;
   std::ofstream fout(OutputFolder + "/Report.yaml");
-  //fout << chi2 << "\n";
   fout << "Status: " << status << std::endl;
-
   fout << out.c_str() << std::endl;
   fout.close();
 
