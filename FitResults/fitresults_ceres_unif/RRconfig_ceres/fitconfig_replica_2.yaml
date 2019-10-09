@@ -1,0 +1,38 @@
+Description: AleLambda3
+Minimiser: ceres
+Seed: 1234
+qToQmax: 0.2
+t0prescription: true
+Parameterisation: PV19
+t0parameters:
+  - 0.032378
+  - 0.387946
+  - 3.2012136
+  - 0.78818279
+  - 0
+  - 0.5
+Parameters:
+  - name: g2
+    starting_value: 0.044282945
+    step: 0.01
+    fix: false
+  - name: N1
+    starting_value: 0.58549565
+    step: 0.03
+    fix: false
+  - name: alpha
+    starting_value: 4.4190122
+    step: 0.1
+    fix: false
+  - name: sigma
+    starting_value: 1.5587665
+    step: 0.05
+    fix: false
+  - name: lambda
+    starting_value: 1.2677764
+    step: 0.05
+    fix: false
+  - name: delta
+    starting_value: 0.13757698
+    step: 0.02
+    fix: false
