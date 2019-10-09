@@ -451,6 +451,7 @@ namespace NangaParbat
         os << YAML::Key << "ylabelpy" << YAML::Value << labels.at("ylabelpy");
         os << YAML::Key << "partial error function" << YAML::Value << chi2c;
         os << YAML::Key << "partial chi2" << YAML::Value << chi2.Evaluate(i, true);
+        os << YAML::Key << "penalty chi2" << YAML::Value << sp.second / nd;
         os << YAML::Key << "qT" << YAML::Value << YAML::Flow << YAML::BeginSeq;
         for (int j = 0; j < nd; j++)
           os << (dh.GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]);

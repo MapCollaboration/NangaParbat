@@ -8,6 +8,7 @@
 #include <cmath>
 #include <gsl/gsl_linalg.h>
 #include <apfel/constants.h>
+#include <dirent.h>
 
 namespace NangaParbat
 {
@@ -167,5 +168,22 @@ namespace NangaParbat
     const double bs = bmax * pow( ( 1 - exp( - pow(b / bmax, power) ) ) /
                                   ( 1 - exp( - pow(b / bmin, power) ) ), 1 / power);
     return bs;
+  }
+
+  //_________________________________________________________________________________
+  std::vector<std::string> list_dir(std::string const& path)
+  {
+    struct dirent *entry;
+    DIR *dir = opendir(path.c_str());
+
+    if (dir == NULL)
+      return {};
+
+    std::vector<std::string> dirlist;
+    while ((entry = readdir(dir)) != NULL)
+      dirlist.push_back(entry->d_name);
+
+    closedir(dir);
+    return dirlist;
   }
 }
