@@ -100,27 +100,34 @@ def TableOfMeanChi2(replicafolder, outfolder):
     replicafolder ---  Folder of the report of the mean of the good replicas.
     outfolder     ---  String, is the folder where the output of the fit is stored.
     """
-    headers = ["name", "# points ", "$\chi2$"]
+    headers = ["name", "# points ", "$\chi^2_{\rm unc}$", "$\chi^2_{\lamda^2}$","$\chi^2$"]
     rows = []
     with open(outfolder + "/" + replicafolder + "/Report.yaml", "r") as meanrep:
         reportmeanrep = yaml.load(meanrep, Loader=yaml.RoundTripLoader)
 
         globalchi2mean = reportmeanrep["Global chi2"]
-        totpoints = 0
+        totpoints      = 0
+        totpenaltychi2 = 0
+        totuncchi2     = 0
 
         for expdata in reportmeanrep["Experiments"]:
             expname = expdata["Name"]
 
-            npoints = len(expdata["Predictions"])
+            npoints    = len(expdata["Predictions"])
             totpoints += npoints
 
             pchi2 = expdata["partial chi2"]
-            penaltychi2 = expdata["penalty chi2"]
 
-            onerow = (expname, npoints, pchi2)
+            penaltychi2     = expdata["penalty chi2"]
+            totpenaltychi2 += penaltychi2
+
+            uncchi2      = pchi2 - penaltychi2
+            totuncchi2  += uncchi2
+
+            onerow = (expname, npoints, uncchi2, penaltychi2, pchi2)
             rows.append(onerow)
 
-        lastrow = ("Total", totpoints, globalchi2mean)
+        lastrow = ("Total", totpoints, totuncchi2 , totpenaltychi2, globalchi2mean)
         rows.append(lastrow)
-        
+
     return headers, rows
