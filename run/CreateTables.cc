@@ -2,10 +2,10 @@
 // Author: Valerio Bertone: valerio.bertone@cern.ch
 //
 
-#include "NangaParbat/DWS.h"
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/convolutiontable.h"
 #include "NangaParbat/utilities.h"
+#include "NangaParbat/nonpertfunctions.h"
 
 #include <fstream>
 #include <cstring>

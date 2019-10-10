@@ -2,9 +2,7 @@
 // Author: Valerio Bertone: valerio.bertone@cern.ch
 //
 
-#include "NangaParbat/DWS.h"
-#include "NangaParbat/PV17.h"
-#include "NangaParbat/PV19.h"
+#include "NangaParbat/nonpertfunctions.h"
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/utilities.h"
 

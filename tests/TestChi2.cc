@@ -3,7 +3,7 @@
 //
 
 #include "NangaParbat/chisquare.h"
-#include "NangaParbat/DWS.h"
+#include "NangaParbat/nonpertfunctions.h"
 
 #include <math.h>
 #include <iostream>

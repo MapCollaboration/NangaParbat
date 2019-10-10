@@ -52,16 +52,16 @@ namespace NangaParbat
       const double g1   = N1 * ( pow(x, sigma) + delta ) / ( pow(xhat, sigma) + delta ) * pow((1 - x) / (1 - xhat), alpha);
       const double g1B   = N1B * ( pow(x, sigmaB) + deltaB ) / ( pow(xhat, sigmaB) + deltaB ) * pow((1 - x) / (1 - xhat), alphaB);
 
-      return ((1-pow(lambdaB, 2)) /(pow(1 +  g1 / 4  * b * b , 1)))
-       	      +  pow(lambdaB, 2)
-       	            * (( g1B * exp( - g1B / 4  * b * b )
-                      + pow(lambdaC, 2)* pow(g1C, 2) * ( 1 - g1C/4  * b * b )
-       	                * exp( - g1C / 4  * b * b ))
-       	              / (g1B + pow(lambdaC, 2) * pow(g1C, 2))
-       	              )
-       	        * exp( - g2 * log(zeta / Q02) * pow(b, beta) / 4
-      	           - g2B * log(zeta / Q02) * pow(b, 4) / 4 );
-     };
+      return ((1-pow(lambdaB, 2)) /(pow(1 +  g1 / 4  * b * b, 1)))
+             +  pow(lambdaB, 2)
+             * (( g1B * exp( - g1B / 4  * b * b )
+                  + pow(lambdaC, 2)* pow(g1C, 2) * ( 1 - g1C/4  * b * b )
+                  * exp( - g1C / 4  * b * b ))
+                / (g1B + pow(lambdaC, 2) * pow(g1C, 2))
+               )
+             * exp( - g2 * log(zeta / Q02) * pow(b, beta) / 4
+                    - g2B * log(zeta / Q02) * pow(b, 4) / 4 );
+    };
 
     std::string LatexFormula() const
     {
@@ -86,8 +86,8 @@ namespace NangaParbat
               R"delimiter($N_{1B}$)delimiter",
               R"delimiter($\alpha_B$)delimiter",
               R"delimiter($\sigma_B$)delimiter",
-	      R"delimiter($\delta_B$)delimiter",
-	      R"delimiter($\lambda_C$)delimiter",
+              R"delimiter($\delta_B$)delimiter",
+              R"delimiter($\lambda_C$)delimiter",
               R"delimiter($g_{1C}$)delimiter",
               R"delimiter($g_{2B}$)delimiter",
               R"delimiter($\beta$)delimiter"};

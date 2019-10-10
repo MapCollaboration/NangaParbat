@@ -312,4 +312,4 @@ print(bcolours.OKBLUE + "\nLaunching the fits...\n" + bcolours.ENDC)
 # Now launch fits to Monte-Carlo replicas (this includes a fit to the
 # central values, i.e. replica 0)
 for i in range(int(answer["Number of replicas"]) + 1):
-    os.system(command + " " + RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables " + str(i) + " " + Paramfluct)
+    os.system(command + " " + RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables " + str(i) + " " + Paramfluct + " n")

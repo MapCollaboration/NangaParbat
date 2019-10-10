@@ -10,10 +10,7 @@
 #include "NangaParbat/QGG6.h"
 #include "NangaParbat/QGG12.h"
 
-
-
 namespace NangaParbat
-
 {
   Parameterisation* GetParametersation(std::string const& name)
   {
