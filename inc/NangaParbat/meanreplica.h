@@ -37,12 +37,18 @@ namespace NangaParbat
           {
             try
               {
-                const YAML::Node report = YAML::LoadFile(InputFolder + "/" + folder + "/Report.yaml");
-                if (report["Status"].as<double>() == 1 && report["Global error function"].as<double>() < 4)
-                  _InPars.push_back(report["Parameters"].as<std::vector<double>>());
+		const YAML::Node report = YAML::LoadFile(InputFolder + "/" + folder + "/Report.yaml");
+                if (report["Status"].as<double>() == 1 && report["Global error function"].as<double>() < fitconfig["Error function cut"].as<double>())
+		  {
+		    std::vector<double> pars;
+		    for (auto const& m : report["Parameters"].as<std::map<std::string, double>>())
+		      pars.push_back(m.second);
+                  _InPars.push_back(pars);
+		  }
               }
-            catch (std::exception)
+            catch (const YAML::Exception& ex)
               {
+                std::cout << ex.what() << std::endl;
                 std::cout << "[MeanReplica][Warning]: File 'Report.yaml' not found in folder '" + folder + "'." << std::endl;
               }
           }

@@ -137,6 +137,13 @@ questions = [
         "validate": FloatValidator
     },
     {
+        "type": "input",
+        "name": "Error function cut",
+        "message": "Enter the cut on the value of the error function:",
+        "default": "4",
+        "validate": FloatValidator
+    },
+    {
         "type": "confirm",
         "name": "t0prescription",
         "message": "Do you want to use the t0 prescription?",
@@ -161,27 +168,35 @@ fitconfig = prompt(questions, style=custom_style_3)
 if fitconfig["Parameterisation"] == "DWS":
     fitconfig["t0parameters"] = [0.01, 0.1]
     fitconfig["Parameters"] = [
-        {"name": "g1", "starting_value": 0.01, "step": 0.001, "fix": False},
-        {"name": "g2", "starting_value": 0.1,  "step": 0.005, "fix": False}
+        {"name": "$g_1$", "starting_value": 0.01, "step": 0.001, "fix": False},
+        {"name": "$g_2$", "starting_value": 0.1,  "step": 0.005, "fix": False}
         ]
 elif fitconfig["Parameterisation"] == "PV17":
     fitconfig["t0parameters"] = [0.13, 0.285, 2.98, 0.173, 0.39]
     fitconfig["Parameters"] = [
-        {"name": "g2",     "starting_value": 0.13,  "step": 0.001, "fix": False},
-        {"name": "N1",     "starting_value": 0.285, "step": 0.003, "fix": False},
-        {"name": "alpha",  "starting_value": 2.98,  "step": 0.030, "fix": False},
-        {"name": "sigma",  "starting_value": 0.173, "step": 0.002, "fix": False},
-        {"name": "lambda", "starting_value": 0.39,  "step": 0.005, "fix": True }
+        {"name": "$g_2$",     "starting_value": 0.13,  "step": 0.001, "fix": False},
+        {"name": "$N_1$",     "starting_value": 0.285, "step": 0.003, "fix": False},
+        {"name": "$\alpha$",  "starting_value": 2.98,  "step": 0.030, "fix": False},
+        {"name": "$\sigma$",  "starting_value": 0.173, "step": 0.002, "fix": False},
+        {"name": "$\lambda$", "starting_value": 0.39,  "step": 0.005, "fix": True }
         ]
 elif fitconfig["Parameterisation"] == "PV19":
-    fitconfig["t0parameters"] = [0.0327043, 0.46221, 0.450088, 0.5, 0, 0]
+    fitconfig["t0parameters"] = [0.02986, 3.8486, 18.5075, 4.938, 0.0, 0.8407, 0.7921, 62.473, 4.075, 0.0, 0.0, 0.1, 0.01781, 2.0]
     fitconfig["Parameters"] = [
-        {"name": "g2",     "starting_value": 0.0327043, "step": 0.001, "fix": False},
-        {"name": "N1",     "starting_value": 0.46221,   "step": 0.003, "fix": False},
-        {"name": "alpha",  "starting_value": 0.450088,  "step": 0.010, "fix": False},
-        {"name": "sigma",  "starting_value": 0.5,       "step": 0.005, "fix": False},
-        {"name": "lambda", "starting_value": 0,         "step": 0.005, "fix": True },
-        {"name": "delta",  "starting_value": 0,         "step": 0.002, "fix": True }
+        {"name": "$g_2$",       "starting_value": 0.02986, "step": 0.05, "fix": False},
+        {"name": "$N_1$",       "starting_value": 3.8486,  "step": 0.05, "fix": False},
+        {"name": "$\alpha$",    "starting_value": 18.5075, "step": 0.5,  "fix": False},
+        {"name": "$\sigma$",    "starting_value": 4.938,   "step": 0.1,  "fix": False},
+        {"name": "$\delta$",    "starting_value": 0.0,     "step": 0.02, "fix": True },
+        {"name": "$\lambda_B$", "starting_value": 0.8407,  "step": 0.05, "fix": False},
+        {"name": "$N_{1,B}$",   "starting_value": 0.7921,  "step": 0.05, "fix": False},
+        {"name": "$\alpha_B$",  "starting_value": 62.47,   "step": 0.5,  "fix": False},
+        {"name": "$\sigma_B$",  "starting_value": 4.075,   "step": 0.1,  "fix": False},
+        {"name": "$\delta_B$",  "starting_value": 0.0,     "step": 0.02, "fix": True },
+        {"name": "$\lambda_C$", "starting_value": 0.0,     "step": 0.1,  "fix": True },
+        {"name": "$g_{1,C}$",   "starting_value": 0.1,     "step": 0.05, "fix": True },
+        {"name": "$g_{2,B}$",   "starting_value": 0.01781, "step": 0.05, "fix": False},
+        {"name": "$\beta$",     "starting_value": 2.,      "step": 0.05, "fix": True }
         ]
 
 # Switch to fluctuate the initial parameters guassianly around the

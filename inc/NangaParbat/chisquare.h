@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <numeric>
+
 #include "NangaParbat/datahandler.h"
 #include "NangaParbat/convolutiontable.h"
 #include "NangaParbat/parameterisation.h"
@@ -140,6 +142,14 @@ namespace NangaParbat
      * each data set
      */
     std::vector<int> GetDataPointNumbers() const { return _ndata; };
+
+    /**
+     * @brief Function that gets the number of data points that pass
+     * the qT / Q cut for the whole dataset.
+     * @return The number of data points that pass the qT / Q cut for
+     * the whole dataset
+     */
+    int GetDataPointNumber() const { return std::accumulate(_ndata.begin(), _ndata.end(), 0); };
 
     /**
      * @brief Function that returns the number of experiments.

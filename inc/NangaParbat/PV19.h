@@ -47,10 +47,10 @@ namespace NangaParbat
       const double beta    = this->_pars[13];
 
       // TMD PDFs
-      const double Q02 = 1;
+      const double Q02  = 1;
       const double xhat = 0.1;
       const double g1   = N1 * ( pow(x, sigma) + delta ) / ( pow(xhat, sigma) + delta ) * pow((1 - x) / (1 - xhat), alpha);
-      const double g1B   = N1B * ( pow(x, sigmaB) + deltaB ) / ( pow(xhat, sigmaB) + deltaB ) * pow((1 - x) / (1 - xhat), alphaB);
+      const double g1B  = N1B * ( pow(x, sigmaB) + deltaB ) / ( pow(xhat, sigmaB) + deltaB ) * pow((1 - x) / (1 - xhat), alphaB);
 
       return ((1-pow(lambdaB, 2)) /(pow(1 +  g1 / 4  * b * b, 1)))
              +  pow(lambdaB, 2)

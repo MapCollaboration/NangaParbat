@@ -19,7 +19,6 @@ from modules.bcolours import *
 from validators import *
 from modules.fitresults import *
 
-
 # Print banner
 print(banner.reportbanner())
 

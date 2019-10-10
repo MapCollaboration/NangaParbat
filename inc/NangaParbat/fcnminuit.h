@@ -33,7 +33,7 @@ namespace NangaParbat
      */
     double operator()(std::vector<double> const& pars) const;
 
-    double Up() const { return 1; }
+    double Up() const { return 1. / (double) _chi2.GetDataPointNumber(); }
 
     /**
      * @brief Function that sets the parameter of the "ChiSquare" object.
@@ -76,7 +76,7 @@ namespace NangaParbat
      */
     std::vector<double> Gradient(const std::vector<double>& pars) const;
 
-    double Up() const { return 4; }
+    double Up() const { return 1. / (double) _chi2.GetDataPointNumber(); }
 
     /**
      * @brief Function that sets the parameter of the "ChiSquare" object.
