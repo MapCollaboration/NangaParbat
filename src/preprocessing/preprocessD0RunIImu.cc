@@ -10,6 +10,7 @@
 #include <vector>
 #include <fstream>
 #include <sys/stat.h>
+#include <algorithm>
 
 namespace NangaParbat
 {
