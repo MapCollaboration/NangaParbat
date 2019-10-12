@@ -109,6 +109,12 @@ namespace NangaParbat
     std::vector<std::vector<double>> GetqTBins()  const { return _qTmap; }
     ///@}
 
+    /**
+     * @brief function that makes a 3D histogram of the weights as a
+     * function of b<SUB>T</SUB> and x<SUB>1,2</SUB>.
+     */
+    void PlotWeights() const;
+
   private:
     std::string                                                    _name;    //!< Name of the table
     int                                                            _proc;    //!< Index of the process (0: DY, 1: SIDIS)

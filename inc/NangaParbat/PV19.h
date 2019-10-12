@@ -7,7 +7,6 @@
 #include "NangaParbat/parameterisation.h"
 
 #include <math.h>
-#include <apfel/constants.h>
 
 namespace NangaParbat
 {
@@ -19,7 +18,7 @@ namespace NangaParbat
   {
   public:
 
-    PV19(): Parameterisation{"PV19", 2, std::vector<double>{0.13, 0.285, 2.98, 0.173, 0.39, 0., 0.1, 0.1, 0., 0., 0., 0.1, 0., 1.}} { };
+    PV19(): Parameterisation{"PV19", 2, std::vector<double>{0.13, 0.285, 2.98, 0.173, 0.39, 0., 0.1, 0.1, 0., 0., 0., 0.1, 0., 1.}} {};
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
@@ -46,21 +45,26 @@ namespace NangaParbat
       const double g2B     = this->_pars[12];
       const double beta    = this->_pars[13];
 
-      // TMD PDFs
-      const double Q02  = 1;
-      const double xhat = 0.1;
-      const double g1   = N1 * ( pow(x, sigma) + delta ) / ( pow(xhat, sigma) + delta ) * pow((1 - x) / (1 - xhat), alpha);
-      const double g1B  = N1B * ( pow(x, sigmaB) + deltaB ) / ( pow(xhat, sigmaB) + deltaB ) * pow((1 - x) / (1 - xhat), alphaB);
+      // Useful definitions
+      const double lambdaB2 = lambdaB * lambdaB;
+      const double lambdaC2 = lambdaC * lambdaC;
+      const double g1C2     = g1C * g1C;
 
-      return ((1-pow(lambdaB, 2)) /(pow(1 +  g1 / 4  * b * b, 1)))
-             +  pow(lambdaB, 2)
-             * (( g1B * exp( - g1B / 4  * b * b )
-                  + pow(lambdaC, 2)* pow(g1C, 2) * ( 1 - g1C/4  * b * b )
-                  * exp( - g1C / 4  * b * b ))
-                / (g1B + pow(lambdaC, 2) * pow(g1C, 2))
-               )
-             * exp( - g2 * log(zeta / Q02) * pow(b, beta) / 4
-                    - g2B * log(zeta / Q02) * pow(b, 4) / 4 );
+      // x-dependent bits
+      const double g1  = N1 *  ( pow(x, sigma)  + delta  ) / ( pow(_xhat, sigma)  + delta  ) * pow((1 - x) / (1 - _xhat), alpha);
+      const double g1B = N1B * ( pow(x, sigmaB) + deltaB ) / ( pow(_xhat, sigmaB) + deltaB ) * pow((1 - x) / (1 - _xhat), alphaB);
+
+      // bT-dependent bits
+      const double b2 = b * b;
+
+      // zeta-dependent bit (i.e. non perturbative evolution)
+      const double lnz    = log(zeta / _Q02);
+      const double NPevol = exp( - ( g2 * pow(b, beta) + g2B * b2 * b2 ) * lnz / 4 );
+
+      return
+	( ( 1 - lambdaB2 ) / ( 1 + g1 / 4  * b2 )
+	  + lambdaB2 * ( g1B * exp( - g1B / 4  * b2 ) + lambdaC2 * g1C2 * ( 1 - g1C / 4  * b2 ) * exp( - g1C / 4  * b2 ) ) / ( g1B + lambdaC2 * g1C2 ) )
+	* NPevol;
     };
 
     std::string LatexFormula() const
@@ -92,5 +96,10 @@ namespace NangaParbat
               R"delimiter($g_{2B}$)delimiter",
               R"delimiter($\beta$)delimiter"};
     };
+
+  private:
+    const double _Q02  = 1;
+    const double _xhat = 0.1;
+
   };
 }

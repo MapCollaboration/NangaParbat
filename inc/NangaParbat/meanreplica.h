@@ -31,7 +31,7 @@ namespace NangaParbat
 
       // Select replicas according to weather the fit converged
       // (status = 1) and the global error function per data point is
-      // less than 4 (hard coded for now).
+      // less than a user-given cut.
       for (auto const& folder : NangaParbat::list_dir(InputFolder))
         if (folder.substr(0, 8) == "replica_")
           {
@@ -45,10 +45,11 @@ namespace NangaParbat
 		      pars.push_back(m.second);
                   _InPars.push_back(pars);
 		  }
+		else
+		  std::cout << "[MeanReplica][Warning]: Replica in folder '" + folder + "' discarded." << std::endl;
               }
             catch (const YAML::Exception& ex)
               {
-                std::cout << ex.what() << std::endl;
                 std::cout << "[MeanReplica][Warning]: File 'Report.yaml' not found in folder '" + folder + "'." << std::endl;
               }
           }

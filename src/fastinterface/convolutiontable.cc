@@ -8,10 +8,10 @@
 #include <iostream>
 #include <algorithm>
 
-//#include <root/TCanvas.h>
-//#include <root/TStyle.h>
-//#include <root/TH2.h>
-//#include <root/TRandom.h>
+#include <root/TCanvas.h>
+#include <root/TStyle.h>
+#include <root/TH2.h>
+#include <root/TRandom.h>
 
 namespace NangaParbat
 {
@@ -74,83 +74,80 @@ namespace NangaParbat
   std::map<double,double> ConvolutionTable::Convolute(std::function<double(double const&, double const&, double const&)> const& fNP1,
                                                       std::function<double(double const&, double const&, double const&)> const& fNP2) const
   {
-    // Cache non-perturbative functions on the grid.
-    std::vector<std::vector<std::vector<std::vector<double>>>> fNP1g(_qTv.size(), std::vector<std::vector<std::vector<double>>>(
-                                                                       _Qg.size(),  std::vector<std::vector<double>>(
-                                                                         _xig.size(), std::vector<double>(_z.size(), 0.))));
-    std::vector<std::vector<std::vector<std::vector<double>>>> fNP2g(_qTv.size(), std::vector<std::vector<std::vector<double>>>(
-                                                                       _Qg.size(), std::vector<std::vector<double>>(
-                                                                         _xig.size(), std::vector<double>(_z.size(), 0.))));
-    for (int iqT = 0; iqT < (int) _qTv.size(); iqT++)
-      for (int tau = 0; tau < (int) _Qg.size(); tau++)
-        {
-          const double Q    = _Qg[tau];
-          const double zeta = Q * Q;
-          const double Vtau = Q / _Vs;
-          for (int alpha = 0; alpha < (int) _xig.size(); alpha++)
-            {
-              const double x1 = Vtau * _xig[alpha];
-              const double x2 = pow(Vtau, 2) / x1;
-              for (int n = 0; n < (int) _z.size(); n++)
-                {
-                  const double b = _z[n] / _qTv[iqT];
-                  fNP1g[iqT][tau][alpha][n] = fNP1(x1, b, zeta);
-                  fNP2g[iqT][tau][alpha][n] = fNP2(x2, b, zeta);
-                }
-            }
-        }
-
-//    TCanvas *c2 = new TCanvas("c2","c2", 600, 400);
-//    const int nx = 50;
-//    const double xmin = 1e-4;//0.95 * _Qg[0] * _xig[0] / _Vs ;
-//    const double xmax = 1;//_Qg.back() / _xig[0] / _Vs ;
-//    std::cout << xmin << "  " << xmax << std::endl;
-//    const double xstep = exp(std::abs(log(xmax/xmin)) / ( nx - 1 ) );
-//    double xbins[nx+1];
-//    xbins[0] = xmin;
-//    for (int i = 1; i <= nx; i++)
-//      xbins[i] = xbins[i-1] * xstep;
-//    TH2F *hlego2 = new TH2F("statistics", _name.c_str(), 20, 0, 70 / _Qg[0] , nx, xbins);
-//    hlego2->GetXaxis()->SetTitle("b_{T}");
-//    hlego2->GetYaxis()->SetTitle("x_{1,2}");
-//    c2->SetLogy();
-
     // Compute predictions
-    std::map<double,double> pred;
+    std::map<double, double> pred;
     for (int iqT = 0; iqT < (int) _qTv.size(); iqT++)
       {
+	const auto wgt  = _W.at(_qTv[iqT]);
+	const auto psf  = _PSRed.at(_qTv[iqT]);
+	const auto dpsf = _dPSRed.at(_qTv[iqT]);
         double cs  = 0;
         double dcs = 0;
         for (int tau = 0; tau < (int) _Qg.size(); tau++)
-          for (int alpha = 0; alpha < (int) _xig.size(); alpha++)
-            {
-//	      const double x1 = _Qg[tau] / _Vs * _xig[alpha];
-//	      const double x2 = _Qg[tau] / _Vs / _xig[alpha];
-              double csn = 0;
-              for (int n = 0; n < (int) _z.size(); n++)
-                {
-//		  hlego2->Fill(_z[n] / _qTv[iqT], x1, std::abs(_W.at(_qTv[iqT])[n][tau][alpha]));
-//		  hlego2->Fill(_z[n] / _qTv[iqT], x2, std::abs(_W.at(_qTv[iqT])[n][tau][alpha]));
-                  csn += _W.at(_qTv[iqT])[n][tau][alpha] * fNP1g[iqT][tau][alpha][n] * fNP2g[iqT][tau][alpha][n];
-                }
-              cs  += csn * _PSRed.at(_qTv[iqT])[tau][alpha];
-              dcs += csn * _dPSRed.at(_qTv[iqT])[tau][alpha];
-            }
+	  {
+	    const double Q    = _Qg[tau];
+	    const double zeta = Q * Q;
+	    const double Vtau = Q / _Vs;
+	    for (int alpha = 0; alpha < (int) _xig.size(); alpha++)
+	      {
+		double csn = 0;
+		const double x1 = Vtau * _xig[alpha];
+		const double x2 = pow(Vtau, 2) / x1;
+		for (int n = 0; n < (int) _z.size(); n++)
+		  {
+		    const double b = _z[n] / _qTv[iqT];
+		    csn += wgt[n][tau][alpha] * fNP1(x1, b, zeta) * fNP2(x2, b, zeta);
+		  }
+		cs  += csn * psf[tau][alpha];
+		dcs += csn * dpsf[tau][alpha];
+	      }
+	  }
         // Positive value of qT correspond to the non-derivative part
         // and negative to the derivative part of the phase-space
         // reduction factor.
-        pred.insert({_qTv[iqT], cs});
+        pred.insert({_qTv[iqT],  cs});
         pred.insert({-_qTv[iqT], dcs});
       }
-//    gStyle->SetPalette(kBird);
-//    hlego2->Draw("SURF7");
-//    //gPad->SetTheta(60); // default is 30
-//    gPad->SetPhi(60); // default is 30
-//    gPad->Update();
-//    c2->SaveAs((_name + "_3D" + ".pdf").c_str());
-//    delete hlego2;
-//    delete c2;
     return pred;
+  }
+
+  //_________________________________________________________________________________
+  void ConvolutionTable::PlotWeights() const
+  {
+    TCanvas *c2 = new TCanvas("c2", "c2", 600, 400);
+    const int nx = 50;
+    const double xmin = 1e-4;//0.95 * _Qg[0] * _xig[0] / _Vs ;
+    const double xmax = 1;//_Qg.back() / _xig[0] / _Vs ;
+    std::cout << xmin << "  " << xmax << std::endl;
+    const double xstep = exp( std::abs( log( xmax / xmin ) ) / ( nx - 1 ) );
+    double xbins[nx+1];
+    xbins[0] = xmin;
+    for (int i = 1; i <= nx; i++)
+      xbins[i] = xbins[i-1] * xstep;
+    TH2F *hlego2 = new TH2F("statistics", _name.c_str(), 20, 0, 70 / _Qg[0] , nx, xbins);
+    hlego2->GetXaxis()->SetTitle("b_{T}");
+    hlego2->GetYaxis()->SetTitle("x_{1,2}");
+    c2->SetLogy();
+    for (int iqT = 0; iqT < (int) _qTv.size(); iqT++)
+      for (int tau = 0; tau < (int) _Qg.size(); tau++)
+	for (int alpha = 0; alpha < (int) _xig.size(); alpha++)
+	  {
+	    const double x1 = _Qg[tau] / _Vs * _xig[alpha];
+	    const double x2 = _Qg[tau] / _Vs / _xig[alpha];
+	    for (int n = 0; n < (int) _z.size(); n++)
+	      {
+		hlego2->Fill(_z[n] / _qTv[iqT], x1, std::abs(_W.at(_qTv[iqT])[n][tau][alpha]));
+		hlego2->Fill(_z[n] / _qTv[iqT], x2, std::abs(_W.at(_qTv[iqT])[n][tau][alpha]));
+	      }
+	  }
+    gStyle->SetPalette(kBird);
+    hlego2->Draw("SURF7");
+    //gPad->SetTheta(60); // default is 30
+    gPad->SetPhi(60); // default is 30
+    gPad->Update();
+    c2->SaveAs((_name + "_3D" + ".pdf").c_str());
+    delete hlego2;
+    delete c2;
   }
 
   //_________________________________________________________________________________

@@ -11,7 +11,7 @@
 namespace NangaParbat
 {
   /**
-   * @brief Pavia 20117 parameterisation derived from the
+   * @brief Pavia 2017 parameterisation derived from the
    * "Parameterisation" mother class.
    */
   class PV17: public NangaParbat::Parameterisation

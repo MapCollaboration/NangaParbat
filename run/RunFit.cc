@@ -50,30 +50,28 @@ int main(int argc, char* argv[])
   NangaParbat::ChiSquare chi2{*NPFunc, fitconfig["qToQmax"].as<double>()};
 
   // Set parameters for the t0 predictions using "t0parameters" in the
-  // configuration card.
-  if (std::string(argv[7]) != "y")
+  // configuration card only if the the t0 has been enabled and the
+  // central replica is not being computed.
+  if (fitconfig["t0prescription"].as<bool>() && !mr)
     NPFunc->SetParameters(fitconfig["t0parameters"].as<std::vector<double>>());
 
   // Open datasets.yaml file that contains the list of datasets to be
   // fitted and push the corresponding pairs of "DataHandler" and
   // "ConvolutionTable" objects into the a vector.
-  const YAML::Node datasets = (mr ? YAML::LoadFile(std::string(argv[1]) + "/data/datasets.yaml") :
-                               YAML::LoadFile(std::string(argv[3]) + "/datasets.yaml"));
+  const YAML::Node datasets = YAML::LoadFile(std::string(argv[3]) + "/datasets.yaml");
   for (auto const& exp : datasets)
     for (auto const& ds : exp.second)
       {
         std::cout << "Reading " << ds["name"].as<std::string>() << " ..." << std::endl;
 
         // Convolution table
-        const std::string table = (mr ? std::string(argv[1]) + "/tables/" + ds["name"].as<std::string>() + ".yaml" :
-                                   std::string(argv[4]) + "/" + ds["name"].as<std::string>() + ".yaml");
+        const std::string table = std::string(argv[4]) + "/" + ds["name"].as<std::string>() + ".yaml";
         const NangaParbat::ConvolutionTable ct{YAML::LoadFile(table)};
 
         // Datafile
-        const std::string datafile = (mr ? std::string(argv[1]) + "/data/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>():
-                                      std::string(argv[3]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>());
+        const std::string datafile = std::string(argv[3]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
         const NangaParbat::DataHandler dh{ds["name"].as<std::string>(), YAML::LoadFile(datafile), (mr ? NULL : rng), (mr ? 0 : ReplicaID),
-                                          (fitconfig["t0prescription"].as<bool>() ? ct.GetPredictions(NPFunc->Function()) : std::vector<double>{})};
+                                          (fitconfig["t0prescription"].as<bool>() && !mr ? ct.GetPredictions(NPFunc->Function()) : std::vector<double>{})};
 
         // Add chi2 block
         chi2.AddBlock(std::make_pair(dh, ct));
@@ -81,23 +79,18 @@ int main(int argc, char* argv[])
 
   // Fluctuate parameters, if required, only for replicas different
   // from zero.
-  const bool fulctpar = (ReplicaID == 0 || mr ? false : std::strncmp(argv[6], "y", 1) == 0);
+  const bool fulctpar = (ReplicaID == 0 ? false : std::strncmp(argv[6], "y", 1) == 0);
 
   // Minimise the chi2 using the minimiser indicated in the input card
   bool status;
-  if (std::string(argv[7]) == "y")
-    status = NoMinimiser(chi2, fitconfig["Parameters"], (fulctpar ? rng : NULL));
+  if (fitconfig["Minimiser"].as<std::string>() == "none" || mr)
+    status = NoMinimiser(chi2, fitconfig["Parameters"]);
+  else if (fitconfig["Minimiser"].as<std::string>() == "minuit")
+    status = MinuitMinimiser(chi2, fitconfig["Parameters"], (fulctpar ? rng : NULL));
+  else if (fitconfig["Minimiser"].as<std::string>() == "ceres")
+    status = CeresMinimiser(chi2, fitconfig["Parameters"], (fulctpar ? rng : NULL));
   else
-    {
-      if (fitconfig["Minimiser"].as<std::string>() == "minuit")
-        status = MinuitMinimiser(chi2, fitconfig["Parameters"], (fulctpar ? rng : NULL));
-      else if (fitconfig["Minimiser"].as<std::string>() == "ceres")
-        status = CeresMinimiser(chi2, fitconfig["Parameters"], (fulctpar ? rng : NULL));
-      else if (fitconfig["Minimiser"].as<std::string>() == "none")
-        status = NoMinimiser(chi2, fitconfig["Parameters"], (fulctpar ? rng : NULL));
-      else
-        throw std::runtime_error("[RunFit]: Unknown minimiser");
-    }
+    throw std::runtime_error("[RunFit]: Unknown minimiser");
 
   // Print the total chi2 on screen
   std::cout << "Total chi2 = " << chi2() << "\n" << std::endl;

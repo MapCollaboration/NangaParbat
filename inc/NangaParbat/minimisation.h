@@ -35,7 +35,6 @@ namespace NangaParbat
    * @param chi2: the "ChiSquare" object that returns the values of all chi2's
    * @param parameters: the "YAML::Node" object that contains the
    * parameters to be minimised along with the relevant information
-   * @param rng: GSL random number object
    */
-  bool NoMinimiser(ChiSquare const& chi2, YAML::Node const& parameters, gsl_rng* rng = NULL);
+  bool NoMinimiser(ChiSquare const& chi2, YAML::Node const& parameters);
 }
