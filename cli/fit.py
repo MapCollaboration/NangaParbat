@@ -139,7 +139,7 @@ questions = [
     {
         "type": "input",
         "name": "Error function cut",
-        "message": "Enter the cut on the value of the error function:",
+        "message": "Enter the cut on the value of the error function (used for the report):",
         "default": "4",
         "validate": FloatValidator
     },
@@ -301,7 +301,7 @@ questions = [
     {
         "type": "input",
         "name": "Number of replicas",
-        "message": "Enter the number of Monte-Carlo replicas you want to run:",
+        "message": "Enter the number of Monte-Carlo replicas that you want to run:",
         "default": "0",
         "validate": IntegerValidator
     },
@@ -314,17 +314,21 @@ questions = [
 ]
 answer = prompt(questions, style=custom_style_3)
 
-# Define commands to run the fit according to the host chosen
-if answer["Host"] == "Locally":
-    command = ""
-elif answer["Host"] == "Slurm":
-    command = "sbatch"
-    print(bcolours.FAIL + bcolours.BOLD + "Slurm not enabled yet" + bcolours.ENDC)
-    exit()
-
-print(bcolours.OKBLUE + "\nLaunching the fits...\n" + bcolours.ENDC)
-
 # Now launch fits to Monte-Carlo replicas (this includes a fit to the
-# central values, i.e. replica 0)
-for i in range(int(answer["Number of replicas"]) + 1):
-    os.system(command + " " + RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables " + str(i) + " " + Paramfluct + " n")
+# central values, i.e. replica 0). Run the fits according to the host chosen
+print(bcolours.OKBLUE + "\nLaunching the fits...\n" + bcolours.ENDC)
+if answer["Host"] == "Locally":
+    for i in range(int(answer["Number of replicas"]) + 1):
+        os.system(RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables " + str(i) + " " + Paramfluct + " n")
+elif answer["Host"] == "Slurm":
+    f = open(outfolder + "/submit.sh", "w+")
+    f.write("#!/bin/bash\n")
+    f.write("#\n")
+    f.write("#SBATCH --job-name=NPfit\n")
+    f.write("#SBATCH --output=output.txt\n")
+    f.write("#SBATCH --array=0-" + answer["Number of replicas"] + "\n")
+    f.write("#SBATCH --partition=12hr\n")
+    f.write("\n")
+    f.write("srun " + RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables $SLURM_ARRAY_TASK_ID " + Paramfluct + " n\n")
+    f.close()
+    os.system("sbatch " + outfolder + "/submit.sh")
