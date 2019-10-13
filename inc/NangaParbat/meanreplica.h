@@ -29,6 +29,9 @@ namespace NangaParbat
       // parameterisation used in the fit.
       _NPFunc = NangaParbat::GetParametersation(fitconfig["Parameterisation"].as<std::string>());
 
+      // Set the parameters to zero (the will not be used anywhere)
+      this->_pars.resize(_NPFunc->GetParameterNames().size(), 0);
+
       // Select replicas according to weather the fit converged
       // (status = 1) and the global error function per data point is
       // less than a user-given cut.
@@ -37,16 +40,16 @@ namespace NangaParbat
           {
             try
               {
-		const YAML::Node report = YAML::LoadFile(InputFolder + "/" + folder + "/Report.yaml");
+                const YAML::Node report = YAML::LoadFile(InputFolder + "/" + folder + "/Report.yaml");
                 if (report["Status"].as<double>() == 1 && report["Global error function"].as<double>() < fitconfig["Error function cut"].as<double>())
-		  {
-		    std::vector<double> pars;
-		    for (auto const& m : report["Parameters"].as<std::map<std::string, double>>())
-		      pars.push_back(m.second);
-                  _InPars.push_back(pars);
-		  }
-		else
-		  std::cout << "[MeanReplica][Warning]: Replica in folder '" + folder + "' discarded." << std::endl;
+                  {
+                    std::vector<double> pars;
+                    for (auto const& m : _NPFunc->GetParameterNames())
+                      pars.push_back(report["Parameters"][m].as<double>());
+                    _InPars.push_back(pars);
+                  }
+                else
+                  std::cout << "[MeanReplica][Warning]: Replica in folder '" + folder + "' discarded." << std::endl;
               }
             catch (const YAML::Exception& ex)
               {
@@ -68,8 +71,17 @@ namespace NangaParbat
           mean += _NPFunc->Evaluate(x, b, zeta, ifunc);
         }
       mean /= (double) _InPars.size();
-
       return mean;
+    };
+
+    std::string LatexFormula() const
+    {
+      return _NPFunc->LatexFormula();
+    };
+
+    std::vector<std::string> GetParameterNames() const
+    {
+      return _NPFunc->GetParameterNames();
     };
 
   private:

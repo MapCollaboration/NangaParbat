@@ -62,9 +62,9 @@ namespace NangaParbat
       const double NPevol = exp( - ( g2 * pow(b, beta) + g2B * b2 * b2 ) * lnz / 4 );
 
       return
-	( ( 1 - lambdaB2 ) / ( 1 + g1 / 4  * b2 )
-	  + lambdaB2 * ( g1B * exp( - g1B / 4  * b2 ) + lambdaC2 * g1C2 * ( 1 - g1C / 4  * b2 ) * exp( - g1C / 4  * b2 ) ) / ( g1B + lambdaC2 * g1C2 ) )
-	* NPevol;
+        ( ( 1 - lambdaB2 ) / ( 1 + g1 / 4  * b2 )
+          + lambdaB2 * ( g1B * exp( - g1B / 4  * b2 ) + lambdaC2 * g1C2 * ( 1 - g1C / 4  * b2 ) * exp( - g1C / 4  * b2 ) ) / ( g1B + lambdaC2 * g1C2 ) )
+        * NPevol;
     };
 
     std::string LatexFormula() const
