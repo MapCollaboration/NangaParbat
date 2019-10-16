@@ -29,10 +29,10 @@ namespace NangaParbat
       // parameterisation used in the fit.
       _NPFunc = NangaParbat::GetParametersation(fitconfig["Parameterisation"].as<std::string>());
 
-      // Set the parameters to zero (the will not be used anywhere)
+      // Set the parameters to zero (this will not be used anywhere)
       this->_pars.resize(_NPFunc->GetParameterNames().size(), 0);
 
-      // Select replicas according to weather the fit converged
+      // Select replicas according to whether the fit converged
       // (status = 1) and the global error function per data point is
       // less than a user-given cut.
       for (auto const& folder : NangaParbat::list_dir(InputFolder))

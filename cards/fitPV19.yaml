@@ -4,7 +4,7 @@ Description: PV17qGauss
 
 # Minimiser to be used for the fit. Possible options so far are
 # 'minuit', 'ceres', and 'none'.
-Minimiser: minuit
+Minimiser: none
 
 # Seed used with the random-number generator for the generation of the
 # Monte Carlo replicas
@@ -21,7 +21,7 @@ Error function cut: 4
 # Enable or disable the t0 prescription for the treatment of
 # normalisation uncertantities and define the set of parameters to be
 # used to compute the corresponding predictions (used only if the t0
-# prescriprion is enabled). They have to be as many and ordered as the
+# prescription is enabled). They have to be as many and ordered as the
 # "Parameters" below.
 t0prescription: true
 t0parameters: [0.02986, 3.8486, 18.5075, 4.938, 0.0, 0.8407, 0.7921, 62.473, 4.075, 0.0, 0.0, 0.1, 0.01781, 2.0]
@@ -42,7 +42,7 @@ Parameters:
   starting_value: 3.8486
   step: 0.05
   fix: false
-- name: "$\alpha$"
+- name: $\alpha$
   starting_value: 18.5075
   step: 0.5
   fix: false
@@ -62,7 +62,7 @@ Parameters:
   starting_value: 0.7921
   step: 0.05
   fix: false
-- name: "$\alpha_B$"
+- name: $\alpha_B$
   starting_value: 62.47
   step: 0.5
   fix: false
@@ -86,7 +86,7 @@ Parameters:
   starting_value: 0.01781
   step: 0.05
   fix: false
-- name: "$\beta$"
+- name: $\beta$
   starting_value: 2.0
   step: 0.05
   fix: true

@@ -1,3 +1,5 @@
+from ruamel import yaml
+
 from modules.bcolours import *
 from collections import OrderedDict
 
@@ -34,36 +36,19 @@ def GetPertOrd(pertord):
       stringord = "NNLLp"
     return stringord
 
-def GetLatexFormula(param):
-    """
-    Function to get the formula of the chosen parameterisation chosen in latex format.
-    Returns an OrderedDict().
-    param   --- String, name of the parameterisation.
-    """
-    if param == "PV19":
-        latexformula = OrderedDict([("parameterisation","$$f_{\\rm NP}(x,\\zeta, b_T)=\\frac{\\exp\\left[ - \\frac{1}{2} g_2 \\log\\left(\\frac{\\zeta}{Q_0^2}\\right) b_T^2 \\right]}{1 + g_1^2(x) b_T^2}$$"),("g1","$$g_1(x) = N_1 \\frac{x^{\\sigma}(1-x)^{\\alpha}}{\\hat{x}^{\\sigma}(1-\\hat{x})^{\\alpha}}$$"),("Q02","$$Q_0^2 = 1\\;{\\rm GeV}^2$$"),("xhat","$$\\hat{x} = 0.1$$")])
-    else:
-        latexformula = OrderedDict([("empty", "latex formula not avaliable yet")])
-        print(bcolours.WARNING + "Latex formula for this parameterisation not yet avaliable" + bcolours.ENDC)
-
-    return latexformula
-
-def GetLatexNames(rows):
-    """
-    Function to get the Latex format of the parameters name from the fitconfig.
-    rows  --- Tuple of strings. The elements of this tuple will be converted into latex formulas.
-    """
-    for l, elemrows in enumerate(rows):
-        elemrows = list(elemrows)
-        if l == 0:
-            elemrows[0] = "$g_2$"
-        if l == 1:
-            elemrows[0] = "$N_1$"
-        if l > 1:
-            elemrows[0] = "$\\" + elemrows[0] + "$"
-        elemrows = tuple(elemrows)
-        rows[l] = elemrows
-    return rows
+# def GetLatexFormula(param):
+#     """
+#     Function to get the formula of the chosen parameterisation chosen in latex format.
+#     Returns an OrderedDict().
+#     param   --- String, name of the parameterisation.
+#     """
+#     if param == "PV19":
+#         latexformula = OrderedDict([("parameterisation","$$f_{\\rm NP}(x,\\zeta, b_T)=\\frac{\\exp\\left[ - \\frac{1}{2} g_2 \\log\\left(\\frac{\\zeta}{Q_0^2}\\right) b_T^2 \\right]}{1 + g_1^2(x) b_T^2}$$"),("g1","$$g_1(x) = N_1 \\frac{x^{\\sigma}(1-x)^{\\alpha}}{\\hat{x}^{\\sigma}(1-\\hat{x})^{\\alpha}}$$"),("Q02","$$Q_0^2 = 1\\;{\\rm GeV}^2$$"),("xhat","$$\\hat{x} = 0.1$$")])
+#     else:
+#         latexformula = OrderedDict([("empty", "latex formula not avaliable yet")])
+#         print(bcolours.WARNING + "Latex formula for this parameterisation not yet avaliable" + bcolours.ENDC)
+#
+#     return latexformula
 
 def TableOfInitialParameters(parameters):
     """
@@ -91,7 +76,7 @@ def TableOfInitialParameters(parameters):
     return headers, rows
 
 
-def TableOfMeanChi2(replicafolder, outfolder):
+def TableOfChi2(replicafolder, outfolder):
     """
     Function to put the mean chi2 of the experiments in the right format for the
     table in markdown.
@@ -100,34 +85,40 @@ def TableOfMeanChi2(replicafolder, outfolder):
     replicafolder ---  Folder of the report of the mean of the good replicas.
     outfolder     ---  String, is the folder where the output of the fit is stored.
     """
-    headers = ["name", "# points ", "$\chi^2_{\rm unc}$", "$\chi^2_{\lamda^2}$","$\chi^2$"]
+    headers = ["name", "# points ", "$\chi^2_{unc}$", "$\chi^2_{\lambda^2}$","$\chi^2$"]
     rows = []
-    with open(outfolder + "/" + replicafolder + "/Report.yaml", "r") as meanrep:
-        reportmeanrep = yaml.load(meanrep, Loader=yaml.RoundTripLoader)
+    with open(outfolder + "/" + replicafolder + "/Report.yaml", "r") as rep:
+        reportrep = yaml.load(rep, Loader=yaml.RoundTripLoader)
 
-        globalchi2mean = reportmeanrep["Global chi2"]
+        globalchi2     = reportrep["Global chi2"]
         totpoints      = 0
+        totpchi2       = 0
         totpenaltychi2 = 0
         totuncchi2     = 0
 
-        for expdata in reportmeanrep["Experiments"]:
+        for expdata in reportrep["Experiments"]:
             expname = expdata["Name"]
 
             npoints    = len(expdata["Predictions"])
             totpoints += npoints
 
-            pchi2 = expdata["partial chi2"]
+            pchi2     = expdata["partial chi2"]
+            totpchi2 += pchi2 * npoints
 
             penaltychi2     = expdata["penalty chi2"]
-            totpenaltychi2 += penaltychi2
+            totpenaltychi2 += penaltychi2 * npoints
 
             uncchi2      = pchi2 - penaltychi2
-            totuncchi2  += uncchi2
+            totuncchi2  += uncchi2 * npoints
 
-            onerow = (expname, npoints, uncchi2, penaltychi2, pchi2)
+            onerow = (expname, npoints, round(uncchi2, 6), round(penaltychi2, 6), pchi2)
             rows.append(onerow)
 
-        lastrow = ("Total", totpoints, totuncchi2 , totpenaltychi2, globalchi2mean)
+        TotUncChi2    = totuncchi2 / totpoints
+        TotPenalty    = totpenaltychi2 / totpoints
+        TotNormChi2   = totpchi2 / totpoints
+
+        lastrow = ("Total", totpoints, round(TotUncChi2, 6) , round(TotPenalty, 6), round(TotNormChi2, 6))
         rows.append(lastrow)
 
     return headers, rows

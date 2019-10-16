@@ -73,7 +73,7 @@ with open(outfolder + "/data/datasets.yaml", "w") as outfile:
     yaml.dump(datasets, outfile, Dumper=yaml.RoundTripDumper)
 
 # Collect available sets of tables
-tables = [d for d in os.listdir(RunFolder + "/../tables/") if os.path.isdir(os.path.join(RunFolder + "/../tables/",d))]
+tables = [d for d in os.listdir(RunFolder + "/../tables/") if os.path.isdir(os.path.join(RunFolder + "/../tables/", d))]
 
 questions = [
     {

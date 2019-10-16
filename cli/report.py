@@ -2,6 +2,7 @@ import os
 import subprocess
 import numpy as np
 import matplotlib.pyplot as plt
+
 from PyInquirer import prompt
 from examples import custom_style_3
 from ruamel import yaml
@@ -32,7 +33,7 @@ questions = [
         "name": "Output folder",
         "message": "Type the name (path) of the input folder for the report (fit result's folder): ",
         "validate": NotOutputFolderValidator,
-        "default": "FitResults/fitresults_ceres_unif"
+        "default": "FitResults/"
     }
 ]
 answers = prompt(questions, style = custom_style_3)
@@ -41,66 +42,23 @@ answers = prompt(questions, style = custom_style_3)
 outfolder = CliFolder + "/../" + answers["Output folder"]
 print(bcolours.ACTREPORT + "Folder with info for the report '" + outfolder + bcolours.ENDC)
 
-# with open(outfolder + "/fitconfig.yaml", "r") as fc:
-#     fitconfig = yaml.load(fc, Loader=yaml.RoundTripLoader)
-# # important: yaml.load imports yaml files as OrderedDict(iterable, kwargs)
-# print(bcolours.ACTREPORT + "Loading fit configuration file '" + outfolder + "/fitconfig.yaml" + bcolours.ENDC)
+with open(outfolder + "/fitconfig.yaml", "r") as fc:
+    fitconfig = yaml.load(fc, Loader=yaml.RoundTripLoader)
+print(bcolours.ACTREPORT + "Loading fit configuration file '" + outfolder + "/fitconfig.yaml" + bcolours.ENDC)
 
 with open(outfolder + "/tables/config.yaml", "r") as fc:
     config = yaml.load(fc, Loader=yaml.RoundTripLoader)
 print(bcolours.ACTREPORT + "Loading tables configuration file '" + outfolder + "/tables/config.yaml" + '\n' + bcolours.ENDC)
 
-# Prompt for report folder
-questions = [
-    {
-        "type": "input",
-        "name": "Final report folder",
-        "message": "Type a name for the report folder:",
-        "validate": OutputFolderValidator,
-        "default": "FinalReport"
-    }
-]
-answers = prompt(questions, style = custom_style_3)
-
 # Create report folder
-reportnamefolder = answers["Final report folder"]
-reportfolder = outfolder + "/" + answers["Final report folder"]
+reportnamefolder = "TotalReport"
+reportfolder = outfolder + "/TotalReport"
 print(bcolours.ACTREPORT + "Creating folder for the final report '" + reportfolder + "'\n " + bcolours.ENDC)
 os.mkdir(reportfolder)
 
-# Prompt for report file
-questions = [
-    {
-        "type": "input",
-        "name": "Final report file",
-        "message": "Type a name for the markdown report (.md):",
-        "validate": OutputFolderValidator,
-        "default": "FReport.md"
-    }
-]
-answers = prompt(questions, style=custom_style_3)
-
 # Create report file
-reportfile = reportfolder + "/" + answers["Final report file"]
+reportfile = reportfolder + "/TotalReport.md"
 print(bcolours.ACTREPORT + "Creating final report file: '" + reportfile + "'\n " + bcolours.ENDC)
-
-# Prompt for the name of the replicas configurations folder
-questions = [
-    {
-        "type": "input",
-        "name": "Replicas fitconfig folder",
-        "message": "What is the name of the Replicas Configuration folder in the folder of the output of the fit?:",
-        # "validate": NotOutputFolderValidator,
-        "default": "RRconfig_ceres"
-    }
-]
-answers = prompt(questions, style=custom_style_3)
-
-# Load the configuration file for the central replica
-randomreplicasconfig = answers["Replicas fitconfig folder"]
-with open(outfolder + "/" + randomreplicasconfig + "/fitconfig_replica_0.yaml", "r") as fc:
-    fitconfig = yaml.load(fc, Loader=yaml.RoundTripLoader)
-print(bcolours.ACTREPORT + "Loading configuration file of the central replica: '" + outfolder + "/" + randomreplicasconfig + "/fitconfig_replica_0.yaml" + '\n' + bcolours.ENDC)
 
 # Prompt for the description
 questions = [
@@ -113,11 +71,13 @@ questions = [
 answers = prompt(questions, style=custom_style_3)
 rdescription = answers["Report description"]
 
+print(bcolours.REPORT + "\n" + "Computing the total report ..."  + bcolours.ENDC)
 
 #### Good replicas and cut on the global function
 goodreplicas = []
-cutgef = 4
-replicasfolders = [dir for dir in os.listdir(outfolder) if os.path.isdir(os.path.join(outfolder,dir)) and dir != 'tables' and dir != 'data' and dir != randomreplicasconfig and dir != reportnamefolder]
+cutgef = fitconfig["Error function cut"]
+replicasfolders = [dir for dir in os.listdir(outfolder) if os.path.isdir(os.path.join(outfolder,dir)) and dir != 'tables' and dir != 'data'  and dir != "mean_replica" and dir != reportnamefolder]
+
 # Consider only the ones where the minimizer converged and with the cut on the global function
 for rf in replicasfolders:
     with open(outfolder + "/" + rf + "/Report.yaml", "r") as rep:
@@ -149,7 +109,7 @@ with open(reportfile,"w+") as mdout:
 
 # General information from tables/config.yaml
 with open(reportfile,"a+") as mdout:
-    # mdout.write("Description of the fit: " + fitconfig["Description"] + '\n')
+    mdout.write("Description of the fit: " + fitconfig["Description"] + '\n')
     mdout.write("Description of the fit: " + rdescription + ' \n')
     mdout.write( "This report is related to the output of the fit in the folder: \n " + "``" + outfolder + "``"  + '\n')
     mdout.write('\n')
@@ -167,15 +127,16 @@ with open(reportfile,"a+") as mdout:
     headings = [list(fitconfig.keys())[iter] for iter in range(1, len(data[0])+ 1)]
     writemarkdown.table(mdout, data, headings)
 
-# # Parameterisation latex formula
-# with open(reportfile,"a+") as mdout:
-#     # unpack the OrderedDict given by GetLatexFormula()
-#     key, formula = [x for x in zip(*utilities.GetLatexFormula(fitconfig["Parameterisation"]).items())]
-#     # Write in the report
-#     mdout.write("The formulas for the " + "``" + fitconfig["Parameterisation"] + "``" + " parameterisation are: " + "\n")
-#     for f in formula:
-#         mdout.write(f + '\n')
-#     mdout.write('\n')
+# Parameterisation latex formula
+with open(reportfile,"a+") as mdout:
+    with open(outfolder + "/replica_0/Report.yaml", "r") as rep0:
+        replica0 = yaml.load(rep0, Loader=yaml.RoundTripLoader)
+        formulae = replica0["Non-perturbative function"]
+
+        # Write in the report
+        mdout.write("The formulas for the " + "``" + fitconfig["Parameterisation"] + "``" + " parameterisation are: " + "\n")
+        mdout.write(formulae + '\n')
+        mdout.write('\n')
 
 # Parameters
 with open(reportfile, "a+") as mdout:
@@ -194,7 +155,6 @@ with open(reportfile, "a+") as mdout:
 with open(reportfile,"a+") as mdout:
     # Get parameters in the right format
     headers, rows = utilities.TableOfInitialParameters(fitconfig["Parameters"])
-    rows = utilities.GetLatexNames(rows)
 
     # Write the table for initial parameters
     mdout.write("The __initial parameters__ of the fit for the central replica (__replica 0__) are: " + '\n')
@@ -239,19 +199,6 @@ with open(reportfile,"a+") as mdout:
 
 # Write tables of initial and final parameters for replicamin
 if replicamin != "replica_0":
-    # Table of initial Parameters of replicamin
-    with open(reportfile,"a+") as mdout:
-        with open(outfolder + "/" + randomreplicasconfig + "/" + "fitconfig_" + replicamin + ".yaml", "r") as repmin_in:
-            repminfitconfig = yaml.load(repmin_in, Loader=yaml.RoundTripLoader)
-
-            headers, rows = utilities.TableOfInitialParameters(repminfitconfig["Parameters"])
-            # Put the name of the parameters in Latex form
-            rows = utilities.GetLatexNames(rows)
-
-            # Write the table for initial parameters
-            mdout.write("The __initial parameters__ of the fit for the replica with the __minimum__ chisquare are: " + '\n')
-            writemarkdown.table(mdout, rows, headers)
-
     # Table of the Final parameters for the replica min
     with open(outfolder + "/" + replicamin + "/Report.yaml", "r") as repmin_fin:
         reportreplmin = yaml.load(repmin_fin, Loader=yaml.RoundTripLoader)
@@ -264,6 +211,23 @@ if replicamin != "replica_0":
         with open(reportfile,"a+") as mdout:
             mdout.write("The __final parameters__ of the fit for the replica with the __minimum__ chisquare are: " + '\n')
             writemarkdown.table(mdout, rows, headings)
+
+#### Replica 0 table of chi2
+header, rows = utilities.TableOfChi2("replica_0", outfolder)
+with open(reportfile,"a+") as mdout:
+    writemarkdown.mdtitle(mdout, 2, "Table of $\chi^2$ for replica 0")
+    mdout.write("Table with the experiment's contributions to the total $\chi^2$. The numbers in the rows of the table are already the normalised values.")
+    writemarkdown.table(mdout, rows, header)
+
+#### Mean replica table of chi2
+try:
+    header, rows = utilities.TableOfChi2("mean_replica", outfolder)
+    with open(reportfile,"a+") as mdout:
+        writemarkdown.mdtitle(mdout, 2, "Table of $\chi^2$ for the mean of the replicas")
+        mdout.write("Table with the experiment's contributions to the total $\chi^2$. The numbers in the rows of the table are already the normalised values.")
+        writemarkdown.table(mdout, rows, header)
+except:
+    print(bcolours.WARNING + "\nThe folder 'mean_replica' was not found, its table of chi2 will not be included in the report. \n " + bcolours.ENDC)
 
 #### Global Plots
 # Create histograms for global error function and global chi2
