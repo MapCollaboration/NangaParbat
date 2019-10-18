@@ -1,8 +1,9 @@
-import banner
+import modules.banner as banner
 from PyInquirer import prompt, Separator
 from examples import custom_style_3
 from ruamel import yaml
 import os
+import modules.bcolours as bcolours
 from bcolours import *
 from validators import *
 

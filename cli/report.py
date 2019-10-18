@@ -17,14 +17,16 @@ import modules.bcolours as bcolours
 import modules.fitresults as fitresults
 
 from modules.bcolours import *
-from validators import *
 from modules.fitresults import *
+from validators import *
+
 
 # Print banner
 print(banner.reportbanner())
 
 # Folder containing the utilities
 CliFolder = os.path.dirname(os.path.realpath(__file__))
+RunFolder = os.path.dirname(os.path.realpath(__file__)) + "/../run"
 
 # Prompt for output folder
 questions = [
@@ -40,7 +42,7 @@ answers = prompt(questions, style = custom_style_3)
 
 # Set folder with the info for the report (output of the fit)
 outfolder = CliFolder + "/../" + answers["Output folder"]
-print(bcolours.ACTREPORT + "Folder with info for the report '" + outfolder + bcolours.ENDC)
+print(bcolours.ACTREPORT + "Folder with info for the report '" + outfolder + '\n' + bcolours.ENDC)
 
 with open(outfolder + "/fitconfig.yaml", "r") as fc:
     fitconfig = yaml.load(fc, Loader=yaml.RoundTripLoader)
@@ -53,7 +55,7 @@ print(bcolours.ACTREPORT + "Loading tables configuration file '" + outfolder + "
 # Create report folder
 reportnamefolder = "TotalReport"
 reportfolder = outfolder + "/TotalReport"
-print(bcolours.ACTREPORT + "Creating folder for the final report '" + reportfolder + "'\n " + bcolours.ENDC)
+print(bcolours.ACTREPORT + "Creating folder for the final report '" + reportfolder + bcolours.ENDC)
 os.mkdir(reportfolder)
 
 # Create report file
@@ -71,21 +73,24 @@ questions = [
 answers = prompt(questions, style=custom_style_3)
 rdescription = answers["Report description"]
 
-print(bcolours.REPORT + "\n" + "Computing the total report ..."  + bcolours.ENDC)
+print(bcolours.ACTREPORT + "\n" + "Computing the total report ... \n"  + bcolours.ENDC)
 
 #### Good replicas and cut on the global function
 goodreplicas = []
-cutgef = fitconfig["Error function cut"]
+cutgef = float(fitconfig["Error function cut"])
 replicasfolders = [dir for dir in os.listdir(outfolder) if os.path.isdir(os.path.join(outfolder,dir)) and dir != 'tables' and dir != 'data'  and dir != "mean_replica" and dir != reportnamefolder]
 
 # Consider only the ones where the minimizer converged and with the cut on the global function
 for rf in replicasfolders:
-    with open(outfolder + "/" + rf + "/Report.yaml", "r") as rep:
-         replica = yaml.load(rep, Loader=yaml.RoundTripLoader)
-         status = int(replica["Status"])
-         globef = float(replica["Global error function"])
-         if status == 1 and globef < cutgef:
-            goodreplicas.append(rf)
+    try:
+        with open(outfolder + "/" + rf + "/Report.yaml", "r") as rep:
+             replica = yaml.load(rep, Loader = yaml.RoundTripLoader)
+             status = int(replica["Status"])
+             globef = float(replica["Global error function"])
+             if status == 1 and globef < cutgef:
+                goodreplicas.append(rf)
+    except:
+        print(bcolours.WARNING + "File Report.yaml not found in '"+ rf + "'" + bcolours.ENDC)
 # # Consider all replicas - uncomment below
 # goodreplicas = replicasfolders
 
@@ -99,6 +104,10 @@ with open(outfolder + "/" + "replica_0" + "/Report.yaml", "r") as rep0:
 
 # Print the final chi2 (of replica 0)
 print(bcolours.REPORT + "The chi2 of the central replica is: " + bcolours.BOLD + str(rep0chi2) + "\n " + bcolours.ENDC)
+
+# Compute mean of replicas
+print(bcolours.ACTREPORT + "Computing mean of the replicas ... \n " + bcolours.ENDC)
+os.system(RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables " + "0 n y ")
 
 # Write final report in Markdown
 # Title
@@ -176,7 +185,7 @@ with open(outfolder + "/" + "replica_0" + "/Report.yaml", "r") as rep0:
 # Create folder for plot.pdf and for plot.png
 pdffolder = reportfolder + "/plots"
 pngfolder = reportfolder + "/pngplots"
-print(bcolours.ACTREPORT + "Creating folder for the plots .pdf '" + pdffolder + "'" + bcolours.ENDC)
+print(bcolours.ACTREPORT + "\nCreating folder for the plots .pdf '" + pdffolder + "'" + bcolours.ENDC)
 os.mkdir(pdffolder)
 print(bcolours.ACTREPORT + "Creating folder for the plots .png '" + pngfolder + "'\n " + bcolours.ENDC)
 os.mkdir(pngfolder)
@@ -227,7 +236,7 @@ try:
         mdout.write("Table with the experiment's contributions to the total $\chi^2$. The numbers in the rows of the table are already the normalised values.")
         writemarkdown.table(mdout, rows, header)
 except:
-    print(bcolours.WARNING + "\nThe folder 'mean_replica' was not found, its table of chi2 will not be included in the report. \n " + bcolours.ENDC)
+    print(bcolours.WARNING + "The folder 'mean_replica' was not found, its table of chi2 will not be included in the report. \n " + bcolours.ENDC)
 
 #### Global Plots
 # Create histograms for global error function and global chi2
