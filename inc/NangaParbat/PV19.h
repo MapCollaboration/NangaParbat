@@ -1,6 +1,6 @@
 //
-// Author: Valerio Bertone: valerio.bertone@cern.ch
-// Author: Alessandro Bacchetta: alessandro.bacchetta@unipv.it
+// Authors: Valerio Bertone: valerio.bertone@cern.ch
+//          Alessandro Bacchetta: alessandro.bacchetta@unipv.it
 
 #pragma once
 
@@ -63,7 +63,7 @@ namespace NangaParbat
 
       return
         ( ( 1 - lambdaB2 ) / ( 1 + g1 / 4  * b2 )
-          + lambdaB2 * ( g1B * exp( - g1B / 4  * b2 ) + lambdaC2 * g1C2 * ( 1 - g1C / 4  * b2 ) * exp( - g1C / 4  * b2 ) ) / ( g1B + lambdaC2 * g1C2 ) )
+          + lambdaB2 * ( g1B * exp( - g1B / 4  * b2 ) + lambdaC2 * g1C2 * ( 1 - g1C / 4 * b2 ) * exp( - g1C / 4 * b2 ) ) / ( g1B + lambdaC2 * g1C2 ) )
         * NPevol;
     };
 

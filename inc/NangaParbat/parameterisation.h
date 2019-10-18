@@ -19,6 +19,10 @@ namespace NangaParbat
   public:
     /**
      * @brief The "Parameterisation" constructor
+     * @param name: name of the parameterisation object
+     * @param nfuncs: number of parametric functions
+     * @param pars: vector of parameters (default: empty vector)
+     * @param anders: whether analytic derivatives are provided
      */
     Parameterisation(std::string const& name, int const& nfuncs = 0, std::vector<double> pars = {}, bool const& anders = false);
 
@@ -38,8 +42,8 @@ namespace NangaParbat
      * @brief Virtual function that returns the value of one of the functions.
      * @param x: momentum fraction
      * @param b: impact parameter
-     * @param zeta: rapidity scale &zeta
-     * @param ifunc: index of the function;
+     * @param zeta: rapidity scale &zeta;
+     * @param ifunc: index of the function
      * @return it returns the value of the ifunc-th function at (x, b,
      * &zeta;)
      */

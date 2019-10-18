@@ -16,41 +16,19 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  ConvolutionTable::ConvolutionTable(YAML::Node const& table)
+  ConvolutionTable::ConvolutionTable(YAML::Node const& table):
+    _name(table["name"].as<std::string>()),
+    _proc(table["process"].as<int>()),
+    _Vs(table["CME"].as<double>()),
+    _IntqT(table["qTintegrated"].as<bool>()),
+    _qTv(table["qT_bounds"].as<std::vector<double>>()),
+    _qTmap(table["qT_map"].as<std::vector<std::vector<double>>>()),
+    _qTfact(table["bin_factors"].as<std::vector<double>>()),
+    _prefact(table["prefactor"].as<double>()),
+    _z(table["Ogata_coordinates"].as<std::vector<double>>()),
+    _Qg(table["Qgrid"].as<std::vector<double>>()),
+    _xig(table["xigrid"].as<std::vector<double>>())
   {
-    // Name
-    _name = table["name"].as<std::string>();
-
-    // Process index
-    _proc = table["process"].as<int>();
-
-    // C.M.E.
-    _Vs = table["CME"].as<double>();
-
-    // Whether the data is integrated over qT
-    _IntqT = table["qTintegrated"].as<bool>();
-
-    // qT bin bounds
-    _qTv = table["qT_bounds"].as<std::vector<double>>();
-
-    // Bin bounds for each qT bin
-    _qTmap = table["qT_map"].as<std::vector<std::vector<double>>>();
-
-    // Bin-by-bin factors
-    _qTfact = table["bin_factors"].as<std::vector<double>>();
-
-    // Prefactor
-    _prefact = table["prefactor"].as<double>();
-
-    // Ogata unscaled coordinates
-    _z = table["Ogata_coordinates"].as<std::vector<double>>();
-
-    // Q grid
-    _Qg = table["Qgrid"].as<std::vector<double>>();
-
-    // xi grid
-    _xig = table["xigrid"].as<std::vector<double>>();
-
     // Read the phase-space reduction factors...
     for (auto const& qT : _qTv)
       _PSRed.insert({qT, table["PS_reduction_factor"][qT].as<std::vector<std::vector<double>>>()});

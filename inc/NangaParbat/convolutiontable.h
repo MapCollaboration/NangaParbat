@@ -116,17 +116,17 @@ namespace NangaParbat
     void PlotWeights() const;
 
   private:
-    std::string                                                    _name;    //!< Name of the table
-    int                                                            _proc;    //!< Index of the process (0: DY, 1: SIDIS)
-    double                                                         _Vs;      //!< Center of mass energy
-    bool                                                           _IntqT;   //!< Whether the bin are integrated in qT or not
-    std::vector<double>                                            _qTv;     //!< Vector of qT bin-bounds
-    std::vector<std::vector<double>>                               _qTmap;   //!< Vector of bounds for each qT bin
-    std::vector<double>                                            _qTfact;  //!< Bin-by-bin factors
-    double                                                         _prefact; //!< Overall prefactor
-    std::vector<double>                                            _z;       //!< Unscaled Ogata coordinate
-    std::vector<double>                                            _Qg;      //!< Grid in Q
-    std::vector<double>                                            _xig;     //!< Grid in xi
+    std::string                                              const _name;    //!< Name of the table
+    int                                                      const _proc;    //!< Index of the process (0: DY, 1: SIDIS)
+    double                                                   const _Vs;      //!< Center of mass energy
+    bool                                                     const _IntqT;   //!< Whether the bin are integrated in qT or not
+    std::vector<double>                                      const _qTv;     //!< Vector of qT bin-bounds
+    std::vector<std::vector<double>>                         const _qTmap;   //!< Vector of bounds for each qT bin
+    std::vector<double>                                      const _qTfact;  //!< Bin-by-bin factors
+    double                                                   const _prefact; //!< Overall prefactor
+    std::vector<double>                                      const _z;       //!< Unscaled Ogata coordinate
+    std::vector<double>                                      const _Qg;      //!< Grid in Q
+    std::vector<double>                                      const _xig;     //!< Grid in &xi;
     std::map<double,std::vector<std::vector<double>>>              _PSRed;   //!< The phase-space reduction factors
     std::map<double,std::vector<std::vector<double>>>              _dPSRed;  //!< The derivative of the phase-space reduction factors
     std::map<double,std::vector<std::vector<std::vector<double>>>> _W;       //!< The weights
