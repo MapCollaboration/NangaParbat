@@ -1,6 +1,6 @@
 # Command Line Interface (CLI)
 
-Io order to facilitate the usage of the code, we provide frontend command line interfaces that help the user access the main functionalities.
+Io order to facilitate the usage of the code, we provide frontend command-line interfaces that help the user access the main functionalities.
 
 ## Generate interpolation tables
 
