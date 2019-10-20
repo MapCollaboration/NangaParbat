@@ -1,7 +1,7 @@
 ![alt text](https://github.com/vbertone/NangaParbat/raw/master/doc/NangaParbatPanoramic.png
  "Nanga Parbat")
 
-# Nanga Parbat: to the top of TMDs
+# Nanga Parbat: a TMD fitting framework
 
 Nanga Parbat is a fitting framework aimed at the determination of the
 non-perturbative component of the TMD distributions.
