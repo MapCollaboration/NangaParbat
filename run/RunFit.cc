@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
   for (auto const& exp : datasets)
     for (auto const& ds : exp.second)
       {
-        std::cout << "Reading " << ds["name"].as<std::string>() << " ..." << std::endl;
+        std::cout << "Reading " << ds["name"].as<std::string>() << "..." << std::endl;
 
         // Convolution table
         const std::string table = std::string(argv[4]) + "/" + ds["name"].as<std::string>() + ".yaml";

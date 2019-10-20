@@ -111,7 +111,8 @@ namespace NangaParbat
 
     /**
      * @brief function that makes a 3D histogram of the weights as a
-     * function of b<SUB>T</SUB> and x<SUB>1,2</SUB>.
+     * function of b<SUB>T</SUB> and x<SUB>1,2</SUB>. See:
+     * https://root.cern/doc/v610/classTHistPainter.html for details.
      */
     void PlotWeights() const;
 

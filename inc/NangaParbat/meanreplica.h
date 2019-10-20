@@ -6,6 +6,8 @@
 
 #include "NangaParbat/parameterisation.h"
 
+#include <apfel/qgrid.h>
+
 namespace NangaParbat
 {
   /**
@@ -36,7 +38,7 @@ namespace NangaParbat
      * @return it returns the value of the ifunc-th function at (x, b,
      * &zeta;)
      */
-    double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const;
+    double Evaluate(double const& x, double const& bT, double const& zeta, int const& ifunc) const;
 
     /**
      * @brief Function that returns a string with the formula
@@ -51,7 +53,12 @@ namespace NangaParbat
     std::vector<std::string> GetParameterNames() const;
 
   private:
-    NangaParbat::Parameterisation               *_NPFunc;
-    std::vector<NangaParbat::Parameterisation*>  _NPFuncv;
+    NangaParbat::Parameterisation               * _NPFunc;
+    std::vector<NangaParbat::Parameterisation*>   _NPFuncv;
+    std::unique_ptr<apfel::QGrid<double>>         _xg;
+    std::unique_ptr<apfel::QGrid<double>>         _bTg;
+    std::unique_ptr<apfel::QGrid<double>>         _zetag;
+    std::vector<std::vector<std::vector<double>>> _fNP1g;
+    std::vector<std::vector<std::vector<double>>> _fNP2g;
   };
 }
