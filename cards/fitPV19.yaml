@@ -4,7 +4,7 @@ Description: PV17qGauss
 
 # Minimiser to be used for the fit. Possible options so far are
 # 'minuit', 'ceres', and 'none'.
-Minimiser: none
+Minimiser: minuit
 
 # Seed used with the random-number generator for the generation of the
 # Monte Carlo replicas
@@ -35,40 +35,40 @@ Parameterisation: PV19
 # particular parameterisation being used.
 Parameters:
 - name: $g_2$
-  starting_value: 0.02986
-  step: 0.05
+  starting_value: 0.01555226183379
+  step: 0.01413064551869
   fix: false
 - name: $N_1$
-  starting_value: 3.8486
-  step: 0.05
+  starting_value: 3.037307301029
+  step: 1.580391827556
   fix: false
 - name: $\alpha$
-  starting_value: 18.5075
-  step: 0.5
+  starting_value: 21.25188271416
+  step: 7.684426012771
   fix: false
 - name: $\sigma$
-  starting_value: 4.938
-  step: 0.1
+  starting_value: 5.617126616185
+  step: 2.332461353585
   fix: false
 - name: $\delta$
   starting_value: 0.0
   step: 0.02
   fix: true
 - name: $\lambda_B$
-  starting_value: 0.8407
-  step: 0.05
+  starting_value: 0.814107812237
+  step: 0.04965693841139
   fix: false
 - name: $N_{1,B}$
-  starting_value: 0.7921
-  step: 0.05
+  starting_value: 0.818236756836
+  step: 0.4139949929797
   fix: false
 - name: $\alpha_B$
-  starting_value: 62.47
-  step: 0.5
+  starting_value: 64.62831373717
+  step: 22.36473821475
   fix: false
 - name: $\sigma_B$
-  starting_value: 4.075
-  step: 0.1
+  starting_value: 4.024930981478
+  step: 1.540759053814
   fix: false
 - name: $\delta_B$
   starting_value: 0.0
@@ -83,8 +83,8 @@ Parameters:
   step: 0.05
   fix: true
 - name: $g_{2,B}$
-  starting_value: 0.01781
-  step: 0.05
+  starting_value: 0.01741323256459
+  step: 0.003884054392502
   fix: false
 - name: $\beta$
   starting_value: 2.0

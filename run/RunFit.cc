@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
   fout.close();
 
   // Produce plots
-  chi2.MakePlots(OutputFolder);
+  // chi2.MakePlots(OutputFolder);
 
   // Delete random-number generator
   gsl_rng_free(rng);

@@ -15,10 +15,11 @@ import modules.utilities as utilities
 
 import modules.bcolours as bcolours
 import modules.fitresults as fitresults
+import modules.validators as validators
 
 from modules.bcolours import *
 from modules.fitresults import *
-from validators import *
+from modules.validators import *
 
 
 # Print banner
