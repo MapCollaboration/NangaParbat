@@ -8,6 +8,7 @@
 
 #include <fstream>
 #include <sys/stat.h>
+#include <memory>
 
 namespace NangaParbat
 {
