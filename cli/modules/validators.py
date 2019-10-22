@@ -4,14 +4,14 @@ import os
 # Validators
 class OutputFolderValidator(Validator):
     def validate(self, document):
-        dir = os.path.dirname(os.path.realpath(__file__)) + "/" + document.text
+        dir = os.path.dirname(os.path.realpath(__file__)) + "/../../" + document.text
         exists = os.path.isdir(dir)
         if exists:
             raise ValidationError(message = "The folder '" + document.text + "' already exists", cursor_position = len(document.text))
 
 class NotOutputFolderValidator(Validator):
     def validate(self, document):
-        dir = os.path.dirname(os.path.realpath(__file__)) + "/../" + document.text
+        dir = os.path.dirname(os.path.realpath(__file__)) + "/../../" + document.text
         exists = os.path.isdir(dir)
         if not exists:
             os.listdir()
