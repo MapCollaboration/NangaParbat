@@ -65,11 +65,13 @@ for rf in os.listdir(outfolder):
     try:
         with open(outfolder + "/" + rf + "/Report.yaml", "r") as rep:
             report = yaml.load(rep, Loader = yaml.RoundTripLoader)
-            if int(report["Status"]) == 0:
+            if (int(report["Status"]) == 0) or (str(report["Global chi2"]) == "nan"):
                 print("- " + rf + " did not converge.")
+                print(bcolours.WARNING + "  chi2 = " + str(report["Global chi2"]) + bcolours.ENDC)
                 continue
             if float(report["Global error function"]) > float(fitconfig["Error function cut"]):
                 print("- " + rf + " does not pass the error-function cut.")
+                print(bcolours.WARNING + "  chi2 = " + str(report["Global chi2"]) + bcolours.ENDC)
                 continue
             if rf != "replica_0" and rf != "mean_replica":
                 reports.append(report)
@@ -142,7 +144,7 @@ with open(reportfile, "w+") as mdout:
 
     # Upload results
     results = fitresults(reports, report0, report_mean, reportfolder, mdout)
-    
+
     # Statistical estimators
     writemarkdown.mdtitle(mdout, 2, "Global statistical estimators")
     results.StatisticalEstimators()
