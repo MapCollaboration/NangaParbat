@@ -29,7 +29,7 @@ namespace NangaParbat
         // central value as starting parameters, otherwise fluctuate
         // them (gaussianly) according to the step.
         double pstart = p["starting_value"].as<double>();
-        if (rng !=  NULL)
+        if (rng !=  NULL && !p["fix"].as<bool>())
           pstart += gsl_ran_gaussian(rng, p["step"].as<double>());
 
         upar.Add(p["name"].as<std::string>(), pstart, p["step"].as<double>());
@@ -42,7 +42,7 @@ namespace NangaParbat
           upar.SetUpperLimit(p["name"].as<std::string>(), p["upper_bound"].as<double>());
 
         // Fix parameter if required
-        if (p["fix"] && p["fix"].as<bool>())
+        if (p["fix"].as<bool>())
           upar.Fix(p["name"].as<std::string>());
       }
 
@@ -104,67 +104,68 @@ namespace NangaParbat
     // Allocate "Problem" instance
     ceres::Problem problem{};
 
-    // Number of parameters to be fitted
-    const int npars = parameters.size();
-
     // Define cost function
     ceres::DynamicNumericDiffCostFunction<FcnCeres> *cost_function = new ceres::DynamicNumericDiffCostFunction<FcnCeres>(new FcnCeres{chi2});
 
-    // Add one single parameter block
-    cost_function->AddParameterBlock(npars);
-
     // Set number of residuals
-    int nres = 0;
-    for (auto const n : chi2.GetDataPointNumbers())
-      nres += n;
-    cost_function->SetNumResiduals(nres);
+    cost_function->SetNumResiduals(chi2.GetDataPointNumber());
 
     // Fill in initial parameter array
-    double initPars[npars];
-    std::vector<int> fixedpars;
-    int i = 0;
+    std::vector<double*> initPars;
     for (auto const p : parameters)
       {
+        // Add a parameter block for each parameter
+        cost_function->AddParameterBlock(1);
+
         // If the GSL random-number generator object is NULL use the
         // central value as starting parameters, otherwise fluctuate
         // them (gaussianly) according to the step.
         double pstart = p["starting_value"].as<double>();
-        if (rng !=  NULL)
+        if (rng !=  NULL && !p["fix"].as<bool>())
           pstart += gsl_ran_gaussian(rng, p["step"].as<double>());
 
         // Fill in initial parameter array
-        initPars[i++] = pstart;
-
-        // Fix parameter if required
-        if (p["fix"] && p["fix"].as<bool>())
-          fixedpars.push_back(i-1);
+        initPars.push_back(new double(pstart));
       }
 
     // Add residual block
     problem.AddResidualBlock(cost_function, NULL, initPars);
 
-    // Fix constant parameters
-    if (!fixedpars.empty())
-      problem.SetParameterization(initPars, new ceres::SubsetParameterization{npars, fixedpars});
-
     // Set upper and lower bounds if required
-    i = 0;
+    int i = 0;
     for (auto const p : parameters)
       {
-        if (p["lower_bound"])
-          problem.SetParameterLowerBound(initPars, i, p["lower_bound"].as<double>());
+        // Fix parameter if required
+        if (p["fix"].as<bool>())
+          {
+            // If the parameter is fixed set lower and upper bound
+            // within an epsilon from the starting value. Workaround
+            // to avoid that the code crushes.
+            problem.SetParameterLowerBound(initPars[i], 0, *initPars[i] - 1e-8);
+            problem.SetParameterUpperBound(initPars[i], 0, *initPars[i] + 1e-8);
 
-        if (p["upper_bound"])
-          problem.SetParameterUpperBound(initPars, i, p["upper_bound"].as<double>());
+            // This is the correct procedure that seems to make the
+            // code crush.
+            //problem.SetParameterBlockConstant(initPars[i]);
+          }
+        else
+          {
+            if (p["lower_bound"])
+              problem.SetParameterLowerBound(initPars[i], 0, p["lower_bound"].as<double>());
 
+            if (p["upper_bound"])
+              problem.SetParameterUpperBound(initPars[i], 0, p["upper_bound"].as<double>());
+          }
         i++;
       }
 
     // Option object
     ceres::Solver::Options options;
     options.minimizer_progress_to_stdout = true;
-    //options.function_tolerance = 1e-5;
-    options.max_num_iterations = 1000;
+    options.max_num_iterations           = 1000;
+    //options.function_tolerance           = 1e-5;
+    //options.minimizer_type               = ceres::LINE_SEARCH;
+    //options.trust_region_strategy_type   = ceres::DOGLEG;
 
     // Summary object
     ceres::Solver::Summary summary;

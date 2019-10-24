@@ -18,7 +18,7 @@ namespace NangaParbat
   {
   public:
 
-    PV19(): Parameterisation{"PV19", 2, std::vector<double>{0.13, 0.285, 2.98, 0.173, 0.39, 0., 0.1, 0.1, 0., 0., 0., 0.1, 0., 1.}} {};
+    PV19(): Parameterisation{"PV19", 2, std::vector<double> {0.02986, 3.8486, 18.5075, 4.938, 0.0, 0.8407, 0.7921, 62.47, 4.075, 0.0, 0.0, 0.1, 0.01781, 2.0}} {};
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
@@ -100,6 +100,5 @@ namespace NangaParbat
   private:
     const double _Q02  = 1;
     const double _xhat = 0.1;
-
   };
 }
