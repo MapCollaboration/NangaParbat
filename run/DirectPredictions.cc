@@ -43,15 +43,7 @@ int main(int argc, char* argv[])
       }
 
   // Allocate "Parameterisation" derived object
-  NangaParbat::Parameterisation *NPFunc;
-  if (std::string(argv[3]) == "DWS")
-    NPFunc = new NangaParbat::DWS{};
-  else if (std::string(argv[3]) == "PV17")
-    NPFunc = new NangaParbat::PV17{};
-  else if (std::string(argv[3]) == "PV19")
-    NPFunc = new NangaParbat::PV19{};
-  else
-    throw std::runtime_error("[DirectPredictions]: Unknown parameterisation");
+  const NangaParbat::Parameterisation *NPFunc = NangaParbat::GetParametersation(std::string(argv[3]));
 
   // Compute direct predictions
   auto const fNP = [=] (double const& x, double const& b, double const& zeta) -> double { return (*NPFunc).Evaluate(x, b, zeta, 0); };

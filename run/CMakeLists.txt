@@ -13,3 +13,6 @@ target_link_libraries(AvailableDataSets NangaParbat)
 
 add_executable(DirectPredictions DirectPredictions.cc)
 target_link_libraries(DirectPredictions NangaParbat)
+
+add_executable(PlotTMDs PlotTMDs.cc)
+target_link_libraries(PlotTMDs NangaParbat)

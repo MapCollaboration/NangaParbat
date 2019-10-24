@@ -16,7 +16,7 @@ endif()
 project(NangaParbat)
 
 # activating some global properties for the project
-set(NangaParbat_VERSION 1.1.0)
+set(NangaParbat_VERSION 1.2.0)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
