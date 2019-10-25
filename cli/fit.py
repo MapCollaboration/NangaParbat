@@ -112,13 +112,78 @@ if not confirm["ConfirmTables"]:
 # Create symbolic link to the chosen interpolation tables
 os.system("ln -s " + RunFolder + "/../tables/" + answers["tables"] + " " + outfolder + "/tables")
 
-# Fit configuration card
+# Choice of parameterisation
+print(bcolours.HEADER + bcolours.BOLD + "\nChoice of parameterisation:" + bcolours.ENDC)
+question = [
+    {
+        "type": "list",
+        "name": "Parameterisation",
+        "message": "Select parameterisation:",
+        "choices": ["DWS", "PV17", "PV19"]
+    }
+]
+answer = prompt(question, style=custom_style_3)
+param  = answer["Parameterisation"]
+
+if param == "DWS":
+    pathfitconfig = RunFolder + "/../cards/fitDWS.yaml"
+    with open(pathfitconfig, "r") as stream:
+        fitconfdef = yaml.load(stream, Loader=yaml.RoundTripLoader)
+
+elif param == "PV17":
+    pathfitconfig = RunFolder + "/../cards/fitPV17.yaml"
+    with open(pathfitconfig, "r") as stream:
+        fitconfdef = yaml.load(stream, Loader=yaml.RoundTripLoader)
+
+elif param == "PV19":
+    pathfitconfig = RunFolder + "/../cards/fitPV19.yaml"
+    with open(pathfitconfig, "r") as stream:
+        fitconfdef = yaml.load(stream, Loader=yaml.RoundTripLoader)
+
+# Choice of default file
+print(bcolours.HEADER + bcolours.BOLD + "\nThe default fit configuration file is: \n" + pathfitconfig + "\n" + bcolours.ENDC)
+print(bcolours.OKBLUE + yaml.dump(fitconfdef, Dumper=yaml.RoundTripDumper) + "\n" + bcolours.ENDC)
+
+question = [
+    {
+        "type": "confirm",
+        "name": "Default file",
+        "message": "Do you want to start from a different default file?",
+        "default": False
+    }
+]
+answer = prompt(question, style=custom_style_3)
+
+if answer["Default file"]:
+    question = [
+        {
+            "type": "input",
+            "name": "New fitconfig yaml file",
+            "message": "Path of the yaml fit configuration file (from NangaParbat/ ):",
+#            "validator": NotOutputFileValidator
+        }
+    ]
+    answer = prompt(question, style=custom_style_3)
+    newfpath = RunFolder + "/../" + answer["New fitconfig yaml file"]
+
+    with open(newfpath, "r") as stream:
+        fitcfg = yaml.load(stream, Loader=yaml.RoundTripLoader)
+
+    # Show the new default fit configuration file
+    print(bcolours.HEADER + bcolours.BOLD + "\nThe default fit configuration file is: \n" + newfpath + "\n" + bcolours.ENDC)
+    print(bcolours.OKBLUE + yaml.dump(fitcfg, Dumper=yaml.RoundTripDumper) + "\n" + bcolours.ENDC)
+
+else:
+    fitcfg = fitconfdef
+
+# Fit configuration card - possibility to change the default
 print(bcolours.HEADER + bcolours.BOLD + "\nConfiguration of the fit parameters:" + bcolours.ENDC)
 questions = [
     {
         "type": "input",
         "name": "Description",
-        "message": "Type a short description of the fit:"
+        "message": "Type a short description of the fit:",
+        "default": fitcfg["Description"]
     },
     {
         "type": "list",
@@ -130,34 +195,28 @@ questions = [
         "type": "input",
         "name": "Seed",
         "message": "Enter the random-number seed for the generation of the Monte-Carlo replicas:",
-        "default": "1234",
+        "default": fitcfg["Seed"],
         "validate": IntegerValidator
     },
     {
         "type": "input",
         "name": "qToQmax",
         "message": "Enter the maximum value qT / Q allowed in the fit:",
-        "default": "0.2",
+        "default": fitcfg["qToQmax"],
         "validate": FloatValidator
     },
     {
         "type": "input",
         "name": "Error function cut",
         "message": "Enter the cut on the value of the error function (used for the report):",
-        "default": "4",
+        "default": fitcfg["Error function cut"],
         "validate": FloatValidator
     },
     {
         "type": "confirm",
         "name": "t0prescription",
         "message": "Do you want to use the t0 prescription?",
-        "default": True
-    },
-    {
-        "type": "list",
-        "name": "Parameterisation",
-        "message": "Select parameterisation:",
-        "choices": ["DWS", "PV17", "PV19"],
+        "default": fitcfg["t0prescription"]
     },
     {
         "type": "confirm",
@@ -166,44 +225,14 @@ questions = [
         "default": False
     }
 ]
+
+# Configure fit
 fitconfig = prompt(questions, style=custom_style_3)
+fitconfig["Parameterisation"] = param
+fitconfig["Parameters"] = fitcfg["Parameters"]
+fitconfig["t0parameters"] = fitcfg["t0parameters"]
 
-# Now initialise parameters according to the parameterisation chosen
-if fitconfig["Parameterisation"] == "DWS":
-    fitconfig["t0parameters"] = [0.01, 0.1]
-    fitconfig["Parameters"] = [
-        {"name": "$g_1$", "starting_value": 0.01, "step": 0.001, "fix": False},
-        {"name": "$g_2$", "starting_value": 0.1,  "step": 0.005, "fix": False}
-        ]
-elif fitconfig["Parameterisation"] == "PV17":
-    fitconfig["t0parameters"] = [0.13, 0.285, 2.98, 0.173, 0.39]
-    fitconfig["Parameters"] = [
-        {"name": "$g_2$",     "starting_value": 0.13,  "step": 0.001, "fix": False},
-        {"name": "$N_1$",     "starting_value": 0.285, "step": 0.003, "fix": False},
-        {"name": "$\alpha$",  "starting_value": 2.98,  "step": 0.030, "fix": False},
-        {"name": "$\sigma$",  "starting_value": 0.173, "step": 0.002, "fix": False},
-        {"name": "$\lambda$", "starting_value": 0.39,  "step": 0.005, "fix": True }
-        ]
-elif fitconfig["Parameterisation"] == "PV19":
-    fitconfig["t0parameters"] = [0.02986, 3.8486, 18.5075, 4.938, 0.0, 0.8407, 0.7921, 62.473, 4.075, 0.0, 0.0, 0.1, 0.01781, 2.0]
-    fitconfig["Parameters"] = [
-        {"name": "$g_2$",       "starting_value": 0.02986, "step": 0.05, "fix": False},
-        {"name": "$N_1$",       "starting_value": 3.8486,  "step": 0.05, "fix": False},
-        {"name": "$\alpha$",    "starting_value": 18.5075, "step": 0.5,  "fix": False},
-        {"name": "$\sigma$",    "starting_value": 4.938,   "step": 0.1,  "fix": False},
-        {"name": "$\delta$",    "starting_value": 0.0,     "step": 0.02, "fix": True },
-        {"name": "$\lambda_B$", "starting_value": 0.8407,  "step": 0.05, "fix": False},
-        {"name": "$N_{1,B}$",   "starting_value": 0.7921,  "step": 0.05, "fix": False},
-        {"name": "$\alpha_B$",  "starting_value": 62.47,   "step": 0.5,  "fix": False},
-        {"name": "$\sigma_B$",  "starting_value": 4.075,   "step": 0.1,  "fix": False},
-        {"name": "$\delta_B$",  "starting_value": 0.0,     "step": 0.02, "fix": True },
-        {"name": "$\lambda_C$", "starting_value": 0.0,     "step": 0.1,  "fix": True },
-        {"name": "$g_{1,C}$",   "starting_value": 0.1,     "step": 0.05, "fix": True },
-        {"name": "$g_{2,B}$",   "starting_value": 0.01781, "step": 0.05, "fix": False},
-        {"name": "$\beta$",     "starting_value": 2.,      "step": 0.05, "fix": True }
-        ]
-
-# Switch to fluctuate the initial parameters guassianly around the
+# Switch to fluctuate the initial parameters gaussianly around the
 # central value according to the step.
 if fitconfig["Paramfluct"]:
     Paramfluct = "y"

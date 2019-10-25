@@ -8,15 +8,15 @@ Minimiser: minuit
 
 # Seed used with the random-number generator for the generation of the
 # Monte Carlo replicas
-Seed: 1234
+Seed: '1234'
 
 # Cut on qT / Q. This has to be smaller than the production cut used
 # to produce the tables.
-qToQmax: 0.2
+qToQmax: '0.2'
 
 # Cut on the error function value for the selection of the "good"
 # Monte Carlo replicas.
-Error function cut: 4
+Error function cut: '4'
 
 # Enable or disable the t0 prescription for the treatment of
 # normalisation uncertantities and define the set of parameters to be
@@ -39,4 +39,3 @@ Parameters:
   - {name: "alpha",  starting_value: 2.98,  step: 0.030, fix: false}#, lower_bound: 0, upper_bound: 10}
   - {name: "sigma",  starting_value: 0.173, step: 0.002, fix: false}#, lower_bound: 0, upper_bound: 10}
   - {name: "lambda", starting_value: 0.39,  step: 0.005, fix: true }#, lower_bound: 0, upper_bound: 10}
-

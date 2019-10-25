@@ -17,6 +17,13 @@ class NotOutputFolderValidator(Validator):
             os.listdir()
             raise ValidationError(message = "The folder '" + document.text + "' does not exists", cursor_position = len(document.text))
 
+class NotOutputFileValidator(Validator):
+    def validate(self, document):
+        file = os.path.dirname(os.path.realpath(__file__)) + "/../../" + document.text
+        exists = os.path.isfile(file)
+        if not exists:
+            raise ValidationError(message = "The file '" + document.text + "' does not exists", cursor_position = len(document.text))    
+
 class FloatValidator(Validator):
     def validate(self, document):
         try:
