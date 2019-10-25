@@ -6,5 +6,6 @@ pandoc "$1" \
     --katex  \
     --css pandoc.css \
     --highlight-style=tango.theme \
+    --metadata pagetitle="Report" \
     -s \
     -o "$2"
