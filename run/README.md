@@ -11,9 +11,9 @@ and displays the available datasets in the target folder ```<path to data folder
 
 - **AvailableParameterisations**: this code is run as follows:
 ```Shell
-./AvailableParameterisations
+./AvailableParameterisations [python]
 ```
-and displays the available parameterisations that can be used in a TMD fit along with a brief description.
+and displays the available parameterisations that can be used in a TMD fit along with a brief description. The optional string ```python``` produces an output that is more easily readable by the python command line interface.
 
 - **CreateTables**: this code produces interpolation tables and is run as follows:
 ```Shell
