@@ -90,5 +90,10 @@ namespace NangaParbat
               R"delimiter($g1C$)delimiter",
               R"delimiter($qq$)delimiter"};
     };
+
+    std::string GetDescription() const
+    {
+      return "Parameterisation with a q-Guaussian and a Gaussion and 12 free parameters.";
+    };
   };
 }

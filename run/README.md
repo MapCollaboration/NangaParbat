@@ -9,6 +9,11 @@ the following.
 ```
 and displays the available datasets in the target folder ```<path to data folder>```. The target folder has be to be filled in by using the ```Filter``` utility (see below) in such a way that the data files are in the appropriate format.
 
+- **AvailableParameterisations**: this code is run as follows:
+```Shell
+./AvailableParameterisations [python]
+```
+and displays the available parameterisations that can be used in a TMD fit along with a brief description. The optional string ```python``` produces an output that is more easily readable by the python command line interface.
 
 - **CreateTables**: this code produces interpolation tables and is run as follows:
 ```Shell

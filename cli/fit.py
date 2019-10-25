@@ -1,4 +1,6 @@
 import os
+import subprocess
+import re
 
 from PyInquirer import prompt, Separator
 from examples import custom_style_3
@@ -112,6 +114,9 @@ if not confirm["ConfirmTables"]:
 # Create symbolic link to the chosen interpolation tables
 os.system("ln -s " + RunFolder + "/../tables/" + answers["tables"] + " " + outfolder + "/tables")
 
+# List of available parameterisations
+avpars = ((re.search("===(.*)===", str(subprocess.run([RunFolder + "/AvailableParameterisations", "python"], stdout=subprocess.PIPE)))).group(1)).split()
+
 # Choice of parameterisation
 print(bcolours.HEADER + bcolours.BOLD + "\nChoice of parameterisation:" + bcolours.ENDC)
 question = [
@@ -119,7 +124,7 @@ question = [
         "type": "list",
         "name": "Parameterisation",
         "message": "Select parameterisation:",
-        "choices": ["DWS", "PV17", "PV19"]
+        "choices": avpars
     }
 ]
 answer = prompt(question, style=custom_style_3)

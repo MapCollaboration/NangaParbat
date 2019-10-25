@@ -63,5 +63,10 @@ namespace NangaParbat
               R"delimiter($\sigma$)delimiter",
               R"delimiter($\lambda$)delimiter"};
     };
+
+    std::string GetDescription() const
+    {
+      return "Parameterisation used for the Pavia 2017 TMD analysis.";
+    };
   };
 }

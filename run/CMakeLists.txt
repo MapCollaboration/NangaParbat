@@ -16,3 +16,6 @@ target_link_libraries(DirectPredictions NangaParbat)
 
 add_executable(PlotTMDs PlotTMDs.cc)
 target_link_libraries(PlotTMDs NangaParbat)
+
+add_executable(AvailableParameterisations AvailableParameterisations.cc)
+target_link_libraries(AvailableParameterisations NangaParbat)
