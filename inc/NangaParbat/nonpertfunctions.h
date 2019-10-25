@@ -10,24 +10,29 @@
 #include "NangaParbat/QGG6.h"
 #include "NangaParbat/QGG12.h"
 
+#include<map>
+
 namespace NangaParbat
 {
-  Parameterisation* GetParametersation(std::string const& name)
+  /**
+   * @brief Map of currently available parameterisations. Each of them
+   * must correspond to a header file containing a class deriving from
+   * the NangaParbat::Parameterisation mother class.
+   */
+  const std::map<std::string, Parameterisation*> AvPars
   {
-    Parameterisation *NPFunc;
-    if (name == "DWS")
-      NPFunc = new NangaParbat::DWS{};
-    else if (name == "PV17")
-      NPFunc = new NangaParbat::PV17{};
-    else if (name == "PV19")
-      NPFunc = new NangaParbat::PV19{};
-    else if (name == "QGG6")
-      NPFunc = new NangaParbat::QGG6{};
-    else if (name == "QGG12")
-      NPFunc = new NangaParbat::QGG12{};
-    else
-      throw std::runtime_error("[GetParametersation]: Unknown parameterisation");
+    {"DWS", new NangaParbat::DWS{}},
+    {"PV17", new NangaParbat::PV17{}},
+    {"PV19", new NangaParbat::PV19{}},
+    {"QGG6", new NangaParbat::QGG6{}},
+    {"QGG12", new NangaParbat::QGG12{}}
+  };
 
-    return NPFunc;
-  }
+  /**
+   * @brief Utility function that returns a pointer to a
+   * NangaParbat::Parameterisation object pointing to a specific
+   * parameterisation.
+   * @param name: name of the parameterisation
+   */
+  Parameterisation* GetParametersation(std::string const& name) { return AvPars.at(name); };
 }

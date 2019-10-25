@@ -97,6 +97,11 @@ namespace NangaParbat
               R"delimiter($\beta$)delimiter"};
     };
 
+    std::string GetDescription() const
+    {
+      return "Parameterisation used for the Pavia 2019 TMD analysis.";
+    };
+
   private:
     const double _Q02  = 1;
     const double _xhat = 0.1;

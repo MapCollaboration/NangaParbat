@@ -388,6 +388,7 @@ namespace NangaParbat
     os << YAML::BeginMap;
     os << YAML::Key << "Global error function" << YAML::Value << chi2.Evaluate();
     os << YAML::Key << "Global chi2" << YAML::Value << chi2.Evaluate(-1, true);
+    os << YAML::Key << "Parameterisation" << YAML::Value << chi2._NPFunc.GetName();
     os << YAML::Key << "Non-perturbative function" << YAML::Value << chi2.GetNonPerturbativeFunction().LatexFormula();
 
     os << YAML::Key << "Parameters" << YAML::Value << YAML::Flow;

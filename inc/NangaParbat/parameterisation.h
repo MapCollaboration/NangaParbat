@@ -87,6 +87,12 @@ namespace NangaParbat
     virtual std::vector<std::string> GetParameterNames() const { return {}; };
 
     /**
+     * @brief Virtual function that returns a short description of the
+     * parametrisation.
+     */
+    virtual std::string GetDescription() const { return ""; };
+
+    /**
      * @name Getters
      * Functions to retrieve the feauture of the parameterisation
      */

@@ -63,6 +63,11 @@ namespace NangaParbat
       return {R"delimiter($g_1$)delimiter", R"delimiter($g_2$)delimiter"};
     };
 
+    std::string GetDescription() const
+    {
+      return "Parameterisation used for the Davies-Webber-Stirling TMD analysis.";
+    };
+
   private:
     double const _Q02;
   };

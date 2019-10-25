@@ -36,7 +36,7 @@ namespace NangaParbat
     // Open LHAPDF FF set
     LHAPDF::PDF* distff = LHAPDF::mkPDF(_config["ffset"]["name"].as<std::string>(), _config["ffset"]["member"].as<int>());
 
-    // Rotate PF set into the QCD evolution basis
+    // Rotate FF set into the QCD evolution basis
     const auto RotFFs = [&] (double const& x, double const& mu) -> std::map<int,double> { return apfel::PhysToQCDEv(distff->xfxQ(x, mu)); };
 
     // Define x-space grid for PDFs
