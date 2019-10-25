@@ -160,7 +160,7 @@ if answer["Default file"]:
             "type": "input",
             "name": "New fitconfig yaml file",
             "message": "Path of the yaml fit configuration file (from NangaParbat/ ):",
-#            "validator": NotOutputFileValidator
+            "validator": NotOutputYamlFileValidator()
         }
     ]
     answer = prompt(question, style=custom_style_3)
