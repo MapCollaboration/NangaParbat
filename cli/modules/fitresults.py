@@ -272,7 +272,7 @@ class fitresults:
 
         # plot single replicas
         for p in tmds["TMD"]:
-            ax0.plot(tmds["qT"], p, linewidth = 0.5, color = "g", alpha = 0.5)
+            ax0.plot(tmds["qT"], p, linewidth = 0.5, color = "b", alpha = 0.3)
 
         # Plot mean replica
         ax0.plot(tmds["qT"], np.mean(tmds["TMD"], axis = 0), label = "Mean replica", color = "r")
@@ -348,7 +348,7 @@ class fitresults:
                 predictions = [sum(x) for x in zip(exp["Predictions"], exp["Systematic shifts"])]
 
                 # Draw the plot
-                ax1.plot(qT, predictions, linewidth = 0.5, color = "g", alpha = 0.5)
+                ax1.plot(qT, predictions, linewidth = 0.5, color = "b", alpha = 0.3)
 
             # Draw plot of the central and mean replica
             ax1.plot(qT, pred0, label = "Central replica", color = "k")
