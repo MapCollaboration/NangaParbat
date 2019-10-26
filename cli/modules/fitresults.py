@@ -227,7 +227,7 @@ class fitresults:
                 # Select experiment
                 for exp in r["Experiments"]:
                     if exp["Name"] == e["Name"]:
-                         break
+                        break
                 c2.append(exp["partial chi2"])
                 c2p.append(exp["penalty chi2"])
                 c2d.append(exp["partial chi2"] - exp["penalty chi2"])

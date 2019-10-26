@@ -20,21 +20,18 @@ int main(int argc, char* argv[])
   if (argc < 8 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./PlotTMDs <configuration file> <report file> <output file> <pdf/ff> <flavour ID> <Scale in GeV> <value of x>\n" << std::endl;
+      std::cout << "Syntax: ./PlotTMDs <configuration file> <output file> <pdf/ff> <flavour ID> <Scale in GeV> <value of x> <parameters file>\n" << std::endl;
       exit(-10);
     }
 
   // Read configuration file
   const YAML::Node config = YAML::LoadFile(argv[1]);
 
-  // Read report
-  const YAML::Node report = YAML::LoadFile(argv[2]);
-
   // Output file
-  const std::string output = std::string(argv[3]);
+  const std::string output = std::string(argv[2]);
 
   // Distribution prefix
-  const std::string pf = argv[4];
+  const std::string pf = argv[3];
 
   // Open LHAPDF set
   LHAPDF::PDF* dist = LHAPDF::mkPDF(config[pf + "set"]["name"].as<std::string>(), config[pf + "set"]["member"].as<int>());
@@ -81,27 +78,15 @@ int main(int argc, char* argv[])
   else
     throw std::runtime_error("[PlotTMDs]: Unknown distribution prefix");
 
-  // Get parameterisation
-  NangaParbat::Parameterisation *NPFunc = NangaParbat::GetParametersation(report["Parameterisation"].as<std::string>());
-
-  // Get map of parameters
-  const std::map<std::string, double> parsm = report["Parameters"].as<std::map<std::string, double>>();
-
-  // Set vector of parameters to be fed to the parameterisation
-  std::vector<double> pars;
-  for (auto const& pn : NPFunc->GetParameterNames())
-    pars.push_back(parsm.at(pn));
-  NPFunc->SetParameters(pars);
-
   // Flavour index
-  const int ifl = std::stoi(argv[5]);
+  const int ifl = std::stoi(argv[4]);
 
   // Final scale
-  const double Q = std::stoi(argv[6]);
+  const double Q = std::stoi(argv[5]);
   const double Q2 = Q * Q;
 
   // Value of x
-  const double x = std::stod(argv[7]);
+  const double x = std::stod(argv[6]);
 
   // Double exponential quadrature
   apfel::DoubleExponentialQuadrature DEObj{};
@@ -116,22 +101,36 @@ int main(int argc, char* argv[])
     16, 16.5, 17, 17.5, 18, 18.5, 19, 19.5, 20
   };
 
-  // bT-space TMD
-  const auto xFb = [=] (double const& bT) -> double
-  {
-    return QCDEvToPhys(EvTMDs(NangaParbat::bstarmin(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1));
-  };
+  // Read file of parameters
+  const YAML::Node parfile = YAML::LoadFile(argv[7]);
 
-  // Tabulate integrand
-  const apfel::TabulateObject<double> TabxFb{xFb, 300, 0.0001, 10, 3, {}, [] (double const& x)->double{ return log(x); }, [] (double const& x)->double{ return exp(x); }};
-  const auto txFb = [=] (double const& bT) -> double{ return TabxFb.Evaluate(bT); };
+  // Get parameterisation and sets of parameters
+  NangaParbat::Parameterisation *NPFunc = NangaParbat::GetParametersation(parfile["Parameterisation"].as<std::string>());
+  const std::vector<std::vector<double>> pars = parfile["Parameters"].as<std::vector<std::vector<double>>>();
 
-  // Compute TMDs in kT space
-  std::vector<double> tmds;
-  for (auto const& qT : qTv)
-    tmds.push_back(DEObj.transform(txFb, qT));
+  // Loop over sets of parameters
+  std::vector<std::vector<double>> tmds(pars.size(), std::vector<double>(qTv.size()));
+  for (int ip = 0; ip < (int) pars.size(); ip++)
+    {
+      // Set vector of parameters
+      NPFunc->SetParameters(pars[ip]);
 
-  // Dump result to file in YAML format
+      // bT-space TMD
+      const auto xFb = [=] (double const& bT) -> double
+      {
+        return QCDEvToPhys(EvTMDs(NangaParbat::bstarmin(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1));
+      };
+
+      // Tabulate integrand
+      const apfel::TabulateObject<double> TabxFb{xFb, 300, 0.0001, 10, 3, {}, [] (double const& x)->double{ return log(x); }, [] (double const& x)->double{ return exp(x); }};
+      const auto txFb = [=] (double const& bT) -> double{ return TabxFb.Evaluate(bT); };
+
+      // Compute TMDs in kT space
+      for (int iqT = 0; iqT < (int) qTv.size(); iqT++)
+        tmds[ip][iqT] = DEObj.transform(txFb, qTv[iqT]);
+    }
+
+  // YAML::Emitter where predictions will be dumped
   YAML::Emitter out;
   out.SetFloatPrecision(8);
   out.SetDoublePrecision(8);
@@ -143,6 +142,7 @@ int main(int argc, char* argv[])
   out << YAML::Key << "TMD" << YAML::Value << YAML::Flow << tmds;
   out << YAML::EndMap;
 
+  // Dump result to file
   std::ofstream fout(output);
   fout << out.c_str() << std::endl;
   fout.close();
