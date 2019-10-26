@@ -6,6 +6,7 @@ import modules.writemarkdown as writemarkdown
 import modules.utilities as utilities
 
 from ruamel import yaml
+from statistics import mean
 from matplotlib.pyplot import cm
 from modules.bcolours import *
 
@@ -24,16 +25,17 @@ class fitresults:
     def __init__(self, reports, report0, report_mean, reportfolder, mdout):
         with open(reportfolder + "/../fitconfig.yaml", "r") as fc:
             fitconfig = yaml.load(fc, Loader = yaml.RoundTripLoader)
-        self.reports     = reports
-        self.report0     = report0
-        self.report_mean = report_mean
-        self.pdffolder   = reportfolder + "/plots/"
-        self.pngfolder   = reportfolder + "/pngplots/"
-        self.mdout       = mdout
-        self.chi2s       = [rep["Global chi2"] for rep in self.reports]
-        self.Efcns       = [rep["Global error function"] for rep in self.reports]
-        self.parameters  = dict(zip(self.report0["Parameters"].keys(), [[r["Parameters"][p] for r in self.reports] for p in self.report0["Parameters"].keys()]))
-        self.fixed       = dict(zip(self.report0["Parameters"].keys(), [p["fix"] for p in fitconfig["Parameters"]]))
+        self.reports      = reports
+        self.report0      = report0
+        self.report_mean  = report_mean
+        self.reportfolder = reportfolder
+        self.pdffolder    = reportfolder + "/plots/"
+        self.pngfolder    = reportfolder + "/pngplots/"
+        self.mdout        = mdout
+        self.chi2s        = [rep["Global chi2"] for rep in self.reports]
+        self.Efcns        = [rep["Global error function"] for rep in self.reports]
+        self.parameters   = dict(zip(self.report0["Parameters"].keys(), [[r["Parameters"][p] for r in self.reports] for p in self.report0["Parameters"].keys()]))
+        self.fixed        = dict(zip(self.report0["Parameters"].keys(), [p["fix"] for p in fitconfig["Parameters"]]))
 
 
     def StatisticalEstimators(self):
@@ -53,7 +55,7 @@ class fitresults:
         Print the tables with the fitted parameters
         """
         headings = ["Parameter", "Central replica", "Average over replicas", "Fixed"]
-        par = [(name, self.report0["Parameters"][name], "$" + str(round(np.mean(val), 8)) + " \pm "+ str(round(np.std(val), 8)) + "$",
+        par = [(name, self.report0["Parameters"][name], str(round(np.mean(val), 8)) + " $\pm$ "+ str(round(np.std(val), 8)),
                 self.fixed[name]) for name, val in self.parameters.items()]
         writemarkdown.table(self.mdout, par, headings)
 
@@ -170,7 +172,7 @@ class fitresults:
             fig = plt.figure()
             ax0 = fig.add_subplot(1, 1, 1)
             #ax0.hist(p, bins = nbins, facecolor = bcolours.tangerineyellow, alpha = 0.8, label = pk)
-            ax0.hist(p, bins = 20, facecolor = bcolours.tangerineyellow, alpha = 0.8, label = pk)
+            ax0.hist(p, bins = 20, facecolor = bcolours.meadow, alpha = 0.8, label = pk)
             ax0.legend()
 
             # Set ticks and labels
@@ -189,6 +191,7 @@ class fitresults:
             # Include plot in the report
             writemarkdown.mdincludefig(self.mdout, "pngplots/param" + str(i) + ".png", pk + " distribution")
             i += 1
+
 
     def Chi2Table(self):
         """
@@ -237,6 +240,56 @@ class fitresults:
                         str(round(np.mean(c2),  4)) + " $\pm$ " + str(round(np.std(c2),  4))))
         par.append(("Total", ntot, "-", "-", str(round(np.mean(self.chi2s), 4)) + " $\pm$ " + str(round(np.std(self.chi2s),  4))))
         writemarkdown.table(self.mdout, par, headings)
+
+
+    def PlotTMDs(self, dist, ifl, Q, x):
+        """
+        Function that creates plots of TMD distributions, replica bly replica using the code ./run/PlotsTMDs
+        """
+        # First of of the code creates the input file containg
+        # parameterisation and sets of parameters
+        param = {"Parameterisation": self.report0["Parameterisation"]}
+        pars = [val for name, val in self.parameters.items()]
+        tpars = {"Parameters": [list(row) for row in zip(*pars)]}
+        with open(self.reportfolder + "/Parameters.yaml", "w") as ofile:
+            yaml.dump(param, ofile, Dumper = yaml.RoundTripDumper)
+            yaml.dump(tpars, ofile, Dumper = yaml.RoundTripDumper)
+
+        # Now the code ./run/PlotsTMDs is run with the appropriate input
+        print(bcolours.ACTREPORT + "Producing TMD plots...\n" + bcolours.ENDC)
+        os.system(self.reportfolder + "/../../run/PlotTMDs " + self.reportfolder + "/../tables/config.yaml "
+                  + self.reportfolder + "/tmds.yaml " + dist + " " + str(ifl) + " " + str(Q) + " " + str(x)
+                  + " " + self.reportfolder +"/Parameters.yaml")
+
+        # Finally the plot is produced and included in the report
+        with open(self.reportfolder +"/tmds.yaml", "r") as fc:
+            tmds = yaml.load(fc, Loader = yaml.RoundTripLoader)
+
+        fig = plt.figure()
+        ax0 = fig.add_subplot(1, 1, 1)
+        ax0.set_yscale("log")
+        ax0.set_xlim(0, 20)
+
+        # plot single replicas
+        for p in tmds["TMD"]:
+            ax0.plot(tmds["qT"], p, linewidth = 0.5, color = "g", alpha = 0.5)
+
+        # Plot mean replica
+        ax0.plot(tmds["qT"], np.mean(tmds["TMD"], axis = 0), label = "Mean replica", color = "r")
+
+        ax0.set_xlabel("$k_T$ [GeV]")
+        ax0.set_ylabel(r"$xf(x, k_T, Q, Q^2)$")
+        ax0.set_title("TMD distribution")
+
+        # Save plot
+        tmdplot = "tmd_" + str(ifl) + "_" + str(Q) + "_" + str(x)
+        fig.savefig(self.pdffolder + "/" + tmdplot + ".pdf")
+        fig.savefig(self.pngfolder + "/" + tmdplot + ".png")
+        plt.close()
+
+        # Include plot in the report
+        writemarkdown.mdincludefig(self.mdout, "pngplots/" + tmdplot + ".png", "TMD " + dist.upper()
+                                   + " of the " + str(ifl) + "-th flavour at $Q = " + str(Q) + "$ GeV and $x = " + str(x) + "$")
 
 
     def PlotExpResults(self):

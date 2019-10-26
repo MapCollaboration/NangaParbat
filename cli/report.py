@@ -164,6 +164,10 @@ with open(reportfile, "w+") as mdout:
     writemarkdown.mdtitle(mdout, 2, "Table of $\chi^2$'s")
     results.Chi2Table()
 
+    # Create plots of TMDs in kT space
+    writemarkdown.mdtitle(mdout, 2, "TMDs in $k_T$ space")
+    results.PlotTMDs("pdf", 1, 10, 0.1)
+
     # Create one set of plots for each experiment
     writemarkdown.mdtitle(mdout, 2, "Data-theory comparison")
     results.PlotExpResults()
