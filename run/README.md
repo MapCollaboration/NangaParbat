@@ -41,6 +41,11 @@ where ```<output dir>``` is the output directory, ```<configuration file>``` poi
 
 - **PlotTMDs**: this code produces plot of TMD distributions in transverse-momentum space and is run as follows:
 ```Shell
-./PlotTMDs <configuration file> <report file> <output file> <pdf/ff> <flavour ID> <Scale in GeV> <value of x>
+./PlotTMDs <configuration file> <output file> <pdf/ff> <flavour ID> <Scale in GeV> <value of x> <parameters file>
 ```
-where ```<configuration file>``` has to point a file that contains the necessary information to do the calculation (*e.g.* see [config.yaml](../cards/config.yaml)),  ```<report file>``` is the report file where the parametrisation and the values of the corresponding parameters are read, ```<output file>```is the output file, ```<pdf/ff>``` to plot either a TMDF PDF or a TMD FF, ```<flavour ID>``` is the flavour ID according to the LHAPDF nomenclature, ```<Scale in GeV>``` is the values of the final scale in GeV,  and ```<value of x>``` is the value of Bjorken ```x```. The code produces a file in the ```YAML``` format reporting the relevant kinematics and the predictions for a fixed set of values of ```qT``` in GeV of ```x``` time the TMD distribution.
+where ```<configuration file>``` has to point a file that contains the necessary information to do the calculation (*e.g.* see [config.yaml](../cards/config.yaml)), ```<output file>```is the output file, ```<pdf/ff>``` to plot either a TMDF PDF or a TMD FF, ```<flavour ID>``` is the flavour ID according to the LHAPDF nomenclature, ```<Scale in GeV>``` is the values of the final scale in GeV,  ```<value of x>``` is the value of Bjorken ```x```, and ```<parameters file>``` is the file containing the relevant information about the parameterisation and the sets of parameters to be used. For example:
+```Shell
+Parameterisation: "PV19"
+Parameters: [[0.015552259, 3.0373071, 21.251885, 5.6171274, 0, 0.81410783, 0.81823693, 64.628302, 4.0249303, 0, 0, 0.1, 0.017413234, 2], [0.015552259, 3.0373071, 21.251885, 5.6171274, 0, 0.81410783, 0.81823693, 64.628302, 4.0249303, 0, 0, 0.1, 0.017413234, 2]]
+```
+This will result in two sets of predictions, one for each set of parameters. The code produces a file in the ```YAML``` format reporting the relevant kinematics and the predictions for a fixed set of values of ```qT``` in GeV of ```x``` time the TMD distribution.
