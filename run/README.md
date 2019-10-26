@@ -41,5 +41,6 @@ where ```<output dir>``` is the output directory, ```<configuration file>``` poi
 
 - **PlotTMDs**: this code produces plot of TMD distributions in transverse-momentum space and is run as follows:
 ```Shell
-./PlotTMDs <configuration file> <report file> <output folder>
+./PlotTMDs <configuration file> <report file> <output file> <pdf/ff> <flavour ID> <Scale in GeV> <value of x>
 ```
+where ```<configuration file>``` has to point a file that contains the necessary information to do the calculation (*e.g.* see [config.yaml](../cards/config.yaml)),  ```<report file>``` is the report file where the parametrisation and the values of the corresponding parameters are read, ```<output file>```is the output file, ```<pdf/ff>``` to plot either a TMDF PDF or a TMD FFs, ```<flavour ID>``` is the flavour ID according to the LHAPDF nomenclature, ```<Scale in GeV>``` is the values of the final scale in GeV,  and ```<value of x>``` is the value of Bjorken ```x```. The code produces a file in the ```YAML``` format reporting the relevant kinematics and the pedictions for a fixed set of values of ```qT``` in GeV of ```x``` time the TMD distribution.
