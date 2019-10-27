@@ -51,6 +51,18 @@ namespace NangaParbat
      */
     double DerivePhaseSpaceReduction(double const& Q, double const& y, double const& qT);
 
+    /**
+     * @brief Function that returns the phase-space reduction factor
+     * associated to the parity violating contribution.
+     * @param M: invariant mass of the leptonic pair
+     * @param y: rapidity of the leptonic pair
+     * @param qT: transverse momentum of the leptonic pair
+     * @return the phase-space reduction factor as a function of the
+     * invariant mass, transverse momentum and rapidity of the lepton
+     * pair.
+     */
+    double ParityViolatingPhaseSpaceReduction(double const& Q, double const& y, double const& qT);
+
   private:
     /**
      * @name Cut variables
