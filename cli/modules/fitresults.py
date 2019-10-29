@@ -268,7 +268,7 @@ class fitresults:
         fig = plt.figure()
         ax0 = fig.add_subplot(1, 1, 1)
         ax0.set_yscale("log")
-        ax0.set_xlim(0, 20)
+        ax0.set_xlim(0, 5)
 
         # plot single replicas
         for p in tmds["TMD"]:
@@ -280,6 +280,7 @@ class fitresults:
         ax0.set_xlabel("$k_T$ [GeV]")
         ax0.set_ylabel(r"$xf(x, k_T, Q, Q^2)$")
         ax0.set_title("TMD distribution")
+        ax0.legend()
 
         # Save plot
         tmdplot = "tmd_" + str(ifl) + "_" + str(Q) + "_" + str(x)
@@ -288,8 +289,10 @@ class fitresults:
         plt.close()
 
         # Include plot in the report
+        flmap = {-6: "$\overline{t}$", -5: "$\overline{b}$", -4: "$\overline{c}$", -3: "$\overline{s}$", -2: "$\overline{u}$", -1: "$\overline{d}$",
+                 0: "$g$", 1: "$d$", 2: "$u$", 3: "$s$", 4: "$c$", 5: "$b$", 6: "$t$"}
         writemarkdown.mdincludefig(self.mdout, "pngplots/" + tmdplot + ".png", "TMD " + dist.upper()
-                                   + " of the " + str(ifl) + "-th flavour at $Q = " + str(Q) + "$ GeV and $x = " + str(x) + "$")
+                                   + " of the " + flmap[ifl] + " at $Q = " + str(Q) + "$ GeV and $x = " + str(x) + "$")
 
 
     def PlotExpResults(self):
