@@ -1,0 +1,80 @@
+t0parameters:
+- 0.02986
+- 3.8486
+- 18.5075
+- 4.938
+- 0.0
+- 0.8407
+- 0.7921
+- 62.473
+- 4.075
+- 0.0
+- 0.0
+- 0.1
+- 0.01781
+- 2.0
+Description: test
+Minimiser: minuit
+t0prescription: true
+qToQmax: '0.2'
+Parameters:
+- step: 0.05
+  fix: false
+  starting_value: 0.02986
+  name: $g_2$
+- step: 0.05
+  fix: false
+  starting_value: 3.8486
+  name: $N_1$
+- step: 0.5
+  fix: false
+  starting_value: 18.5075
+  name: "$\alpha$"
+- step: 0.1
+  fix: false
+  starting_value: 4.938
+  name: $\sigma$
+- step: 0.02
+  fix: true
+  starting_value: 0.0
+  name: $\delta$
+- step: 0.05
+  fix: false
+  starting_value: 0.8407
+  name: $\lambda_B$
+- step: 0.05
+  fix: false
+  starting_value: 0.7921
+  name: $N_{1,B}$
+- step: 0.5
+  fix: false
+  starting_value: 62.47
+  name: "$\alpha_B$"
+- step: 0.1
+  fix: false
+  starting_value: 4.075
+  name: $\sigma_B$
+- step: 0.02
+  fix: true
+  starting_value: 0.0
+  name: $\delta_B$
+- step: 0.1
+  fix: true
+  starting_value: 0.0
+  name: $\lambda_C$
+- step: 0.05
+  fix: true
+  starting_value: 0.1
+  name: $g_{1,C}$
+- step: 0.05
+  fix: false
+  starting_value: 0.01781
+  name: $g_{2,B}$
+- step: 0.05
+  fix: true
+  starting_value: 2.0
+  name: "$\beta$"
+Seed: '1234'
+Error function cut: '4'
+Paramfluct: false
+Parameterisation: PV19
