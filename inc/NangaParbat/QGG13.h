@@ -15,16 +15,16 @@ namespace NangaParbat
    * @brief Pavia 2019 parameterisation derived from the
    * "Parameterisation" mother class.
    */
-  class QGG12: public NangaParbat::Parameterisation
+  class QGG13: public NangaParbat::Parameterisation
   {
   public:
 
-    QGG12(): Parameterisation{"QGG12", 2, std::vector<double>{0.13, 0.285, 2.98, 0.173, 0.39, 0., 0.1, 0.1, 0., 0., 0., 0.1, 1.}} { };
+    QGG13(): Parameterisation{"QGG13", 2, std::vector<double>{0.13, 0.285, 2.98, 0.173, 0.39, 0., 0.1, 0.1, 0., 0., 0., 0.1, 1.}} { };
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
       if (ifunc < 0 || ifunc >= this->_nfuncs)
-        throw std::runtime_error("[QGG12::Evaluate]: function index out of range");
+        throw std::runtime_error("[QGG13::Evaluate]: function index out of range");
 
       // If the value of 'x' exceeds one returns zero
       if (x >= 1)
@@ -51,14 +51,15 @@ namespace NangaParbat
       const double g1    = N1 * ( pow(x, sigma) + delta ) / ( pow(xhat, sigma) + delta ) * pow((1 - x) / (1 - xhat), alpha);
       const double g1B   = N1B * ( pow(x, sigmaB) + deltaB ) / ( pow(xhat, sigmaB) + deltaB ) * pow((1 - x) / (1 - xhat), alphaB);
 
-      return ((1 - pow(lambdaB, 2)) / (pow(1 +  g1/4  * b * b, qq)))
-             +  pow(lambdaB, 2)
-             * (
-               ( g1B * exp( - g1B / 4  * b * b )
-                 + pow(lambdaC, 2) * pow(g1C, 2) * ( 1 - g1C / 4  * b * b )
-                 * exp( - g1C / 4  * b * b )
-               )
-               / (g1B + pow(lambdaC, 2) * pow(g1C, 2))
+      return (
+              ((1 - pow(lambdaB, 2)) / (pow(1 +  g1/4  * b * b, qq)))
+                +  pow(lambdaB, 2) *
+                  (
+                    g1B * exp( - g1B / 4  * b * b )
+                    + pow(lambdaC, 2) * pow(g1C, 2) * ( 1 - g1C / 4  * b * b )
+                    * exp( - g1C / 4  * b * b )
+                  )
+                  / (g1B + pow(lambdaC, 2) * pow(g1C, 2))
              )
              * exp( - g2 * log(zeta / Q02) * b * b / 4 );
     };
@@ -66,10 +67,10 @@ namespace NangaParbat
     std::string LatexFormula() const
     {
       std::string formula;
-      formula  = R"delimiter($$f_{\rm NP}(x,\zeta, b_T)= \Biggl(\frac{1-\lambda_B^2}{1 + g_1^2(x) b_T^2/4} + \lambda_B^2 \exp \left(-g_{1B} b_T^2 /4 \right)\Biggr) \exp\left[ - g_2 \log\left(\frac{\zeta}{Q_0^2}\right) b_T^2/4\right]$$\\)delimiter";
-      formula += R"delimiter($$g_1(x) = N_1 \frac{x^{\sigma}(1-x)^{\alpha}}{\hat{x}^{\sigma}(1-\hat{x})^{\alpha}}$$\\)delimiter";
-      formula += R"delimiter($$g_{1B}(x) = N_{1B} \frac{x^{\sigma_B}(1-x)^{\alpha_B}}{\hat{x}^{\sigma_B}(1-\hat{x})^{\alpha_B}}$$\\)delimiter";
-      formula += R"delimiter($$Q_0^2 = 1\;{\rm GeV}^2$$\\)delimiter";
+      formula  = R"delimiter($$f_{\rm NP}(x,\zeta, b_T)= \Biggl(\frac{1-\lambda_B^2}{1 + g_1^2(x) b_T^2/4} + \lambda_B^2 \exp \left(-g_{1B} b_T^2 /4 \right)\Biggr) \exp\left[ - g_2 \log\left(\frac{\zeta}{Q_0^2}\right) b_T^2/4\right]$$)delimiter";
+      formula += R"delimiter($$g_1(x) = N_1 \frac{x^{\sigma}(1-x)^{\alpha}}{\hat{x}^{\sigma}(1-\hat{x})^{\alpha}}$$)delimiter";
+      formula += R"delimiter($$g_{1B}(x) = N_{1B} \frac{x^{\sigma_B}(1-x)^{\alpha_B}}{\hat{x}^{\sigma_B}(1-\hat{x})^{\alpha_B}}$$)delimiter";
+      formula += R"delimiter($$Q_0^2 = 1\;{\rm GeV}^2$$)delimiter";
       formula += R"delimiter($$\hat{x} = 0.1$$)delimiter";
       return formula;
     };
@@ -93,7 +94,7 @@ namespace NangaParbat
 
     std::string GetDescription() const
     {
-      return "Parameterisation with a q-Guaussian and a Gaussion and 12 free parameters.";
+      return "Parameterisation with a q-Gaussian and a Gaussian and 13 parameters.";
     };
   };
 }

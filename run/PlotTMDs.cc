@@ -10,7 +10,7 @@
 #include <fstream>
 #include <cstring>
 #include <algorithm>
-#include <apfel/timer.h>
+#include <apfel/apfelxx.h>
 #include <LHAPDF/LHAPDF.h>
 
 //_________________________________________________________________________________

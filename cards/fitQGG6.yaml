@@ -1,0 +1,71 @@
+# Short description of the fit that will appear in the report of the
+# fit
+Description: Parameterisation with a q-Gaussian and a Gaussian and 6 free parameters.
+
+# Minimiser to be used for the fit. Possible options so far are
+# 'minuit', 'ceres', and 'none'.
+Minimiser: minuit
+
+# Seed used with the random-number generator for the generation of the
+# Monte Carlo replicas
+Seed: '1234'
+
+# Cut on qT / Q. This has to be smaller than the production cut used
+# to produce the tables.
+qToQmax: '0.2'
+
+# Cut on the error function value for the selection of the "good"
+# Monte Carlo replicas.
+Error function cut: '4'
+
+# Enable or disable the t0 prescription for the treatment of
+# normalisation uncertantities and define the set of parameters to be
+# used to compute the corresponding predictions (used only if the t0
+# prescription is enabled). They have to be as many and ordered as the
+# "Parameters" below.
+t0prescription: true
+t0parameters: [0.05559058341417, 0.9224055773512, 7.113267705697, 1.602472242752,  0.2602811109142, 0.034393712145685]
+
+# Parameterisation to be fitted to data. This has to correspond to a
+# derivation of the "Parameterisation" class.
+Parameterisation: QGG6
+
+# List of parameters to be fitted to data. This requires that the
+# number and order of parameters matches those expected by the
+# particular parameterisation being used.
+Parameters:
+- name: $g_2$
+  starting_value: 0.05559058341417
+  step: 0.01
+  fix: false
+- name: $N_1$
+  starting_value: 0.9224055773512
+  step: 0.30
+  fix: false
+- name: $\alpha$
+  starting_value: 7.113267705697
+  step: 1.55
+  fix: false
+- name: $\sigma$
+  starting_value: 1.602472242752
+  step: 0.4
+  fix: false
+- name: $\lambda$
+  starting_value: 0.2602811109142
+  step: 0.25
+  fix: false
+- name: $\delta$
+  starting_value: 0.03439371214568
+  step: 0.15
+  fix: false
+
+
+### initial
+# # ext. ||   Name    ||   type  ||     Value     ||  Error +/-
+#
+#    0   ||     $g_2$ ||  free   ||    0.05559058341417 ||0.009394776619112
+#    1   ||     $N_1$ ||  free   ||     0.9224055773512 ||0.2714118581031
+#    2   ||  $\alpha$ ||  free   ||      7.113267705697 ||1.536276072923
+#    3   ||  $\sigma$ ||  free   ||      1.602472242752 ||0.3964189452156
+#    4   || $\lambda$ ||  free   ||     0.2602811109142 ||0.2434830640158
+#    5   ||  $\delta$ ||  free   ||    0.03439371214568 ||0.1404925742567
