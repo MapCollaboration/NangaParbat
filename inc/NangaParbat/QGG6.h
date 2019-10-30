@@ -52,9 +52,9 @@ namespace NangaParbat
     std::string LatexFormula() const
     {
       std::string formula;
-      formula  = R"delimiter($$f_{\rm NP}(x,\zeta, b_T)=\left[\frac{1-\lambda^2}{\left(1 + \left(\frac{g_1}{4}\right)b_T^2\right)}+\lambda^2e^{-\delta\frac{b_T^2}{2}}\right]e^{- g_2 \log\left(\frac{\zeta}{Q_0^2}\right)\frac{b_T^2}{4}}$$\\)delimiter";
-      formula += R"delimiter($$g_1(x) = N_1 \frac{x^{\sigma}(1-x)^{\alpha}}{\hat{x}^{\sigma}(1-\hat{x})^{\alpha}}$$\\)delimiter";
-      formula += R"delimiter($$Q_0^2 = 1\;{\rm GeV}^2$$\\)delimiter";
+      formula  = R"delimiter($$f_{\rm NP}(x,\zeta, b_T)=\left[\frac{1-\lambda^2}{\left(1 + \left(\frac{g_1}{4}\right)b_T^2\right)}+\lambda^2e^{-\delta\frac{b_T^2}{2}}\right]e^{- g_2 \log\left(\frac{\zeta}{Q_0^2}\right)\frac{b_T^2}{4}}$$)delimiter";
+      formula += R"delimiter($$g_1(x) = N_1 \frac{x^{\sigma}(1-x)^{\alpha}}{\hat{x}^{\sigma}(1-\hat{x})^{\alpha}}$$)delimiter";
+      formula += R"delimiter($$Q_0^2 = 1\;{\rm GeV}^2$$)delimiter";
       formula += R"delimiter($$\hat{x} = 0.1$$)delimiter";
       return formula;
     };
@@ -66,16 +66,12 @@ namespace NangaParbat
               R"delimiter($\alpha$)delimiter",
               R"delimiter($\sigma$)delimiter",
               R"delimiter($\lambda$)delimiter",
-              R"delimiter($\delta$)delimiter",
-              R"delimiter($\lambdaB$)delimiter",
-              R"delimiter($g1B$)delimiter",
-              R"delimiter($g1C$)delimiter",
-              R"delimiter($qq$)delimiter"};
+              R"delimiter($\delta$)delimiter"};
     };
 
     std::string GetDescription() const
     {
-      return "Parameterisation with a q-Guaussian and a Gaussion and 6 free parameters.";
+      return "Parameterisation with a q-Gaussian and a Gaussian and 6 free parameters.";
     };
   };
 }

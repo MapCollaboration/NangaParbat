@@ -8,7 +8,7 @@
 #include "NangaParbat/PV17.h"
 #include "NangaParbat/PV19.h"
 #include "NangaParbat/QGG6.h"
-#include "NangaParbat/QGG12.h"
+#include "NangaParbat/QGG13.h"
 
 #include<map>
 
@@ -25,7 +25,7 @@ namespace NangaParbat
     {"PV17", new NangaParbat::PV17{}},
     {"PV19", new NangaParbat::PV19{}},
     {"QGG6", new NangaParbat::QGG6{}},
-    {"QGG12", new NangaParbat::QGG12{}}
+    {"QGG13", new NangaParbat::QGG13{}}
   };
 
   /**

@@ -130,25 +130,15 @@ question = [
 answer = prompt(question, style=custom_style_3)
 param  = answer["Parameterisation"]
 
-if param == "DWS":
-    pathfitconfig = RunFolder + "/../cards/fitDWS.yaml"
-    with open(pathfitconfig, "r") as stream:
-        fitconfdef = yaml.load(stream, Loader=yaml.RoundTripLoader)
+# Load default fitconfig file
+pathfitconfig = RunFolder + "/../cards/fit" + param + ".yaml"
+with open(pathfitconfig, "r") as stream:
+    fitconfdef = yaml.load(stream, Loader=yaml.RoundTripLoader)
 
-elif param == "PV17":
-    pathfitconfig = RunFolder + "/../cards/fitPV17.yaml"
-    with open(pathfitconfig, "r") as stream:
-        fitconfdef = yaml.load(stream, Loader=yaml.RoundTripLoader)
-
-elif param == "PV19":
-    pathfitconfig = RunFolder + "/../cards/fitPV19.yaml"
-    with open(pathfitconfig, "r") as stream:
-        fitconfdef = yaml.load(stream, Loader=yaml.RoundTripLoader)
-
-# Choice of default file
 print(bcolours.HEADER + bcolours.BOLD + "\nThe default fit configuration file is: \n" + pathfitconfig + "\n" + bcolours.ENDC)
 print(bcolours.OKBLUE + yaml.dump(fitconfdef, Dumper=yaml.RoundTripDumper) + "\n" + bcolours.ENDC)
 
+# Choice of default file
 question = [
     {
         "type": "confirm",
