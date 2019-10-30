@@ -18,7 +18,7 @@ namespace NangaParbat
   {
   public:
 
-    DWS(): Parameterisation{"DWS", 2, std::vector<double>{0.016, 0.54}, true}, _Q02(3.2) { };
+    DWS(): Parameterisation{"DWS", 2, std::vector<double>{0.207309505279, 0.09258432985738}, true}, _Q02(3.2) { };
 
     double Evaluate(double const&, double const& b, double const& zeta, int const& ifunc) const
     {

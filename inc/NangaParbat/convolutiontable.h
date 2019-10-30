@@ -39,8 +39,8 @@ namespace NangaParbat
      * @param fNP2: the second non-perturbative input function
      * @return a map that associates each value of qT to a prediction.
      */
-    std::map<double,double> Convolute(std::function<double(double const&, double const&, double const&)> const& fNP1,
-                                      std::function<double(double const&, double const&, double const&)> const& fNP2) const;
+    std::map<double, double> Convolute(std::function<double(double const&, double const&, double const&)> const& fNP1,
+                                       std::function<double(double const&, double const&, double const&)> const& fNP2) const;
 
     /**
      * @brief This function convolutes the input convolution table
@@ -49,7 +49,7 @@ namespace NangaParbat
      * @param fNP: the non-perturbative input function
      * @return a map that associates each value of qT to a prediction.
      */
-    std::map<double,double> Convolute(std::function<double(double const&, double const&, double const&)> const& fNP) const;
+    std::map<double, double> Convolute(std::function<double(double const&, double const&, double const&)> const& fNP) const;
 
     /**
      * @brief This function returns a vector of predictions given two
@@ -115,6 +115,15 @@ namespace NangaParbat
      * https://root.cern/doc/v610/classTHistPainter.html for details.
      */
     void PlotWeights() const;
+
+    /**
+     * @brief This function prints the numerical accuracy of the
+     * Hankel tranform for each single prediction. The estimate is
+     * computed by comparing the last term of the quadrature summation
+     * with the sum of all of them.
+     * @param fNP1: the non-perturbative input function(s)
+     */
+    void NumericalAccuracy(std::function<double(double const&, double const&, double const&, int const&)> const& fNP) const;
 
   private:
     std::string                                              const _name;    //!< Name of the table

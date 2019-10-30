@@ -52,14 +52,14 @@ namespace NangaParbat
       const double g1B   = N1B * ( pow(x, sigmaB) + deltaB ) / ( pow(xhat, sigmaB) + deltaB ) * pow((1 - x) / (1 - xhat), alphaB);
 
       return (
-              ((1 - pow(lambdaB, 2)) / (pow(1 +  g1/4  * b * b, qq)))
-                +  pow(lambdaB, 2) *
-                  (
-                    g1B * exp( - g1B / 4  * b * b )
-                    + pow(lambdaC, 2) * pow(g1C, 2) * ( 1 - g1C / 4  * b * b )
-                    * exp( - g1C / 4  * b * b )
-                  )
-                  / (g1B + pow(lambdaC, 2) * pow(g1C, 2))
+               ((1 - pow(lambdaB, 2)) / (pow(1 +  g1/4  * b * b, qq)))
+               +  pow(lambdaB, 2) *
+               (
+                 g1B * exp( - g1B / 4  * b * b )
+                 + pow(lambdaC, 2) * pow(g1C, 2) * ( 1 - g1C / 4  * b * b )
+                 * exp( - g1C / 4  * b * b )
+               )
+               / (g1B + pow(lambdaC, 2) * pow(g1C, 2))
              )
              * exp( - g2 * log(zeta / Q02) * b * b / 4 );
     };
