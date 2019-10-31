@@ -18,7 +18,7 @@ namespace NangaParbat
   {
   public:
 
-    PV19b(): Parameterisation{"PV19b", 2, std::vector<double> {0, 0, 0, 0, 0, 0, 0, 0}} {};
+    PV19b(): Parameterisation{"PV19b", 2, std::vector<double> {0, 0, 0, 0, 0, 0, 0, 0, 0}} {};
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
@@ -33,15 +33,17 @@ namespace NangaParbat
       const double g2     = this->_pars[0];
       const double N1     = this->_pars[1];
       const double alpha  = this->_pars[2];
-      const double lambda = this->_pars[3];
-      const double N1B    = this->_pars[4];
-      const double alphaB = this->_pars[5];
-      const double sigmaB = this->_pars[6];
-      const double g2B    = this->_pars[7];
+      const double sigma  = this->_pars[3];
+      const double lambda = this->_pars[4];
+      const double N1B    = this->_pars[5];
+      const double alphaB = this->_pars[6];
+      const double sigmaB = this->_pars[7];
+      const double g2B    = this->_pars[8];
 
       // x-dependent bits
-      const double g1  = exp( N1 * ( x / alpha - 1 ) );
+      const double g1  = exp( sigma * ( x / alpha - 1 ) );
       const double g1B = N1B * exp( - pow( ( x - alphaB ) / sigmaB, 2 ) / 2 );
+      //const double g1B = N1B * exp( - pow(log(sigmaB) * log( x / alphaB ), 2 ) / 2 );
 
       // bT-dependent bits
       const double b2 = b * b;
@@ -51,7 +53,7 @@ namespace NangaParbat
       const double NPevol = exp( - ( g2 + g2B * b2 ) * b2 * lnz / 4 );
 
       const double gauss  = exp( - g1B * b2 / 4 );
-      const double qgauss = 1 / ( 1 + g1 * b2 / 4 );
+      const double qgauss = 1 / ( 1 + g1 * b2 / 4 ) + N1;
 
       return ( ( 1 - lambda ) * qgauss + lambda * gauss ) * NPevol;
     };
@@ -73,6 +75,7 @@ namespace NangaParbat
       return {R"delimiter($g_2$)delimiter",
               R"delimiter($N_1$)delimiter",
               R"delimiter($\alpha$)delimiter",
+              R"delimiter($\sigma)delimiter",
               R"delimiter($\lambda_B$)delimiter",
               R"delimiter($N_{1B}$)delimiter",
               R"delimiter($\alpha_B$)delimiter",

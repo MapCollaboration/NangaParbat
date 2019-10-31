@@ -1,5 +1,5 @@
-Description: PV17qGauss
-Minimiser: none
+Description: PV19b
+Minimiser: minuit
 Seed: 1234
 qToQmax: 0.2
 Error function cut: 4
@@ -7,56 +7,16 @@ t0prescription: true
 Paramfluct: false
 Parameterisation: PV19b
 Parameters:
-- {name: g2,      starting_value: -0.02367487640717, step: 0.012832400, fix: false}
-- {name: N1,      starting_value:    11823688.16299, step: 0.272165254, fix: false}
-- {name: alpha,   starting_value:   -3942.553401808, step: 0.272157210, fix: false}
-- {name: sigma,   starting_value:    222.3822052741, step: 0.269474667, fix: false}
-- {name: lambdaB, starting_value:    0.842138270781, step: 0.035261836, fix: false}
-- {name: N1B,     starting_value:    7853065.858142, step: 0.272165254, fix: false}
-- {name: alphaB,  starting_value:    55.86253068832, step: 0.271925474, fix: false}
-- {name: sigmaB,  starting_value:     4.29518160833, step: 0.100533245, fix: false}
-- {name: g2B,     starting_value:   0.1061040611396, step: 0.019467410, fix: false}
-t0parameters: [-0.02367487640717, 11823688.16299, -3942.553401808, 222.3822052741, 0.842138270781, 7853065.858142, 55.86253068832, 4.29518160833, 0.1061040611396]
+- {name: g2,      starting_value: 0.01637759456338, step: 0.0175396467, fix: false}
+- {name: N1,      starting_value: -0.0360402603115, step: 0.0097375613, fix: false}
+- {name: alpha,   starting_value: 0.07553836092907, step: 0.0454066213, fix: false}
+- {name: sigma,   starting_value:  0.8738129447193, step: 0.6480506611, fix: false}
+- {name: lambdaB, starting_value:  0.7692672717837, step: 0.0540287258, fix: false}
+- {name: N1B,     starting_value:    1.94666352759, step: 0.4720687315, fix: false}
+- {name: alphaB,  starting_value:  0.0900170221136, step: 0.0077779790, fix: false}
+- {name: sigmaB,  starting_value: 0.03129685357799, step: 0.0050015419, fix: false}
+- {name: g2B,     starting_value: 0.02024085243599, step: 0.0033906182, fix: false}
+t0parameters: [0.01637759456338, -0.0360402603115, 0.07553836092907, 0.8738129447193, 0.7692672717837, 1.94666352759, 0.0900170221136, 0.03129685357799, 0.02024085243599]
 
+#Total chi2 = 1.00576
 
-
-
-
-
-
-
-#- {name: g2,      starting_value: -0.02367487640717, step: 0.012832400, fix: false}
-#- {name: N1,      starting_value:    11823688.16299, step: 0.272165254, fix: false}
-#- {name: alpha,   starting_value:   -3942.553401808, step: 0.272157210, fix: false}
-#- {name: sigma,   starting_value:    222.3822052741, step: 0.269474667, fix: false}
-#- {name: lambdaB, starting_value:    0.842138270781, step: 0.035261836, fix: false}
-#- {name: N1B,     starting_value:    7853065.858142, step: 0.272165254, fix: false}
-#- {name: alphaB,  starting_value:    55.86253068832, step: 0.271925474, fix: false}
-#- {name: sigmaB,  starting_value:     4.29518160833, step: 0.100533245, fix: false}
-#- {name: g2B,     starting_value:   0.1061040611396, step: 0.019467410, fix: false}
-#t0parameters: [-0.02367487640717, 11823688.16299, -3942.553401808, 222.3822052741, 0.842138270781, 7853065.858142, 55.86253068832, 4.29518160833, 0.1061040611396]
-#
-#      // Free paraMeters
-#      const double g2     = this->_pars[0];
-#      const double N1     = this->_pars[1];
-#      const double alpha  = this->_pars[2];
-#      const double sigma  = this->_pars[3];
-#      const double lambda = this->_pars[4];
-#      const double N1B    = this->_pars[5];
-#      const double alphaB = this->_pars[6];
-#      const double sigmaB = this->_pars[7];
-#      const double g2B    = this->_pars[8];
-#
-#      // x-dependent bits
-#      const double g1  = N1 *  pow(x, sigma)  * pow((1 - x), alpha);
-#      const double g1B = N1B * pow(x, sigmaB) * pow((1 - x), alphaB);
-#
-#      // bT-dependent bits
-#      const double b2 = b * b;
-#
-#      // zeta-dependent bit (i.e. non perturbative evolution)
-#      const double lnz    = log(zeta / _Q02);
-#      const double NPevol = exp( - ( g2 + g2B * b2 ) * b2 * lnz / 4 );
-#
-#      return
-#        ( ( 1 - lambda ) / ( 1 + g1 / 4  * b2 ) + lambda * exp( - g1B / 4  * b2 ) ) * NPevol;
