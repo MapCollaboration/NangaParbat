@@ -48,25 +48,25 @@ namespace NangaParbat
       // bT-dependent bits
       const double b2 = b * b;
 
+      // different contributions
+      const double term1 = 1 / ( 1 + g1 * b2 / 4 ) + N1;
+      const double term2 = exp( - g1B * b2 / 4 );
+
       // zeta-dependent bit (i.e. non perturbative evolution)
       const double lnz    = log(zeta / _Q02);
       const double NPevol = exp( - ( g2 + g2B * b2 ) * b2 * lnz / 4 );
 
-      const double gauss  = exp( - g1B * b2 / 4 );
-      const double qgauss = 1 / ( 1 + g1 * b2 / 4 ) + N1;
-
-      return ( ( 1 - lambda ) * qgauss + lambda * gauss ) * NPevol;
+      return ( ( 1 - lambda ) * term1 + lambda * term2 ) * NPevol;
     };
 
     std::string LatexFormula() const
     {
       std::string formula;
-      formula  = R"delimiter($$f_{\rm NP}(x,\zeta, b_T)= \Biggl(
-\frac{1-\lambda_B^2}{1 + g_1^2(x) b_T^2/4} + \lambda_B^2 \exp \left(-g_{1B} b_T^2 /4 \right)\Biggr) \exp\left[- g_2 \log\left(\frac{\zeta}{Q_0^2}\right) b_T^2/4 - g_{2B} \log\left(\frac{\zeta}{Q_0^2}\right) b_T^4/4 \right]$$)delimiter";
-      formula += R"delimiter($$g_1(x) = N_1 \frac{x^{\sigma}(1-x)^{\alpha}}{\hat{x}^{\sigma}(1-\hat{x})^{\alpha}}$$)delimiter";
-      formula += R"delimiter($$g_{1B}(x) = N_{1B} \frac{x^{\sigma_B}(1-x)^{\alpha_B}}{\hat{x}^{\sigma_B}(1-\hat{x})^{\alpha_B}}$$)delimiter";
+      formula  = R"delimiter($$f_{\rm NP}(x,\zeta, b_T)= \Biggl((1-\lambda)
+\left(\frac{1}{1 + g_1(x) b_T^2/4}+N_1\right) + \lambda \exp \left(-g_{1B}(x) b_T^2 /4 \right)\Biggr) \exp\left[- g_2 \log\left(\frac{\zeta}{Q_0^2}\right) b_T^2/4 - g_{2B} \log\left(\frac{\zeta}{Q_0^2}\right) b_T^4/4 \right]$$)delimiter";
+      formula += R"delimiter($$g_1(x) = \exp\left[\sigma\left(\frac{x}{\alpha}-1\right)\right]$$)delimiter";
+      formula += R"delimiter($$g_{1B}(x) = N_{1B} exp\left(-\frac{(x-\alpha_B)^2}{2\sigma_B^2}\right)$$)delimiter";
       formula += R"delimiter($$Q_0^2 = 1\;{\rm GeV}^2$$)delimiter";
-      formula += R"delimiter($$\hat{x} = 0.1$$)delimiter";
       return formula;
     };
 
@@ -85,7 +85,7 @@ namespace NangaParbat
 
     std::string GetDescription() const
     {
-      return "Parameterisation used for the Pavia 2019 TMD analysis.";
+      return "Parameterisation used for the Pavia 2019 TMD analysis (b version).";
     };
 
   private:
