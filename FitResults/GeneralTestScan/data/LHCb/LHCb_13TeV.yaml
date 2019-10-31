@@ -1,0 +1,112 @@
+dependent_variables:
+  - header: {title: "LHCb at 13 TeV, 60 GeV < Q < 120 GeV, 2 < #it{y} < 4.5", xlabel: "#it{q}_{T} [GeV]", ylabel: "#frac{d#it{#sigma}}{d#it{q}_{T}}  [pb GeV^{-1}]", titlepy: "LHCb at 13 TeV, 60 GeV < Q < 120 GeV, 2 < $y$ < 4.5", xlabelpy: "$q_T\\rm{ [GeV]}$",ylabelpy: "$\\frac{1}{\\sigma}\\frac{d\\sigma}{dq_{T}}[\\rm{GeV}^{-1}]$"}
+    qualifiers:
+      - {name: process, value: DY}
+      - {name: target_isoscalarity, value: 1}
+      - {name: prefactor, value: 1}
+      - {name: Vs, value: 13000}
+      - {name: Q, low: 60, high: 120, integrate: true}
+      - {name: y, low: 2, high: 4.5, integrate: true}
+      - {name: PS_reduction, pTmin: 20, etamin: 2, etamax: 4.5}
+    values:
+      - errors:
+          - {label: unc, value: 0.11}
+          - {label: unc, value: 1.711197e-01}
+          - {label: add, value: 0.027027027027027029}
+          - {label: mult, value: 0.039639639639639644}
+        value: 5.55
+      - errors:
+          - {label: unc, value: 0.21}
+          - {label: unc, value: 3.151052e-01}
+          - {label: add, value: 0.02633969118982743}
+          - {label: mult, value: 0.039055404178019983}
+        value: 11.01
+      - errors:
+          - {label: unc, value: 0.21}
+          - {label: unc, value: 3.028800e-01}
+          - {label: add, value: 0.026408450704225352}
+          - {label: mult, value: 0.038732394366197187}
+        value: 11.36
+      - errors:
+          - {label: unc, value: 0.21}
+          - {label: unc, value: 2.762428e-01}
+          - {label: add, value: 0.026220614828209761}
+          - {label: mult, value: 0.038878842676311032}
+        value: 11.06
+      - errors:
+          - {label: unc, value: 0.18}
+          - {label: unc, value: 2.339126e-01}
+          - {label: add, value: 0.026183282980866064}
+          - {label: mult, value: 0.039274924471299093}
+        value: 9.93
+      - errors:
+          - {label: unc, value: 0.16}
+          - {label: unc, value: 1.971411e-01}
+          - {label: add, value: 0.02595936794582393}
+          - {label: mult, value: 0.039503386004514675}
+        value: 8.86
+      - errors:
+          - {label: unc, value: 0.13}
+          - {label: unc, value: 1.511999e-01}
+          - {label: add, value: 0.026315789473684213}
+          - {label: mult, value: 0.038781163434903052}
+        value: 7.22
+      - errors:
+          - {label: unc, value: 0.11}
+          - {label: unc, value: 1.270724e-01}
+          - {label: add, value: 0.027777777777777776}
+          - {label: mult, value: 0.038580246913580245}
+        value: 6.48
+      - errors:
+          - {label: unc, value: 0.09}
+          - {label: unc, value: 9.716601e-02}
+          - {label: add, value: 0.026515151515151516}
+          - {label: mult, value: 0.039772727272727272}
+        value: 5.28
+      - errors:
+          - {label: unc, value: 0.07}
+          - {label: unc, value: 7.335540e-02}
+          - {label: add, value: 0.027972027972027972}
+          - {label: mult, value: 0.039627039627039631}
+        value: 4.29
+      - errors:
+          - {label: unc, value: 0.05}
+          - {label: unc, value: 4.541542e-02}
+          - {label: add, value: 0.02777777777777778}
+          - {label: mult, value: 0.038194444444444448}
+        value: 2.88
+      - errors:
+          - {label: unc, value: 0.029}
+          - {label: unc, value: 0.000000e+00}
+          - {label: add, value: 0.026136363636363635}
+          - {label: mult, value: 0.039204545454545457}
+        value: 1.760
+      - errors:
+          - {label: unc, value: 0.011}
+          - {label: unc, value: 0.000000e+00}
+          - {label: add, value: 0.025387870239774329}
+          - {label: mult, value: 0.039492242595204514}
+        value: 0.709
+      - errors:
+          - {label: unc, value: 0.0009}
+          - {label: unc, value: 0.000000e+00}
+          - {label: add, value: 0.026595744680851064}
+          - {label: mult, value: 0.039893617021276598}
+        value: 0.0376
+independent_variables:
+  - header: {name: "$P_{T,Z}$", units: GEV}
+    values:
+      - {high: 2.2, low: 0.0}
+      - {high: 3.4, low: 2.2}
+      - {high: 4.6, low: 3.4}
+      - {high: 5.8, low: 4.6}
+      - {high: 7.2, low: 5.8}
+      - {high: 8.7, low: 7.2}
+      - {high: 10.5, low: 8.7}
+      - {high: 12.8, low: 10.5}
+      - {high: 15.4, low: 12.8}
+      - {high: 19.0, low: 15.4}
+      - {high: 24.5, low: 19.0}
+      - {high: 34.0, low: 24.5}
+      - {high: 63.0, low: 34.0}
+      - {high: 270.0, low: 63.0}
