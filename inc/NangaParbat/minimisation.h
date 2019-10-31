@@ -37,4 +37,14 @@ namespace NangaParbat
    * parameters to be minimised along with the relevant information
    */
   bool NoMinimiser(ChiSquare const& chi2, YAML::Node const& parameters);
+
+  /**
+   * @brief The "MinuitScan" function performs a scan around the parameters using
+   * Minuit2
+   * @param chi2: the "ChiSquare" object that returns the values of all chi2's
+   * @param parameters: the "YAML::Node" object that contains the
+   * parameters
+   * @param outfolder: folder for the output
+   */
+  bool MinuitScan(ChiSquare const& chi2, YAML::Node const& parameters, std::string const& outfolder);
 }

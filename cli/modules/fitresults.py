@@ -246,7 +246,7 @@ class fitresults:
         """
         Function that creates plots of TMD distributions, replica bly replica using the code ./run/PlotsTMDs
         """
-        # First of of the code creates the input file containg
+        # First of all the code creates the input file containg
         # parameterisation and sets of parameters
         param = {"Parameterisation": self.report0["Parameterisation"]}
         pars = [val for name, val in self.parameters.items()]
@@ -319,7 +319,7 @@ class fitresults:
                     break
             pred_mean = [sum(x) for x in zip(exp["Predictions"], exp["Systematic shifts"])]
 
-            
+
             # Initialise (multi) plot
             """ for three plots: one principal (bigger) and two smaller
             below the principal one:

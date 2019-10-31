@@ -24,7 +24,7 @@ Error function cut: '4'
 # prescription is enabled). They have to be as many and ordered as the
 # "Parameters" below.
 t0prescription: true
-t0parameters: [0.015552, 3.037307, 21.25188, 5.617127, 0.0, 0.814108, 0.818237, 64.62831, 4.024931, 0.0, 0.0, 0.1, 0.017413, 2.0]
+t0parameters: [0.015552, 1.0, 21.25188, 5.617127, 0.0, 0.814108, 0.1, 40.62831, 3.024931, 0.0, 0.0, 0.1, 0.017413, 2.0]
 
 # Parameterisation to be fitted to data. This has to correspond to a
 # derivation of the "Parameterisation" class.
@@ -35,40 +35,40 @@ Parameterisation: PV19
 # particular parameterisation being used.
 Parameters:
 - name: $g_2$
-  starting_value: 0.015552
-  step: 0.014131
+  starting_value: 0.01395550210504
+  step: 0.01419673181475
   fix: false
 - name: $N_1$
-  starting_value: 3.037307
-  step: 1.5804
+  starting_value: 2.793035171873
+  step: 1.413582213765
   fix: false
 - name: $\alpha$
-  starting_value: 21.25188
-  step: 7.68443
+  starting_value: 21.42155062249
+  step: 8.051294836362
   fix: false
 - name: $\sigma$
-  starting_value: 5.6171266
-  step: 2.3324614
+  starting_value: 5.580717215756
+  step: 2.394371467483
   fix: false
 - name: $\delta$
   starting_value: 0.0
   step: 0.00
   fix: true
 - name: $\lambda_B$
-  starting_value: 0.8141078
-  step: 0.049657
+  starting_value: 0.7908312504393
+  step: 0.05790555538672
   fix: false
 - name: $N_{1,B}$
-  starting_value: 0.8182367
-  step: 0.413995
+  starting_value: 0.9110798699983
+  step: 0.4586084000651
   fix: false
 - name: $\alpha_B$
-  starting_value: 64.62831
-  step: 22.36474
+  starting_value: 60.98167621649
+  step: 21.48798960477
   fix: false
 - name: $\sigma_B$
-  starting_value: 4.024931
-  step: 1.54076
+  starting_value: 3.795919789581
+  step: 1.417417473514
   fix: false
 - name: $\delta_B$
   starting_value: 0.0
@@ -83,29 +83,38 @@ Parameters:
   step: 0.0
   fix: true
 - name: $g_{2,B}$
-  starting_value: 0.0174132
-  step: 0.0038841
+  starting_value: 0.01652426301925
+  step: 0.004077023417563
   fix: false
 - name: $\beta$
   starting_value: 2.0
   step: 0.0
   fix: true
 
-#### Result from minuit minimisation of replica 0
+## The result of the fit with the configuration reported above is:
+# Total chi2 = 1.1285
 
-# # ext. ||   Name    ||   type   ||              Value  ||  Error +/-
+# The values in this file are taken from a previous minimisation that had this
+# t0 parameters (from a previous fit):
+# t0parameters: [0.015552, 1.0, 21.25188, 5.617127, 0.0, 0.814108, 0.1, 40.62831, 3.024931, 0.0, 0.0, 0.1, 0.017413, 2.0]
+# and this output (Minuit output):
 #
-#    0   ||     $g_2$  ||  free   ||    0.01555226183379 ||0.01413064551869
-#    1   ||     $N_1$  ||  free   ||      3.037307301029 ||1.580391827556
-#    2   ||  $\alpha$  ||  free   ||      21.25188271416 ||7.684426012771
-#    3   ||  $\sigma$  ||  free   ||      5.617126616185 ||2.332461353585
-#    4   ||  $\delta$  ||  fixed  ||                   0 ||
-#    5   ||$\lambda_B$ ||  free   ||      0.814107812237 ||0.04965693841139
-#    6   || $N_{1,B}$  ||  free   ||      0.818236756836 ||0.4139949929797
-#    7   ||$\alpha_B$  ||  free   ||      64.62831373717 ||22.36473821475
-#    8   ||$\sigma_B$  ||  free   ||      4.024930981478 ||1.540759053814
-#    9   ||$\delta_B$  ||  fixed  ||                   0 ||
+# # ext. ||   Name    ||   type  ||     Value     ||  Error +/-
+#
+#    0   ||     $g_2$ ||  free   ||    0.01395550210504 ||0.01419673181475
+#    1   ||     $N_1$ ||  free   ||      2.793035171873 ||1.413582213765
+#    2   ||  $\alpha$ ||  free   ||      21.42155062249 ||8.051294836362
+#    3   ||  $\sigma$ ||  free   ||      5.580717215756 ||2.394371467483
+#    4   ||  $\delta$ ||  fixed  ||                   0 ||
+#    5   ||$\lambda_B$ ||  free   ||     0.7908312504393 ||0.05790555538672
+#    6   || $N_{1,B}$ ||  free   ||     0.9110798699983 ||0.4586084000651
+#    7   ||$\alpha_B$ ||  free   ||      60.98167621649 ||21.48798960477
+#    8   ||$\sigma_B$ ||  free   ||      3.795919789581 ||1.417417473514
+#    9   ||$\delta_B$ ||  fixed  ||                   0 ||
 #   10   ||$\lambda_C$ ||  fixed  ||                   0 ||
-#   11   || $g_{1,C}$  ||  fixed  ||                 0.1 ||
-#   12   || $g_{2,B}$  ||  free   ||    0.01741323256459 ||0.003884054392502
-#   13   ||   $\beta$  ||  fixed  ||                   2 ||
+#   11   || $g_{1,C}$ ||  fixed  ||                 0.1 ||
+#   12   || $g_{2,B}$ ||  free   ||    0.01652426301925 ||0.004077023417563
+#   13   ||   $\beta$ ||  fixed  ||                   2 ||
+#
+# Total chi2 = 1.1285
+# The t0 parameters of this file are the t0 parameters of the fit

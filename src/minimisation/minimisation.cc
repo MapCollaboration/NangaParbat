@@ -8,10 +8,15 @@
 
 #include <root/Minuit2/MnUserParameters.h>
 #include <root/Minuit2/MnMigrad.h>
+#include <root/Minuit2/MnScan.h>
+#include <root/Minuit2/MnPlot.h>
 #include <root/Minuit2/FunctionMinimum.h>
 #include <root/Minuit2/MnPrint.h>
 #include <ceres/ceres.h>
 #include <gsl/gsl_randist.h>
+
+#include <fstream>
+#include <sys/stat.h>
 
 namespace NangaParbat
 {
@@ -195,6 +200,67 @@ namespace NangaParbat
     fcn.SetParameters(initPars);
 
     // Return minimisation status
+    return true;
+  }
+
+  //_________________________________________________________________________________
+  bool MinuitScan(ChiSquare const& chi2, YAML::Node const& parameters, std::string const& outfolder)
+  {
+    std::cout << "\nMinuit scanning...\n" << std::endl;
+
+    // Create Minuit parameters with name, starting value, step and,
+    // when available, upper and lower bounds.
+    ROOT::Minuit2::MnUserParameters upar;
+    for (auto const p : parameters)
+      upar.Add(p["name"].as<std::string>(), p["starting_value"].as<double>(), p["step"].as<double>());
+
+    // Define "Minuit" fcn
+    NangaParbat::FcnMinuit fcn{chi2};
+
+    // Initialise scanner
+    ROOT::Minuit2::MnScan scan{fcn, upar};
+
+    // Produce YAML output
+    YAML::Emitter out;
+    out << YAML::BeginMap;
+    out << YAML::Key << "Parameters scan" << YAML::Value << YAML::BeginSeq;
+    for (int p = 0; p < upar.Params().size(); p++)
+      {
+        // Scan
+        std::vector<std::pair<double,double>> points = scan.Scan(p);
+
+        out << YAML::BeginMap;
+        out << YAML::Key << "name" << YAML::Value << upar.GetName(p);
+
+        out << YAML::Key << "parameter value" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+        for (int i = 0; i < points.size(); i++)
+          out << points[i].first;
+        out << YAML::EndSeq;
+        out << YAML::Key << "fcn value" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+        for (int i = 0; i < points.size(); i++)
+          out << points[i].second;
+        out << YAML::EndSeq;
+        out << YAML::EndMap;
+
+        // On terminal
+        for (int i = 0; i < points.size(); i++)
+          std::cout << points[i].first << "," << points[i].second << std::endl;
+        ROOT::Minuit2::MnPlot plot{};
+        plot(points);
+      }
+    out << YAML::EndSeq;
+    out << YAML::EndMap;
+
+    // Create output directory
+    const std::string OutputFolder = outfolder + "/scan";
+    mkdir((OutputFolder).c_str(), ACCESSPERMS);
+
+    // Print out
+    std::ofstream fout(OutputFolder + "/ParameterScan.yaml");
+    fout << out.c_str() << std::endl;
+    fout.close();
+
+    // Return status
     return true;
   }
 }

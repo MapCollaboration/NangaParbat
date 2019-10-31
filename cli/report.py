@@ -23,7 +23,7 @@ questions = [
     {
         "type": "input",
         "name": "Output folder",
-        "message": "Type the name of the fit result folder: ",
+        "message": "Type the name of the fit result folder (path from NangaParbat/): ",
         "validate": NotOutputFolderValidator
     }
 ]

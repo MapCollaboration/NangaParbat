@@ -1,6 +1,7 @@
 import os
 import subprocess
 import re
+import matplotlib.pyplot as plt
 
 from PyInquirer import prompt, Separator
 from examples import custom_style_3
@@ -184,7 +185,7 @@ questions = [
         "type": "list",
         "name": "Minimiser",
         "message": "Select minimiser:",
-        "choices": ["none", "minuit", "ceres"],
+        "choices": ["none", "minuit", "ceres", "scan"],
     },
     {
         "type": "input",
@@ -360,3 +361,24 @@ elif answer["Host"] == "Slurm":
     f.write("srun " + RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables $SLURM_ARRAY_TASK_ID " + Paramfluct + " n\n")
     f.close()
     os.system("sbatch " + outfolder + "/submit.sh")
+
+# Plot scan results
+if fitconfig["Minimiser"] == "scan":
+    with open(outfolder + "/scan/ParameterScan.yaml", "r") as stream:
+        ps = yaml.load(stream, Loader = yaml.RoundTripLoader)
+
+    # Plot
+    for p in ps["Parameters scan"]:
+
+        # Set title and labels
+        plt.xlabel(p["name"])
+        plt.ylabel("Error function")
+
+        # Plot the starting point separately from the points obtained whith the scan
+        plt.plot(p["parameter value"][1:], p["fcn value"][1:], label = "Scan", color = bcolours.answerblue)
+        plt.plot(p["parameter value"][0], p["fcn value"][0], label = "starting value", marker = 'o', color = bcolours.borgogna)
+        plt.legend()
+
+        # Save plot
+        plt.savefig(outfolder + "/scan/" + p["name"] + ".pdf")
+        plt.close()

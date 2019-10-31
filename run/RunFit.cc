@@ -89,6 +89,8 @@ int main(int argc, char* argv[])
     status = MinuitMinimiser(chi2, fitconfig["Parameters"], (fulctpar ? rng : NULL));
   else if (fitconfig["Minimiser"].as<std::string>() == "ceres")
     status = CeresMinimiser(chi2, fitconfig["Parameters"], (fulctpar ? rng : NULL));
+  else if (fitconfig["Minimiser"].as<std::string>() == "scan")
+    status = MinuitScan(chi2, fitconfig["Parameters"], std::string(argv[1]));
   else
     throw std::runtime_error("[RunFit]: Unknown minimiser");
 
