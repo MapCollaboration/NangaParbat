@@ -211,8 +211,12 @@ namespace NangaParbat
     // Create Minuit parameters with name, starting value, step and,
     // when available, upper and lower bounds.
     ROOT::Minuit2::MnUserParameters upar;
+    std::vector<double> initPars;
     for (auto const p : parameters)
-      upar.Add(p["name"].as<std::string>(), p["starting_value"].as<double>(), p["step"].as<double>());
+      {
+        upar.Add(p["name"].as<std::string>(), p["starting_value"].as<double>(), p["step"].as<double>());
+        initPars.push_back(p["starting_value"].as<double>());
+      }
 
     // Define "Minuit" fcn
     NangaParbat::FcnMinuit fcn{chi2};
@@ -244,7 +248,7 @@ namespace NangaParbat
 
         // On terminal
         for (int i = 0; i < points.size(); i++)
-          std::cout << points[i].first << "," << points[i].second << std::endl;
+          std::cout << points[i].first << ", " << points[i].second << std::endl;
         ROOT::Minuit2::MnPlot plot{};
         plot(points);
       }
@@ -259,6 +263,9 @@ namespace NangaParbat
     std::ofstream fout(OutputFolder + "/ParameterScan.yaml");
     fout << out.c_str() << std::endl;
     fout.close();
+
+    // Reset the initial parameters
+    fcn.SetParameters(initPars);
 
     // Return status
     return true;
