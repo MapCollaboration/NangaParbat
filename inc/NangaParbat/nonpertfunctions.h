@@ -7,6 +7,7 @@
 #include "NangaParbat/DWS.h"
 #include "NangaParbat/PV17.h"
 #include "NangaParbat/PV19.h"
+#include "NangaParbat/PV19b.h"
 #include "NangaParbat/QGG6.h"
 #include "NangaParbat/QGG13.h"
 
@@ -21,10 +22,11 @@ namespace NangaParbat
    */
   const std::map<std::string, Parameterisation*> AvPars
   {
-    {"DWS", new NangaParbat::DWS{}},
-    {"PV17", new NangaParbat::PV17{}},
-    {"PV19", new NangaParbat::PV19{}},
-    {"QGG6", new NangaParbat::QGG6{}},
+    {"DWS",   new NangaParbat::DWS{}},
+    {"PV17",  new NangaParbat::PV17{}},
+    {"PV19",  new NangaParbat::PV19{}},
+    {"PV19b", new NangaParbat::PV19b{}},
+    {"QGG6",  new NangaParbat::QGG6{}},
     {"QGG13", new NangaParbat::QGG13{}}
   };
 

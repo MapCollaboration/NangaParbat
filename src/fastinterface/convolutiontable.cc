@@ -16,7 +16,7 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  ConvolutionTable::ConvolutionTable(YAML::Node const& table):
+  ConvolutionTable::ConvolutionTable(YAML::Node const& table, double const& acc):
     _name(table["name"].as<std::string>()),
     _proc(table["process"].as<int>()),
     _Vs(table["CME"].as<double>()),
@@ -27,7 +27,8 @@ namespace NangaParbat
     _prefact(table["prefactor"].as<double>()),
     _z(table["Ogata_coordinates"].as<std::vector<double>>()),
     _Qg(table["Qgrid"].as<std::vector<double>>()),
-    _xig(table["xigrid"].as<std::vector<double>>())
+    _xig(table["xigrid"].as<std::vector<double>>()),
+    _acc(acc)
   {
     // Read the phase-space reduction factors...
     for (auto const& qT : _qTv)
@@ -43,8 +44,8 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  ConvolutionTable::ConvolutionTable(std::string const& infile):
-    ConvolutionTable(YAML::LoadFile(infile))
+  ConvolutionTable::ConvolutionTable(std::string const& infile, double const& acc):
+    ConvolutionTable(YAML::LoadFile(infile), acc)
   {
   }
 
@@ -61,28 +62,35 @@ namespace NangaParbat
         const auto dpsf = _dPSRed.at(_qTv[iqT]);
         double cs  = 0;
         double dcs = 0;
-        for (int tau = 0; tau < (int) _Qg.size(); tau++)
+        for (int n = 0; n < (int) _z.size(); n++)
           {
-            const double Q    = _Qg[tau];
-            const double zeta = Q * Q;
-            const double Vtau = Q / _Vs;
-            for (int alpha = 0; alpha < (int) _xig.size(); alpha++)
+            double csn  = 0;
+            double dcsn = 0;
+            const double b = _z[n] / _qTv[iqT];
+            for (int tau = 0; tau < (int) _Qg.size(); tau++)
               {
-                double csn = 0;
-                const double x1 = Vtau * _xig[alpha];
-                const double x2 = pow(Vtau, 2) / x1;
-                for (int n = 0; n < (int) _z.size(); n++)
+                const double Q    = _Qg[tau];
+                const double zeta = Q * Q;
+                const double Vtau = Q / _Vs;
+                for (int alpha = 0; alpha < (int) _xig.size(); alpha++)
                   {
-                    const double b = _z[n] / _qTv[iqT];
-                    csn += wgt[n][tau][alpha] * fNP1(x1, b, zeta) * fNP2(x2, b, zeta);
+                    const double x1 = Vtau * _xig[alpha];
+                    const double x2 = pow(Vtau, 2) / x1;
+                    const double wf = wgt[n][tau][alpha] * fNP1(x1, b, zeta) * fNP2(x2, b, zeta);
+                    csn  += wf * psf[tau][alpha];
+                    dcsn += wf * dpsf[tau][alpha];
                   }
-                cs  += csn * psf[tau][alpha];
-                dcs += csn * dpsf[tau][alpha];
               }
+            cs  += csn;
+            dcs += dcsn;
+            // Break the loop if the accuracy is satisfied (assuming
+            // convergence).
+            if (std::abs(csn/cs) < _acc)
+              break;
           }
-        // Positive value of qT correspond to the non-derivative part
-        // and negative to the derivative part of the phase-space
-        // reduction factor.
+        // Positive values of qT correspond to the non-derivative part
+        // while the negative ones to the derivative part of the
+        // phase-space reduction factor.
         pred.insert({_qTv[iqT],  cs});
         pred.insert({-_qTv[iqT], dcs});
       }

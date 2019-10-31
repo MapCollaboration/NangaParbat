@@ -62,11 +62,12 @@ int main(int argc, char* argv[])
   for (auto const& exp : datasets)
     for (auto const& ds : exp.second)
       {
-        std::cout << "Reading " << ds["name"].as<std::string>() << "..." << std::endl;
+        std::cout << "Reading table for " << ds["name"].as<std::string>() << "..." << std::endl;
 
         // Convolution table
         const std::string table = std::string(argv[4]) + "/" + ds["name"].as<std::string>() + ".yaml";
         const NangaParbat::ConvolutionTable ct{YAML::LoadFile(table)};
+        //ct.NumericalAccuracy(NPFunc->Function());
 
         // Datafile
         const std::string datafile = std::string(argv[3]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
@@ -104,7 +105,8 @@ int main(int argc, char* argv[])
   fout.close();
 
   // Produce plots
-  //chi2.MakePlots(OutputFolder);
+  if (ReplicaID == 0)
+    chi2.MakePlots(OutputFolder);
 
   // Delete random-number generator
   gsl_rng_free(rng);
