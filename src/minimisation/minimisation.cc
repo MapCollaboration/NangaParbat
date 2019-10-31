@@ -226,7 +226,8 @@ namespace NangaParbat
     out << YAML::Key << "Parameters scan" << YAML::Value << YAML::BeginSeq;
     for (int p = 0; p < upar.Params().size(); p++)
       {
-        // Scan
+        // Perform the scan. The number of points in the scan is 41 and the range is 2 standard deviations
+        // (= two times the step of the parameter) by default (Scan from Minuit2).
         std::vector<std::pair<double,double>> points = scan.Scan(p);
 
         out << YAML::BeginMap;
