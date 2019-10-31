@@ -63,7 +63,7 @@ namespace NangaParbat
         minimiser.Minimizer().Builder().SetPrintLevel(2);
 
         // Minimise
-        ROOT::Minuit2::FunctionMinimum min = minimiser();
+        ROOT::Minuit2::FunctionMinimum min = minimiser(10000);
 
         // Output of Minuit
         std::cout << "minimum: " << min << std::endl;
@@ -87,7 +87,7 @@ namespace NangaParbat
         minimiser.Minimizer().Builder().SetPrintLevel(2);
 
         // Minimise
-        ROOT::Minuit2::FunctionMinimum min = minimiser();
+        ROOT::Minuit2::FunctionMinimum min = minimiser(10000);
 
         // Output of Minuit
         std::cout << "minimum: " << min << std::endl;
