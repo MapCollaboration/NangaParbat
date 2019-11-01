@@ -29,7 +29,7 @@ namespace NangaParbat
       if (x >= 1)
         return 0;
 
-      // Free paraMeters
+      // Free parameters
       const double g2     = this->_pars[0];
       const double N1     = this->_pars[1];
       const double alpha  = this->_pars[2];
@@ -75,8 +75,8 @@ namespace NangaParbat
       return {R"delimiter($g_2$)delimiter",
               R"delimiter($N_1$)delimiter",
               R"delimiter($\alpha$)delimiter",
-              R"delimiter($\sigma)delimiter",
-              R"delimiter($\lambda_B$)delimiter",
+              R"delimiter($\sigma$)delimiter",
+              R"delimiter($\lambda$)delimiter",
               R"delimiter($N_{1B}$)delimiter",
               R"delimiter($\alpha_B$)delimiter",
               R"delimiter($\sigma_B$)delimiter",
