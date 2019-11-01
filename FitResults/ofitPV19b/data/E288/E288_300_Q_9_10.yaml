@@ -1,0 +1,97 @@
+dependent_variables:
+  - header: {title: "E288  at 300 GeV, 9 GeV < Q < 10 GeV, #it{y} = 0.21", titlepy: "E288  at 300 GeV, 9 GeV < Q < 10 GeV, $y$ = 0.21", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q_T \\rm{ [GeV]}$", ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]", ylabelpy: "$\\rm{E }\\frac{d^{3}\\sigma}{d^{3}q}{[\\rm{pb GeV}^{-2}]}$"}
+    qualifiers:
+      - {name: process, value: DY}
+      - {name: target_isoscalarity, value: 0.4603}
+      - {name: prefactor, value: 0.31830989}
+      - {name: Vs, value: 23.8}
+      - {name: Q, low: 9, high: 10, integrate: true}
+      - {name: y, low: 0.21, high: 0.21, integrate: false}
+    values:
+      - errors:
+          - {label: unc, value: 0.021}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.25}
+        value: 0.091
+      - errors:
+          - {label: unc, value: 0.01}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.25}
+        value: 0.066
+      - errors:
+          - {label: unc, value: 0.008}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.25}
+        value: 0.066
+      - errors:
+          - {label: unc, value: 0.009}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.25}
+        value: 0.069
+      - errors:
+          - {label: unc, value: 0.007}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.25}
+        value: 0.05
+      - errors:
+          - {label: unc, value: 0.0077}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.25}
+        value: 0.05
+      - errors:
+          - {label: unc, value: 0.0056}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.25}
+        value: 0.03
+      - errors:
+          - {label: unc, value: 0.004}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.25}
+        value: 0.0166
+      - errors:
+          - {label: unc, value: 0.0033}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.25}
+        value: 0.0097
+      - errors:
+          - {label: unc, value: 0.0013}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.25}
+        value: 0.0022
+      - errors:
+          - {label: unc, value: 0.0029}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.25}
+        value: 0.0067
+      - errors:
+          - {label: unc, value: 0.00112}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.25}
+        value: 0.00155
+      - errors:
+          - {label: unc, value: 0.00084}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.25}
+        value: 0.00084
+      - errors:
+          - {label: unc, value: 0.00098}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.25}
+        value: 0.00096
+independent_variables:
+  - header: "{name: 'PT(P=3 4,RF=CM)', units: GEV}"
+    values:
+      - {value: 0.1, factor: 5}
+      - {value: 0.3, factor: 1.6666667}
+      - {value: 0.5, factor: 1}
+      - {value: 0.7, factor: 0.71428571}
+      - {value: 0.9, factor: 0.55555556}
+      - {value: 1.1, factor: 0.45454545}
+      - {value: 1.3, factor: 0.38461538}
+      - {value: 1.5, factor: 0.33333333}
+      - {value: 1.7, factor: 0.29411765}
+      - {value: 1.9, factor: 0.26315789}
+      - {value: 2.1, factor: 0.23809524}
+      - {value: 2.3, factor: 0.2173913}
+      - {value: 2.5, factor: 0.2}
+      - {value: 3.1, factor: 0.16129032}

@@ -1,0 +1,679 @@
+Status: 1
+Global error function: 2.0023324
+Global chi2: 1.0205356
+Parameterisation: PV19b
+Non-perturbative function: "$$f_{\\rm NP}(x,\\zeta, b_T)= \\Biggl((1-\\lambda)\n\\left(\\frac{1}{1 + g_1(x) b_T^2/4}+N_1\\right) + \\lambda \\exp \\left(-g_{1B}(x) b_T^2 /4 \\right)\\Biggr) \\exp\\left[- g_2 \\log\\left(\\frac{\\zeta}{Q_0^2}\\right) b_T^2/4 - g_{2B} \\log\\left(\\frac{\\zeta}{Q_0^2}\\right) b_T^4/4 \\right]$$$$g_1(x) = \\exp\\left[\\sigma\\left(\\frac{x}{\\alpha}-1\\right)\\right]$$$$g_{1B}(x) = N_{1B} exp\\left(-\\frac{(x-\\alpha_B)^2}{2\\sigma_B^2}\\right)$$$$Q_0^2 = 1\\;{\\rm GeV}^2$$"
+Parameters: {$g_2$: 0.017990042, $N_1$: -0.041089938, $\alpha$: 0.051598693, $\sigma$: 0.75930249, $\lambda$: 0.82234608, "$N_{1B}$": 1.8036507, $\alpha_B$: 0.09595835, $\sigma_B$: 0.030929538, "$g_{2B}$": 0.022451767}
+Experiments:
+  - Name: E605_Q_7_8
+    Plot title: "E605, 7 GeV < Q < 8 GeV, #it{x}_{F} = 0.1"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E605, 7 GeV < Q < 8 GeV, $x_{F}$ = 0.1
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 1.6736087
+    partial chi2: 0.51326616
+    penalty chi2: 0.055482021
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3]
+    Predictions: [1.0019571, 0.96457204, 0.89337233, 0.79591089, 0.67997079, 0.55663326, 0.43596774]
+    Central values: [0.785, 0.973, 0.825, 0.805, 0.569, 0.537, 0.388]
+    Fluctuated data: [0.75574719, 1.0006686, 0.73396541, 0.8152429, 0.47394402, 0.58498097, 0.4245347]
+    Uncorrelated uncertainties: [0.13210606, 0.11787255, 0.091855867, 0.087446589, 0.062943982, 0.062625784, 0.05013576]
+    Systematic shifts: [-0.099877477, -0.095947628, -0.088483369, -0.078317414, -0.066324307, -0.053695086, -0.041497195]
+  - Name: E605_Q_8_9
+    Plot title: "E605, 8 GeV < Q < 9 GeV, #it{x}_{F} = 0.1"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E605, 8 GeV < Q < 9 GeV, $x_{F}$ = 0.1
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 3.1212481
+    partial chi2: 1.3251028
+    penalty chi2: 0.0014215875
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5]
+    Predictions: [0.49500431, 0.47466897, 0.43593396, 0.38320655, 0.32117383, 0.25603261, 0.19339166, 0.13704588]
+    Central values: [0.333, 0.439, 0.368, 0.37, 0.259, 0.224, 0.18, 0.131]
+    Fluctuated data: [0.34787772, 0.55046909, 0.39098321, 0.43532968, 0.31919107, 0.29297336, 0.18639684, 0.13310543]
+    Uncorrelated uncertainties: [0.037973198, 0.043083384, 0.034781656, 0.034740493, 0.02437963, 0.021324139, 0.017734124, 0.013656068]
+    Systematic shifts: [-0.0081494997, -0.0078043628, -0.0071483222, -0.0062590366, -0.0052195137, -0.0041367298, -0.0031061467, -0.0021908859]
+  - Name: E605_Q_10.5_11.5
+    Plot title: "E605, 10.5 GeV < Q < 11.5 GeV, #it{x}_{F} = 0.1"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E605, 10.5 GeV < Q < 11.5 GeV, $x_{F}$ = 0.1
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 1.8121895
+    partial chi2: 0.96990943
+    penalty chi2: 0.061442317
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9]
+    Predictions: [0.0675157, 0.064791032, 0.059604468, 0.052521259, 0.044157703, 0.035324452, 0.026771991, 0.019022076, 0.012522673, 0.0074858171]
+    Central values: [0.0701, 0.0784, 0.0712, 0.0624, 0.0503, 0.039, 0.0312, 0.0234, 0.0147, 0.0131]
+    Fluctuated data: [0.062108734, 0.094500369, 0.073771797, 0.060269325, 0.042641339, 0.036117854, 0.033164513, 0.020727006, 0.011300263, 0.011777718]
+    Uncorrelated uncertainties: [0.010899029, 0.0095319953, 0.008145105, 0.0069701824, 0.0055867042, 0.0043152577, 0.0034805336, 0.0026855976, 0.0017227733, 0.0016093324]
+    Systematic shifts: [0.0079320355, 0.0076059142, 0.0069857549, 0.0061419499, 0.005151164, 0.0041120893, 0.0031149441, 0.0022211211, 0.0014811032, 0.00091621134]
+  - Name: E288_200_Q_4_5
+    Plot title: "E288  at 200 GeV, 4 GeV < Q < 5 GeV, #it{y} = 0.4"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E288  at 200 GeV, 4 GeV < Q < 5 GeV, $y$ = 0.4
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 6.2332547
+    partial chi2: 2.1376664
+    penalty chi2: 1.7262213
+    qT: [0.1, 0.3, 0.5, 0.7]
+    Predictions: [3.6256096, 3.4515447, 3.1234709, 2.6801962]
+    Central values: [6.29, 5.88, 4.75, 3.69]
+    Fluctuated data: [6.7003153, 6.8639086, 5.9552847, 3.4077322]
+    Uncorrelated uncertainties: [0.564579, 0.49596218, 0.41819696, 0.34804456]
+    Systematic shifts: [2.4938316, 2.3675752, 2.1306558, 1.812676]
+  - Name: E288_200_Q_5_6
+    Plot title: "E288  at 200 GeV, 5 GeV < Q < 6 GeV, #it{y} = 0.4"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E288  at 200 GeV, 5 GeV < Q < 6 GeV, $y$ = 0.4
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 5.7163654
+    partial chi2: 2.3009365
+    penalty chi2: 0.35780808
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9]
+    Predictions: [1.0570378, 1.0019627, 0.89862084, 0.75969844, 0.60111845]
+    Central values: [1.63, 1.44, 1.19, 1.04, 0.601]
+    Fluctuated data: [1.7958224, 1.5166408, 1.2463722, 1.2060495, 0.51835663]
+    Uncorrelated uncertainties: [0.16975126, 0.13928598, 0.11699919, 0.10730209, 0.069017347]
+    Systematic shifts: [0.35074071, 0.33183034, 0.29648658, 0.24922448, 0.19568608]
+  - Name: E288_200_Q_6_7
+    Plot title: "E288  at 200 GeV, 6 GeV < Q < 7 GeV, #it{y} = 0.4"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E288  at 200 GeV, 6 GeV < Q < 7 GeV, $y$ = 0.4
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 1.8614083
+    partial chi2: 0.92017402
+    penalty chi2: 0.3770244
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9, 1.1]
+    Predictions: [0.2638401, 0.25053362, 0.2254691, 0.19161612, 0.15277039, 0.11290877]
+    Central values: [0.399, 0.342, 0.333, 0.255, 0.181, 0.13]
+    Fluctuated data: [0.46984422, 0.36268367, 0.31780755, 0.28024218, 0.20557397, 0.11829815]
+    Uncorrelated uncertainties: [0.054315216, 0.037808985, 0.035185528, 0.028881016, 0.022406614, 0.017378266]
+    Systematic shifts: [0.096717398, 0.091678085, 0.082217871, 0.069503432, 0.055016805, 0.040292272]
+  - Name: E288_200_Q_7_8
+    Plot title: "E288  at 200 GeV, 7 GeV < Q < 8 GeV, #it{y} = 0.4"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E288  at 200 GeV, 7 GeV < Q < 8 GeV, $y$ = 0.4
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 0.51412661
+    partial chi2: 0.90811955
+    penalty chi2: 0.037593382
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3]
+    Predictions: [0.062692985, 0.059653692, 0.053893337, 0.046077944, 0.037067658, 0.027742711, 0.018940583]
+    Central values: [0.0945, 0.0901, 0.0702, 0.0522, 0.0411, 0.0297, 0.0164]
+    Fluctuated data: [0.048733988, 0.082425827, 0.068235731, 0.051025561, 0.036778347, 0.032330868, 0.021059739]
+    Uncorrelated uncertainties: [0.020795831, 0.013948478, 0.010642051, 0.0084068222, 0.0071439183, 0.0060046392, 0.0040525439]
+    Systematic shifts: [0.0077631547, 0.0073739158, 0.0066380412, 0.0056445094, 0.0045070285, 0.0033408719, 0.0022534463]
+  - Name: E288_200_Q_8_9
+    Plot title: "E288  at 200 GeV, 8 GeV < Q < 9 GeV, #it{y} = 0.4"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E288  at 200 GeV, 8 GeV < Q < 9 GeV, $y$ = 0.4
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 1.3583347
+    partial chi2: 0.67574606
+    penalty chi2: 0.11300521
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5]
+    Predictions: [0.013427436, 0.012802403, 0.011610868, 0.0099876709, 0.008108637, 0.0061500216, 0.0042826476, 0.0026487714]
+    Central values: [0.0222, 0.0165, 0.0134, 0.01, 0.0061, 0.0052, 0.006, 0.0017]
+    Fluctuated data: [0.030080314, 0.011896873, 0.0057558099, 0.0046177275, 0.0052879805, 0.0047431342, 0.0050515609, 0.0016678557]
+    Uncorrelated uncertainties: [0.007982439, 0.0043051576, 0.0033250422, 0.0025916115, 0.0018431384, 0.0017047239, 0.0019140578, 0.0010151125]
+    Systematic shifts: [-0.0030563202, -0.0029089573, -0.0026286299, -0.0022486209, -0.0018117342, -0.0013606084, -0.0009356937, -0.00056963957]
+  - Name: E288_300_Q_4_5
+    Plot title: "E288  at 300 GeV, 4 GeV < Q < 5 GeV, #it{y} = 0.21"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E288  at 300 GeV, 4 GeV < Q < 5 GeV, $y$ = 0.21
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 1.6245933
+    partial chi2: 1.1259758
+    penalty chi2: 0.3387639
+    qT: [0.1, 0.3, 0.5, 0.7]
+    Predictions: [6.3125455, 6.0226298, 5.4764793, 4.7378568]
+    Central values: [9.16, 7.65, 6.61, 5.58]
+    Fluctuated data: [5.7720126, 3.7291715, 3.3851519, 3.0109221]
+    Uncorrelated uncertainties: [0.73882272, 0.58903042, 0.52982208, 0.47400597]
+    Systematic shifts: [-1.9644721, -1.8693466, -1.6908475, -1.4509399]
+  - Name: E288_300_Q_5_6
+    Plot title: "E288  at 300 GeV, 5 GeV < Q < 6 GeV, #it{y} = 0.21"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E288  at 300 GeV, 5 GeV < Q < 6 GeV, $y$ = 0.21
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 2.2831515
+    partial chi2: 1.1167162
+    penalty chi2: 0.069710175
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9]
+    Predictions: [2.3055379, 2.1890454, 1.9706847, 1.6771339, 1.3408777]
+    Central values: [2.57, 2.3, 2.07, 1.82, 1.13]
+    Fluctuated data: [2.1496775, 2.0205725, 1.5161463, 1.7581299, 0.87129281]
+    Uncorrelated uncertainties: [0.25060712, 0.19932308, 0.18418389, 0.17439879, 0.11559058]
+    Systematic shifts: [-0.34574868, -0.32778839, -0.29423644, -0.24934705, -0.19828384]
+  - Name: E288_300_Q_6_7
+    Plot title: "E288  at 300 GeV, 6 GeV < Q < 7 GeV, #it{y} = 0.21"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E288  at 300 GeV, 6 GeV < Q < 7 GeV, $y$ = 0.21
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 0.46121474
+    partial chi2: 0.68034004
+    penalty chi2: 0.00075322741
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9, 1.1]
+    Predictions: [0.73416445, 0.69810119, 0.63024718, 0.53867125, 0.43325506, 0.32498335]
+    Central values: [0.849, 0.783, 0.655, 0.54, 0.414, 0.286]
+    Fluctuated data: [0.83294982, 0.71199942, 0.64219937, 0.47203468, 0.42546741, 0.30357622]
+    Uncorrelated uncertainties: [0.099965238, 0.078519898, 0.064980169, 0.055701878, 0.045434711, 0.033455505]
+    Systematic shifts: [-0.012290362, -0.011672355, -0.01051326, -0.0089558781, -0.0071746224, -0.0053605304]
+  - Name: E288_300_Q_7_8
+    Plot title: "E288  at 300 GeV, 7 GeV < Q < 8 GeV, #it{y} = 0.21"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E288  at 300 GeV, 7 GeV < Q < 8 GeV, $y$ = 0.21
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 0.40860464
+    partial chi2: 0.21322622
+    penalty chi2: 0.033979058
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3]
+    Predictions: [0.23332216, 0.22229227, 0.2014021, 0.17308765, 0.14033074, 0.10641749, 0.074396931]
+    Central values: [0.286, 0.253, 0.237, 0.197, 0.145, 0.11, 0.0781]
+    Fluctuated data: [0.19146981, 0.17933146, 0.17085523, 0.18543114, 0.11186228, 0.093319245, 0.064654861]
+    Uncorrelated uncertainties: [0.047331604, 0.032320014, 0.029125338, 0.024246369, 0.019290473, 0.015575007, 0.012000227]
+    Systematic shifts: [-0.027963675, -0.026608813, -0.024049426, -0.020595965, -0.016626717, -0.012552455, -0.0087476414]
+  - Name: E288_300_Q_8_9
+    Plot title: "E288  at 300 GeV, 8 GeV < Q < 9 GeV, #it{y} = 0.21"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E288  at 300 GeV, 8 GeV < Q < 9 GeV, $y$ = 0.21
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 2.7396941
+    partial chi2: 0.4954744
+    penalty chi2: 0.31855728
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5]
+    Predictions: [0.073578518, 0.070220801, 0.063826721, 0.055128263, 0.045023287, 0.034492294, 0.024461481, 0.015647294]
+    Central values: [0.096, 0.07, 0.07, 0.073, 0.053, 0.052, 0.032, 0.018]
+    Fluctuated data: [0.11836564, 0.091335763, 0.06834285, 0.08418692, 0.061501823, 0.07147042, 0.051858405, 0.015553231]
+    Uncorrelated uncertainties: [0.022480532, 0.013293465, 0.011663092, 0.011822653, 0.0088978911, 0.0095929864, 0.0067925574, 0.004361152]
+    Systematic shifts: [0.02851047, 0.027173571, 0.024633021, 0.021192616, 0.01722254, 0.013121252, 0.0092585894, 0.005912771]
+  - Name: E288_400_Q_5_6
+    Plot title: "E288  at 400 GeV, 5 GeV < Q < 6 GeV, #it{y} = 0.03"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E288  at 400 GeV, 5 GeV < Q < 6 GeV, $y$ = 0.03
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 2.0175805
+    partial chi2: 0.69615616
+    penalty chi2: 0.24954281
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9]
+    Predictions: [3.4813042, 3.3081229, 2.9838686, 2.548165, 2.048221]
+    Central values: [2.88, 2.76, 2.3, 2.08, 1.48]
+    Fluctuated data: [2.9161815, 2.61126, 1.9123394, 1.6802741, 1.3674504]
+    Uncorrelated uncertainties: [0.22325115, 0.19714952, 0.16529823, 0.15196929, 0.11272026]
+    Systematic shifts: [-0.99774893, -0.94675431, -0.85156612, -0.72423267, -0.57907558]
+  - Name: E288_400_Q_6_7
+    Plot title: "E288  at 400 GeV, 6 GeV < Q < 7 GeV, #it{y} = 0.03"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E288  at 400 GeV, 6 GeV < Q < 7 GeV, $y$ = 0.03
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 0.79314082
+    partial chi2: 0.29146934
+    penalty chi2: 0.25396049
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9, 1.1]
+    Predictions: [1.2592936, 1.1986852, 1.084698, 0.93088479, 0.75342122, 0.57098688]
+    Central values: [1.04, 0.966, 0.894, 0.707, 0.594, 0.44]
+    Fluctuated data: [0.95559921, 0.77125431, 0.70567588, 0.62921141, 0.49301653, 0.42392812]
+    Uncorrelated uncertainties: [0.082422361, 0.073434314, 0.067640768, 0.053629754, 0.045453856, 0.03397548]
+    Systematic shifts: [-0.39314761, -0.37383217, -0.33760561, -0.2889223, -0.23308377, -0.17612195]
+  - Name: E288_400_Q_7_8
+    Plot title: "E288  at 400 GeV, 7 GeV < Q < 8 GeV, #it{y} = 0.03"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E288  at 400 GeV, 7 GeV < Q < 8 GeV, $y$ = 0.03
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 2.1666705
+    partial chi2: 0.12368788
+    penalty chi2: 0.14806598
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3]
+    Predictions: [0.46134473, 0.43994111, 0.39938987, 0.34444741, 0.28074989, 0.21476873, 0.15243447]
+    Central values: [0.382, 0.354, 0.328, 0.28, 0.221, 0.17, 0.125]
+    Fluctuated data: [0.40471159, 0.24186849, 0.30261354, 0.28022178, 0.1898731, 0.15353244, 0.1297974]
+    Uncorrelated uncertainties: [0.036533736, 0.031700922, 0.029193388, 0.024868337, 0.019977404, 0.015477159, 0.011519295]
+    Systematic shifts: [-0.11745156, -0.11189564, -0.10139612, -0.087228817, -0.070901348, -0.054119154, -0.038419392]
+  - Name: E288_400_Q_8_9
+    Plot title: "E288  at 400 GeV, 8 GeV < Q < 9 GeV, #it{y} = 0.03"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E288  at 400 GeV, 8 GeV < Q < 9 GeV, $y$ = 0.03
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 0.76051762
+    partial chi2: 0.63597551
+    penalty chi2: 0.029259606
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5]
+    Predictions: [0.16914342, 0.1615311, 0.14703529, 0.12733158, 0.10439683, 0.080491309, 0.057724709, 0.037667306]
+    Central values: [0.158, 0.138, 0.122, 0.112, 0.083, 0.063, 0.047, 0.039]
+    Fluctuated data: [0.21356168, 0.17894972, 0.16286998, 0.11967113, 0.11852312, 0.091519807, 0.067490273, 0.042764158]
+    Uncorrelated uncertainties: [0.018421263, 0.014884152, 0.012976465, 0.011956227, 0.0088079977, 0.0069034713, 0.0049925244, 0.004229718]
+    Systematic shifts: [0.020210775, 0.019282611, 0.017518924, 0.015131664, 0.01236999, 0.0095143238, 0.006822205, 0.0044801752]
+  - Name: E288_400_Q_11_12
+    Plot title: "E288  at 400 GeV, 11 GeV < Q < 12 GeV, #it{y} = 0.03"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E288  at 400 GeV, 11 GeV < Q < 12 GeV, $y$ = 0.03
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 2.9079416
+    partial chi2: 0.5572148
+    penalty chi2: 0.14230906
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9, 2.1]
+    Predictions: [0.006777883, 0.006501526, 0.0059768465, 0.00525748, 0.0044114112, 0.0035153216, 0.0026431055, 0.0018542692, 0.0011912041, 0.00067647551, 0.00031062663]
+    Central values: [0.00993, 0.00699, 0.00753, 0.00509, 0.00377, 0.00334, 0.00289, 0.00231, 0.0012, 0.00091, 0.00052]
+    Fluctuated data: [0.014352943, 0.0098130842, 0.011361112, 0.0063929944, 0.0053466068, 0.0024239083, 0.0039561013, 0.0020109257, 0.0013683919, 0.001343546, 0.00073983336]
+    Uncorrelated uncertainties: [0.0027032, 0.0015106798, 0.0015031147, 0.0010158794, 0.00075661913, 0.00066617432, 0.00058208338, 0.00048982606, 0.00029480221, 0.00024562396, 0.00016967831]
+    Systematic shifts: [0.0020228999, 0.0019379753, 0.0017769039, 0.0015570598, 0.0013002421, 0.0010306042, 0.00077107423, 0.00053967978, 0.0003485785, 0.00020353486, 0.00010336527]
+  - Name: E288_400_Q_12_13
+    Plot title: "E288  at 400 GeV, 12 GeV < Q < 13 GeV, #it{y} = 0.03"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E288  at 400 GeV, 12 GeV < Q < 13 GeV, $y$ = 0.03
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 0.7296608
+    partial chi2: 0.53205705
+    penalty chi2: 0.034136057
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9, 2.1, 2.3]
+    Predictions: [0.0019741899, 0.0019003578, 0.0017597594, 0.0015662751, 0.0013372778, 0.0010929553, 0.00085256737, 0.00063209142, 0.00044294471, 0.00029167289, 0.00017911159, 0.00010222465]
+    Central values: [0.00225, 0.00259, 0.00157, 0.00207, 0.00154, 0.00129, 0.00097, 0.00085, 0.00052, 0.00016, 0.00024, 0.00013]
+    Fluctuated data: [0.0018229455, 0.0013936978, 0.00093732173, 0.0016112827, 0.0013787192, 0.0013139576, 0.00044542122, 0.00078124572, 0.00042458833, 0.00016773421, 3.8080857e-05, 7.2986563e-05]
+    Uncorrelated uncertainties: [0.00095790861, 0.00073880707, 0.00046104198, 0.00051372818, 0.00038626956, 0.00032587504, 0.00025352873, 0.00021994453, 0.00015670227, 8.2321952e-05, 0.00010329164, 8.0997699e-05]
+    Systematic shifts: [-0.0002984791, -0.00028693871, -0.0002650071, -0.00023495749, -0.00019964093, -0.00016228898, -0.00012594851, -9.3089363e-05, -6.538114e-05, -4.3691673e-05, -2.7966946e-05, -1.7569039e-05]
+  - Name: E288_400_Q_13_14
+    Plot title: "E288  at 400 GeV, 13 GeV < Q < 14 GeV, #it{y} = 0.03"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]"
+    Plot title python: E288  at 400 GeV, 13 GeV < Q < 14 GeV, $y$ = 0.03
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\rm{E }\frac{d^{3}\sigma}{d^{3}q}{[\rm{pb GeV}^{-2}]}$
+    partial error function: 1.7883938
+    partial chi2: 0.62729908
+    penalty chi2: 0.0011546932
+    qT: [0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9, 2.3, 2.5]
+    Predictions: [0.00046884138, 0.00045464252, 0.00042835734, 0.00039161218, 0.00034756803, 0.00029978176, 0.00025133374, 0.00020536837, 0.00016393161, 0.00012841537, 7.614353e-05, 5.8313273e-05]
+    Central values: [0.00087, 0.00057, 0.00062, 0.00085, 0.00038, 0.00035, 0.00029, 0.00019, 9e-05, 0.00011, 5.7e-05, 3e-05]
+    Fluctuated data: [0.0012821286, 0.00090351498, 0.00074648634, 0.00023346863, 0.00032169051, 0.00054860508, 0.00032583605, 0.00015118442, 7.0108279e-06, 0.00012746171, 8.2442768e-05, 8.1708327e-05]
+    Uncorrelated uncertainties: [0.00055162374, 0.00026705703, 0.00024586652, 0.00028140635, 0.00015200046, 0.00012875196, 0.00011192096, 8.5220516e-05, 5.148368e-05, 7.125312e-05, 4.1490342e-05, 3.0222151e-05]
+    Systematic shifts: [1.2884026e-05, 1.248092e-05, 1.1735636e-05, 1.0698441e-05, 9.4638689e-06, 8.135351e-06, 6.8026472e-06, 5.5542153e-06, 4.4448381e-06, 3.5093085e-06, 2.1643609e-06, 1.7141617e-06]
+  - Name: STAR_510
+    Plot title: STAR at 510 GeV, 73 GeV < Q < 114 GeV, |#it{y}| < 1
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{d#it{#sigma}}{d#it{q}_{T}}  [pb GeV^{-1}]"
+    Plot title python: STAR at 510 GeV, 73 GeV < Q < 114 GeV, $|y|$ < 1
+    xlabelpy: $q_T\rm{ [GeV]}$
+    ylabelpy: $\frac{1}{\sigma}\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$
+    partial error function: 1.947817
+    partial chi2: 1.1493826
+    penalty chi2: 0.037028987
+    qT: [0.625005, 1.875, 3.125, 4.375, 6.25, 8.75, 11.25]
+    Predictions: [0.2716646, 0.569855, 0.55083427, 0.44608523, 0.29657076, 0.17583497, 0.10492503]
+    Central values: [0.217182, 0.511523, 0.692712, 0.527631, 0.302337, 0.192684, 0.155741]
+    Fluctuated data: [0.21138411, 0.49601703, 0.49002216, 0.57861466, 0.30337867, 0.23158048, 0.16834808]
+    Uncorrelated uncertainties: [0.056029485, 0.088853791, 0.086268446, 0.065230274, 0.042504217, 0.032631346, 0.028541079]
+    Systematic shifts: [0.012127201, 0.025130681, 0.024221697, 0.019539404, 0.012773537, 0.0074331335, 0.0043693802]
+  - Name: CDF_RunI
+    Plot title: CDF Run I, 66 GeV < Q < 116 GeV
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{d#it{#sigma}}{d#it{q}_{T}}  [pb GeV^{-1}]"
+    Plot title python: CDF Run I, 66 GeV < Q < 116 GeV
+    xlabelpy: $q_T\rm{ [GeV]}$
+    ylabelpy: $\frac{d\sigma}{dq_{T}}[\rm{pb GeV}^{-1}]$
+    partial error function: 1.1582928
+    partial chi2: 0.64919976
+    penalty chi2: 0.29539798
+    qT: [0.250005, 0.75, 1.25, 1.75, 2.25, 2.75, 3.25, 3.75, 4.25, 4.75, 5.25, 5.75, 6.25, 6.75, 7.25, 7.75, 8.25, 8.75, 9.25, 9.75, 10.25, 10.75, 11.25, 11.75, 12.5]
+    Predictions: [3.5102858, 9.9654306, 14.945808, 18.172933, 19.812239, 20.509157, 20.551007, 20.055847, 19.282842, 18.15904, 16.715561, 15.65949, 14.521124, 13.394615, 12.363905, 11.725496, 10.749585, 10.258772, 9.6214888, 8.8033589, 8.4629157, 7.7212629, 7.4166717, 6.7380213, 6.150428]
+    Central values: [3.35, 10.1, 14.8, 19.4, 20.2, 23.6, 23.6, 23, 19.9, 19.3, 17.9, 18, 14.6, 14.5, 13.5, 13.7, 11.9, 10.4, 11.1, 9.56, 8.35, 7.82, 8.18, 7.48, 7.21]
+    Fluctuated data: [2.9087688, 11.238794, 16.640657, 18.928286, 20.444817, 24.111779, 25.276368, 23.885754, 21.117, 19.158885, 17.32192, 19.852914, 16.343125, 14.864007, 14.594808, 12.415317, 13.028527, 11.488916, 10.775277, 9.2582011, 9.7440804, 8.7392184, 8.0209936, 8.2773511, 7.4840584]
+    Uncorrelated uncertainties: [0.54662247, 1.0318522, 1.2553918, 1.4788001, 1.481974, 1.5994397, 1.5010693, 1.4912372, 1.3700833, 1.2674862, 1.2550632, 1.2530399, 1.0398933, 1.0374315, 1.0310719, 1.0309758, 0.92485298, 0.91864136, 0.92060584, 0.83611091, 0.77313324, 0.75133007, 0.77196323, 0.73005723, 0.54220384]
+    Systematic shifts: [0.37232463, 1.0561711, 1.5825603, 1.9239579, 2.1001785, 2.1789401, 2.1880327, 2.1376595, 2.0550815, 1.9344188, 1.7802665, 1.6677243, 1.5463978, 1.4259823, 1.3150392, 1.2459553, 1.1411296, 1.0881041, 1.0196202, 0.93200839, 0.89532827, 0.81605831, 0.78337528, 0.71098714, 0.64835545]
+  - Name: CDF_RunII
+    Plot title: CDF Run II, 66 GeV < Q < 116 GeV
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{d#it{#sigma}}{d#it{q}_{T}}  [pb GeV^{-1}]"
+    Plot title python: CDF Run II, 66 GeV < Q < 116 GeV
+    xlabelpy: $q_T\rm{ [GeV]}$
+    ylabelpy: $\frac{d\sigma}{dq_{T}}[\rm{pb GeV}^{-1}]$
+    partial error function: 1.8705963
+    partial chi2: 0.73888239
+    penalty chi2: 0.021882545
+    qT: [0.250005, 0.75, 1.25, 1.75, 2.25, 2.75, 3.25, 3.75, 4.25, 4.75, 5.25, 5.75, 6.25, 6.75, 7.25, 7.75, 8.25, 8.75, 9.25, 9.75, 10.25, 10.75, 11.25, 11.75, 12.25, 12.75]
+    Predictions: [3.7080518, 10.532663, 15.814034, 19.260522, 21.044288, 21.839511, 21.939744, 21.465579, 20.690465, 19.538267, 18.031895, 16.933724, 15.740235, 14.555168, 13.460412, 12.785488, 11.745218, 11.219777, 10.537245, 9.6614477, 9.2943374, 8.4981387, 8.1675363, 7.4407027, 7.1278648, 6.4824301]
+    Central values: [3.613, 10.08, 15.51, 19.47, 21.58, 22.95, 22.58, 22.35, 20.61, 19.87, 18.76, 17.29, 15.63, 14.68, 13.74, 13.07, 11.83, 11.12, 10.33, 10.24, 9.043, 8.295, 8.319, 7.78, 7.465, 6.839]
+    Fluctuated data: [3.683306, 10.799934, 16.633124, 19.839103, 22.803757, 23.573203, 22.083938, 23.521548, 21.089479, 20.582889, 19.106407, 17.330185, 15.65894, 14.36953, 14.554444, 12.929051, 12.029083, 11.274645, 10.838512, 10.946075, 9.2583262, 8.6159803, 8.3863116, 8.0408722, 7.9999464, 7.4312483]
+    Uncorrelated uncertainties: [0.19109924, 0.36975886, 0.50646219, 0.60175272, 0.64571483, 0.66724038, 0.64317084, 0.62751211, 0.5751462, 0.5471215, 0.51444705, 0.47964001, 0.43698206, 0.41233097, 0.38933609, 0.3791619, 0.34688723, 0.33024589, 0.31277261, 0.31824628, 0.2852812, 0.26625234, 0.27306707, 0.25866672, 0.25436805, 0.23803526]
+    Systematic shifts: [0.15671062, 0.44418346, 0.66765629, 0.81506834, 0.89268373, 0.93026673, 0.93472355, 0.91634226, 0.87996383, 0.83202817, 0.76919375, 0.72119191, 0.66879721, 0.61904637, 0.5725653, 0.54344738, 0.49818048, 0.47489981, 0.44527061, 0.41056676, 0.39192918, 0.35814315, 0.34522869, 0.31494876, 0.30162818, 0.27427844]
+  - Name: D0_RunI
+    Plot title: D0 Run I, 75 GeV < Q < 105 GeV
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{d#it{#sigma}}{d#it{q}_{T}}  [pb GeV^{-1}]"
+    Plot title python: D0 Run I, 75 GeV < Q < 105 GeV
+    xlabelpy: $q_T\rm{ [GeV]}$
+    ylabelpy: $\frac{d\sigma}{dq_{T}}[\rm{pb GeV}^{-1}]$
+    partial error function: 1.0500402
+    partial chi2: 0.53632055
+    penalty chi2: 0.041076906
+    qT: [0.500005, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 11, 13]
+    Predictions: [6.5114397, 16.000593, 19.479706, 19.620463, 18.098606, 15.651425, 13.498811, 11.649374, 10.159072, 8.9080959, 7.3308132, 5.5525894]
+    Central values: [6.04, 16.2, 20.4, 19.7, 16.2, 15, 14.1, 11.1, 10, 9.29, 7.25, 5.45]
+    Fluctuated data: [6.0562174, 16.010059, 20.448113, 17.014521, 16.911525, 13.544964, 13.739246, 11.031615, 10.573543, 8.0930563, 7.4375406, 5.8152153]
+    Uncorrelated uncertainties: [0.55146308, 1.040131, 1.2022406, 1.1869674, 0.98342735, 0.9217418, 0.88299623, 0.75822811, 0.71260226, 0.68895943, 0.5532547, 0.44817647]
+    Systematic shifts: [-0.2011582, -0.49368514, -0.60243796, -0.60909191, -0.56192715, -0.48564121, -0.41869897, -0.3607443, -0.3140057, -0.27489303, -0.22577489, -0.1706762]
+  - Name: D0_RunII
+    Plot title: D0 Run II, 70 GeV < Q < 110 GeV
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"
+    Plot title python: D0 Run II, 70 GeV < Q < 110 GeV
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\frac{1}{\sigma}\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$
+    partial error function: 1.9127634
+    partial chi2: 1.1702947
+    penalty chi2: 0.27240546
+    qT: [1.250005, 3.75, 6.25, 8.75, 11.25]
+    Predictions: [0.056327721, 0.084484048, 0.063083854, 0.044838066, 0.032473972]
+    Central values: [0.0532, 0.0808, 0.0633, 0.0443, 0.0315]
+    Fluctuated data: [0.051632974, 0.082343025, 0.063728652, 0.043585918, 0.030381094]
+    Uncorrelated uncertainties: [0.00135702, 0.0012521636, 0.0011118466, 0.00091030756, 0.00080983919]
+    Systematic shifts: [-0.0028009422, -0.0022174125, -0.001633883, -0.0012837652, -0.00093364738]
+  - Name: D0_RunIImu
+    Plot title: D0 Run II muons, 65 GeV < Q < 115 GeV, |#it{y}| < 1.7
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"
+    Plot title python: D0 Run II muons, 65 GeV < Q < 115 GeV, $|y|$ < 1.7
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\frac{1}{\sigma}\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$
+    partial error function: 1.5537195
+    partial chi2: 4.5236622
+    penalty chi2: 0.23489236
+    qT: [2.000005, 6, 10]
+    Predictions: [0.066914423, 0.063236249, 0.035635454]
+    Central values: [0.064978, 0.063327, 0.037248]
+    Fluctuated data: [0.064229814, 0.06324538, 0.036044587]
+    Uncorrelated uncertainties: [0.00086707075, 0.00064896747, 0.00050112463]
+    Systematic shifts: [-0.0017626231, 7.0921527e-05, -0.00043191191]
+  - Name: LHCb_7TeV
+    Plot title: "LHCb at 7 TeV, 60 GeV < Q < 120 GeV, 2 < #it{y} < 4.5"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{d#it{#sigma}}{d#it{q}_{T}}  [pb GeV^{-1}]"
+    Plot title python: LHCb at 7 TeV, 60 GeV < Q < 120 GeV, 2 < $y$ < 4.5
+    xlabelpy: $q_T\rm{ [GeV]}$
+    ylabelpy: $\frac{d\sigma}{dq_{T}}[\rm{pb GeV}^{-1}]$
+    partial error function: 2.1181251
+    partial chi2: 1.6275212
+    penalty chi2: 0.27142088
+    qT: [1.100005, 2.8, 4, 5.2, 6.5, 7.95, 9.6]
+    Predictions: [2.8154435, 4.8282378, 4.9370761, 4.5804911, 4.0279134, 3.4153461, 2.9274715]
+    Central values: [2.9336364, 5.4333333, 5.1741667, 4.89, 4.1064286, 3.738, 3.1316667]
+    Fluctuated data: [2.9748228, 5.4462494, 5.1061396, 4.873026, 3.9157439, 3.6168038, 3.1272607]
+    Uncorrelated uncertainties: [0.11738059, 0.19801128, 0.17230187, 0.15053567, 0.11822221, 0.10280791, 0.081719131]
+    Systematic shifts: [0.10691165, 0.19589044, 0.22886804, 0.21335476, 0.16620178, 0.12162042, 0.095201525]
+  - Name: LHCb_8TeV
+    Plot title: "LHCb at 8 TeV, 60 GeV < Q < 120 GeV, 2 < #it{y} < 4.5"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{d#it{#sigma}}{d#it{q}_{T}}  [pb GeV^{-1}]"
+    Plot title python: LHCb at 8 TeV, 60 GeV < Q < 120 GeV, 2 < $y$ < 4.5
+    xlabelpy: $q_T\rm{ [GeV]}$
+    ylabelpy: $\frac{d\sigma}{dq_{T}}[\rm{pb GeV}^{-1}]$
+    partial error function: 0.86654109
+    partial chi2: 1.2109579
+    penalty chi2: 0.26336768
+    qT: [1.100005, 2.8, 4, 5.2, 6.5, 7.95, 9.6]
+    Predictions: [3.3826114, 5.8872443, 6.0686591, 5.6730053, 5.0212187, 4.2836705, 3.6899152]
+    Central values: [3.5922727, 6.4208333, 6.3408333, 5.8941667, 5.2707143, 4.542, 3.7505556]
+    Fluctuated data: [3.5920445, 6.1333931, 6.4219626, 5.662862, 5.2123625, 4.3694694, 3.814751]
+    Uncorrelated uncertainties: [0.11353223, 0.18934131, 0.16336442, 0.14057378, 0.11036563, 0.094170768, 0.073823641]
+    Systematic shifts: [0.10911897, 0.17920869, 0.16295413, 0.15437232, 0.12954205, 0.11640948, 0.094216676]
+  - Name: LHCb_13TeV
+    Plot title: "LHCb at 13 TeV, 60 GeV < Q < 120 GeV, 2 < #it{y} < 4.5"
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{d#it{#sigma}}{d#it{q}_{T}}  [pb GeV^{-1}]"
+    Plot title python: LHCb at 13 TeV, 60 GeV < Q < 120 GeV, 2 < $y$ < 4.5
+    xlabelpy: $q_T\rm{ [GeV]}$
+    ylabelpy: $\frac{1}{\sigma}\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$
+    partial error function: 1.5439661
+    partial chi2: 1.0094247
+    penalty chi2: 0.0019527819
+    qT: [1.100005, 2.8, 4, 5.2, 6.5, 7.95, 9.6]
+    Predictions: [5.6177568, 10.286163, 10.896564, 10.463231, 9.4888489, 8.2614106, 7.2438592]
+    Central values: [5.55, 11.01, 11.36, 11.06, 9.93, 8.86, 7.22]
+    Fluctuated data: [5.2696475, 10.143057, 10.726156, 10.437176, 9.7605397, 8.7995603, 6.9417197]
+    Uncorrelated uncertainties: [0.20342554, 0.37867042, 0.36855976, 0.34700156, 0.29515268, 0.25389882, 0.19940263]
+    Systematic shifts: [-0.022774133, -0.040600336, -0.042745949, -0.041078344, -0.03767758, -0.032872349, -0.028402366]
+  - Name: CMS_7TeV
+    Plot title: CMS at 7 TeV, 60 GeV < Q < 120 GeV, |#it{y}| < 2.1
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{1}{#it{#sigma}}  #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"
+    Plot title python: CMS at 7 TeV, 60 GeV < Q < 120 GeV, $|y|$ < 2.1
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\frac{1}{\sigma}\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$
+    partial error function: 1.6840339
+    partial chi2: 2.7507251
+    penalty chi2: 0
+    qT: [1.250005, 3.75, 6.25, 8.75]
+    Predictions: [0.031683762, 0.056329065, 0.050541426, 0.0410094]
+    Central values: [0.0322, 0.0592, 0.055, 0.0396]
+    Fluctuated data: [0.029183973, 0.056469884, 0.053305456, 0.039935431]
+    Uncorrelated uncertainties: [0.0013686528, 0.0018034404, 0.001645923, 0.0014175753]
+    Systematic shifts: [0, 0, 0, 0]
+  - Name: CMS_8TeV
+    Plot title: CMS at 8 TeV, 60 GeV < Q < 120 GeV, |#it{y}| < 2.1
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"
+    Plot title python: CMS at 8 TeV, 60 GeV < Q < 120 GeV, $|y|$ < 2.1
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\frac{1}{\sigma}\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$
+    partial error function: 1.3261749
+    partial chi2: 1.1581782
+    penalty chi2: 0.14754174
+    qT: [1.250005, 3.75, 6.25, 8.75]
+    Predictions: [0.031146459, 0.056423914, 0.051499535, 0.042513303]
+    Central values: [0.0333549, 0.0553482, 0.051878, 0.0385965]
+    Fluctuated data: [0.03407885, 0.060884799, 0.051452814, 0.040610823]
+    Uncorrelated uncertainties: [0.0018863216, 0.0025831867, 0.0024985242, 0.0022362306]
+    Systematic shifts: [0.00070209788, 0.00058677289, 0.00019926943, 0.00039731977]
+  - Name: ATLAS_7TeV_y_0_1
+    Plot title: ATLAS at 7 TeV, 66 GeV < Q < 116 GeV, 0 < |#it{y}| < 1
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"
+    Plot title python: ATLAS at 7 TeV, 66 GeV < Q < 116 GeV, 0 < $|y|$ < 1
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\frac{1}{\sigma}\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$
+    partial error function: 5.8313072
+    partial chi2: 3.0604816
+    penalty chi2: 0.2430273
+    qT: [1.000005, 3, 5, 7, 9, 11]
+    Predictions: [0.028040646, 0.056240517, 0.056990177, 0.048862549, 0.040954486, 0.03412795]
+    Central values: [0.02861, 0.05874, 0.05834, 0.04972, 0.04106, 0.03385]
+    Fluctuated data: [0.028618515, 0.059588494, 0.058298165, 0.05011511, 0.040655765, 0.033557944]
+    Uncorrelated uncertainties: [0.00045968033, 0.00078639574, 0.00060488743, 0.00042982768, 0.00033853586, 0.00029076315]
+    Systematic shifts: [0.00012437226, 0.00024116596, 0.00024656852, 0.00020413299, 0.00016857805, 0.00014306384]
+  - Name: ATLAS_7TeV_y_1_2
+    Plot title: ATLAS at 7 TeV, 66 GeV < Q < 116 GeV, 1 < |#it{y}| < 2
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"
+    Plot title python: ATLAS at 7 TeV, 66 GeV < Q < 116 GeV, 1 < $|y|$ < 2
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\frac{1}{\sigma}\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$
+    partial error function: 1.5559684
+    partial chi2: 2.2994704
+    penalty chi2: 0.00045925258
+    qT: [1.000005, 3, 5, 7, 9, 11]
+    Predictions: [0.028459399, 0.057513475, 0.057727482, 0.049502089, 0.041802519, 0.034832438]
+    Central values: [0.02781, 0.05802, 0.05782, 0.04868, 0.04047, 0.03381]
+    Fluctuated data: [0.02844602, 0.058152786, 0.057717406, 0.050384649, 0.0404681, 0.034740771]
+    Uncorrelated uncertainties: [0.00043372085, 0.00078937893, 0.00071270479, 0.0006033225, 0.00052330339, 0.00045612105]
+    Systematic shifts: [-5.4013726e-06, -1.0659754e-05, -1.1837067e-05, -9.7103659e-06, -7.2229324e-06, -6.0342808e-06]
+  - Name: ATLAS_7TeV_y_2_2.4
+    Plot title: ATLAS at 7 TeV, 66 GeV < Q < 116 GeV, 2 < |#it{y}| < 2.4
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"
+    Plot title python: ATLAS at 7 TeV, 66 GeV < Q < 116 GeV, 2 < $|y|$ < 2.4
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\frac{1}{\sigma}\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$
+    partial error function: 3.4465976
+    partial chi2: 2.1882759
+    penalty chi2: 0.26507565
+    qT: [1.000005, 3, 5, 7, 9, 11]
+    Predictions: [0.027803744, 0.056992978, 0.057402102, 0.049101058, 0.040965269, 0.034735438]
+    Central values: [0.0271, 0.0568, 0.0564, 0.0471, 0.0395, 0.0322]
+    Fluctuated data: [0.026404156, 0.056542401, 0.056044621, 0.047480003, 0.039659277, 0.031299361]
+    Uncorrelated uncertainties: [0.00094256236, 0.0017165091, 0.0015479657, 0.0012427198, 0.0010335505, 0.00085441413]
+    Systematic shifts: [-0.00017088339, -0.00028652919, -0.00035563922, -0.00029699659, -0.00019925886, -0.0001624338]
+  - Name: ATLAS_8TeV_y_0_0.4
+    Plot title: ATLAS at 8 TeV, 66 GeV < Q < 116 GeV, 0 < |#it{y}| < 0.4
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"
+    Plot title python: ATLAS at 8 TeV, 66 GeV < Q < 116 GeV, 0 < $|y|$ < 0.4
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\frac{1}{\sigma}\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$
+    partial error function: 2.2669624
+    partial chi2: 1.6069804
+    penalty chi2: 0.37683649
+    qT: [1.000005, 3, 5, 7, 9, 11.5]
+    Predictions: [0.026575011, 0.053782994, 0.055423208, 0.048394715, 0.040826231, 0.033098483]
+    Central values: [0.02704, 0.05569, 0.05571, 0.04883, 0.04086, 0.03251]
+    Fluctuated data: [0.027302214, 0.054463738, 0.055871012, 0.04981761, 0.041701037, 0.032725348]
+    Uncorrelated uncertainties: [0.00049615172, 0.00086675877, 0.00069177561, 0.00050587219, 0.00040392894, 0.0003177741]
+    Systematic shifts: [0.00028461437, 0.00025121789, 0.00033507749, 0.0002202724, 0.00024575958, 9.7768525e-05]
+  - Name: ATLAS_8TeV_y_0.4_0.8
+    Plot title: ATLAS at 8 TeV, 66 GeV < Q < 116 GeV, 0.4 < |#it{y}| < 0.8
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"
+    Plot title python: ATLAS at 8 TeV, 66 GeV < Q < 116 GeV, 0.4 < $|y|$ < 0.8
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\frac{1}{\sigma}\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$
+    partial error function: 3.9973277
+    partial chi2: 1.6501341
+    penalty chi2: 0.27022287
+    qT: [1.000005, 3, 5, 7, 9, 11.5]
+    Predictions: [0.027008045, 0.054561951, 0.055843537, 0.04849617, 0.040993101, 0.033018866]
+    Central values: [0.0269, 0.05575, 0.05642, 0.04922, 0.04071, 0.03256]
+    Fluctuated data: [0.027202589, 0.057034408, 0.056632273, 0.049620675, 0.041004563, 0.032404329]
+    Uncorrelated uncertainties: [0.00039099243, 0.00066931508, 0.00053646373, 0.00042628542, 0.00035788585, 0.00030347167]
+    Systematic shifts: [0.00027401791, 0.00021296234, 0.00021552171, 0.00025069073, 0.00020734701, 8.291843e-05]
+  - Name: ATLAS_8TeV_y_0.8_1.2
+    Plot title: ATLAS at 8 TeV, 66 GeV < Q < 116 GeV, 0.8 < |#it{y}| < 1.2
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"
+    Plot title python: ATLAS at 8 TeV, 66 GeV < Q < 116 GeV, 0.8 < $|y|$ < 1.2
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\frac{1}{\sigma}\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$
+    partial error function: 1.9321247
+    partial chi2: 0.62402209
+    penalty chi2: 0.038819259
+    qT: [1.000005, 3, 5, 7, 9, 11.5]
+    Predictions: [0.02738165, 0.05539898, 0.056635936, 0.048935582, 0.041186328, 0.033167284]
+    Central values: [0.02711, 0.05611, 0.05691, 0.04906, 0.04096, 0.03244]
+    Fluctuated data: [0.027064895, 0.055469634, 0.056714148, 0.048645094, 0.041773409, 0.031765553]
+    Uncorrelated uncertainties: [0.00052055419, 0.00095994834, 0.00086368236, 0.0006933262, 0.00055819056, 0.0004380171]
+    Systematic shifts: [-7.8501873e-05, -8.123829e-05, -8.2396562e-05, -7.1031019e-05, -7.9071356e-05, -4.6967922e-05]
+  - Name: ATLAS_8TeV_y_1.2_1.6
+    Plot title: ATLAS at 8 TeV, 66 GeV < Q < 116 GeV, 1.2 < |#it{y}| < 1.6
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"
+    Plot title python: ATLAS at 8 TeV, 66 GeV < Q < 116 GeV, 1.2 < $|y|$ < 1.6
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\frac{1}{\sigma}\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$
+    partial error function: 1.9376621
+    partial chi2: 0.84076082
+    penalty chi2: 0.15525205
+    qT: [1.000005, 3, 5, 7, 9, 11.5]
+    Predictions: [0.027022343, 0.054511605, 0.05556887, 0.048375034, 0.041078841, 0.033581335]
+    Central values: [0.02658, 0.05536, 0.05529, 0.04816, 0.04066, 0.0327]
+    Fluctuated data: [0.026152284, 0.054160153, 0.053407903, 0.049008478, 0.040844916, 0.032604082]
+    Uncorrelated uncertainties: [0.00056655215, 0.0010673545, 0.00095534487, 0.0007532164, 0.00060160425, 0.00045812085]
+    Systematic shifts: [-0.00017957559, -0.00021372256, -0.00021345232, -0.00023240784, -0.00019621476, -9.4681101e-05]
+  - Name: ATLAS_8TeV_y_1.6_2
+    Plot title: ATLAS at 8 TeV, 66 GeV < Q < 116 GeV, 1.6 < |#it{y}| < 2
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"
+    Plot title python: ATLAS at 8 TeV, 66 GeV < Q < 116 GeV, 1.6 < $|y|$ < 2
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\frac{1}{\sigma}\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$
+    partial error function: 5.796137
+    partial chi2: 1.6166561
+    penalty chi2: 0.29850447
+    qT: [1.000005, 3, 5, 7, 9, 11.5]
+    Predictions: [0.026154887, 0.054131739, 0.055046753, 0.047055514, 0.040241685, 0.032916955]
+    Central values: [0.02606, 0.05394, 0.05425, 0.04667, 0.03925, 0.0318]
+    Fluctuated data: [0.026082015, 0.054361567, 0.053435064, 0.046258665, 0.039235853, 0.030549524]
+    Uncorrelated uncertainties: [0.00040211932, 0.00070988662, 0.00066803046, 0.0005917891, 0.00053705588, 0.0004552043]
+    Systematic shifts: [-0.00031388312, -0.00043312499, -0.00029040947, -0.00037474867, -0.00021011192, -8.5115403e-05]
+  - Name: ATLAS_8TeV_y_2_2.4
+    Plot title: ATLAS at 8 TeV, 66 GeV < Q < 116 GeV, 2 < |#it{y}| < 2.4
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"
+    Plot title python: ATLAS at 8 TeV, 66 GeV < Q < 116 GeV, 2 < $|y|$ < 2.4
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\frac{1}{\sigma}\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$
+    partial error function: 1.0841613
+    partial chi2: 0.93329036
+    penalty chi2: 0.14931428
+    qT: [1.000005, 3, 5, 7, 9, 11.5]
+    Predictions: [0.025275568, 0.052545887, 0.053636801, 0.046416448, 0.039049838, 0.031478608]
+    Central values: [0.02676, 0.05429, 0.05338, 0.04567, 0.03867, 0.031]
+    Fluctuated data: [0.026307196, 0.055818643, 0.054905875, 0.046103377, 0.038852675, 0.031387296]
+    Uncorrelated uncertainties: [0.00077415451, 0.0014397967, 0.0013527794, 0.0011341347, 0.00095624783, 0.00076745428]
+    Systematic shifts: [0.00037993007, 0.00046247542, 0.00030314899, 0.00030259055, 0.00021960981, 0.00014670942]
+  - Name: ATLAS_8TeV_Q_46_66
+    Plot title: ATLAS at 8 TeV, 46 GeV < Q < 66 GeV, 0 < |#it{y}| < 2.4
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"
+    Plot title python: ATLAS at 8 TeV, 46 GeV < Q < 66 GeV, 0 < $|y|$ < 2.4
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\frac{1}{\sigma}\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$
+    partial error function: 3.9190619
+    partial chi2: 1.6381861
+    penalty chi2: 8.0945612e-05
+    qT: [1.000005, 3, 5, 7]
+    Predictions: [0.045594126, 0.083239663, 0.077874733, 0.060899099]
+    Central values: [0.04347, 0.08148, 0.0739, 0.05877]
+    Fluctuated data: [0.046744603, 0.085902966, 0.07237067, 0.059901855]
+    Uncorrelated uncertainties: [0.0012248901, 0.0018824343, 0.0015775266, 0.0012662482]
+    Systematic shifts: [3.4416679e-05, 1.759377e-05, 1.4627287e-05, 9.5175431e-06]
+  - Name: ATLAS_8TeV_Q_116_150
+    Plot title: ATLAS at 8 TeV, 116 GeV < Q < 150 GeV, 0 < |#it{y}| < 2.4
+    xlabel: "#it{q}_{T} [GeV]"
+    ylabel: "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"
+    Plot title python: ATLAS at 8 TeV, 116 GeV < Q < 150 GeV, 0 < $|y|$ < 2.4
+    xlabelpy: $q_T \rm{ [GeV]}$
+    ylabelpy: $\frac{1}{\sigma}\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$
+    partial error function: 2.0584046
+    partial chi2: 0.7598863
+    penalty chi2: 2.4529055e-06
+    qT: [1.000005, 3, 5, 7, 9, 11.5, 14.5, 18]
+    Predictions: [0.021295271, 0.044966696, 0.047734535, 0.042712305, 0.036837275, 0.030423398, 0.024185316, 0.019158371]
+    Central values: [0.0213, 0.04563, 0.04826, 0.04306, 0.03838, 0.03049, 0.02479, 0.01912]
+    Fluctuated data: [0.020252861, 0.044637182, 0.049341987, 0.042425345, 0.038864863, 0.030092806, 0.024350655, 0.019481981]
+    Uncorrelated uncertainties: [0.00060682109, 0.00089231628, 0.00086029438, 0.00073570036, 0.00070344379, 0.00053396725, 0.00045457841, 0.00033867948]
+    Systematic shifts: [4.0572658e-06, 2.2234561e-06, 2.1378278e-06, 1.9074775e-06, 1.8701785e-06, 1.485715e-06, 9.8833561e-07, 7.6228224e-07]

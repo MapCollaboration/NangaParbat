@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Report</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="pandoc.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+    var mathElements = document.getElementsByClassName("math");
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") { katex.render(texText.data, mathElements[i], { displayMode: mathElements[i].classList.contains("display"), throwOnError: false } );
+    }}});</script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 id="report-of-the-fit">Report of the fit</h1>
+<h2 id="fit-summary">Fit summary</h2>
+<p>Description:<br />
+Minimiser: minuit<br />
+Random seed: 1234<br />
+Maximum values allowed for <span class="math inline">q_T / Q</span>: 0.2<br />
+Cut on the error function: 4<br />
+Parameterisation: PV19b<br />
+Explicit formula:</p>
+<p><span class="math display">f_{\rm NP}(x,\zeta, b_T)= \Biggl((1-\lambda)
+\left(\frac{1}{1 + g_1(x) b_T^2/4}+N_1\right) + \lambda \exp \left(-g_{1B}(x) b_T^2 /4 \right)\Biggr) \exp\left[- g_2 \log\left(\frac{\zeta}{Q_0^2}\right) b_T^2/4 - g_{2B} \log\left(\frac{\zeta}{Q_0^2}\right) b_T^4/4 \right]</span><span class="math display">g_1(x) = \exp\left[\sigma\left(\frac{x}{\alpha}-1\right)\right]</span><span class="math display">g_{1B}(x) = N_{1B} exp\left(-\frac{(x-\alpha_B)^2}{2\sigma_B^2}\right)</span><span class="math display">Q_0^2 = 1\;{\rm GeV}^2</span> <span class="math inline">t_0</span> prescription: True</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 9%" />
+<col style="width: 10%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">g_2</span></th>
+<th style="text-align: center;"><span class="math inline">N_1</span></th>
+<th style="text-align: center;"><span class="math inline">\alpha</span></th>
+<th style="text-align: center;"><span class="math inline">\sigma</span></th>
+<th style="text-align: center;"><span class="math inline">\lambda</span></th>
+<th style="text-align: center;"><span class="math inline">N_{1B}</span></th>
+<th style="text-align: center;"><span class="math inline">\alpha_B</span></th>
+<th style="text-align: center;"><span class="math inline">\sigma_B</span></th>
+<th style="text-align: center;"><span class="math inline">g_{2B}</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0.01637759456338</td>
+<td style="text-align: center;">-0.0360402603115</td>
+<td style="text-align: center;">0.07553836092907</td>
+<td style="text-align: center;">0.8738129447193</td>
+<td style="text-align: center;">0.7692672717837</td>
+<td style="text-align: center;">1.94666352759</td>
+<td style="text-align: center;">0.0900170221136</td>
+<td style="text-align: center;">0.03129685357799</td>
+<td style="text-align: center;">0.02024085243599</td>
+</tr>
+</tbody>
+</table>
+<h2 id="theory-summary">Theory summary</h2>
+<p>Collinear PDF set: MMHT2014nnlo68cl member 0<br />
+Collinear FF set: DSS14_NLO_PiSum member 0<br />
+Perturbative order: N3LL<br />
+Reference value of the fine-structure constant: <span class="math inline">\alpha(Q = 91.1876\;{\rm GeV}) = 0.00776578395589</span> (running True)</p>
+<h2 id="global-statistical-estimators">Global statistical estimators</h2>
+<p><span class="math inline">N_{rep}</span> = 247<br />
+<span class="math inline">\chi_{0}^2</span> = 1.0063<br />
+<span class="math inline">\chi_{mean}^2</span> = 0.9652<br />
+<span class="math inline">\langle\chi^2\rangle \pm \sigma_{\chi^2}</span> = 1.0351 <span class="math inline">\pm</span> 0.0147<br />
+<span class="math inline">\langle E \rangle \pm \sigma_{E}</span> = 2.0165 <span class="math inline">\pm</span> 0.1828</p>
+<h2 id="parameters">Parameters</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Central replica</th>
+<th style="text-align: center;">Average over replicas</th>
+<th style="text-align: center;">Fixed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">g_2</span></td>
+<td style="text-align: center;">0.016338215</td>
+<td style="text-align: center;">0.01435339 <span class="math inline">\pm</span> 0.01831858</td>
+<td style="text-align: center;">False</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">N_1</span></td>
+<td style="text-align: center;">-0.035978765</td>
+<td style="text-align: center;">-0.03546671 <span class="math inline">\pm</span> 0.00905085</td>
+<td style="text-align: center;">False</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\alpha</span></td>
+<td style="text-align: center;">0.07543727</td>
+<td style="text-align: center;">0.08182229 <span class="math inline">\pm</span> 0.03354069</td>
+<td style="text-align: center;">False</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\sigma</span></td>
+<td style="text-align: center;">0.87529147</td>
+<td style="text-align: center;">1.04234075 <span class="math inline">\pm</span> 1.39177636</td>
+<td style="text-align: center;">False</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\lambda</span></td>
+<td style="text-align: center;">0.76896721</td>
+<td style="text-align: center;">0.75375768 <span class="math inline">\pm</span> 0.05763132</td>
+<td style="text-align: center;">False</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">N_{1B}</span></td>
+<td style="text-align: center;">1.9418189</td>
+<td style="text-align: center;">2.54917603 <span class="math inline">\pm</span> 2.16351415</td>
+<td style="text-align: center;">False</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\alpha_B</span></td>
+<td style="text-align: center;">0.089887804</td>
+<td style="text-align: center;">0.0904224 <span class="math inline">\pm</span> 0.01219622</td>
+<td style="text-align: center;">False</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\sigma_B</span></td>
+<td style="text-align: center;">0.031276945</td>
+<td style="text-align: center;">0.02926968 <span class="math inline">\pm</span> 0.00791431</td>
+<td style="text-align: center;">False</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">g_{2B}</span></td>
+<td style="text-align: center;">0.020236509</td>
+<td style="text-align: center;">0.02029374 <span class="math inline">\pm</span> 0.00427375</td>
+<td style="text-align: center;">False</td>
+</tr>
+</tbody>
+</table>
+<figure>
+<img src="pngplots/CorrelationMatrix.png" title="Fitted parameter correlation matrix" alt="" /><figcaption>Fitted parameter correlation matrix</figcaption>
+</figure>
+<h2 id="fit-properties">Fit properties</h2>
+<figure>
+<img src="pngplots/Globalchi2.png" title="Global $\chi^2$ distribution" alt="" /><figcaption>Global <span class="math inline">\chi^2</span> distribution</figcaption>
+</figure>
+<figure>
+<img src="pngplots/GlobalErrorFunction.png" title="Global error function distribution" alt="" /><figcaption>Global error function distribution</figcaption>
+</figure>
+<figure>
+<img src="pngplots/param0.png" title="$g_2$ distribution" alt="" /><figcaption><span class="math inline">g_2</span> distribution</figcaption>
+</figure>
+<figure>
+<img src="pngplots/param1.png" title="$N_1$ distribution" alt="" /><figcaption><span class="math inline">N_1</span> distribution</figcaption>
+</figure>
+<figure>
+<img src="pngplots/param2.png" title="$\alpha$ distribution" alt="" /><figcaption><span class="math inline">\alpha</span> distribution</figcaption>
+</figure>
+<figure>
+<img src="pngplots/param3.png" title="$\sigma$ distribution" alt="" /><figcaption><span class="math inline">\sigma</span> distribution</figcaption>
+</figure>
+<figure>
+<img src="pngplots/param4.png" title="$\lambda$ distribution" alt="" /><figcaption><span class="math inline">\lambda</span> distribution</figcaption>
+</figure>
+<figure>
+<img src="pngplots/param5.png" title="$N_{1B}$ distribution" alt="" /><figcaption><span class="math inline">N_{1B}</span> distribution</figcaption>
+</figure>
+<figure>
+<img src="pngplots/param6.png" title="$\alpha_B$ distribution" alt="" /><figcaption><span class="math inline">\alpha_B</span> distribution</figcaption>
+</figure>
+<figure>
+<img src="pngplots/param7.png" title="$\sigma_B$ distribution" alt="" /><figcaption><span class="math inline">\sigma_B</span> distribution</figcaption>
+</figure>
+<figure>
+<img src="pngplots/param8.png" title="$g_{2B}$ distribution" alt="" /><figcaption><span class="math inline">g_{2B}</span> distribution</figcaption>
+</figure>
+<h2 id="table-of-chi2s">Table of <span class="math inline">\chi^2</span>’s</h2>
+<p>Central-replica <span class="math inline">\chi^2</span>’s:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Experiment</th>
+<th style="text-align: center;">Number of points</th>
+<th style="text-align: center;"><span class="math inline">\chi_{D}^2</span></th>
+<th style="text-align: center;"><span class="math inline">\chi_{\lambda}^2</span></th>
+<th style="text-align: center;"><span class="math inline">\chi^2</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">E605_Q_7_8</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.4853</td>
+<td style="text-align: center;">0.0883</td>
+<td style="text-align: center;">0.5736</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E605_Q_8_9</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">1.3747</td>
+<td style="text-align: center;">0.1273</td>
+<td style="text-align: center;">1.5021</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E605_Q_10.5_11.5</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">0.7325</td>
+<td style="text-align: center;">0.1384</td>
+<td style="text-align: center;">0.8709</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_200_Q_4_5</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">1.0</td>
+<td style="text-align: center;">0.8924</td>
+<td style="text-align: center;">1.8924</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_200_Q_5_6</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">1.9025</td>
+<td style="text-align: center;">0.2888</td>
+<td style="text-align: center;">2.1914</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_200_Q_6_7</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.5848</td>
+<td style="text-align: center;">0.3202</td>
+<td style="text-align: center;">0.905</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_200_Q_7_8</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.7495</td>
+<td style="text-align: center;">0.1079</td>
+<td style="text-align: center;">0.8573</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_200_Q_8_9</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0.6361</td>
+<td style="text-align: center;">0.0041</td>
+<td style="text-align: center;">0.6402</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_300_Q_4_5</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">0.8049</td>
+<td style="text-align: center;">0.1324</td>
+<td style="text-align: center;">0.9373</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_300_Q_5_6</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">1.0192</td>
+<td style="text-align: center;">0.0001</td>
+<td style="text-align: center;">1.0193</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_300_Q_6_7</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.6042</td>
+<td style="text-align: center;">0.0016</td>
+<td style="text-align: center;">0.6058</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_300_Q_7_8</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.1585</td>
+<td style="text-align: center;">0.0383</td>
+<td style="text-align: center;">0.1968</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_300_Q_8_9</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0.458</td>
+<td style="text-align: center;">0.0958</td>
+<td style="text-align: center;">0.5538</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_400_Q_5_6</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">0.4662</td>
+<td style="text-align: center;">0.1582</td>
+<td style="text-align: center;">0.6245</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_400_Q_6_7</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.142</td>
+<td style="text-align: center;">0.1153</td>
+<td style="text-align: center;">0.2574</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_400_Q_7_8</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.0321</td>
+<td style="text-align: center;">0.0772</td>
+<td style="text-align: center;">0.1093</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_400_Q_8_9</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0.5578</td>
+<td style="text-align: center;">0.0334</td>
+<td style="text-align: center;">0.5912</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_400_Q_11_12</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">0.4999</td>
+<td style="text-align: center;">0.0193</td>
+<td style="text-align: center;">0.5192</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_400_Q_12_13</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">0.5266</td>
+<td style="text-align: center;">0.0284</td>
+<td style="text-align: center;">0.555</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_400_Q_13_14</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">0.6506</td>
+<td style="text-align: center;">0.0018</td>
+<td style="text-align: center;">0.6524</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">STAR_510</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">1.2134</td>
+<td style="text-align: center;">0.0468</td>
+<td style="text-align: center;">1.2602</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CDF_RunI</td>
+<td style="text-align: center;">25</td>
+<td style="text-align: center;">0.5276</td>
+<td style="text-align: center;">0.1116</td>
+<td style="text-align: center;">0.6391</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">CDF_RunII</td>
+<td style="text-align: center;">26</td>
+<td style="text-align: center;">0.7391</td>
+<td style="text-align: center;">0.003</td>
+<td style="text-align: center;">0.7421</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">D0_RunI</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">0.5511</td>
+<td style="text-align: center;">0.0092</td>
+<td style="text-align: center;">0.5603</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">D0_RunII</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">0.9851</td>
+<td style="text-align: center;">0.2114</td>
+<td style="text-align: center;">1.1965</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">D0_RunIImu</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">4.0858</td>
+<td style="text-align: center;">0.2928</td>
+<td style="text-align: center;">4.3787</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">LHCb_7TeV</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">1.1834</td>
+<td style="text-align: center;">0.3566</td>
+<td style="text-align: center;">1.54</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">LHCb_8TeV</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.5522</td>
+<td style="text-align: center;">0.4058</td>
+<td style="text-align: center;">0.958</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">LHCb_13TeV</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.929</td>
+<td style="text-align: center;">0.0746</td>
+<td style="text-align: center;">1.0036</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CMS_7TeV</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">2.8807</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">2.8807</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">CMS_8TeV</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">1.1747</td>
+<td style="text-align: center;">0.0019</td>
+<td style="text-align: center;">1.1766</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_7TeV_y_0_1</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">3.0305</td>
+<td style="text-align: center;">0.4277</td>
+<td style="text-align: center;">3.4582</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ATLAS_7TeV_y_1_2</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1.9388</td>
+<td style="text-align: center;">0.18</td>
+<td style="text-align: center;">2.1188</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_7TeV_y_2_2.4</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1.8176</td>
+<td style="text-align: center;">0.1651</td>
+<td style="text-align: center;">1.9828</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ATLAS_8TeV_y_0_0.4</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1.6387</td>
+<td style="text-align: center;">0.0854</td>
+<td style="text-align: center;">1.7241</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_8TeV_y_0.4_0.8</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1.6993</td>
+<td style="text-align: center;">0.0659</td>
+<td style="text-align: center;">1.7653</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ATLAS_8TeV_y_0.8_1.2</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.6021</td>
+<td style="text-align: center;">0.0035</td>
+<td style="text-align: center;">0.6056</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_8TeV_y_1.2_1.6</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.7523</td>
+<td style="text-align: center;">0.0326</td>
+<td style="text-align: center;">0.7849</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ATLAS_8TeV_y_1.6_2</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1.5223</td>
+<td style="text-align: center;">0.0702</td>
+<td style="text-align: center;">1.5926</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_8TeV_y_2_2.4</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.7822</td>
+<td style="text-align: center;">0.0694</td>
+<td style="text-align: center;">0.8516</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ATLAS_8TeV_Q_46_66</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">1.206</td>
+<td style="text-align: center;">0.328</td>
+<td style="text-align: center;">1.5341</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_8TeV_Q_116_150</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0.7464</td>
+<td style="text-align: center;">0.0563</td>
+<td style="text-align: center;">0.8027</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Total</td>
+<td style="text-align: center;">319</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">1.0063</td>
+</tr>
+</tbody>
+</table>
+<p>Mean-replica <span class="math inline">\chi^2</span>’s:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Experiment</th>
+<th style="text-align: center;">Number of points</th>
+<th style="text-align: center;"><span class="math inline">\chi_{D}^2</span></th>
+<th style="text-align: center;"><span class="math inline">\chi_{\lambda}^2</span></th>
+<th style="text-align: center;"><span class="math inline">\chi^2</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">E605_Q_7_8</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.5807</td>
+<td style="text-align: center;">0.0473</td>
+<td style="text-align: center;">0.628</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E605_Q_8_9</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">1.6079</td>
+<td style="text-align: center;">0.1303</td>
+<td style="text-align: center;">1.7382</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E605_Q_10.5_11.5</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">0.5775</td>
+<td style="text-align: center;">0.081</td>
+<td style="text-align: center;">0.6585</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_200_Q_4_5</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">0.4434</td>
+<td style="text-align: center;">0.5186</td>
+<td style="text-align: center;">0.962</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_200_Q_5_6</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">1.1685</td>
+<td style="text-align: center;">0.1839</td>
+<td style="text-align: center;">1.3525</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_200_Q_6_7</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.3329</td>
+<td style="text-align: center;">0.1444</td>
+<td style="text-align: center;">0.4773</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_200_Q_7_8</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.528</td>
+<td style="text-align: center;">0.0569</td>
+<td style="text-align: center;">0.5849</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_200_Q_8_9</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0.6105</td>
+<td style="text-align: center;">0.0039</td>
+<td style="text-align: center;">0.6145</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_300_Q_4_5</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">0.5712</td>
+<td style="text-align: center;">0.1672</td>
+<td style="text-align: center;">0.7384</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_300_Q_5_6</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">1.0774</td>
+<td style="text-align: center;">0.0009</td>
+<td style="text-align: center;">1.0783</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_300_Q_6_7</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.596</td>
+<td style="text-align: center;">0.0</td>
+<td style="text-align: center;">0.5961</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_300_Q_7_8</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.1257</td>
+<td style="text-align: center;">0.0142</td>
+<td style="text-align: center;">0.1399</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_300_Q_8_9</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0.3217</td>
+<td style="text-align: center;">0.0484</td>
+<td style="text-align: center;">0.3701</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_400_Q_5_6</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">0.8685</td>
+<td style="text-align: center;">0.2345</td>
+<td style="text-align: center;">1.103</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_400_Q_6_7</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.2158</td>
+<td style="text-align: center;">0.2354</td>
+<td style="text-align: center;">0.4512</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_400_Q_7_8</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.0545</td>
+<td style="text-align: center;">0.1651</td>
+<td style="text-align: center;">0.2195</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_400_Q_8_9</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0.8189</td>
+<td style="text-align: center;">0.071</td>
+<td style="text-align: center;">0.8899</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_400_Q_11_12</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">0.4278</td>
+<td style="text-align: center;">0.0081</td>
+<td style="text-align: center;">0.4358</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_400_Q_12_13</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">0.4225</td>
+<td style="text-align: center;">0.0185</td>
+<td style="text-align: center;">0.441</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_400_Q_13_14</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">0.589</td>
+<td style="text-align: center;">0.0118</td>
+<td style="text-align: center;">0.6008</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">STAR_510</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">1.0218</td>
+<td style="text-align: center;">0.091</td>
+<td style="text-align: center;">1.1128</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CDF_RunI</td>
+<td style="text-align: center;">25</td>
+<td style="text-align: center;">0.4561</td>
+<td style="text-align: center;">0.1157</td>
+<td style="text-align: center;">0.5718</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">CDF_RunII</td>
+<td style="text-align: center;">26</td>
+<td style="text-align: center;">0.712</td>
+<td style="text-align: center;">0.0026</td>
+<td style="text-align: center;">0.7146</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">D0_RunI</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">0.5555</td>
+<td style="text-align: center;">0.0048</td>
+<td style="text-align: center;">0.5603</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">D0_RunII</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">1.1137</td>
+<td style="text-align: center;">0.1824</td>
+<td style="text-align: center;">1.2961</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">D0_RunIImu</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">4.1618</td>
+<td style="text-align: center;">0.3745</td>
+<td style="text-align: center;">4.5363</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">LHCb_7TeV</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">1.0844</td>
+<td style="text-align: center;">0.4141</td>
+<td style="text-align: center;">1.4984</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">LHCb_8TeV</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.4985</td>
+<td style="text-align: center;">0.4511</td>
+<td style="text-align: center;">0.9496</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">LHCb_13TeV</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.8621</td>
+<td style="text-align: center;">0.084</td>
+<td style="text-align: center;">0.9461</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CMS_7TeV</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">3.05</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">3.05</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">CMS_8TeV</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">1.1929</td>
+<td style="text-align: center;">0.0053</td>
+<td style="text-align: center;">1.1982</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_7TeV_y_0_1</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">3.4663</td>
+<td style="text-align: center;">0.6005</td>
+<td style="text-align: center;">4.0668</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ATLAS_7TeV_y_1_2</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1.7382</td>
+<td style="text-align: center;">0.1102</td>
+<td style="text-align: center;">1.8485</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_7TeV_y_2_2.4</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1.6373</td>
+<td style="text-align: center;">0.1396</td>
+<td style="text-align: center;">1.7769</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ATLAS_8TeV_y_0_0.4</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1.8327</td>
+<td style="text-align: center;">0.165</td>
+<td style="text-align: center;">1.9977</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_8TeV_y_0.4_0.8</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1.7847</td>
+<td style="text-align: center;">0.1639</td>
+<td style="text-align: center;">1.9486</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ATLAS_8TeV_y_0.8_1.2</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.624</td>
+<td style="text-align: center;">0.0009</td>
+<td style="text-align: center;">0.625</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_8TeV_y_1.2_1.6</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.6922</td>
+<td style="text-align: center;">0.0106</td>
+<td style="text-align: center;">0.7028</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ATLAS_8TeV_y_1.6_2</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1.171</td>
+<td style="text-align: center;">0.0408</td>
+<td style="text-align: center;">1.2118</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_8TeV_y_2_2.4</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.6674</td>
+<td style="text-align: center;">0.0855</td>
+<td style="text-align: center;">0.7529</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ATLAS_8TeV_Q_46_66</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">1.1693</td>
+<td style="text-align: center;">0.2492</td>
+<td style="text-align: center;">1.4185</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_8TeV_Q_116_150</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0.7933</td>
+<td style="text-align: center;">0.084</td>
+<td style="text-align: center;">0.8773</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Total</td>
+<td style="text-align: center;">319</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">0.9652</td>
+</tr>
+</tbody>
+</table>
+<p>Average-over-replicas <span class="math inline">\chi^2</span>’s:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Experiment</th>
+<th style="text-align: center;">Number of points</th>
+<th style="text-align: center;"><span class="math inline">\chi_{D}^2</span></th>
+<th style="text-align: center;"><span class="math inline">\chi_{\lambda}^2</span></th>
+<th style="text-align: center;"><span class="math inline">\chi^2</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">E605_Q_7_8</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.4567 <span class="math inline">\pm</span> 0.2986</td>
+<td style="text-align: center;">0.2365 <span class="math inline">\pm</span> 0.2848</td>
+<td style="text-align: center;">0.6932 <span class="math inline">\pm</span> 0.191</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E605_Q_8_9</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">1.3088 <span class="math inline">\pm</span> 0.3393</td>
+<td style="text-align: center;">0.1978 <span class="math inline">\pm</span> 0.2141</td>
+<td style="text-align: center;">1.5066 <span class="math inline">\pm</span> 0.3109</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E605_Q_10.5_11.5</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">0.6653 <span class="math inline">\pm</span> 0.3202</td>
+<td style="text-align: center;">0.2215 <span class="math inline">\pm</span> 0.2782</td>
+<td style="text-align: center;">0.8868 <span class="math inline">\pm</span> 0.1513</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_200_Q_4_5</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">0.5634 <span class="math inline">\pm</span> 1.6577</td>
+<td style="text-align: center;">1.3585 <span class="math inline">\pm</span> 1.4892</td>
+<td style="text-align: center;">1.9219 <span class="math inline">\pm</span> 0.6035</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_200_Q_5_6</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">1.6557 <span class="math inline">\pm</span> 0.8453</td>
+<td style="text-align: center;">0.591 <span class="math inline">\pm</span> 0.7852</td>
+<td style="text-align: center;">2.2466 <span class="math inline">\pm</span> 0.2487</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_200_Q_6_7</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.3644 <span class="math inline">\pm</span> 0.6526</td>
+<td style="text-align: center;">0.5633 <span class="math inline">\pm</span> 0.6338</td>
+<td style="text-align: center;">0.9277 <span class="math inline">\pm</span> 0.1542</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_200_Q_7_8</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.5948 <span class="math inline">\pm</span> 0.3856</td>
+<td style="text-align: center;">0.2763 <span class="math inline">\pm</span> 0.3564</td>
+<td style="text-align: center;">0.8711 <span class="math inline">\pm</span> 0.1252</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_200_Q_8_9</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0.5402 <span class="math inline">\pm</span> 0.1389</td>
+<td style="text-align: center;">0.1108 <span class="math inline">\pm</span> 0.1352</td>
+<td style="text-align: center;">0.651 <span class="math inline">\pm</span> 0.0425</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_300_Q_4_5</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">0.5962 <span class="math inline">\pm</span> 0.6501</td>
+<td style="text-align: center;">0.3672 <span class="math inline">\pm</span> 0.5359</td>
+<td style="text-align: center;">0.9635 <span class="math inline">\pm</span> 0.3342</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_300_Q_5_6</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">0.8638 <span class="math inline">\pm</span> 0.3242</td>
+<td style="text-align: center;">0.1896 <span class="math inline">\pm</span> 0.2575</td>
+<td style="text-align: center;">1.0534 <span class="math inline">\pm</span> 0.1828</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_300_Q_6_7</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.4667 <span class="math inline">\pm</span> 0.2807</td>
+<td style="text-align: center;">0.1503 <span class="math inline">\pm</span> 0.2178</td>
+<td style="text-align: center;">0.617 <span class="math inline">\pm</span> 0.1646</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_300_Q_7_8</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.0187 <span class="math inline">\pm</span> 0.2534</td>
+<td style="text-align: center;">0.1927 <span class="math inline">\pm</span> 0.2374</td>
+<td style="text-align: center;">0.2114 <span class="math inline">\pm</span> 0.0694</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_300_Q_8_9</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0.3542 <span class="math inline">\pm</span> 0.3112</td>
+<td style="text-align: center;">0.2188 <span class="math inline">\pm</span> 0.3076</td>
+<td style="text-align: center;">0.573 <span class="math inline">\pm</span> 0.0739</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_400_Q_5_6</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">0.4049 <span class="math inline">\pm</span> 0.3488</td>
+<td style="text-align: center;">0.2576 <span class="math inline">\pm</span> 0.3075</td>
+<td style="text-align: center;">0.6626 <span class="math inline">\pm</span> 0.1593</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_400_Q_6_7</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.0975 <span class="math inline">\pm</span> 0.2244</td>
+<td style="text-align: center;">0.1979 <span class="math inline">\pm</span> 0.2129</td>
+<td style="text-align: center;">0.2954 <span class="math inline">\pm</span> 0.0882</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_400_Q_7_8</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">-0.0376 <span class="math inline">\pm</span> 0.2371</td>
+<td style="text-align: center;">0.1887 <span class="math inline">\pm</span> 0.2302</td>
+<td style="text-align: center;">0.151 <span class="math inline">\pm</span> 0.0683</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_400_Q_8_9</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0.4816 <span class="math inline">\pm</span> 0.1969</td>
+<td style="text-align: center;">0.1329 <span class="math inline">\pm</span> 0.1798</td>
+<td style="text-align: center;">0.6145 <span class="math inline">\pm</span> 0.0946</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_400_Q_11_12</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">0.4138 <span class="math inline">\pm</span> 0.188</td>
+<td style="text-align: center;">0.1149 <span class="math inline">\pm</span> 0.1637</td>
+<td style="text-align: center;">0.5287 <span class="math inline">\pm</span> 0.0864</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E288_400_Q_12_13</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">0.4724 <span class="math inline">\pm</span> 0.1625</td>
+<td style="text-align: center;">0.1151 <span class="math inline">\pm</span> 0.1455</td>
+<td style="text-align: center;">0.5874 <span class="math inline">\pm</span> 0.0696</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">E288_400_Q_13_14</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">0.6154 <span class="math inline">\pm</span> 0.1094</td>
+<td style="text-align: center;">0.0608 <span class="math inline">\pm</span> 0.0793</td>
+<td style="text-align: center;">0.6762 <span class="math inline">\pm</span> 0.0655</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">STAR_510</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">1.1208 <span class="math inline">\pm</span> 0.2381</td>
+<td style="text-align: center;">0.1503 <span class="math inline">\pm</span> 0.2193</td>
+<td style="text-align: center;">1.2711 <span class="math inline">\pm</span> 0.0961</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CDF_RunI</td>
+<td style="text-align: center;">25</td>
+<td style="text-align: center;">0.4862 <span class="math inline">\pm</span> 0.1362</td>
+<td style="text-align: center;">0.1572 <span class="math inline">\pm</span> 0.1338</td>
+<td style="text-align: center;">0.6434 <span class="math inline">\pm</span> 0.0197</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">CDF_RunII</td>
+<td style="text-align: center;">26</td>
+<td style="text-align: center;">0.7116 <span class="math inline">\pm</span> 0.0827</td>
+<td style="text-align: center;">0.0525 <span class="math inline">\pm</span> 0.0668</td>
+<td style="text-align: center;">0.7641 <span class="math inline">\pm</span> 0.0519</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">D0_RunI</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">0.5046 <span class="math inline">\pm</span> 0.0953</td>
+<td style="text-align: center;">0.0665 <span class="math inline">\pm</span> 0.0887</td>
+<td style="text-align: center;">0.5711 <span class="math inline">\pm</span> 0.0304</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">D0_RunII</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">0.7724 <span class="math inline">\pm</span> 0.5424</td>
+<td style="text-align: center;">0.4217 <span class="math inline">\pm</span> 0.5215</td>
+<td style="text-align: center;">1.194 <span class="math inline">\pm</span> 0.1951</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">D0_RunIImu</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">3.5218 <span class="math inline">\pm</span> 0.9145</td>
+<td style="text-align: center;">0.8055 <span class="math inline">\pm</span> 0.6553</td>
+<td style="text-align: center;">4.3272 <span class="math inline">\pm</span> 0.5973</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">LHCb_7TeV</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.9881 <span class="math inline">\pm</span> 0.4896</td>
+<td style="text-align: center;">0.5837 <span class="math inline">\pm</span> 0.4834</td>
+<td style="text-align: center;">1.5718 <span class="math inline">\pm</span> 0.0568</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">LHCb_8TeV</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.4674 <span class="math inline">\pm</span> 0.5374</td>
+<td style="text-align: center;">0.5273 <span class="math inline">\pm</span> 0.508</td>
+<td style="text-align: center;">0.9947 <span class="math inline">\pm</span> 0.1554</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">LHCb_13TeV</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.8601 <span class="math inline">\pm</span> 0.2596</td>
+<td style="text-align: center;">0.166 <span class="math inline">\pm</span> 0.2556</td>
+<td style="text-align: center;">1.0261 <span class="math inline">\pm</span> 0.099</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CMS_7TeV</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">2.8893 <span class="math inline">\pm</span> 0.1278</td>
+<td style="text-align: center;">0.0 <span class="math inline">\pm</span> 0.0</td>
+<td style="text-align: center;">2.8893 <span class="math inline">\pm</span> 0.1278</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">CMS_8TeV</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">1.1036 <span class="math inline">\pm</span> 0.1147</td>
+<td style="text-align: center;">0.0697 <span class="math inline">\pm</span> 0.0978</td>
+<td style="text-align: center;">1.1734 <span class="math inline">\pm</span> 0.0614</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_7TeV_y_0_1</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">3.0166 <span class="math inline">\pm</span> 0.5612</td>
+<td style="text-align: center;">0.4954 <span class="math inline">\pm</span> 0.3277</td>
+<td style="text-align: center;">3.512 <span class="math inline">\pm</span> 0.4314</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ATLAS_7TeV_y_1_2</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1.9898 <span class="math inline">\pm</span> 0.3105</td>
+<td style="text-align: center;">0.2132 <span class="math inline">\pm</span> 0.1873</td>
+<td style="text-align: center;">2.2031 <span class="math inline">\pm</span> 0.2402</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_7TeV_y_2_2.4</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1.8735 <span class="math inline">\pm</span> 0.2182</td>
+<td style="text-align: center;">0.1937 <span class="math inline">\pm</span> 0.1078</td>
+<td style="text-align: center;">2.0673 <span class="math inline">\pm</span> 0.1949</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ATLAS_8TeV_y_0_0.4</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1.6357 <span class="math inline">\pm</span> 0.3136</td>
+<td style="text-align: center;">0.1326 <span class="math inline">\pm</span> 0.1498</td>
+<td style="text-align: center;">1.7683 <span class="math inline">\pm</span> 0.2708</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_8TeV_y_0.4_0.8</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1.7013 <span class="math inline">\pm</span> 0.2211</td>
+<td style="text-align: center;">0.1413 <span class="math inline">\pm</span> 0.1752</td>
+<td style="text-align: center;">1.8426 <span class="math inline">\pm</span> 0.1577</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ATLAS_8TeV_y_0.8_1.2</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.6011 <span class="math inline">\pm</span> 0.0917</td>
+<td style="text-align: center;">0.0418 <span class="math inline">\pm</span> 0.0634</td>
+<td style="text-align: center;">0.6429 <span class="math inline">\pm</span> 0.0671</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_8TeV_y_1.2_1.6</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.7428 <span class="math inline">\pm</span> 0.1546</td>
+<td style="text-align: center;">0.0831 <span class="math inline">\pm</span> 0.101</td>
+<td style="text-align: center;">0.8259 <span class="math inline">\pm</span> 0.1238</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ATLAS_8TeV_y_1.6_2</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1.5167 <span class="math inline">\pm</span> 0.4534</td>
+<td style="text-align: center;">0.1713 <span class="math inline">\pm</span> 0.1887</td>
+<td style="text-align: center;">1.688 <span class="math inline">\pm</span> 0.3995</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_8TeV_y_2_2.4</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.8097 <span class="math inline">\pm</span> 0.4102</td>
+<td style="text-align: center;">0.1313 <span class="math inline">\pm</span> 0.1506</td>
+<td style="text-align: center;">0.941 <span class="math inline">\pm</span> 0.385</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ATLAS_8TeV_Q_46_66</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">1.0623 <span class="math inline">\pm</span> 0.5298</td>
+<td style="text-align: center;">0.4723 <span class="math inline">\pm</span> 0.4924</td>
+<td style="text-align: center;">1.5346 <span class="math inline">\pm</span> 0.1621</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ATLAS_8TeV_Q_116_150</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0.6653 <span class="math inline">\pm</span> 0.2296</td>
+<td style="text-align: center;">0.1558 <span class="math inline">\pm</span> 0.2095</td>
+<td style="text-align: center;">0.8211 <span class="math inline">\pm</span> 0.0851</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Total</td>
+<td style="text-align: center;">319</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">1.0351 <span class="math inline">\pm</span> 0.0147</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tmds-in-k_t-space">TMDs in <span class="math inline">k_T</span> space</h2>
+<figure>
+<img src="pngplots/tmd_1_2_0.001.png" title="TMD PDF of the $d$ at $Q = 2$ GeV and $x = 0.001$" alt="" /><figcaption>TMD PDF of the <span class="math inline">d</span> at <span class="math inline">Q = 2</span> GeV and <span class="math inline">x = 0.001</span></figcaption>
+</figure>
+<figure>
+<img src="pngplots/tmd_1_2_0.01.png" title="TMD PDF of the $d$ at $Q = 2$ GeV and $x = 0.01$" alt="" /><figcaption>TMD PDF of the <span class="math inline">d</span> at <span class="math inline">Q = 2</span> GeV and <span class="math inline">x = 0.01</span></figcaption>
+</figure>
+<figure>
+<img src="pngplots/tmd_1_2_0.1.png" title="TMD PDF of the $d$ at $Q = 2$ GeV and $x = 0.1$" alt="" /><figcaption>TMD PDF of the <span class="math inline">d</span> at <span class="math inline">Q = 2</span> GeV and <span class="math inline">x = 0.1</span></figcaption>
+</figure>
+<figure>
+<img src="pngplots/tmd_1_2_0.5.png" title="TMD PDF of the $d$ at $Q = 2$ GeV and $x = 0.5$" alt="" /><figcaption>TMD PDF of the <span class="math inline">d</span> at <span class="math inline">Q = 2</span> GeV and <span class="math inline">x = 0.5</span></figcaption>
+</figure>
+<figure>
+<img src="pngplots/tmd_1_2_0.9.png" title="TMD PDF of the $d$ at $Q = 2$ GeV and $x = 0.9$" alt="" /><figcaption>TMD PDF of the <span class="math inline">d</span> at <span class="math inline">Q = 2</span> GeV and <span class="math inline">x = 0.9</span></figcaption>
+</figure>
+<h2 id="data-theory-comparison">Data-theory comparison</h2>
+<figure>
+<img src="pngplots/E605_Q_7_8.png" title="E605_Q_7_8 data-theory comparison" alt="" /><figcaption>E605_Q_7_8 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E605_Q_8_9.png" title="E605_Q_8_9 data-theory comparison" alt="" /><figcaption>E605_Q_8_9 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E605_Q_10.5_11.5.png" title="E605_Q_10.5_11.5 data-theory comparison" alt="" /><figcaption>E605_Q_10.5_11.5 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E288_200_Q_4_5.png" title="E288_200_Q_4_5 data-theory comparison" alt="" /><figcaption>E288_200_Q_4_5 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E288_200_Q_5_6.png" title="E288_200_Q_5_6 data-theory comparison" alt="" /><figcaption>E288_200_Q_5_6 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E288_200_Q_6_7.png" title="E288_200_Q_6_7 data-theory comparison" alt="" /><figcaption>E288_200_Q_6_7 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E288_200_Q_7_8.png" title="E288_200_Q_7_8 data-theory comparison" alt="" /><figcaption>E288_200_Q_7_8 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E288_200_Q_8_9.png" title="E288_200_Q_8_9 data-theory comparison" alt="" /><figcaption>E288_200_Q_8_9 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E288_300_Q_4_5.png" title="E288_300_Q_4_5 data-theory comparison" alt="" /><figcaption>E288_300_Q_4_5 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E288_300_Q_5_6.png" title="E288_300_Q_5_6 data-theory comparison" alt="" /><figcaption>E288_300_Q_5_6 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E288_300_Q_6_7.png" title="E288_300_Q_6_7 data-theory comparison" alt="" /><figcaption>E288_300_Q_6_7 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E288_300_Q_7_8.png" title="E288_300_Q_7_8 data-theory comparison" alt="" /><figcaption>E288_300_Q_7_8 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E288_300_Q_8_9.png" title="E288_300_Q_8_9 data-theory comparison" alt="" /><figcaption>E288_300_Q_8_9 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E288_400_Q_5_6.png" title="E288_400_Q_5_6 data-theory comparison" alt="" /><figcaption>E288_400_Q_5_6 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E288_400_Q_6_7.png" title="E288_400_Q_6_7 data-theory comparison" alt="" /><figcaption>E288_400_Q_6_7 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E288_400_Q_7_8.png" title="E288_400_Q_7_8 data-theory comparison" alt="" /><figcaption>E288_400_Q_7_8 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E288_400_Q_8_9.png" title="E288_400_Q_8_9 data-theory comparison" alt="" /><figcaption>E288_400_Q_8_9 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E288_400_Q_11_12.png" title="E288_400_Q_11_12 data-theory comparison" alt="" /><figcaption>E288_400_Q_11_12 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E288_400_Q_12_13.png" title="E288_400_Q_12_13 data-theory comparison" alt="" /><figcaption>E288_400_Q_12_13 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/E288_400_Q_13_14.png" title="E288_400_Q_13_14 data-theory comparison" alt="" /><figcaption>E288_400_Q_13_14 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/STAR_510.png" title="STAR_510 data-theory comparison" alt="" /><figcaption>STAR_510 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/CDF_RunI.png" title="CDF_RunI data-theory comparison" alt="" /><figcaption>CDF_RunI data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/CDF_RunII.png" title="CDF_RunII data-theory comparison" alt="" /><figcaption>CDF_RunII data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/D0_RunI.png" title="D0_RunI data-theory comparison" alt="" /><figcaption>D0_RunI data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/D0_RunII.png" title="D0_RunII data-theory comparison" alt="" /><figcaption>D0_RunII data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/D0_RunIImu.png" title="D0_RunIImu data-theory comparison" alt="" /><figcaption>D0_RunIImu data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/LHCb_7TeV.png" title="LHCb_7TeV data-theory comparison" alt="" /><figcaption>LHCb_7TeV data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/LHCb_8TeV.png" title="LHCb_8TeV data-theory comparison" alt="" /><figcaption>LHCb_8TeV data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/LHCb_13TeV.png" title="LHCb_13TeV data-theory comparison" alt="" /><figcaption>LHCb_13TeV data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/CMS_7TeV.png" title="CMS_7TeV data-theory comparison" alt="" /><figcaption>CMS_7TeV data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/CMS_8TeV.png" title="CMS_8TeV data-theory comparison" alt="" /><figcaption>CMS_8TeV data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/ATLAS_7TeV_y_0_1.png" title="ATLAS_7TeV_y_0_1 data-theory comparison" alt="" /><figcaption>ATLAS_7TeV_y_0_1 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/ATLAS_7TeV_y_1_2.png" title="ATLAS_7TeV_y_1_2 data-theory comparison" alt="" /><figcaption>ATLAS_7TeV_y_1_2 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/ATLAS_7TeV_y_2_2.4.png" title="ATLAS_7TeV_y_2_2.4 data-theory comparison" alt="" /><figcaption>ATLAS_7TeV_y_2_2.4 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/ATLAS_8TeV_y_0_0.4.png" title="ATLAS_8TeV_y_0_0.4 data-theory comparison" alt="" /><figcaption>ATLAS_8TeV_y_0_0.4 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/ATLAS_8TeV_y_0.4_0.8.png" title="ATLAS_8TeV_y_0.4_0.8 data-theory comparison" alt="" /><figcaption>ATLAS_8TeV_y_0.4_0.8 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/ATLAS_8TeV_y_0.8_1.2.png" title="ATLAS_8TeV_y_0.8_1.2 data-theory comparison" alt="" /><figcaption>ATLAS_8TeV_y_0.8_1.2 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/ATLAS_8TeV_y_1.2_1.6.png" title="ATLAS_8TeV_y_1.2_1.6 data-theory comparison" alt="" /><figcaption>ATLAS_8TeV_y_1.2_1.6 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/ATLAS_8TeV_y_1.6_2.png" title="ATLAS_8TeV_y_1.6_2 data-theory comparison" alt="" /><figcaption>ATLAS_8TeV_y_1.6_2 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/ATLAS_8TeV_y_2_2.4.png" title="ATLAS_8TeV_y_2_2.4 data-theory comparison" alt="" /><figcaption>ATLAS_8TeV_y_2_2.4 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/ATLAS_8TeV_Q_46_66.png" title="ATLAS_8TeV_Q_46_66 data-theory comparison" alt="" /><figcaption>ATLAS_8TeV_Q_46_66 data-theory comparison</figcaption>
+</figure>
+<figure>
+<img src="pngplots/ATLAS_8TeV_Q_116_150.png" title="ATLAS_8TeV_Q_116_150 data-theory comparison" alt="" /><figcaption>ATLAS_8TeV_Q_116_150 data-theory comparison</figcaption>
+</figure>
+</body>
+</html>
