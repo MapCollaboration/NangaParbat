@@ -228,7 +228,7 @@ namespace NangaParbat
     YAML::Emitter out;
     out << YAML::BeginMap;
     out << YAML::Key << "Parameters scan" << YAML::Value << YAML::BeginSeq;
-    for (int p = 0; p < upar.Params().size(); p++)
+    for (int p = 0; p < (int) upar.Params().size(); p++)
       {
         // Perform the scan. The number of points in the scan is 41 and the range is 2 standard deviations
         // (= two times the step of the parameter) by default (Scan from Minuit2).
@@ -238,17 +238,17 @@ namespace NangaParbat
         out << YAML::Key << "name" << YAML::Value << upar.GetName(p);
 
         out << YAML::Key << "parameter value" << YAML::Value << YAML::Flow << YAML::BeginSeq;
-        for (int i = 0; i < points.size(); i++)
+        for (int i = 0; i < (int) points.size(); i++)
           out << points[i].first;
         out << YAML::EndSeq;
         out << YAML::Key << "fcn value" << YAML::Value << YAML::Flow << YAML::BeginSeq;
-        for (int i = 0; i < points.size(); i++)
+        for (int i = 0; i < (int) points.size(); i++)
           out << points[i].second;
         out << YAML::EndSeq;
         out << YAML::EndMap;
 
         // On terminal
-        for (int i = 0; i < points.size(); i++)
+        for (int i = 0; i < (int) points.size(); i++)
           std::cout << points[i].first << ", " << points[i].second << std::endl;
         ROOT::Minuit2::MnPlot plot{};
         plot(points);
