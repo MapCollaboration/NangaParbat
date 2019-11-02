@@ -14,7 +14,7 @@ from modules.bcolours import *
 from modules.validators import *
 
 # Print banner
-print(banner.banner())
+print(banner.fitbanner())
 
 # Folder containing the utilities
 RunFolder = os.path.dirname(os.path.realpath(__file__)) + "/../run"
@@ -28,7 +28,7 @@ questions = [
         "validate": OutputFolderValidator
     }
 ]
-answers = prompt(questions, style=custom_style_3)
+answers = prompt(questions, style = custom_style_3)
 
 # Create output folder
 outfolder = RunFolder + "/../" + answers["Output folder"]
@@ -40,7 +40,7 @@ os.system(RunFolder + "/Filter " + RunFolder + "/../rawdata/ " + outfolder + "/d
 
 # Open "dataset.yaml" file to select experiments to fit
 with open(outfolder + "/data/datasets.yaml", "r") as stream:
-    datasets = yaml.load(stream, Loader=yaml.RoundTripLoader)
+    datasets = yaml.load(stream, Loader = yaml.RoundTripLoader)
 
 # Read the datasets and assume that they are all included
 print(bcolours.HEADER + bcolours.BOLD + "\nSelection of the data sets:" + bcolours.ENDC)
@@ -61,7 +61,7 @@ questions = [
             if len(answer) == 0 else True
     }
 ]
-answers = prompt(questions, style=custom_style_3)
+answers = prompt(questions, style = custom_style_3)
 
 # Now remove from the "datasets" node all the datasets that have been
 # excluded
@@ -77,7 +77,7 @@ for exp in datasets:
 
 # Dump new dataset file to disk
 with open(outfolder + "/data/datasets.yaml", "w") as outfile:
-    yaml.dump(datasets, outfile, Dumper=yaml.RoundTripDumper)
+    yaml.dump(datasets, outfile, Dumper = yaml.RoundTripDumper)
 
 # Collect available sets of tables
 tables = [d for d in os.listdir(RunFolder + "/../tables/") if os.path.isdir(os.path.join(RunFolder + "/../tables/", d))]
@@ -90,13 +90,13 @@ questions = [
         "choices": tables,
     }
 ]
-answers = prompt(questions, style=custom_style_3)
+answers = prompt(questions, style = custom_style_3)
 
 # Print features of the chosen interpolation tables
 print(bcolours.HEADER + bcolours.BOLD + "\nFeatures of the chosen interpolation tables:" + bcolours.ENDC)
 with open(RunFolder + "/../tables/" + answers["tables"] + "/config.yaml", "r") as stream:
-    feats = yaml.load(stream, Loader=yaml.RoundTripLoader)
-    print(bcolours.OKBLUE + yaml.dump(feats, Dumper=yaml.RoundTripDumper) + bcolours.ENDC)
+    feats = yaml.load(stream, Loader = yaml.RoundTripLoader)
+    print(bcolours.OKBLUE + yaml.dump(feats, Dumper = yaml.RoundTripDumper) + bcolours.ENDC)
 
 # Ask for confirmation
 questions = [
@@ -107,7 +107,7 @@ questions = [
         "default": True
     }
 ]
-confirm = prompt(questions, style=custom_style_3)
+confirm = prompt(questions, style = custom_style_3)
 if not confirm["ConfirmTables"]:
     print(bcolours.FAIL + bcolours.BOLD + "\nquitting\n" + bcolours.ENDC)
     exit()
@@ -116,7 +116,7 @@ if not confirm["ConfirmTables"]:
 os.system("ln -s " + RunFolder + "/../tables/" + answers["tables"] + " " + outfolder + "/tables")
 
 # List of available parameterisations
-avpars = ((re.search("===(.*)===", str(subprocess.run([RunFolder + "/AvailableParameterisations", "python"], stdout=subprocess.PIPE)))).group(1)).split()
+avpars = ((re.search("===(.*)===", str(subprocess.run([RunFolder + "/AvailableParameterisations", "python"], stdout = subprocess.PIPE)))).group(1)).split()
 
 # Choice of parameterisation
 print(bcolours.HEADER + bcolours.BOLD + "\nChoice of parameterisation:" + bcolours.ENDC)
@@ -128,16 +128,16 @@ question = [
         "choices": avpars
     }
 ]
-answer = prompt(question, style=custom_style_3)
+answer = prompt(question, style = custom_style_3)
 param  = answer["Parameterisation"]
 
 # Load default fitconfig file
 pathfitconfig = RunFolder + "/../cards/fit" + param + ".yaml"
 with open(pathfitconfig, "r") as stream:
-    fitconfdef = yaml.load(stream, Loader=yaml.RoundTripLoader)
+    fitconfdef = yaml.load(stream, Loader = yaml.RoundTripLoader)
 
 print(bcolours.HEADER + bcolours.BOLD + "\nThe default fit configuration file is: \n" + pathfitconfig + "\n" + bcolours.ENDC)
-print(bcolours.OKBLUE + yaml.dump(fitconfdef, Dumper=yaml.RoundTripDumper) + "\n" + bcolours.ENDC)
+print(bcolours.OKBLUE + yaml.dump(fitconfdef, Dumper = yaml.RoundTripDumper) + "\n" + bcolours.ENDC)
 
 # Choice of default file
 question = [
@@ -148,7 +148,7 @@ question = [
         "default": False
     }
 ]
-answer = prompt(question, style=custom_style_3)
+answer = prompt(question, style = custom_style_3)
 
 if answer["Default file"]:
     question = [
@@ -159,15 +159,15 @@ if answer["Default file"]:
             "validator": NotOutputYamlFileValidator()
         }
     ]
-    answer = prompt(question, style=custom_style_3)
+    answer = prompt(question, style = custom_style_3)
     newfpath = RunFolder + "/../" + answer["New fitconfig yaml file"]
 
     with open(newfpath, "r") as stream:
-        fitcfg = yaml.load(stream, Loader=yaml.RoundTripLoader)
+        fitcfg = yaml.load(stream, Loader = yaml.RoundTripLoader)
 
     # Show the new default fit configuration file
     print(bcolours.HEADER + bcolours.BOLD + "\nThe default fit configuration file is: \n" + newfpath + "\n" + bcolours.ENDC)
-    print(bcolours.OKBLUE + yaml.dump(fitcfg, Dumper=yaml.RoundTripDumper) + "\n" + bcolours.ENDC)
+    print(bcolours.OKBLUE + yaml.dump(fitcfg, Dumper = yaml.RoundTripDumper) + "\n" + bcolours.ENDC)
 
 else:
     fitcfg = fitconfdef
@@ -223,7 +223,7 @@ questions = [
 ]
 
 # Configure fit
-fitconfig = prompt(questions, style=custom_style_3)
+fitconfig = prompt(questions, style = custom_style_3)
 fitconfig["Parameterisation"] = param
 fitconfig["Parameters"] = fitcfg["Parameters"]
 fitconfig["t0parameters"] = fitcfg["t0parameters"]
@@ -249,7 +249,7 @@ questions = [
         "default": False
     }
 ]
-answer = prompt(questions, style=custom_style_3)
+answer = prompt(questions, style = custom_style_3)
 
 if answer["ConfirmParameters"]:
     newpars = []
@@ -278,7 +278,7 @@ if answer["ConfirmParameters"]:
                 "default": p["fix"]
             }
         ]
-        np = prompt(questions, style=custom_style_3)
+        np = prompt(questions, style = custom_style_3)
         np["name"] = p["name"]
         newpars.append(np)
 
@@ -300,7 +300,7 @@ if fitconfig["t0prescription"]:
             "default": False
         }
     ]
-    answer = prompt(questions, style=custom_style_3)
+    answer = prompt(questions, style = custom_style_3)
 
     if answer["Confirmt0parameters"]:
         newpars = []
@@ -314,7 +314,7 @@ if fitconfig["t0prescription"]:
                     "default": str(p)
                 }
             ]
-            np = prompt(questions, style=custom_style_3)
+            np = prompt(questions, style = custom_style_3)
             newpars.append(np["value"])
 
         fitconfig["t0parameters"] = newpars
@@ -322,7 +322,7 @@ if fitconfig["t0prescription"]:
 
 # Print configuration in yaml
 with open(outfolder + "/fitconfig.yaml", "w") as outfile:
-    yaml.dump(fitconfig, outfile, Dumper=yaml.RoundTripDumper)
+    yaml.dump(fitconfig, outfile, Dumper = yaml.RoundTripDumper)
 
 # Questions concerning the fit
 print(bcolours.HEADER + bcolours.BOLD + "\nFit parameters: " + bcolours.ENDC)
@@ -341,7 +341,7 @@ questions = [
         "choices": ["Locally", "Slurm"],
     }
 ]
-answer = prompt(questions, style=custom_style_3)
+answer = prompt(questions, style = custom_style_3)
 
 # Now launch fits to Monte-Carlo replicas (this includes a fit to the
 # central values, i.e. replica 0). Run the fits according to the host chosen
@@ -350,7 +350,7 @@ if answer["Host"] == "Locally":
     for i in range(int(answer["Number of replicas"]) + 1):
         os.system(RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables " + str(i) + " " + Paramfluct + " n")
 elif answer["Host"] == "Slurm":
-    f = open(outfolder + "/submit.sh", "w+")
+    f = open(outfolder + "/submit_fit.sh", "w+")
     f.write("#!/bin/bash\n")
     f.write("#\n")
     f.write("#SBATCH --job-name=NPfit\n")
@@ -360,7 +360,7 @@ elif answer["Host"] == "Slurm":
     f.write("\n")
     f.write("srun " + RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables $SLURM_ARRAY_TASK_ID " + Paramfluct + " n\n")
     f.close()
-    os.system("sbatch " + outfolder + "/submit.sh")
+    os.system("sbatch " + outfolder + "/submit_fit.sh")
 
 # Plot scan results
 if fitconfig["Minimiser"] == "scan":
