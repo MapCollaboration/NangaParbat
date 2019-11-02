@@ -15,6 +15,12 @@ and displays the available datasets in the target folder ```<path to data folder
 ```
 and displays the available parameterisations that can be used in a TMD fit along with a brief description. The optional string ```python``` produces an output that is more easily readable by the python command line interface.
 
+- **AvailableBstar**: this code is run as follows:
+```Shell
+./AvailableBstar [python]
+```
+and displays the available b* presciptions available that can be used for the production of interpolation tables. The optional string ```python``` produces an output that is more easily readable by the python command line interface.
+
 - **CreateTables**: this code produces interpolation tables and is run as follows:
 ```Shell
 ./CreateTables <configuration file> <path to data folder> <output folder> <test tables? [y/n]> [optional selected datasets]

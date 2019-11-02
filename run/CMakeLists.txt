@@ -19,3 +19,6 @@ target_link_libraries(PlotTMDs NangaParbat)
 
 add_executable(AvailableParameterisations AvailableParameterisations.cc)
 target_link_libraries(AvailableParameterisations NangaParbat)
+
+add_executable(AvailableBstar AvailableBstar.cc)
+target_link_libraries(AvailableBstar NangaParbat)
