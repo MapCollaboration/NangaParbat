@@ -2,6 +2,9 @@
 
 Io order to facilitate the usage of the code, we provide frontend command-line interfaces that help the user access the main functionalities.
 
+## Produce interpolation tables
+The pyhton program ``tables.py`` produces fast interpolation tables according to the parameters set by the user.
+
 ## Prepare and run a fit
 The python program ``fit.py`` prepares and runs a fit. The results of the fit will be put in a new folder created by ``fit.py`` itself with a name chosen from the user. 
 Answering the questions asked by the command line interface the user can choose: 
@@ -17,4 +20,5 @@ Answering the questions asked by the command line interface the user can choose:
 - the number of Monte-Carlo replicas.
 
 ## Produce a report of a fit
-The pyhton program report.py produces a report starting form the output folder of the fit. 
+The pyhton program ``report.py`` produces a report starting form the output folder of the fit. 
+ 
