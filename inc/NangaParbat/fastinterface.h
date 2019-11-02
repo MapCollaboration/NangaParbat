@@ -49,18 +49,15 @@ namespace NangaParbat
      * @brief Function that computes the interpolation tables given as
      * an input vector of "DataHandler" objects.
      * @param DHVect: vector of "DataHandler" objects.
-     * @param bstar: function that returns b*.
      * @return a vector of "YAML::Emitter" objects containing as many
      * tables as elements of "DHVect".
      */
-    std::vector<YAML::Emitter> ComputeTables(std::vector<DataHandler>                            const& DHVect,
-                                             std::function<double(double const&, double const&)> const& bstar) const;
+    std::vector<YAML::Emitter> ComputeTables(std::vector<DataHandler> const& DHVect) const;
 
     /**
      * @brief Function that computes the predictions corresponding to
      * a set of "DataHandler" objects as direct integration.
      * @param DHVect: vector of "DataHandler" objects.
-     * @param bstar: function that returns b*.
      * @param fNP1: the first non-perturbative input function
      * @param fNP2: the second non-perturbative input function
      * @param epsQ: the integration accuracy in Q
@@ -70,7 +67,6 @@ namespace NangaParbat
      * associated to the corresponding "DataHandler" object
      */
     std::vector<std::vector<double>> DirectComputation(std::vector<DataHandler>                                           const& DHVect,
-                                                       std::function<double(double const&, double const&)>                const& bstar,
                                                        std::function<double(double const&, double const&, double const&)> const& fNP1,
                                                        std::function<double(double const&, double const&, double const&)> const& fNP2,
                                                        double                                                             const& epsQ = 1e-7,
@@ -90,5 +86,6 @@ namespace NangaParbat
     std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>                     _TabFFs;     //!< Collinear FFs
     std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> _EvTMDPDFs;  //!< TMD PDFs
     std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> _EvTMDFFs;   //!< TMD FFs
+    std::function<double(double const&, double const&)>                                         _bstar;      //!< b* prescription
   };
 }

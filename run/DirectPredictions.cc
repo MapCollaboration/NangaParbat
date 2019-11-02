@@ -4,7 +4,6 @@
 
 #include "NangaParbat/nonpertfunctions.h"
 #include "NangaParbat/fastinterface.h"
-#include "NangaParbat/utilities.h"
 
 #include <fstream>
 #include <cstring>
@@ -47,7 +46,7 @@ int main(int argc, char* argv[])
 
   // Compute direct predictions
   auto const fNP = [=] (double const& x, double const& b, double const& zeta) -> double { return (*NPFunc).Evaluate(x, b, zeta, 0); };
-  const std::vector<std::vector<double>> dc = FIObj.DirectComputation(DHVect, NangaParbat::bstarmin, fNP, fNP);
+  const std::vector<std::vector<double>> dc = FIObj.DirectComputation(DHVect, fNP, fNP);
 
   // Report results
   std::cout << "Direct computation...\n" << std::endl;

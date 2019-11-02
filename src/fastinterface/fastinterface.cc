@@ -4,6 +4,7 @@
 
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/utilities.h"
+#include "NangaParbat/bstar.h"
 #include "NangaParbat/twobodyphasespace.h"
 
 #include <LHAPDF/LHAPDF.h>
@@ -93,6 +94,9 @@ namespace NangaParbat
     // Delete LHAPDF sets
     delete distpdf;
     delete distff;
+
+    // b* presciption
+    _bstar = bstarMap.at(_config["bstar"].as<std::string>());
 
     // Alpha_em (provided by APFEL)
     apfel::AlphaQED a{_config["alphaem"]["aref"].as<double>(), _config["alphaem"]["Qref"].as<double>(), _Thresholds, {0, 0, 1.777}, 0};
@@ -210,8 +214,7 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  std::vector<YAML::Emitter> FastInterface::ComputeTables(std::vector<DataHandler>                            const& DHVect,
-                                                          std::function<double(double const&, double const&)> const& bstar) const
+  std::vector<YAML::Emitter> FastInterface::ComputeTables(std::vector<DataHandler> const& DHVect) const
   {
     // Retrieve relevant parameters for the numerical integration from
     // the configuration file
@@ -398,7 +401,7 @@ namespace NangaParbat
                 const auto Lumi = [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
                 {
                   const double Qt = (IntQ ? Q : Qav);
-                  return LuminosityDY(bstar(b, Qt), Qt, targetiso);
+                  return LuminosityDY(_bstar(b, Qt), Qt, targetiso);
                 };
                 const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabLumi{Lumi, (IntQ ? 200 : 2), Qb.first, Qb.second, 1, {}};
 
@@ -511,7 +514,6 @@ namespace NangaParbat
 
   //_________________________________________________________________________________
   std::vector<std::vector<double>> FastInterface::DirectComputation(std::vector<DataHandler>                                           const& DHVect,
-                                                                    std::function<double(double const&, double const&)>                const& bstar,
                                                                     std::function<double(double const&, double const&, double const&)> const& fNP1,
                                                                     std::function<double(double const&, double const&, double const&)> const& fNP2,
                                                                     double                                                             const& epsQ,
@@ -587,7 +589,7 @@ namespace NangaParbat
               const auto Qintegrand = [&] (double const& Q) -> double
               {
                 // Compute Drell-Yan luminosity
-                const apfel::DoubleObject<apfel::Distribution> Lumi = LuminosityDY(bstar(b, Q), Q, targetiso);
+                const apfel::DoubleObject<apfel::Distribution> Lumi = LuminosityDY(_bstar(b, Q), Q, targetiso);
 
                 // Function to be integrated in xi
                 const auto xiintegrand = [&] (double const& xi) -> double

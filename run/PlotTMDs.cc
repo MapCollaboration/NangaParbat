@@ -4,7 +4,7 @@
 
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/convolutiontable.h"
-#include "NangaParbat/utilities.h"
+#include "NangaParbat/bstar.h"
 #include "NangaParbat/nonpertfunctions.h"
 
 #include <fstream>
@@ -78,6 +78,9 @@ int main(int argc, char* argv[])
   else
     throw std::runtime_error("[PlotTMDs]: Unknown distribution prefix");
 
+  // b* prescription
+  const std::function<double(double const&, double const&)> bs = NangaParbat::bstarMap.at(config["bstar"].as<std::string>());
+
   // Flavour index
   const int ifl = std::stoi(argv[4]);
 
@@ -120,7 +123,7 @@ int main(int argc, char* argv[])
       // bT-space TMD
       const auto xFb = [=] (double const& bT) -> double
       {
-        return QCDEvToPhys(EvTMDs(NangaParbat::bstarmin(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1));
+        return QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1));
       };
 
       // Tabulate integrand

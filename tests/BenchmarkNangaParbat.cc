@@ -4,7 +4,7 @@
 // Authors: Valerio Bertone: valerio.bertone@cern.ch
 //
 
-#include "NangaParbat/utilities.h"
+#include "NangaParbat/bstar.h"
 
 #include <apfel/apfelxx.h>
 #include <LHAPDF/LHAPDF.h>
@@ -106,7 +106,7 @@ int main()
   // non-perturbative part. This can be tabulated in b.
   const auto EvolvedTMDPDFs = [=] (double const& b) -> apfel::Set<apfel::Distribution>
   {
-    const double bs = NangaParbat::bstar(b, 0);
+    const double bs = NangaParbat::bstarCSS(b, 0);
     return fNP(b, zetaf) * QuarkEvolFactor(bs, muf, zetaf) * MatchedTMDPDFs(bs);
   };
 

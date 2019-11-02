@@ -4,7 +4,7 @@
 // Authors: Valerio Bertone: valerio.bertone@cern.ch
 //
 
-#include "NangaParbat/utilities.h"
+#include "NangaParbat/bstar.h"
 
 #include <math.h>
 #include <LHAPDF/LHAPDF.h>
@@ -108,7 +108,7 @@ int main()
   {
     // Get Evolved TMD PDFs and rotate them into the physical
     // basis
-    const std::map<int,apfel::Distribution> xF = QCDEvToPhys(EvTMDPDFs(NangaParbat::bstar(b, Qb), muf, zetaf).GetObjects());
+    const std::map<int,apfel::Distribution> xF = QCDEvToPhys(EvTMDPDFs(NangaParbat::bstarCSS(b, Qb), muf, zetaf).GetObjects());
 
     // Combine TMDs through the EW charges
     double lumi = 0;

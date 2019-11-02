@@ -136,6 +136,7 @@ with open(reportfile, "w+") as mdout:
 
     mdout.write("Collinear PDF set: " + config["pdfset"]["name"] + " member " + str(config["pdfset"]["member"]) + "  \n")
     mdout.write("Collinear FF set: "  + config["ffset"]["name"]  + " member " + str(config["ffset"]["member"])  + "  \n")
+    mdout.write("$b^*$ prescription: " + config["bstar"] + "  \n")
     mdout.write("Perturbative order: " + utilities.GetPertOrd(str(config["PerturbativeOrder"])) + "  \n")
     mdout.write(r"Reference value of the fine-structure constant: $\alpha(Q = " + str(config["alphaem"]["Qref"]) + r"\;{\rm GeV}) = " +
                 str(config["alphaem"]["aref"]) + "$ (running " + str(config["alphaem"]["run"]) + ")  \n\n")
