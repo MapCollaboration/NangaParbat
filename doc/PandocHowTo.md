@@ -3,10 +3,16 @@ To get __pandoc__:
 
   <https://pandoc.org/installing.html>
 
-How to use pandoc from terminal to convert files.
+__Why do we use pandoc in NangaParbat?__
+In ``NangaParbat``, once a fit is performed (with the ``python`` script ``fit.py``), running ``report.py`` gives a preliminary analysis of the fit and a summary of all its characteristics.
+
+The program ``report.py`` works approximately in this way: it gathers information from the folder of the fit, it performs the analysis, writes it in ``markdown`` format in ``Report.md`` and then converts this output file to ``html`` and ``tex``.
+The conversion from ``.md`` to ``.html`` and ``.tex`` is done whithin ``report.py`` using __pandoc__ scripts, so that ``report.py`` has three outputs: ``Report.md``, ``Report.html`` and ``Report.tex``.
+This note is about how to use pandoc from terminal to convert files and it explains how the pandoc scripts used in ``report.py`` work.
+
 
 ## From .md to html
-I created a script to convert a ``markdown`` file to an ``html`` using pandoc, ``pandoc_to_html.sh``
+We created a script to convert a ``markdown`` file to an ``html`` using pandoc, ``pandoc_to_html.sh``:
 
 ```bash {cmd=false}
 bash pandoc_to_html.sh file.md file.html
@@ -23,7 +29,7 @@ pandoc file.md -f markdown -t html -s -o file.html
 This line says: convert the file ``file.md``, which is in ``markdown``, to an ``html`` output called ``file.html``.
 Such output is ``standalone`` (``-s`` or ``--standalone``), which means that is interpreted as a complete file by itself and so __pandoc__ includes all the headers necessary for opening that output in the desired format. It's necessary to include the ``-s`` option because otherwise __pandoc__ by default produces pieces of code and does not include the headers necessary to open the output in the desired format.
 
-It's also possible to write:
+As a line to write on the terminal, is also possible to have:
 
 ```bash {cmd=false}
 pandoc file.md -s -o file.html
@@ -60,7 +66,11 @@ Costumizing the themes, I created ``tango.theme`` and ``kate.theme``.
 
 ### Customize css
 
-I found online, at <https://gist.github.com/killercup/5917178>, a ``css`` file to make ``html`` files look better, and I included it  ``--css pandoc.css`` after having slightly modified it to have less margin in the ``html``.
+We found online, at <https://gist.github.com/killercup/5917178>, a ``css`` file to make ``html`` files look better, and we included it  ``--css pandoc.css`` after having slightly modified it to have less margin in the ``html``.
+
+If ``--css pandoc.css`` is included, it is convenient to also add the flag ``--self-contained``. This option makes the ``html`` output __really self contained__ (``--standalone`` is implied) as it includes the ``css`` pandoc styling in the header of the ``html`` output. In this way, even if the output``.html`` is moved from the its original folder (where it was created) or for example is sent by email, it will retain the customized styling.
+With ``--standalone``, pandoc automatically put your ``CSS`` file inline in the HTML file, but it’ll also embed the scripts, images, videos… that your document may link to.
+Without ``--standalone`` if, for example, you have to email the document you just created then things fall apart. When your reader opens it, they’ll see what you wrote, but it won’t be styled the way you wanted it. Because that pandoc.css file with the styling is back on your machine, in the same directory as the original Markdown file.
 
 
 ## From .md to .tex
