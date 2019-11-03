@@ -135,12 +135,23 @@ To change the margins of the Latex file, use:
 This is also in the pandoc script ``pandoc_to_pdf.sh``.
 
 ### Figures
+
 In order not to have floating figures, in the ``latexheader.tex``, included in the script with ``-H latexheader.tex`` there is:
 
 ```bash {cmd=true}
 \usepackage{float}
 \floatplacement{figure}{H}
 ```
+
+### Tables
+
+To change how the tables are generated in Latex we use a pandoc filter.
+The filter is ``tablefilter.py`` and uses the ``pandocfilters`` python module (that can be installed with ``pip3 install pandocfilters``).
+``tablefilter.py`` is a filter taking JSON data as ``stdin`` and spitting modified JSON to ``stdout``, and it is included in the ``pandoc_to_pdf.sh`` with:
+```bash {cmd=true}
+--filter ./tablefilter.py
+```
+In particular, this filter centers all the tables and puts the boarders on the columns (thet by default are not there).
 
 ### Latex settings
 
