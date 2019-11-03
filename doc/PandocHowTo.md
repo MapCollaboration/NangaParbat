@@ -119,11 +119,28 @@ In order to make the __code lines__ to wrap __inside the codeblocks__ and not be
 
 Another possibility to do the same thing is to include ``--listings -H listings-setup.tex``, but the ``--listing`` option is not compatible with ``--highlight-style``, so the code blocks in the pdf will not be highlighted.
 
-In order to make the __text lines__ to wrap include ``--wrap auto`` (or ``none`` or the other option that can be found in the pandoc manual).
+In order to make the __text lines__ to wrap include ``--wrap auto`` (or ``none``, or the other option that can be found in the pandoc manual).
 
 ### Syntax highlighting
 
 Works in the same way as explained in the ``html`` section.
+
+### Change margins
+
+To change the margins of the Latex file, use:
+
+```bash {cmd=true}
+-V geometry:margin=1in
+```
+This is also in the pandoc script ``pandoc_to_pdf.sh``.
+
+### Figures
+In order not to have floating figures, in the ``latexheader.tex``, included in the script with ``-H latexheader.tex`` there is:
+
+```bash {cmd=true}
+\usepackage{float}
+\floatplacement{figure}{H}
+```
 
 ### Latex settings
 
