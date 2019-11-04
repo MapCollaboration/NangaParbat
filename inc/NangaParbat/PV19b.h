@@ -49,14 +49,14 @@ namespace NangaParbat
       const double b2 = b * b;
 
       // different contributions
-      const double term1 = 1 / ( 1 + g1 * b2 / 4 ) + N1;
+      const double term1 = 1 / ( 1 + g1 * b2 / 4 );
       const double term2 = exp( - g1B * b2 / 4 );
 
       // zeta-dependent bit (i.e. non perturbative evolution)
       const double lnz    = log(zeta / _Q02);
       const double NPevol = exp( - ( g2 + g2B * b2 ) * b2 * lnz / 4 );
 
-      return ( ( 1 - lambda ) * term1 + lambda * term2 ) * NPevol;
+      return ( ( 1 - lambda ) * term1 + lambda * term2 - N1 ) * NPevol;
     };
 
     std::string LatexFormula() const
@@ -65,7 +65,7 @@ namespace NangaParbat
       formula  = R"delimiter($$f_{\rm NP}(x,\zeta, b_T)= \Biggl((1-\lambda)
 \left(\frac{1}{1 + g_1(x) b_T^2/4}+N_1\right) + \lambda \exp \left(-g_{1B}(x) b_T^2 /4 \right)\Biggr) \exp\left[- g_2 \log\left(\frac{\zeta}{Q_0^2}\right) b_T^2/4 - g_{2B} \log\left(\frac{\zeta}{Q_0^2}\right) b_T^4/4 \right]$$)delimiter";
       formula += R"delimiter($$g_1(x) = \exp\left[\sigma\left(\frac{x}{\alpha}-1\right)\right]$$)delimiter";
-      formula += R"delimiter($$g_{1B}(x) = N_{1B} exp\left(-\frac{(x-\alpha_B)^2}{2\sigma_B^2}\right)$$)delimiter";
+      formula += R"delimiter($$g_{1B}(x) = N_{1B} \exp\left(-\frac{(x-\alpha_B)^2}{2\sigma_B^2}\right)$$)delimiter";
       formula += R"delimiter($$Q_0^2 = 1\;{\rm GeV}^2$$)delimiter";
       return formula;
     };
