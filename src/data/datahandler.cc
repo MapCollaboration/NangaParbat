@@ -207,7 +207,7 @@ namespace NangaParbat
 
     // Check that the t0 vector is either empty or contains exactly
     // "_kin.ndata" elements.
-    if (!_t0.empty() && _t0.size() != _kin.ndata)
+    if (!_t0.empty() && (int) _t0.size() != _kin.ndata)
       throw std::runtime_error("[DataHandler::DataHandler]: t0 vector has wrong size");
 
     // Now construct the covariance matrix. First include uncorrelated
@@ -255,12 +255,12 @@ namespace NangaParbat
           {
             // Additive correlation random numbers
             std::vector<double> radd(_corra[0].size());
-            for (int j = 0; j < _corra[0].size(); j++)
+            for (int j = 0; j < (int) _corra[0].size(); j++)
               radd[j] = gsl_ran_gaussian(rng, 1);
 
             // Multiplicative correlation random numbers
             std::vector<double> rmult(_corrm[0].size());
-            for (int j = 0; j < _corrm[0].size(); j++)
+            for (int j = 0; j < (int) _corrm[0].size(); j++)
               rmult[j] = gsl_ran_gaussian(rng, 1);
 
             for (int i = 0; i < (int) _means.size(); i++)
@@ -270,12 +270,12 @@ namespace NangaParbat
 
                 // Additive correlated uncertainty fluctuation
                 double Fadd = 0;
-                for (int j = 0; j < _corra[i].size(); j++)
+                for (int j = 0; j < (int) _corra[i].size(); j++)
                   Fadd += _corra[i][j] * radd[j];
 
                 // Mulplicative correlated uncertainty fluctuation
                 double Fmult = 1;
-                for (int j = 0; j < _corrm[i].size(); j++)
+                for (int j = 0; j < (int) _corrm[i].size(); j++)
                   Fmult *= 1 + _corrm[i][j] * rmult[j];
 
                 // Generate fluctuation
