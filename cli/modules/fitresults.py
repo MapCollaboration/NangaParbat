@@ -43,9 +43,13 @@ class fitresults:
         Writes some relevant statistical estimatos
         """
         self.mdout.write("$N_{rep}$ = " + str(len(self.reports)) + "  \n")
+        self.mdout.write(" ")
         self.mdout.write("$\chi_{0}^2$ = " + str(round(self.report0["Global chi2"], 4)) + "  \n")
+        self.mdout.write(" ")
         self.mdout.write("$\chi_{mean}^2$ = " + str(round(self.report_mean["Global chi2"], 4)) + "  \n")
+        self.mdout.write(" ")
         self.mdout.write(r"$\langle\chi^2\rangle \pm \sigma_{\chi^2}$ = " + str(round(np.mean(self.chi2s), 4)) + " $\pm$ " + str(round(np.std(self.chi2s), 4)) + "  \n")
+        self.mdout.write(" ")
         self.mdout.write(r"$\langle E \rangle \pm \sigma_{E}$ = " + str(round(np.mean(self.Efcns), 4)) + " $\pm$ " + str(round(np.std(self.Efcns), 4)) + "  \n")
         self.mdout.write("\n")
 
@@ -206,21 +210,21 @@ class fitresults:
             ntot += len(e["qT"])
 
         # Central replica
-        self.mdout.write("Central-replica $\chi^2$'s:\n")
+        self.mdout.write("Table: Central-replica $\chi^2$'s:\n")
         par = [(e["Name"], len(e["qT"]), round(e["partial chi2"] - e["penalty chi2"], 4), round(e["penalty chi2"], 4), round(e["partial chi2"], 4))
                 for e in self.report0["Experiments"]]
         par.append(("Total", ntot, "-", "-", round(self.report0["Global chi2"], 4)))
         writemarkdown.table(self.mdout, par, headings)
 
         # Mean replica
-        self.mdout.write("Mean-replica $\chi^2$'s:\n")
+        self.mdout.write("Table: Mean-replica $\chi^2$'s:\n")
         par = [(e["Name"], len(e["qT"]), round(e["partial chi2"] - e["penalty chi2"], 4), round(e["penalty chi2"], 4), round(e["partial chi2"], 4))
                 for e in self.report_mean["Experiments"]]
         par.append(("Total", ntot, "-", "-", round(self.report_mean["Global chi2"], 4)))
         writemarkdown.table(self.mdout, par, headings)
 
         # Average over replicas
-        self.mdout.write("Average-over-replicas $\chi^2$'s:\n")
+        self.mdout.write("Table: Average-over-replicas $\chi^2$'s:\n")
         par = []
         for e in self.report0["Experiments"]:
             c2 = []

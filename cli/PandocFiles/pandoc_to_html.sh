@@ -8,4 +8,5 @@ pandoc "$1" \
     --highlight-style=tango.theme \
     --metadata pagetitle="Report" \
     -s \
+    --self-contained \
     -o "$2"
