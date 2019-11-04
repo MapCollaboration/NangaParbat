@@ -399,7 +399,7 @@ elif answer["Host"] == "Slurm":
     f.write("#SBATCH --job-name=NPtables\n")
     f.write("#SBATCH --output=output.txt\n")
     f.write("#SBATCH --array=0-" + str(len(selds)-1) + "\n")
-    f.write("#SBATCH --partition=12hr\n")
+    f.write("#SBATCH --partition=1day\n")
     f.write("\n")
     f.write("DS=( ")
     for s in selds:

@@ -8,6 +8,7 @@
 #include "NangaParbat/PV17.h"
 #include "NangaParbat/PV19.h"
 #include "NangaParbat/PV19b.h"
+#include "NangaParbat/PV19x.h"
 #include "NangaParbat/QGG6.h"
 #include "NangaParbat/QGG13.h"
 
@@ -26,6 +27,7 @@ namespace NangaParbat
     {"PV17",  new NangaParbat::PV17{}},
     {"PV19",  new NangaParbat::PV19{}},
     {"PV19b", new NangaParbat::PV19b{}},
+    {"PV19x", new NangaParbat::PV19x{}},
     {"QGG6",  new NangaParbat::QGG6{}},
     {"QGG13", new NangaParbat::QGG13{}}
   };
