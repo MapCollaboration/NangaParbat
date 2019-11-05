@@ -61,8 +61,8 @@ namespace NangaParbat
       std::string formula;
       formula  = R"delimiter($$f_{\rm NP}(x,\zeta, b_T)= \Biggl(
 \frac{1-\lambda}{1 + g_1(x) b_T^2/4} + \lambda \exp \left(-g_{1B}(x) b_T^2 / 4 \right)\Biggr) \exp\left[- g_2 \log\left(\frac{\zeta}{Q_0^2}\right) b_T^2/4 - g_{2B} \log\left(\frac{\zeta}{Q_0^2}\right) b_T^4/4 \right]$$)delimiter";
-      formula += R"delimiter($$g_1(x) = \frac{N_1}{x\sigma} \exp\left[ - \frac{\ln^2\left({x}{\alpha}\right)}{2 \sigma^2} \right]$$)delimiter";
-      formula += R"delimiter($$g_{1B}(x) = \frac{N_{1B}}{x\sigma_B} \exp\left[ - \frac{\ln^2\left({x}{\alpha_B}\right)}{2 \sigma_B^2} \right]$$)delimiter";
+      formula += R"delimiter($$g_1(x) = \frac{N_1}{x\sigma} \exp\left[ - \frac{\ln^2\left(\frac{x}{\alpha}\right)}{2 \sigma^2} \right]$$)delimiter";
+      formula += R"delimiter($$g_{1B}(x) = \frac{N_{1B}}{x\sigma_B} \exp\left[ - \frac{\ln^2\left(\frac{x}{\alpha_B}\right)}{2 \sigma_B^2} \right]$$)delimiter";
       formula += R"delimiter($$Q_0^2 = 1\;{\rm GeV}^2$$)delimiter";
       return formula;
     };
