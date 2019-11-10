@@ -113,10 +113,11 @@ namespace NangaParbat
      * Functions to retrieve the feauture of the convolution table
      */
     ///@{
-    std::string                      GetName()    const { return _name; }
-    int                              GetProcess() const { return _proc; }
-    double                           GetCME()     const { return _Vs; }
-    std::vector<std::vector<double>> GetqTBins()  const { return _qTmap; }
+    std::string                      GetName()       const { return _name; }
+    int                              GetProcess()    const { return _proc; }
+    double                           GetCME()        const { return _Vs; }
+    std::vector<std::vector<double>> GetqTBins()     const { return _qTmap; }
+    double                           GetCutqToverQ() const { return _qToQmax; }
     ///@}
 
     /**

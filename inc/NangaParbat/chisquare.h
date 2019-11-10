@@ -28,7 +28,7 @@ namespace NangaParbat
      * @param NPFunc: "Parameterisation" object containing the
      * non-perturbative function(s)
      */
-    ChiSquare(std::vector<std::pair<DataHandler, ConvolutionTable>> const& DSVect, Parameterisation& NPFunc, double const& qToQMax = 100);
+    ChiSquare(std::vector<std::pair<DataHandler, ConvolutionTable>> const& DSVect, Parameterisation& NPFunc);
 
     /**
      * @brief The default "ChiSquare" constructor.
@@ -36,7 +36,7 @@ namespace NangaParbat
      * @param NPFunc: "Parameterisation" object containing the
      * non-perturbative function(s)
      */
-    ChiSquare(Parameterisation& NPFunc, double const& qToQMax = 100);
+    ChiSquare(Parameterisation& NPFunc);
 
     /**
      * @brief Add ("DataHandler","ConvolutionTable") pair block to the
@@ -129,12 +129,6 @@ namespace NangaParbat
     Parameterisation& GetNonPerturbativeFunction() const { return _NPFunc; };
 
     /**
-     * @brief Function that returns value of the cut in qT / Q.
-     * @return The cut in qT / Q
-     */
-    double GetCutqToverQ() const { return _qToQMax; };
-
-    /**
      * @brief Function that gets the number of data points that pass
      * the qT / Q cut for each data set in the form of a vector of
      * integers.
@@ -184,7 +178,6 @@ namespace NangaParbat
   protected:
     std::vector<std::pair<DataHandler, ConvolutionTable>> _DSVect;  //!< Vector of "DataHandler-ConvolutionTable" pairs
     Parameterisation&                                     _NPFunc;  //!< Parameterisation of the non-perturbative component
-    double                                                _qToQMax; //!< Max value of the ratio qT / Q allowed in the computation of the &chi;<SUP>2</SUP>
     std::vector<int>                                      _ndata;   //!< Vector constaining the number of data points per dataset that pass the qT/Q cut
 
     friend YAML::Emitter& operator << (YAML::Emitter& os, ChiSquare const& chi2);

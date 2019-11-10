@@ -20,10 +20,10 @@ int main()
   const NangaParbat::DataHandler DHand{"CDF_Run_I", YAML::LoadFile("../data/TestData/Table1.yaml")};
 
   // Convolution table
-  const NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/Test_data.yaml")};
+  const NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/Test_data.yaml"), 0.1};
 
   // Define "ChiSquare" object
-  NangaParbat::ChiSquare chi2{NPFunc, 0.1};
+  NangaParbat::ChiSquare chi2{NPFunc};
 
   // Append dataset to the chi2 object
   chi2.AddBlock(std::make_pair(DHand, CTable));

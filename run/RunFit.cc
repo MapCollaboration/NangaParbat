@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
   mkdir((OutputFolder).c_str(), ACCESSPERMS);
 
   // Define "ChiSquare" object with a given qT / Q cut
-  NangaParbat::ChiSquare chi2{*NPFunc, fitconfig["qToQmax"].as<double>()};
+  NangaParbat::ChiSquare chi2{*NPFunc};
 
   // Set parameters for the t0 predictions using "t0parameters" in the
   // configuration card only if the the t0 has been enabled and the

@@ -21,9 +21,8 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  ChiSquare::ChiSquare(std::vector<std::pair<DataHandler, ConvolutionTable>> const& DSVect, Parameterisation& NPFunc, double const& qToQMax):
-    _NPFunc(NPFunc),
-    _qToQMax(qToQMax)
+  ChiSquare::ChiSquare(std::vector<std::pair<DataHandler, ConvolutionTable>> const& DSVect, Parameterisation& NPFunc):
+    _NPFunc(NPFunc)
   {
     // The input parameterisation has to contain 2 functions, othewise
     // stop the code.
@@ -37,8 +36,8 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  ChiSquare::ChiSquare(Parameterisation& NPFunc, double const& qToQMax):
-    ChiSquare{{}, NPFunc, qToQMax}
+  ChiSquare::ChiSquare(Parameterisation& NPFunc):
+    ChiSquare{{}, NPFunc}
   {
   }
 
@@ -49,15 +48,16 @@ namespace NangaParbat
     _DSVect.push_back(DSBlock);
 
     // Determine number of data points that pass the cut qT / Q.
-    const DataHandler::Kinematics kin  = DSBlock.first.GetKinematics();
-    const std::vector<double>     qTv  = kin.qTv;
-    const double                  Qmin = (kin.Intv1 ? kin.var1b.first : ( kin.var1b.first + kin.var1b.second ) / 2);
+    const DataHandler::Kinematics kin     = DSBlock.first.GetKinematics();
+    const double                  qToQMax = DSBlock.second.GetCutqToverQ();
+    const std::vector<double>     qTv     = kin.qTv;
+    const double                  Qmin    = (kin.Intv1 ? kin.var1b.first : ( kin.var1b.first + kin.var1b.second ) / 2);
 
     // Run over the qTv vector, count how many data points pass
     // the cut and push the number into the "_ndata" vector.
     int idata = 0;
     for (auto const& qT : qTv)
-      if (qT / Qmin < _qToQMax)
+      if (qT / Qmin < qToQMax)
         idata++;
     _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
   };
