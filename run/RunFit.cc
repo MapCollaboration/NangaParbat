@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 
         // Convolution table
         const std::string table = std::string(argv[4]) + "/" + ds["name"].as<std::string>() + ".yaml";
-        const NangaParbat::ConvolutionTable ct{YAML::LoadFile(table)};
+        const NangaParbat::ConvolutionTable ct{YAML::LoadFile(table), fitconfig["qToQmax"].as<double>()};
         //ct.NumericalAccuracy(NPFunc->Function());
 
         // Datafile

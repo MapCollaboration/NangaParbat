@@ -16,7 +16,7 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  ConvolutionTable::ConvolutionTable(YAML::Node const& table, double const& acc):
+  ConvolutionTable::ConvolutionTable(YAML::Node const& table, double const& qToQmax, double const& acc):
     _name(table["name"].as<std::string>()),
     _proc(table["process"].as<int>()),
     _Vs(table["CME"].as<double>()),
@@ -28,6 +28,7 @@ namespace NangaParbat
     _z(table["Ogata_coordinates"].as<std::vector<double>>()),
     _Qg(table["Qgrid"].as<std::vector<double>>()),
     _xig(table["xigrid"].as<std::vector<double>>()),
+    _qToQmax(qToQmax),
     _acc(acc)
   {
     // Read the phase-space reduction factors...
@@ -44,8 +45,8 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  ConvolutionTable::ConvolutionTable(std::string const& infile, double const& acc):
-    ConvolutionTable(YAML::LoadFile(infile), acc)
+  ConvolutionTable::ConvolutionTable(std::string const& infile, double const& qToQmax, double const& acc):
+    ConvolutionTable(YAML::LoadFile(infile), qToQmax, acc)
   {
   }
 
@@ -57,6 +58,12 @@ namespace NangaParbat
     std::map<double, double> pred;
     for (int iqT = 0; iqT < (int) _qTv.size(); iqT++)
       {
+        if (_qTv[iqT] / _Qg.front() > _qToQmax)
+          {
+            pred.insert({_qTv[iqT],  0});
+            pred.insert({-_qTv[iqT], 0});
+            continue;
+          }
         const auto wgt  = _W.at(_qTv[iqT]);
         const auto psf  = _PSRed.at(_qTv[iqT]);
         const auto dpsf = _dPSRed.at(_qTv[iqT]);

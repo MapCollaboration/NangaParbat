@@ -3,7 +3,6 @@
 //
 
 #include "NangaParbat/fastinterface.h"
-#include "NangaParbat/convolutiontable.h"
 #include "NangaParbat/bstar.h"
 #include "NangaParbat/nonpertfunctions.h"
 

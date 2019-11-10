@@ -24,21 +24,23 @@ namespace NangaParbat
      * @brief The "ConvolutionTable" constructor.
      * @param table: the YAML:Node with the interpolation table
      * @param acc: the Ogata-quadrature required accuracy (default: 10<SUP>-7</SUP>)
+     * @param qToQmax: maximum value allowed for the ratio qT /Q (default: 100)
      * @note The accuracy has to be intended as the best accuracy over
      * the tabulated Ogata-quadrature points. This accuracy may not be
      * met withing the tabulated points.
      */
-    ConvolutionTable(YAML::Node const& table, double const& acc = 1e-7);
+    ConvolutionTable(YAML::Node const& table, double const& qToQmax = 100, double const& acc = 1e-7);
 
     /**
      * @brief The "ConvolutionTable" constructor.
      * @param infile: the name of interpolation table in YAML format
      * @param acc: the Ogata-quadrature required accuracy (default: 10<SUP>-7</SUP>)
+     * @param qToQmax: maximum value allowed for the ratio qT /Q (default: 100)
      * @note The accuracy has to be intended as the best accuracy over
      * the tabulated Ogata-quadrature points. This accuracy may not be
      * met withing the tabulated points.
      */
-    ConvolutionTable(std::string const& infile, double const& acc = 1e-7);
+    ConvolutionTable(std::string const& infile, double const& qToQmax = 100, double const& acc = 1e-7);
 
     /**
      * @brief This function convolutes the input convolution table with
@@ -148,6 +150,7 @@ namespace NangaParbat
     std::map<double,std::vector<std::vector<double>>>              _PSRed;   //!< The phase-space reduction factors
     std::map<double,std::vector<std::vector<double>>>              _dPSRed;  //!< The derivative of the phase-space reduction factors
     std::map<double,std::vector<std::vector<std::vector<double>>>> _W;       //!< The weights
+    double                                                         _qToQmax; //!< Maximum value allowed for the ratio qT / Q
     double                                                         _acc;     //!< The Ogata-quadrature accuracy
   };
 }
