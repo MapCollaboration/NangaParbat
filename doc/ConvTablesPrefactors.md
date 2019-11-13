@@ -12,8 +12,6 @@ it is necessary to add the prefactor (1/σ<sub>fid</sub>) in the header of the t
 | ``NNLLp`` |  nnlo |
 | ``N3LL``  |  nnlo|
 
-# Convolution tables and their prefactors
-
 The convolution tables are computed with ``NangaParbat/run/CreateTables.cc`` using the configuration file ``config.yaml`` present in each subfolder of ``NangaParbat/tables/``.
 
 Once computed, the tables for the experiments whose observable is the normalized cross section need their prefactor (1/σ<sub>fid</sub>) (computed with ``DY@NNLO`` at the appropriate order) to be included. These prefactors are stored in the file ``FiducialCrossSections.yaml`` present in each subfolder of ``NangaParbat/tables/`` and included in the relevant tables through the script. This operation has alredy been done in the tables released with the code.
