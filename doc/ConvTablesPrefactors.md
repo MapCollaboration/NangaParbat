@@ -1,10 +1,8 @@
-``NangaParbat/doc``
-
 # Convolution tables and their prefactors
 
-This note reports how the convolution tables currently (september 2019) used in NangaParbat are produced and gathers some information about them.
+This note reports how the convolution tables used in NangaParbat are produced and gathers some information about them.
 
-In ``NangaParbat/tables`` there are six folders, one for each "*level*" of perturbative precision that we can reach. Here there is a summary:
+In ``NangaParbat/tables`` there are six folders, one for each perturbative order currently available. In the following there is a summary of some relevant parameters used for the computation:
 
 |  | PDFs used| order|
 | --- | --- | :---: |
@@ -17,7 +15,7 @@ In ``NangaParbat/tables`` there are six folders, one for each "*level*" of pertu
 
 For some experiments, for which the observable is
 $$\frac{1}{\sigma_{\rm fid}}\frac{d\sigma}{dq_T}$$
-it is necessary to add the prefactor  $\frac{1}{\sigma_{\rm fid}}$ in the header of the tables. The prefactor are calculated with ``DY@NNLO`` used at the order specified in the table:
+it is necessary to add the prefactor  $\frac{1}{\sigma_{\rm fid}}$ in the header of the tables. The prefactors correspond to the inverse of the total cross section (integrated in qT) and are calculated with ``DY@NNLO`` at the order specified in the table:
 
 | table | ``DY@NNLO`` at |
 | --- | :---: |
