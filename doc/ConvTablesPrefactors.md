@@ -1,19 +1,6 @@
 # Convolution tables and their prefactors
 
-This note reports how the convolution tables used in NangaParbat are produced and gathers some information about them.
-
-In ``NangaParbat/tables`` there are six folders, one for each perturbative order currently available. In the following there is a summary of some relevant parameters used for the computation:
-
-|  | PDFs used| order|
-| --- | --- | :---: |
-| ``LL``   |  ``MMHT2014lo68cl `` |  0 |
-| ``NLL``   |  ``MMHT2014lo68cl``  |  1|
-| ``NLL'``  |  ``MMHT2014nlo68cl`` |  -1|
-| ``NNLL``  |  ``MMHT2014nlo68cl`` |  2|
-| ``NNLL'`` |  ``MMHT2014nnlo68cl`` |  -2|
-| ``N3LL``  |  ``MMHT2014nnlo68cl``|  3|
-
-For some experiments, for which the observable is (1/σ<sub>fid</sub>)(dσ/d*q*<sub>T</sub>)<sub>fid</sub>
+This note reports how the convolution tables for normalised cross sections used in NangaParbat are produced. In ``NangaParbat/tables`` there are six folders, one for each perturbative order currently available. For some experiments, for which the observable is (1/σ<sub>fid</sub>)(dσ/d*q*<sub>T</sub>)<sub>fid</sub>,
 it is necessary to add the prefactor (1/σ<sub>fid</sub>) in the header of the tables. The fiducial total cross section σ<sub>fid</sub> is calculated with ``DY@NNLO`` at the order specified in the table below:
 
 | table | ``DY@NNLO`` at |
@@ -24,10 +11,6 @@ it is necessary to add the prefactor (1/σ<sub>fid</sub>) in the header of the t
 | ``NNLL``  |  nlo |
 | ``NNLLp`` |  nnlo |
 | ``N3LL``  |  nnlo|
-
-Details and more information on the tables and how their prefactors are calculated follow in the sections below.
-
-At the end of the notes an appendix with the details about ``DY@NNLO`` and how the fiducial cross sections were produced is also provided.
 
 # Convolution tables and their prefactors
 
