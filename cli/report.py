@@ -1,4 +1,5 @@
 import os
+import sys
 
 from PyInquirer import prompt
 from examples import custom_style_3
@@ -65,7 +66,7 @@ for rf in os.listdir(outfolder):
     try:
         with open(outfolder + "/" + rf + "/Report.yaml", "r") as rep:
             report = yaml.load(rep, Loader = yaml.RoundTripLoader)
-            if (int(report["Status"]) == 0) or (str(report["Global chi2"]) == "nan"):
+            if (int(report["Status"]) == 0) or (str(report["Global chi2"])[-2:] == "an"):
                 print("- " + rf + " did not converge.")
                 print(bcolours.WARNING + "  chi2 = " + str(report["Global chi2"]) + bcolours.ENDC)
                 continue
