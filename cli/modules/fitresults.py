@@ -224,25 +224,19 @@ class fitresults:
         writemarkdown.table(self.mdout, par, headings)
 
         # Average over replicas
+        headings = ["Experiment", "Number of points", "$\chi^2$"]
         self.mdout.write("Table: Average-over-replicas $\chi^2$'s:\n")
         par = []
         for e in self.report0["Experiments"]:
             c2 = []
-            c2p = []
-            c2d = []
             for r in self.reports:
                 # Select experiment
                 for exp in r["Experiments"]:
                     if exp["Name"] == e["Name"]:
                         break
                 c2.append(exp["partial chi2"])
-                c2p.append(exp["penalty chi2"])
-                c2d.append(exp["partial chi2"] - exp["penalty chi2"])
-            par.append((e["Name"], len(e["qT"]),
-                        str(round(np.mean(c2d), 4)) + " $\pm$ " + str(round(np.std(c2d), 4)),
-                        str(round(np.mean(c2p), 4)) + " $\pm$ " + str(round(np.std(c2p), 4)),
-                        str(round(np.mean(c2),  4)) + " $\pm$ " + str(round(np.std(c2),  4))))
-        par.append(("Total", ntot, "-", "-", str(round(np.mean(self.chi2s), 4)) + " $\pm$ " + str(round(np.std(self.chi2s),  4))))
+            par.append((e["Name"], len(e["qT"]), str(round(np.mean(c2),  4)) + " $\pm$ " + str(round(np.std(c2),  4))))
+        par.append(("Total", ntot, str(round(np.mean(self.chi2s), 4)) + " $\pm$ " + str(round(np.std(self.chi2s),  4))))
         writemarkdown.table(self.mdout, par, headings)
 
 

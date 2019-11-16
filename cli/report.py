@@ -55,7 +55,7 @@ with open(outfolder + "/tables/config.yaml", "r") as tc:
 
 # Now run "RunFit" to generate the central replica
 print(bcolours.ACTREPORT + "Generating mean replica...\n" + bcolours.ENDC)
-os.system(CliFolder + "/../run/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables 0 n y")
+os.system(CliFolder + "/../run/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables 0 y")
 
 print(bcolours.ACTREPORT + "\nSelecting usable replicas..." + bcolours.ENDC)
 
