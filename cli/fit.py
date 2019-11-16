@@ -218,7 +218,7 @@ questions = [
         "type": "confirm",
         "name": "Paramfluct",
         "message": "Do you want to fluctuate the initial parameters?",
-        "default": False
+        "default": fitcfg["Paramfluct"]
     }
 ]
 
@@ -348,7 +348,7 @@ answer = prompt(questions, style = custom_style_3)
 print(bcolours.OKBLUE + "\nLaunching the fits...\n" + bcolours.ENDC)
 if answer["Host"] == "Locally":
     for i in range(int(answer["Number of replicas"]) + 1):
-        os.system(RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables " + str(i) + " " + Paramfluct + " n")
+        os.system(RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables " + str(i) + " n")
 elif answer["Host"] == "Slurm":
     f = open(outfolder + "/submit_fit.sh", "w+")
     f.write("#!/bin/bash\n")
@@ -358,7 +358,7 @@ elif answer["Host"] == "Slurm":
     f.write("#SBATCH --array=0-" + answer["Number of replicas"] + "\n")
     f.write("#SBATCH --partition=12hr\n")
     f.write("\n")
-    f.write("srun " + RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables $SLURM_ARRAY_TASK_ID " + Paramfluct + " n\n")
+    f.write("srun " + RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables $SLURM_ARRAY_TASK_ID n\n")
     f.close()
     os.system("sbatch " + outfolder + "/submit_fit.sh")
 

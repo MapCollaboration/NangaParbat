@@ -17,10 +17,10 @@
 int main(int argc, char* argv[])
 {
   // Check that the input is correct otherwise stop the code
-  if (argc < 8 || strcmp(argv[1], "--help") == 0)
+  if (argc < 7 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./RunFit <output dir> <fit configuration file> <path to data folder> <path to tables folder> <replica ID> <fluctuate initial parameters? [y/n] <calculate mean replica? [y/n]>\n" << std::endl;
+      std::cout << "Syntax: ./RunFit <output dir> <fit configuration file> <path to data folder> <path to tables folder> <replica ID> <calculate mean replica? [y/n]>\n" << std::endl;
       exit(-10);
     }
 
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
   const YAML::Node fitconfig = YAML::LoadFile(argv[2]);
 
   // Allocate "Parameterisation" derived object
-  const bool mr = std::string(argv[7]) == "y";
+  const bool mr = std::string(argv[6]) == "y";
   NangaParbat::Parameterisation *NPFunc = (mr ? new NangaParbat::MeanReplica{std::string(argv[1]), std::string(argv[2])} :
                                            NangaParbat::GetParametersation(fitconfig["Parameterisation"].as<std::string>()));
 
@@ -80,19 +80,15 @@ int main(int argc, char* argv[])
   // Report time elapsed
   t.stop();
 
-  // Fluctuate parameters, if required, only for replicas different
-  // from zero.
-  const bool fulctpar = (ReplicaID == 0 ? false : std::strncmp(argv[6], "y", 1) == 0);
-
   // Minimise the chi2 using the minimiser indicated in the input card
   t.start();
   bool status;
   if (fitconfig["Minimiser"].as<std::string>() == "none" || mr)
     status = NoMinimiser(chi2, fitconfig["Parameters"]);
   else if (fitconfig["Minimiser"].as<std::string>() == "minuit")
-    status = MinuitMinimiser(chi2, fitconfig["Parameters"], (fulctpar ? rng : NULL));
+    status = MinuitMinimiser(chi2, fitconfig["Parameters"], (fitconfig["Paramfluct"].as<bool>() ? rng : NULL));
   else if (fitconfig["Minimiser"].as<std::string>() == "ceres")
-    status = CeresMinimiser(chi2, fitconfig["Parameters"], (fulctpar ? rng : NULL));
+    status = CeresMinimiser(chi2, fitconfig["Parameters"], (fitconfig["Paramfluct"].as<bool>() ? rng : NULL));
   else if (fitconfig["Minimiser"].as<std::string>() == "scan")
     status = MinuitScan(chi2, fitconfig["Parameters"], std::string(argv[1]));
   else
