@@ -29,7 +29,7 @@ namespace NangaParbat
       if (x >= 1)
         return 0;
 
-      // Free paraMeters
+      // Free parameters
       const double g2     = this->_pars[0];
       const double N1     = this->_pars[1];
       const double alpha  = this->_pars[2];
@@ -48,12 +48,95 @@ namespace NangaParbat
       const double b2 = b * b;
 
       // zeta-dependent bit (i.e. non perturbative evolution)
+      const double NPevol = exp( - ( g2 + g2B * b2 ) * b2 * log(zeta / _Q02) / 4 );
+
+      return ( ( 1 - lambda ) / ( 1 + g1 / 4 * b2 ) + lambda * exp( - g1B / 4 * b2 ) ) * NPevol;
+    };
+
+    double Derive(double const& x, double const& b, double const& zeta, int const& ifunc, int const& ipar) const
+    {
+      // Free parameters
+      const double g2     = this->_pars[0];
+      const double N1     = this->_pars[1];
+      const double alpha  = this->_pars[2];
+      const double sigma  = this->_pars[3];
+      const double lambda = this->_pars[4];
+      const double N1B    = this->_pars[5];
+      const double alphaB = this->_pars[6];
+      const double sigmaB = this->_pars[7];
+      const double g2B    = this->_pars[8];
+
+      // x-dependent bits
+      const double lnx  = log(x / alpha);
+      const double lnxB = log(x / alphaB);
+      const double g1   = N1  * exp( - pow(lnx,  2) / 2 / pow(sigma, 2)  ) / x / sigma;
+      const double g1B  = N1B * exp( - pow(lnxB, 2) / 2 / pow(sigmaB, 2) ) / x / sigmaB;
+
+      // bT-dependent bits
+      const double b2 = b * b;
+
+      // zeta-dependent bit (i.e. non perturbative evolution)
       const double lnz    = log(zeta / _Q02);
       const double NPevol = exp( - ( g2 + g2B * b2 ) * b2 * lnz / 4 );
 
-      return
-        ( ( 1 - lambda ) / ( 1 + g1 / 4  * b2 ) + lambda * exp( - g1B / 4  * b2 ) )
-        * NPevol;
+      // Derivative
+      double der = 0;
+
+      // Derivative w.r.t. "g2"
+      if (ipar == 0)
+        {
+          const double fNP = ( ( 1 - lambda ) / ( 1 + g1 / 4 * b2 ) + lambda * exp( - g1B / 4 * b2 ) ) * NPevol;
+          der = - lnz * b2 * fNP / 4;
+        }
+      // Derivative w.r.t. "N1"
+      else if (ipar == 1)
+        {
+          const double dfNbdg1 = - b2 * ( 1 - lambda ) / pow(1 + g1 / 4 * b2, 2) * NPevol / 4;
+          der = g1 / N1 * dfNbdg1;
+        }
+      // Derivative w.r.t. "alpha"
+      else if (ipar == 2)
+        {
+          const double dfNbdg1 = - b2 * ( 1 - lambda ) / pow(1 + g1 / 4 * b2, 2) * NPevol / 4;
+          der = lnx * g1 * dfNbdg1  / alpha / pow(sigma, 2);
+        }
+      // Derivative w.r.t. "sigma"
+      else if (ipar == 3)
+        {
+          const double dfNbdg1 = - b2 * ( 1 - lambda ) / pow(1 + g1 / 4 * b2, 2) * NPevol / 4;
+          der = ( pow(lnx, 2) - pow(sigma, 2) ) * g1 * dfNbdg1 / pow(sigma, 3);
+        }
+      // Derivative w.r.t. "lambda"
+      else if (ipar == 4)
+        {
+          der = ( - 1 / ( 1 + g1 / 4 * b2 ) + exp( - g1B / 4 * b2 ) ) * NPevol;
+        }
+      // Derivative w.r.t. "N1B"
+      else if (ipar == 5)
+        {
+          const double dfNbdg1B = - b2 * lambda * exp( - g1B / 4 * b2 ) * NPevol / 4;
+          der = g1B / N1B * dfNbdg1B;
+        }
+      // Derivative w.r.t. "alphaB"
+      else if (ipar == 6)
+        {
+          const double dfNbdg1B = - b2 * lambda * exp( - g1B / 4 * b2 ) * NPevol / 4;
+          der = lnxB * g1B * dfNbdg1B  / alphaB / pow(sigmaB, 2);
+        }
+      // Derivative w.r.t. "sigmaB"
+      else if (ipar == 7)
+        {
+          const double dfNbdg1B = - b2 * lambda * exp( - g1B / 4 * b2 ) * NPevol / 4;
+          der = (pow(lnxB, 2) - pow(sigmaB, 2) ) * g1B * dfNbdg1B / pow(sigmaB, 3);
+        }
+      // Derivative w.r.t. "g2B"
+      else if (ipar == 8)
+        {
+          const double fNP = ( ( 1 - lambda ) / ( 1 + g1 / 4 * b2 ) + lambda * exp( - g1B / 4 * b2 ) ) * NPevol;
+          der = - lnz * b2 * b2 * fNP / 4;
+        }
+
+      return der;
     };
 
     std::string LatexFormula() const

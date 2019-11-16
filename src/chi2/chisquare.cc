@@ -69,8 +69,8 @@ namespace NangaParbat
       throw std::runtime_error("[ChiSquare::GetResiduals]: index out of range");
 
     // Get "DataHandler" and "ConvolutionTable" objects
-    const DataHandler      dh = _DSVect[ids].first;
-    const ConvolutionTable ct = _DSVect[ids].second;
+    const DataHandler      &dh = _DSVect[ids].first;
+    const ConvolutionTable &ct = _DSVect[ids].second;
 
     // Get experimental values
     std::vector<double> mean;
@@ -104,8 +104,8 @@ namespace NangaParbat
       throw std::runtime_error("[ChiSquare::GetResidualDerivatives]: index out of range");
 
     // Get "DataHandler" and "ConvolutionTable" objects
-    const DataHandler      dh = _DSVect[ids].first;
-    const ConvolutionTable ct = _DSVect[ids].second;
+    const DataHandler      &dh = _DSVect[ids].first;
+    const ConvolutionTable &ct = _DSVect[ids].second;
 
     // Get (fluctuated) experimental central values
     const std::vector<double> mean = dh.GetFluctutatedData();
@@ -139,8 +139,8 @@ namespace NangaParbat
     const int nd = _ndata[ids];
 
     // Get "DataHandler" and "ConvolutionTable" objects
-    const DataHandler      dh = _DSVect[ids].first;
-    const ConvolutionTable ct = _DSVect[ids].second;
+    const DataHandler      &dh = _DSVect[ids].first;
+    const ConvolutionTable &ct = _DSVect[ids].second;
 
     // Get experimental central values, uncorrelated and correlated
     // uncertainties. Rescale the multiplicative correlation if the t0
@@ -293,8 +293,8 @@ namespace NangaParbat
         const int nd = _ndata[i];
 
         // Get "DataHandler" and "ConvolutionTable" objects
-        const DataHandler      dh = _DSVect[i].first;
-        const ConvolutionTable ct = _DSVect[i].second;
+        const DataHandler      &dh = _DSVect[i].first;
+        const ConvolutionTable &ct = _DSVect[i].second;
 
         // Get predictions
         const std::vector<double> pred = ct.GetPredictions(_NPFunc.Function());
@@ -405,8 +405,8 @@ namespace NangaParbat
         const int nd = chi2._ndata[i];
 
         // Get "DataHandler" and "ConvolutionTable" objects
-        const DataHandler      dh = chi2._DSVect[i].first;
-        const ConvolutionTable ct = chi2._DSVect[i].second;
+        const DataHandler      &dh = chi2._DSVect[i].first;
+        const ConvolutionTable &ct = chi2._DSVect[i].second;
 
         // Get predictions
         const std::vector<double> pred = ct.GetPredictions(chi2._NPFunc.Function());

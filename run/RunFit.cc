@@ -77,12 +77,15 @@ int main(int argc, char* argv[])
         // Add chi2 block
         chi2.AddBlock(std::make_pair(dh, ct));
       }
+  // Report time elapsed
+  t.stop();
 
   // Fluctuate parameters, if required, only for replicas different
   // from zero.
   const bool fulctpar = (ReplicaID == 0 ? false : std::strncmp(argv[6], "y", 1) == 0);
 
   // Minimise the chi2 using the minimiser indicated in the input card
+  t.start();
   bool status;
   if (fitconfig["Minimiser"].as<std::string>() == "none" || mr)
     status = NoMinimiser(chi2, fitconfig["Parameters"]);
