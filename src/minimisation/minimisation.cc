@@ -213,10 +213,7 @@ namespace NangaParbat
     ROOT::Minuit2::MnUserParameters upar;
     std::vector<double> initPars;
     for (auto const p : parameters)
-      {
-        upar.Add(p["name"].as<std::string>(), p["starting_value"].as<double>(), p["step"].as<double>());
-        initPars.push_back(p["starting_value"].as<double>());
-      }
+      upar.Add(p["name"].as<std::string>(), p["starting_value"].as<double>(), p["step"].as<double>());
 
     // Define "Minuit" fcn
     NangaParbat::FcnMinuit fcn{chi2};
@@ -230,8 +227,9 @@ namespace NangaParbat
     out << YAML::Key << "Parameters scan" << YAML::Value << YAML::BeginSeq;
     for (int p = 0; p < (int) upar.Params().size(); p++)
       {
-        // Perform the scan. The number of points in the scan is 41 and the range is 2 standard deviations
-        // (= two times the step of the parameter) by default (Scan from Minuit2).
+        // Perform the scan. The number of points in the scan is 41
+        // and the range is 2 standard deviations (= two times the
+        // step of the parameter) by default (Scan from Minuit2).
         std::vector<std::pair<double,double>> points = scan.Scan(p);
 
         out << YAML::BeginMap;
@@ -247,9 +245,12 @@ namespace NangaParbat
         out << YAML::EndSeq;
         out << YAML::EndMap;
 
-        // On terminal
+        // On terminal. Notice that the 0-th entry is the minimum of
+        // the previous scan and this scan is done with the best of
+        // the previous parameter.
         for (int i = 0; i < (int) points.size(); i++)
-          std::cout << points[i].first << ", " << points[i].second << std::endl;
+          std::cout << std::scientific << i << ": " << points[i].first << ", " << points[i].second << std::endl;
+
         ROOT::Minuit2::MnPlot plot{};
         plot(points);
       }
@@ -265,8 +266,8 @@ namespace NangaParbat
     fout << out.c_str() << std::endl;
     fout.close();
 
-    // Reset the initial parameters
-    fcn.SetParameters(initPars);
+    // Set best parameters after the scan
+    fcn.SetParameters(scan.Parameters().Params());
 
     // Return status
     return true;

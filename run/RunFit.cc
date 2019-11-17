@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
   apfel::Timer t;
 
   // Reading fit  parameters from an input card
-  const YAML::Node fitconfig = YAML::LoadFile(argv[2]);
+  YAML::Node fitconfig = YAML::LoadFile(argv[2]);
 
   // Allocate "Parameterisation" derived object
   const bool mr = std::string(argv[6]) == "y";
@@ -100,14 +100,25 @@ int main(int argc, char* argv[])
   // Produce the report
   YAML::Emitter out;
   out << chi2;
-  std::ofstream fout(OutputFolder + "/Report.yaml");
-  fout << "Status: " << status << std::endl;
-  fout << out.c_str() << std::endl;
-  fout.close();
+  std::ofstream rout(OutputFolder + "/Report.yaml");
+  rout << "Status: " << status << std::endl;
+  rout << out.c_str() << std::endl;
+  rout.close();
 
-  // Produce plots
+  // Produce plots and modify fitconfig.yaml to dump into to output
+  // folder. Do it only for replica 0.
   if (ReplicaID == 0)
-    chi2.MakePlots(OutputFolder);
+    {
+      chi2.MakePlots(OutputFolder);
+      const std::vector<double> pars = chi2.GetParameters();
+      int i = 0;
+      for (auto p : fitconfig["Parameters"])
+        p["starting_value"] = pars[i++];
+      fitconfig["t0parameters"] = pars;
+      std::ofstream fout(OutputFolder + "/fitconfig.yaml");
+      fout << fitconfig;
+      fout.close();
+    }
 
   // Delete random-number generator
   gsl_rng_free(rng);
