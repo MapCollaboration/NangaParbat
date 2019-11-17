@@ -1,0 +1,57 @@
+Description: 'PV19 version x. Initial fit parameters from a previous fit with ceres
+  on replica zero. Negative g2 as stating parameters, the chi2 of replica 0 without
+  minimisation with this fitconfig file was 1.10947. '
+Minimiser: minuit
+Seed: '1234'
+qToQmax: '0.2'
+Error function cut: '4'
+t0prescription: true
+Paramfluct: true
+Parameterisation: PV19x
+Parameters:
+- starting_value: '-0.005144'
+  step: '0.006586509'
+  fix: false
+  name: g2
+- starting_value: '0.68535248'
+  step: '0.40514561'
+  fix: false
+  name: N1
+- starting_value: '0.21943481'
+  step: '0.011498155'
+  fix: false
+  name: alpha
+- starting_value: '0.3329461'
+  step: '0.060998937'
+  fix: false
+  name: sigma
+- starting_value: '0.66627605'
+  step: '0.111466055'
+  fix: false
+  name: lambda
+- starting_value: '0.0387879'
+  step: '0.011244147'
+  fix: false
+  name: N1B
+- starting_value: '0.075758463'
+  step: '0.010590214'
+  fix: false
+  name: alphaB
+- starting_value: '0.34845635'
+  step: '0.113316907'
+  fix: false
+  name: sigmaB
+- starting_value: '0.019224141'
+  step: '0.00241617'
+  fix: false
+  name: g2B
+t0parameters:
+- '-0.005144'
+- '0.68535248'
+- '0.21943481'
+- '0.3329461'
+- '0.66627605'
+- '0.0387879'
+- '0.075758463'
+- '0.34845635'
+- '0.019224141'
