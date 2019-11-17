@@ -122,6 +122,7 @@ with open(reportfile, "w+") as mdout:
     mdout.write("Maximum values allowed for $q_T / Q$: " + fitconfig["qToQmax"]            + "  \n")
     mdout.write("Cut on the error function: "            + fitconfig["Error function cut"] + "  \n")
     mdout.write("Parameterisation: "                     + fitconfig["Parameterisation"]   + "  \n")
+    mdout.write("Initial parameters fluctuations: "      + str(fitconfig["Paramfluct"])    + "  \n")
     mdout.write("Explicit formula:\n\n")
     mdout.write(report0["Non-perturbative function"] + "\n")
 

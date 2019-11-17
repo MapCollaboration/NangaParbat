@@ -1,0 +1,80 @@
+Description: PV19 version x, parameters for NNLL. Initial parameters from a previous
+  fit with ceres on replica zero. T0 parameters from the previous to previous fit.
+  Steps from minuit minimisation.
+Minimiser: minuit
+Seed: '1234'
+qToQmax: '0.2'
+Error function cut: '4'
+t0prescription: true
+Paramfluct: true
+Parameterisation: PV19x
+Parameters:
+- starting_value: '-0.09134014808054'
+  step: '0.01522675620885'
+  fix: false
+  name: g2
+- starting_value: '5.3553982'
+  step: '0.1'
+  fix: true
+  name: N1
+- starting_value: '1.080569030183'
+  step: '0.2641725848172'
+  fix: false
+  name: alpha
+- starting_value: '0.9431148901737'
+  step: '0.1252831445446'
+  fix: false
+  name: sigma
+- starting_value: '0.4912154122441'
+  step: '0.05490223587686'
+  fix: false
+  name: lambda
+- starting_value: '0.04047358370361'
+  step: '0.01442046711599'
+  fix: false
+  name: N1B
+- starting_value: '0.05239971029534'
+  step: '0.008952122028246'
+  fix: false
+  name: alphaB
+- starting_value: '0.5659656060108'
+  step: '0.09634266221467'
+  fix: false
+  name: sigmaB
+- starting_value: '0.03418882889168'
+  step: '0.005265635585157'
+  fix: false
+  name: g2B
+t0parameters:
+- '0.005144'
+- '0.68535248'
+- '0.21943481'
+- '0.3329461'
+- '0.66627605'
+- '0.0387879'
+- '0.075758463'
+- '0.34845635'
+- '0.019224141'
+
+#_________________________________
+# Parameters from (1c with t0 paramters from the previous fit, maybe N2p) :
+#
+# Status: 1
+# Minimiser: ceres
+# Global chi2: 1.6570811
+# Parameterisation: PV19x
+#_________________________________
+
+# # ext. ||   Name    ||   type  ||     Value     ||  Error +/-
+#
+#    0   ||        g2 ||  free   ||   -0.09134014808054 ||0.01522675620885
+#    1   ||        N1 ||  fixed  ||           5.3553982 ||
+#    2   ||     alpha ||  free   ||      1.080569030183 ||0.2641725848172
+#    3   ||     sigma ||  free   ||     0.9431148901737 ||0.1252831445446
+#    4   ||    lambda ||  free   ||     0.4912154122441 ||0.05490223587686
+#    5   ||       N1B ||  free   ||    0.04047358370361 ||0.01442046711599
+#    6   ||    alphaB ||  free   ||    0.05239971029534 ||0.008952122028246
+#    7   ||    sigmaB ||  free   ||     0.5659656060108 ||0.09634266221467
+#    8   ||       g2B ||  free   ||    0.03418882889168 ||0.005265635585157
+
+# Total chi2 = 1.65706
