@@ -29,7 +29,7 @@ where ```<configuration file>``` has to point a file that contains the necessary
 
 - **DirectPredictions**: this code computes direct prediction (without using interpolation tables) and is run as follows:
 ```Shell
-./DirectPredictions <configuration file> <path to data folder> <parametrisation [DWS, PV17, PV19]>
+./DirectPredictions <configuration file> <path to data folder> <parametrisation [DWS, PV17, PV19x, ...]>
 ```
 where ```<configuration file>``` has to point a file that contains the necessary information to do the calculation (*e.g.* see [config.yaml](../cards/config.yaml)), ```<path to data folder>``` is the path to the processed data files, and ```<parametrisation [DWS, PV17, PV19]>``` is the particular parameterisation to be used for the computation.
 
