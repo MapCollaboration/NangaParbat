@@ -81,8 +81,8 @@ Code documentation generated with Doxygen can be found [here](https://vbertone.g
 
 Some of our results can be found at the following links:
 
-- [N3LL fit](https://vbertone.github.io/NangaParbat/results/PV19/N3LL/index.html)
-- [NNLL' fit](https://vbertone.github.io/NangaParbat/results/PV19/NNLLp/index.html)
+- [N3LL fit](https://vbertone.github.io/NangaParbat/results/PV19/N3LL/index.html),
+- [NNLL' fit](https://vbertone.github.io/NangaParbat/results/PV19/NNLLp/index.html).
 
 The reports above have been generated using the CLI ``cli/report.py``.
 
