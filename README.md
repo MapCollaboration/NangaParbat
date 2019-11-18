@@ -65,7 +65,7 @@ and following the instructions. Any such fits relie on the dataset, the interpol
 
 Once the fit is complete (including a number of Monte Carlo replicas), it is possible to create a summary report of the fit by running ``cli/report.py``. This will create a document (in markdown and html format) that collects the main statistical features of the fit, histograms, data-theory comparison plots, and TMD plots.
 
-## Documetation
+## Documentation
 
 Some general documentation can be found at the following links:
 
@@ -77,9 +77,10 @@ Some general documentation can be found at the following links:
 
 Code documentation generated with Doxygen can be found [here](https://vbertone.github.io/NangaParbat/html/index.html).
 
-## Relevant references
+## References
 
 
-## Contact Information
+## Contacts
 
 - Valerio Bertone: valerio.bertone@cern.ch
+- Chiara Bissolotti: chiara.bissolotti01@universitadipavia.it
