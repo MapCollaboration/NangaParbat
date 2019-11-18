@@ -77,7 +77,7 @@ Some general documentation can be found at the following links:
 
 Code documentation generated with Doxygen can be found [here](https://vbertone.github.io/NangaParbat/html/index.html).
 
-## Relevant references
+## References
 
 
 ## Contact Information
