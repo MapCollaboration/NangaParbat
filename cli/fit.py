@@ -203,9 +203,9 @@ questions = [
     },
     {
         "type": "input",
-        "name": "Error function cut",
-        "message": "Enter the cut on the value of the error function (used for the report):",
-        "default": fitcfg["Error function cut"],
+        "name": "Percentile cut",
+        "message": "Enter the percentile cut [%] (used for the report):",
+        "default": fitcfg["Percentile cut"],
         "validate": FloatValidator
     },
     {
@@ -348,7 +348,7 @@ answer = prompt(questions, style = custom_style_3)
 print(bcolours.OKBLUE + "\nLaunching the fits...\n" + bcolours.ENDC)
 if answer["Host"] == "Locally":
     for i in range(int(answer["Number of replicas"]) + 1):
-        os.system(RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables " + str(i) + " n")
+        os.system(RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables " + str(i))
 elif answer["Host"] == "Slurm":
     f = open(outfolder + "/submit_fit.sh", "w+")
     f.write("#!/bin/bash\n")
@@ -358,7 +358,7 @@ elif answer["Host"] == "Slurm":
     f.write("#SBATCH --array=0-" + answer["Number of replicas"] + "\n")
     f.write("#SBATCH --partition=12hr\n")
     f.write("\n")
-    f.write("srun " + RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables $SLURM_ARRAY_TASK_ID n\n")
+    f.write("srun " + RunFolder + "/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables $SLURM_ARRAY_TASK_ID\n")
     f.close()
     os.system("sbatch " + outfolder + "/submit_fit.sh")
 
@@ -369,7 +369,6 @@ if fitconfig["Minimiser"] == "scan":
 
     # Plot
     for p in ps["Parameters scan"]:
-
         # Set title and labels
         plt.xlabel(p["name"])
         plt.ylabel("Error function")

@@ -12,6 +12,10 @@ from modules.validators import *
 import modules.banner as banner
 import modules.writemarkdown as writemarkdown
 import modules.utilities as utilities
+import warnings
+
+# Avoid mantissa warnings from the CLoader of YAML
+warnings.simplefilter("ignore", yaml.error.MantissaNoDotYAML1_1Warning)
 
 # Print banner
 print(banner.reportbanner())
@@ -53,56 +57,65 @@ with open(outfolder + "/tables/config.yaml", "r") as tc:
     config = yaml.load(tc, Loader = yaml.RoundTripLoader)
     print(bcolours.ACTREPORT + "Loading tables configuration file: '" + outfolder + "/tables/config.yaml'\n" + bcolours.ENDC)
 
-# Now run "RunFit" to generate the central replica
-print(bcolours.ACTREPORT + "Generating mean replica...\n" + bcolours.ENDC)
-os.system(CliFolder + "/../run/RunFit " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables 0 y")
+# Get report of the zero-th replica
+with open(outfolder + "/replica_0/Report.yaml", "r") as rep:
+    report0 = yaml.load(rep, Loader = yaml.CLoader)
+    if int(report0["Status"]) == 0:
+        print("- replica_0 did not converge.")
+        sys.exit()
 
 print(bcolours.ACTREPORT + "\nSelecting usable replicas..." + bcolours.ENDC)
 
-# Select replicas accordig to whether the fit has converged and the
+# Select replicas according to whether the fit has converged and the
 # global error-function value is within the cut.
 reports = []
+folders = []
 for rf in os.listdir(outfolder):
     try:
         with open(outfolder + "/" + rf + "/Report.yaml", "r") as rep:
-            report = yaml.load(rep, Loader = yaml.RoundTripLoader)
+            report = yaml.load(rep, Loader = yaml.CLoader)
             if (int(report["Status"]) == 0) or (str(report["Global chi2"])[-2:] == "an"):
                 print("- " + rf + " did not converge.")
                 print(bcolours.WARNING + "  chi2 = " + str(report["Global chi2"]) + bcolours.ENDC)
                 continue
-            if float(report["Global error function"]) > float(fitconfig["Error function cut"]):
-                print("- " + rf + " does not pass the error-function cut.")
-                print(bcolours.WARNING + "  chi2 = " + str(report["Global chi2"]) + bcolours.ENDC)
-                continue
             if rf != "replica_0" and rf != "mean_replica":
                 reports.append(report)
+                folders.append(rf.replace("replica_", ""))
     except FileNotFoundError:
         pass
     except NotADirectoryError:
         pass
 
+# Identify index of the ouliers according to the chi2, error function,
+# and parameters distributions and remove them from the list of usable replicas.
+outliers = np.array(utilities.FindOutliers([r["Global chi2"] for r in reports], float(fitconfig["Percentile cut"]), 5), dtype = int)
+outliers = np.unique(np.concatenate((outliers, np.array(utilities.FindOutliers([r["Global error function"] for r in reports], float(fitconfig["Percentile cut"]), 5), dtype = int))))
+for value in [[r["Parameters"][p] for r in reports] for p in report0["Parameters"].keys()]:
+    outliers = np.unique(np.concatenate((outliers, np.array(utilities.FindOutliers(value, float(fitconfig["Percentile cut"]), 5), dtype = int))))
+
+discard = []
+for index in sorted(outliers, reverse = True):
+    del reports[index]
+    discard.append(folders[index])
+
+print(bcolours.WARNING + "\nThe following replicas: " + str(discard) + " are outliers and will be discarded" + bcolours.ENDC)
+
 # Print the number of usable replicas
 print(bcolours.REPORT + "\n" + "The number of usable replicas is: " + bcolours.BOLD + str(len(reports)) + bcolours.ENDC)
 
-# Get report of the zero-th replica
-with open(outfolder + "/replica_0/Report.yaml", "r") as rep:
-    report0 = yaml.load(rep, Loader = yaml.RoundTripLoader)
-    if int(report0["Status"]) == 0:
-        print("- replica_0 did not converge.")
-        sys.exit()
-    if float(report0["Global error function"]) > float(fitconfig["Error function cut"]):
-        print("- replica_0 does not pass the error-function cut.")
-        sys.exit()
-
-# Print the chi2 of replica 0
-print(bcolours.REPORT + "The chi2 of the central replica is: " + bcolours.BOLD + str(report0["Global chi2"]) + bcolours.ENDC)
+# Now run "ComputeMeanReplica" to generate the central replica
+print(bcolours.ACTREPORT + "\nGenerating mean replica...\n" + bcolours.ENDC)
+os.system(CliFolder + "/../run/ComputeMeanReplica " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables " + " ".join(discard))
 
 # Get report of the mean replica
 with open(outfolder + "/mean_replica/Report.yaml", "r") as rep:
-    report_mean = yaml.load(rep, Loader = yaml.RoundTripLoader)
+    report_mean = yaml.load(rep, Loader = yaml.CLoader)
 
 # Print the chi2 of replica 0
-print(bcolours.REPORT + "The chi2 of the mean replica is: " + bcolours.BOLD + str(report_mean["Global chi2"]) + "\n " + bcolours.ENDC)
+print(bcolours.REPORT + "\nThe chi2 of the central replica is: " + bcolours.BOLD + str(report0["Global chi2"]) + bcolours.ENDC)
+
+# Print the chi2 of mean replica
+print(bcolours.REPORT + "The chi2 of the mean replica is: " + bcolours.BOLD + str(report_mean["Global chi2"]) + bcolours.ENDC)
 
 # Create folder for plot.pdf and for plot.png
 os.mkdir(reportfolder + "/plots")
@@ -116,13 +129,13 @@ with open(reportfile, "w+") as mdout:
     # Summary of the fit
     writemarkdown.mdtitle(mdout, 2, "Fit summary")
 
-    mdout.write("Description: "                          + fitconfig["Description"]        + "  \n")
-    mdout.write("Minimiser: "                            + fitconfig["Minimiser"]          + "  \n")
-    mdout.write("Random seed: "                          + fitconfig["Seed"]               + "  \n")
-    mdout.write("Maximum values allowed for $q_T / Q$: " + fitconfig["qToQmax"]            + "  \n")
-    mdout.write("Cut on the error function: "            + fitconfig["Error function cut"] + "  \n")
-    mdout.write("Parameterisation: "                     + fitconfig["Parameterisation"]   + "  \n")
-    mdout.write("Initial parameters fluctuations: "      + str(fitconfig["Paramfluct"])    + "  \n")
+    mdout.write("Description: "                          + fitconfig["Description"]      + "  \n")
+    mdout.write("Minimiser: "                            + fitconfig["Minimiser"]        + "  \n")
+    mdout.write("Random seed: "                          + fitconfig["Seed"]             + "  \n")
+    mdout.write("Maximum values allowed for $q_T / Q$: " + fitconfig["qToQmax"]          + "  \n")
+    mdout.write("Percentile cut: "                       + fitconfig["Percentile cut"]   + "  \n")
+    mdout.write("Parameterisation: "                     + fitconfig["Parameterisation"] + "  \n")
+    mdout.write("Initial parameters fluctuations: "      + str(fitconfig["Paramfluct"])  + "  \n")
     mdout.write("Explicit formula:\n\n")
     mdout.write(report0["Non-perturbative function"] + "\n")
 

@@ -22,8 +22,9 @@ namespace NangaParbat
      * @brief The "Parameterisation" constructor
      * @param InputFolder: path to the folder where the replicas are
      * @param FitConfigFile: configuration file in YAML format
+     * @param discard: vector of replicas to be discarded
      */
-    MeanReplica(std::string const& InputFolder, std::string const& FitConfigFile);
+    MeanReplica(std::string const& InputFolder, std::string const& FitConfigFile, std::vector<int> const& discard = {});
 
     /**
      * @brief The "MeanReplica" destructor

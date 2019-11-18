@@ -41,9 +41,15 @@ where ```<path to raw-data folder>``` is the path to the raw data files and ```<
 
 - **RunFit**: this code runs a fit and is run as follows:
 ```Shell
-./RunFit <output dir> <fit configuration file> <path to data folder> <path to tables folder> <replica ID> <fluctuate initial parameters? [y/n] <calculate mean replica? [y/n]>
+./RunFit <output dir> <fit configuration file> <path to data folder> <path to tables folder> <replica ID>
 ```
-where ```<output dir>``` is the output directory, ```<configuration file>``` points to the fit configuration file (*e.g.* see [fitPV17.yaml](../cards/fitPV17.yaml), ```<path to data folder>``` is the path to the data files to be fitted , ```<path to tables folder> ```is the path to the corresponding interpolation tables to be used, and ```<replica ID>``` is the replica ID number (0 correcponds to central values). The last two options are booleans: ```<fluctuate initial parameters? [y/n]``` tells the code whether or not to fluctuate the starting parameters of each replica with a gaussian noise (according to what is written in ```src/minimisation/minimisation.cc```), while ```<calculate mean replica? [y/n]>``` tells the code whether or not to calculate the mean of the predictions of all the replicas. This last option uses ```src/parameterisation/meanreplica.cc```) and in order to work properly has to be chosen after a fit has already been performed.
+where ```<output dir>``` is the output directory, ```<configuration file>``` points to the fit configuration file (*e.g.* see [fitPV17.yaml](../cards/fitPV17.yaml)), ```<path to data folder>``` is the path to the data files to be fitted , ```<path to tables folder> ```is the path to the corresponding interpolation tables to be used, and ```<replica ID>``` is the replica ID number (0 correcponds to central values).
+
+- **ComputeMeanReplica**: this code computes the mean replica, i.e. the average over some Monte Carlo replicas, and produces a report:
+```Shell
+./ComputeMeanReplica <output dir> <fit configuration file> <path to data folder> <path to tables folder> [optional replicas to be discarded]
+```
+as above, ```<output dir>``` is the output directory, ```<configuration file>``` points to the fit configuration file, ```<path to data folder>``` is the path to the data files to be fitted , and ```<path to tables folder> ```is the path to the corresponding interpolation tables to be used. In addition, it is possible to provide a list of replicas that have to be discarded when computing the average.
 
 - **PlotTMDs**: this code produces plot of TMD distributions in transverse-momentum space and is run as follows:
 ```Shell

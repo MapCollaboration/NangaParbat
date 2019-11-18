@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import modules.bcolours as bcolours
 import modules.writemarkdown as writemarkdown
-import modules.utilities as utilities
+#import modules.utilities as utilities
 
 from ruamel import yaml
 from statistics import mean
@@ -32,8 +32,8 @@ class fitresults:
         self.pdffolder    = reportfolder + "/plots/"
         self.pngfolder    = reportfolder + "/pngplots/"
         self.mdout        = mdout
-        self.chi2s        = [rep["Global chi2"] for rep in self.reports]
-        self.Efcns        = [rep["Global error function"] for rep in self.reports]
+        self.chi2s        = [r["Global chi2"] for r in self.reports]
+        self.Efcns        = [r["Global error function"] for r in self.reports]
         self.parameters   = dict(zip(self.report0["Parameters"].keys(), [[r["Parameters"][p] for r in self.reports] for p in self.report0["Parameters"].keys()]))
         self.fixed        = dict(zip(self.report0["Parameters"].keys(), [p["fix"] for p in fitconfig["Parameters"]]))
 
@@ -254,7 +254,7 @@ class fitresults:
             yaml.dump(tpars, ofile, Dumper = yaml.RoundTripDumper)
 
         # Now the code ./run/PlotsTMDs is run with the appropriate input
-        print(bcolours.ACTREPORT + "Producing TMD plots...\n" + bcolours.ENDC)
+        print(bcolours.ACTREPORT + "\nProducing TMD plots..." + bcolours.ENDC)
         os.system(self.reportfolder + "/../../run/PlotTMDs " + self.reportfolder + "/../tables/config.yaml "
                   + self.reportfolder + "/tmds.yaml " + dist + " " + str(ifl) + " " + str(Q) + " " + str(x)
                   + " " + self.reportfolder +"/Parameters.yaml")

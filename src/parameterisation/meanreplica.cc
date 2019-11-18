@@ -14,7 +14,7 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  MeanReplica::MeanReplica(std::string const& InputFolder, std::string const& FitConfigFile):
+  MeanReplica::MeanReplica(std::string const& InputFolder, std::string const& FitConfigFile, std::vector<int> const& discard):
     Parameterisation{"MeanReplica", 2}
   {
     // Open configuration file
@@ -37,10 +37,11 @@ namespace NangaParbat
     for (auto const& folder : NangaParbat::list_dir(InputFolder))
       if (folder.substr(0, 8) == "replica_" && folder != "replica_0")
         {
+          const bool dsc = (find(discard.begin(), discard.end(), std::stoi(folder.substr(folder.find_last_of("_") + 1, folder.size()))) != discard.end());
           try
             {
               const YAML::Node report = YAML::LoadFile(InputFolder + "/" + folder + "/Report.yaml");
-              if (report["Status"].as<double>() == 1 && report["Global error function"].as<double>() < fitconfig["Error function cut"].as<double>())
+              if (report["Status"].as<double>() == 1 && !dsc)
                 {
                   std::vector<double> pars;
                   for (auto const& m : _NPFunc->GetParameterNames())

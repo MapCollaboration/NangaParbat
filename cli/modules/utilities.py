@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def GetPertOrd(pertord):
     """
     Transforms the number of the perturbative order in the relative string.
@@ -42,7 +43,7 @@ def BinsAndTicks(_min, _max):
 
     _min  --- Float (or int). Minimum to plot.
     _max  --- Float (or int). Maximum to plot.
-        """
+    """
     # Get the range for the x axis
     range = _max - _min
 
@@ -88,3 +89,34 @@ def BinsAndTicks(_min, _max):
         minorticks = np.arange(start = round(startbin, 1) - 1, stop = round(_max, 1) + 1, step = 25).tolist()
 
     return nbins, majorticks, minorticks
+
+
+def FindOutliers(a, perc, n):
+    """
+    This function gets the list 'a' as an input, finds average and standard
+    deviation within a given (symmetric) percentile, and identifies the
+    index of the elements that are beyond 'n' standard deviations away
+    from the mean value.
+    """
+
+    # if the percentile is less than zero or more that 50 exit
+    if perc < 0 or perc >= 50:
+        raise ValueError("Percentile out of range")
+
+    # Transform list into a numpy array
+    a = np.array(a)
+
+    # Trim the input array removing the tails
+    b = a[(a < np.percentile(a, 100 - perc, interpolation = "nearest")) & (a > np.percentile(a, perc, interpolation = "nearest"))]
+
+    # Compute averange and standard deviation of the trimmed array
+    av = np.mean(b)
+    sd = np.std(b)
+
+    # Now collect outliers' index
+    outliers = []
+    for i in range(len(a)):
+        if a[i] < av - n * sd or a[i] > av + n * sd:
+            outliers.append(i)
+
+    return outliers

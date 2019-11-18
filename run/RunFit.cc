@@ -17,10 +17,10 @@
 int main(int argc, char* argv[])
 {
   // Check that the input is correct otherwise stop the code
-  if (argc < 7 || strcmp(argv[1], "--help") == 0)
+  if (argc < 6 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./RunFit <output dir> <fit configuration file> <path to data folder> <path to tables folder> <replica ID> <calculate mean replica? [y/n]>\n" << std::endl;
+      std::cout << "Syntax: ./RunFit <output dir> <fit configuration file> <path to data folder> <path to tables folder> <replica ID>\n" << std::endl;
       exit(-10);
     }
 
@@ -31,9 +31,7 @@ int main(int argc, char* argv[])
   YAML::Node fitconfig = YAML::LoadFile(argv[2]);
 
   // Allocate "Parameterisation" derived object
-  const bool mr = std::string(argv[6]) == "y";
-  NangaParbat::Parameterisation *NPFunc = (mr ? new NangaParbat::MeanReplica{std::string(argv[1]), std::string(argv[2])} :
-                                           NangaParbat::GetParametersation(fitconfig["Parameterisation"].as<std::string>()));
+  NangaParbat::Parameterisation *NPFunc = NangaParbat::GetParametersation(fitconfig["Parameterisation"].as<std::string>());
 
   // Initialise GSL random-number generator
   gsl_rng *rng = gsl_rng_alloc(gsl_rng_ranlxs2);
@@ -43,7 +41,7 @@ int main(int argc, char* argv[])
   const int ReplicaID = atoi(argv[5]);
 
   // Create replica folder
-  const std::string OutputFolder = (mr ? std::string(argv[1]) + "/mean_replica" : std::string(argv[1]) + "/replica_" + std::string(argv[5]));
+  const std::string OutputFolder = std::string(argv[1]) + "/replica_" + std::string(argv[5]);
   mkdir((OutputFolder).c_str(), ACCESSPERMS);
 
   // Define "ChiSquare" object with a given qT / Q cut
@@ -52,7 +50,7 @@ int main(int argc, char* argv[])
   // Set parameters for the t0 predictions using "t0parameters" in the
   // configuration card only if the the t0 has been enabled and the
   // central replica is not being computed.
-  if (fitconfig["t0prescription"].as<bool>() && !mr)
+  if (fitconfig["t0prescription"].as<bool>())
     NPFunc->SetParameters(fitconfig["t0parameters"].as<std::vector<double>>());
 
   // Open datasets.yaml file that contains the list of datasets to be
@@ -71,8 +69,8 @@ int main(int argc, char* argv[])
 
         // Datafile
         const std::string datafile = std::string(argv[3]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
-        const NangaParbat::DataHandler dh{ds["name"].as<std::string>(), YAML::LoadFile(datafile), (mr ? NULL : rng), (mr ? 0 : ReplicaID),
-                                          (fitconfig["t0prescription"].as<bool>() && !mr ? ct.GetPredictions(NPFunc->Function()) : std::vector<double>{})};
+        const NangaParbat::DataHandler dh{ds["name"].as<std::string>(), YAML::LoadFile(datafile), rng, ReplicaID,
+                                          (fitconfig["t0prescription"].as<bool>() ? ct.GetPredictions(NPFunc->Function()) : std::vector<double>{})};
 
         // Add chi2 block
         chi2.AddBlock(std::make_pair(dh, ct));
@@ -83,7 +81,7 @@ int main(int argc, char* argv[])
   // Minimise the chi2 using the minimiser indicated in the input card
   t.start();
   bool status;
-  if (fitconfig["Minimiser"].as<std::string>() == "none" || mr)
+  if (fitconfig["Minimiser"].as<std::string>() == "none")
     status = NoMinimiser(chi2, fitconfig["Parameters"]);
   else if (fitconfig["Minimiser"].as<std::string>() == "minuit")
     status = MinuitMinimiser(chi2, fitconfig["Parameters"], (fitconfig["Paramfluct"].as<bool>() ? rng : NULL));
