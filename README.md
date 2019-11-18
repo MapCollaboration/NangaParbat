@@ -24,6 +24,19 @@ If you instead want to download a specific tag:
 git tag -l
 git checkout tags/tag_name
 ```
+## Dependencies
+
+In order to install the code a number of external but relatively standard libraries are required. Here is the list:
+- [``yaml-cpp``](https://github.com/jbeder/yaml-cpp),
+- [``eigen3``](https://eigen.tuxfamily.org/dox/),
+- [``ceres-solver``](http://ceres-solver.org),
+- [``GSL``](https://www.gnu.org/software/gsl/doc/html/),
+- [``ROOT``](https://root.cern.ch) with ``Minuit2``,
+- [``LHAPDF6``](https://lhapdf.hepforge.org),
+- [``APFEL++``](https://github.com/vbertone/apfelxx).
+
+Most of these libraries can be installed through standard package managers such as [``Homerew``](https://brew.sh) on MacOS and ``apt-get`` on Linux.
+
 ## Installation 
 
 The code can be compiled using the following procedure:
