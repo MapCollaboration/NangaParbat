@@ -1,7 +1,6 @@
 import os
 import subprocess
 import re
-import matplotlib.pyplot as plt
 
 from PyInquirer import prompt, Separator
 from examples import custom_style_3
@@ -10,6 +9,7 @@ from ruamel import yaml
 import modules.banner as banner
 import modules.bcolours as bcolours
 import modules.validators as validators
+import modules.utilities as utilities
 from modules.bcolours import *
 from modules.validators import *
 
@@ -364,20 +364,4 @@ elif answer["Host"] == "Slurm":
 
 # Plot scan results
 if fitconfig["Minimiser"] == "scan":
-    with open(outfolder + "/scan/ParameterScan.yaml", "r") as stream:
-        ps = yaml.load(stream, Loader = yaml.RoundTripLoader)
-
-    # Plot
-    for p in ps["Parameters scan"]:
-        # Set title and labels
-        plt.xlabel(p["name"])
-        plt.ylabel("Error function")
-
-        # Plot the starting point separately from the points obtained whith the scan
-        plt.plot(p["parameter value"][1:], p["fcn value"][1:], label = "Scan", color = bcolours.answerblue)
-        plt.plot(p["parameter value"][0], p["fcn value"][0], label = "starting value", marker = 'o', color = bcolours.borgogna)
-        plt.legend()
-
-        # Save plot
-        plt.savefig(outfolder + "/scan/" + p["name"] + ".pdf")
-        plt.close()
+    utilities.PlotScan(outfolder + "/scan/")

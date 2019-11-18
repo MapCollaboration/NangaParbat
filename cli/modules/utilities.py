@@ -1,4 +1,7 @@
 import numpy as np
+import matplotlib.pyplot as plt
+from ruamel import yaml
+from modules.bcolours import *
 
 
 def GetPertOrd(pertord):
@@ -120,3 +123,23 @@ def FindOutliers(a, perc, n):
             outliers.append(i)
 
     return outliers
+
+
+def PlotScan(path):
+    with open(path + "/ParameterScan.yaml", "r") as stream:
+        ps = yaml.load(stream, Loader = yaml.RoundTripLoader)
+
+    # Plot
+    for p in ps["Parameters scan"]:
+        # Set title and labels
+        plt.xlabel(p["name"])
+        plt.ylabel("Error function")
+
+        # Plot the starting point separately from the points obtained whith the scan
+        plt.plot(p["parameter value"][1:], p["fcn value"][1:], label = "Scan", color = bcolours.answerblue)
+        plt.plot(p["parameter value"][0], p["fcn value"][0], label = "starting value", marker = 'o', color = bcolours.borgogna)
+        plt.legend()
+
+        # Save plot
+        plt.savefig(path + "/" + p["name"] + ".pdf")
+        plt.close()
