@@ -4,7 +4,7 @@
 # Nanga Parbat: a TMD fitting framework
 
 Nanga Parbat is a fitting framework aimed at the determination of the
-non-perturbative component of the TMD distributions.
+non-perturbative component of TMD distributions.
 
 ## Download
 
@@ -67,12 +67,12 @@ Once the fit is complete (including a number of Monte Carlo replicas), it is pos
 
 ## Documentation
 
-Some general documentation can be found at the following links:
+Some further general documentation can be found at the following links:
 
 - [command line interface](doc/CommandLineInterface.md)
+- [utilities](run/)
 - [raw data files](rawdata/)
 - [preprocessed data files](data/)
-- [utilities](run/)
 - [convolution prefactors](doc/ConvTablesPrefactors.md)
 
 Code documentation generated with Doxygen can be found [here](https://vbertone.github.io/NangaParbat/html/index.html).
