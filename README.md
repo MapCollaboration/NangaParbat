@@ -79,10 +79,12 @@ Code documentation generated with Doxygen can be found [here](https://vbertone.g
 
 ## Public results
 
-Some of our results can be found at the following links:
+The results obtained with NangaParbat for the fit of TMD PDFs to Drell-Yan data can be found at the following links:
 
-- [N3LL fit](https://vbertone.github.io/NangaParbat/results/PV19/N3LL/index.html),
-- [NNLL' fit](https://vbertone.github.io/NangaParbat/results/PV19/NNLLp/index.html).
+- fit at [N3LL](https://vbertone.github.io/NangaParbat/results/PV19/N3LL/index.html),
+- fit at [NNLL'](https://vbertone.github.io/NangaParbat/results/PV19/NNLLp/index.html),
+- fit at [NNLL](https://vbertone.github.io/NangaParbat/results/PV19/NNLL/index.html),
+- fit at [NLL'](https://vbertone.github.io/NangaParbat/results/PV19/NLLp/index.html).
 
 The reports above have been generated using the CLI ``cli/report.py``.
 
