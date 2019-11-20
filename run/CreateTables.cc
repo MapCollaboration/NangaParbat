@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
   // Dump table to file
   for (auto const& tab : Tabs)
     {
-      std::ofstream fout(std::string(argv[3]) + YAML::Load(tab.c_str())["name"].as<std::string>() + ".yaml");
+      std::ofstream fout(std::string(argv[3]) + "/" + YAML::Load(tab.c_str())["name"].as<std::string>() + ".yaml");
       fout << tab.c_str() << std::endl;
       fout.close();
     }
