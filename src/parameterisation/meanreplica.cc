@@ -10,6 +10,7 @@
 #include <sys/stat.h>
 #include <memory>
 #include <yaml-cpp/yaml.h>
+#include <algorithm>
 
 namespace NangaParbat
 {
