@@ -303,7 +303,7 @@ class fitresults:
             print("Plotting " + e["Name"] + "...")
             # Gather global information about the particular experiment
             expname    = e["Name"]
-            plottitle  = e["Plot title python"].replace("<", r"$<$").replace("Q", r"$Q$")
+            plottitle  = r"\textbf{" + e["Plot title python"].replace("<", r"$<$").replace("Q", r"$Q$") + "}"
             xlabel     = e["xlabelpy"]
             ylabel     = e["ylabelpy"]
             qT         = e["qT"]
