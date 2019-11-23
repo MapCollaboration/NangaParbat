@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import modules.bcolours as bcolours
 import modules.writemarkdown as writemarkdown
-#import modules.utilities as utilities
+import modules.MatplotlibSettings
 
 from ruamel import yaml
 from statistics import mean
@@ -89,8 +89,8 @@ class fitresults:
         ax.set_xticklabels(labels)
         ax.set_yticklabels(labels)
         cbar = fig.colorbar(im, ticks=[-1, -0.5, 0, 0.5, 1])
-        cbar.ax.set_yticklabels(["-1", "-0.5", "0", "0.5", "1"])
-        ax.set_title("Correlation matrix")
+        cbar.ax.set_yticklabels(["$-1$", "$-0.5$", "$0$", "$0.5$", "$1$"])
+        ax.set_title(r"\textbf{Correlation matrix}")
         fig.tight_layout()
         plt.savefig(self.pdffolder + "CorrelationMatrix.pdf")
         plt.savefig(self.pngfolder + "CorrelationMatrix.png")
@@ -110,16 +110,16 @@ class fitresults:
         # Global Error function histogram
         fig = plt.figure()
         ax0 = fig.add_subplot(1, 1, 1)
-        #ax0.hist(self.Efcns, bins = nbins, facecolor = bcolours.celestial, alpha = 1, label = "E")
-        ax0.hist(self.Efcns, bins = 20, facecolor = bcolours.celestial, alpha = 1, label = "E")
+        #ax0.hist(self.Efcns, bins = nbins, facecolor = bcolours.celestial, alpha = 1, label = r"$E$")
+        ax0.hist(self.Efcns, bins = 15, facecolor = bcolours.celestial, alpha = 1, label = r"$E$")
         ax0.legend()
 
         # Set ticks and labels
         #ax0.set_xticks(majorticks)
         #ax0.set_xticks(minorticks, minor = True)
-        ax0.set_xlabel("$E$")
-        ax0.set_ylabel("Counts")
-        ax0.set_title("Global error function distribution")
+        ax0.set_xlabel(r"$E$")
+        ax0.set_ylabel(r"\textbf{Counts}")
+        ax0.set_title(r"\textbf{Global error function distribution}")
 
         # Save histogram
         fig.savefig(self.pdffolder + "/GlobalErrorFunction.pdf")
@@ -140,17 +140,17 @@ class fitresults:
         # Global chi2 histogram
         fig = plt.figure()
         ax0 = fig.add_subplot(1, 1, 1)
-        #ax0.hist(self.chi2s, bins = nbins, facecolor = bcolours.tangerineyellow, alpha = 1, label = "$\chi^2$")
-        ax0.hist(self.chi2s, bins = 20, facecolor = bcolours.tangerineyellow, alpha = 1, label = "$\chi^2$")
+        #ax0.hist(self.chi2s, bins = nbins, facecolor = bcolours.tangerineyellow, alpha = 1, label = r"$\chi^2$")
+        ax0.hist(self.chi2s, bins = 15, facecolor = bcolours.tangerineyellow, alpha = 1, label = r"$\chi^2$")
         ax0.legend()
 
         # Set ticks and labels
         #ax0.set_xticks(majorticks)
         #ax0.set_xticks(minorticks, minor = True)
         # ax0.grid(which = 'both', linestyle = "dashdot")
-        ax0.set_ylabel("Counts")
-        ax0.set_xlabel("$\chi^2$")
-        ax0.set_title("Global $\chi^2$ distribution")
+        ax0.set_xlabel(r"$\chi^2$")
+        ax0.set_ylabel(r"\textbf{Counts}")
+        ax0.set_title(r"\textbf{Global $\chi^2$ distribution}")
 
         # Save histogram
         fig.savefig(self.pdffolder + "/Globalchi2.pdf")
@@ -176,7 +176,7 @@ class fitresults:
             fig = plt.figure()
             ax0 = fig.add_subplot(1, 1, 1)
             #ax0.hist(p, bins = nbins, facecolor = bcolours.tangerineyellow, alpha = 0.8, label = pk)
-            ax0.hist(p, bins = 20, facecolor = bcolours.meadow, alpha = 0.8, label = pk)
+            ax0.hist(p, bins = 15, facecolor = bcolours.meadow, alpha = 0.8, label = pk)
             ax0.legend()
 
             # Set ticks and labels
@@ -184,8 +184,8 @@ class fitresults:
             #ax0.set_xticks(minorticks, minor = True)
             # ax0.grid(which = 'both', linestyle = "dashdot")
             ax0.set_xlabel(pk)
-            ax0.set_ylabel("Counts")
-            ax0.set_title(pk + " distribution")
+            ax0.set_ylabel(r"\textbf{Counts}")
+            #ax0.set_title(r"\textbf{" + pk + r" distribution}")
 
             # Save histogram
             fig.savefig(self.pdffolder + "/param" + str(i) + ".pdf")
@@ -273,11 +273,11 @@ class fitresults:
             ax0.plot(tmds["qT"], p, linewidth = 0.5, color = "b", alpha = 0.3)
 
         # Plot mean replica
-        ax0.plot(tmds["qT"], np.mean(tmds["TMD"], axis = 0), label = "Mean replica", color = "r")
+        ax0.plot(tmds["qT"], np.mean(tmds["TMD"], axis = 0), label = r"\textbf{Mean replica}", color = "r")
 
-        ax0.set_xlabel("$k_T$ [GeV]")
+        ax0.set_xlabel(r"\textbf{$k_T$ [GeV]}")
         ax0.set_ylabel(r"$xf(x, k_T, Q, Q^2)$")
-        ax0.set_title("TMD distribution")
+        ax0.set_title(r"\textbf{TMD distribution}")
         ax0.legend()
 
         # Save plot
@@ -303,7 +303,7 @@ class fitresults:
             print("Plotting " + e["Name"] + "...")
             # Gather global information about the particular experiment
             expname    = e["Name"]
-            plottitle  = e["Plot title python"]
+            plottitle  = e["Plot title python"].replace("<", r"$<$").replace("Q", r"$Q$")
             xlabel     = e["xlabelpy"]
             ylabel     = e["ylabelpy"]
             qT         = e["qT"]
@@ -316,7 +316,6 @@ class fitresults:
                 if exp["Name"] == expname:
                     break
             pred_mean = [sum(x) for x in zip(exp["Predictions"], exp["Systematic shifts"])]
-
 
             # Initialise (multi) plot
             """ for three plots: one principal (bigger) and two smaller
@@ -332,7 +331,7 @@ class fitresults:
             #fig, (ax1, ax2) = plt.subplots(nrows = 1, ncols = 2, figsize = (10, 6))
 
             # Set title and labels
-            fig.suptitle(plottitle)
+            plt.suptitle(plottitle)
             ax1.set_xlabel(xlabel)
             ax1.set_ylabel(ylabel)
 
@@ -349,14 +348,14 @@ class fitresults:
                 predictions = [sum(x) for x in zip(exp["Predictions"], exp["Systematic shifts"])]
 
                 # Draw the plot
-                ax1.plot(qT, predictions, linewidth = 0.5, color = "b", alpha = 0.3)
+                ax1.plot(qT, predictions, linewidth = 0.3, color = "b", alpha = 0.2)
 
             # Draw plot of the central and mean replica
-            ax1.plot(qT, pred0, label = "Central replica", color = "k")
-            ax1.plot(qT, pred_mean, label = "Mean replica", color = "r")
+            ax1.plot(qT, pred0, label = r"\textbf{Central replica}", color = "k")
+            ax1.plot(qT, pred_mean, label = r"\textbf{Mean replica}", color = "r")
 
             # Plot data with experimental errors
-            ax1.errorbar(qT, centralval, yerr = uncunc, color = "black", linestyle = "None", label = "data", marker = 'o', markersize = 2.5, capsize = 3, linewidth = 2)
+            ax1.errorbar(qT, centralval, yerr = uncunc, color = "black", linestyle = "None", label = r"\textbf{Data}", marker = 'o', markersize = 7, capsize = 5, linewidth = 2)
             ax1.legend()
 
             # Define equally spaced bins and ticks for the histogram
@@ -392,14 +391,14 @@ class fitresults:
 
             # Plot histogram
             #ax2.hist(partialchi2, bins = nbins, histtype='bar', color = bcolours.tangerineyellow, label = "$\chi^2$")
-            ax2.hist(partialchi2, bins = 20, histtype='bar', color = bcolours.tangerineyellow, label = "$\chi^2$")
+            ax2.hist(partialchi2, bins = 15, histtype = 'bar', color = bcolours.tangerineyellow, label = r"$\chi^2$")
             ax2.legend()
 
             # Set labels and ticks
             #ax2.set_xticks(majorticks)
             #ax2.set_xticks(minorticks, minor = True)
-            ax2.set_xlabel("$\chi^2$")
-            ax2.set_ylabel("Counts")
+            ax2.set_xlabel(r"$\chi^2$")
+            ax2.set_ylabel(r"\textbf{Counts}")
 
             # Save plot
             fig.savefig(self.pdffolder + "/" + expname + ".pdf")
