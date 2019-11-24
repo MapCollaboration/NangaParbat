@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import modules.bcolours as bcolours
 import modules.writemarkdown as writemarkdown
+import modules.utilities as utilities
 import modules.MatplotlibSettings
 
 from ruamel import yaml
@@ -36,6 +37,7 @@ class fitresults:
         self.Efcns        = [r["Global error function"] for r in self.reports]
         self.parameters   = dict(zip(self.report0["Parameters"].keys(), [[r["Parameters"][p] for r in self.reports] for p in self.report0["Parameters"].keys()]))
         self.fixed        = dict(zip(self.report0["Parameters"].keys(), [p["fix"] for p in fitconfig["Parameters"]]))
+        self.ntot         = sum([len(e["qT"]) for e in self.report0["Experiments"]])
 
 
     def StatisticalEstimators(self):
@@ -204,23 +206,18 @@ class fitresults:
         """
         headings = ["Experiment", "Number of points", "$\chi_{D}^2$", "$\chi_{\lambda}^2$", "$\chi^2$"]
 
-        # Total number of points
-        ntot = 0
-        for e in self.report0["Experiments"]:
-            ntot += len(e["qT"])
-
         # Central replica
         self.mdout.write("Table: Central-replica $\chi^2$'s:\n")
         par = [(e["Name"], len(e["qT"]), round(e["partial chi2"] - e["penalty chi2"], 4), round(e["penalty chi2"], 4), round(e["partial chi2"], 4))
                 for e in self.report0["Experiments"]]
-        par.append(("Total", ntot, "-", "-", round(self.report0["Global chi2"], 4)))
+        par.append(("Total", self.ntot, "-", "-", round(self.report0["Global chi2"], 4)))
         writemarkdown.table(self.mdout, par, headings)
 
         # Mean replica
         self.mdout.write("Table: Mean-replica $\chi^2$'s:\n")
         par = [(e["Name"], len(e["qT"]), round(e["partial chi2"] - e["penalty chi2"], 4), round(e["penalty chi2"], 4), round(e["partial chi2"], 4))
                 for e in self.report_mean["Experiments"]]
-        par.append(("Total", ntot, "-", "-", round(self.report_mean["Global chi2"], 4)))
+        par.append(("Total", self.ntot, "-", "-", round(self.report_mean["Global chi2"], 4)))
         writemarkdown.table(self.mdout, par, headings)
 
         # Average over replicas
@@ -236,7 +233,7 @@ class fitresults:
                         break
                 c2.append(exp["partial chi2"])
             par.append((e["Name"], len(e["qT"]), str(round(np.mean(c2),  4)) + " $\pm$ " + str(round(np.std(c2),  4))))
-        par.append(("Total", ntot, str(round(np.mean(self.chi2s), 4)) + " $\pm$ " + str(round(np.std(self.chi2s),  4))))
+        par.append(("Total", self.ntot, str(round(np.mean(self.chi2s), 4)) + " $\pm$ " + str(round(np.std(self.chi2s),  4))))
         writemarkdown.table(self.mdout, par, headings)
 
 
@@ -266,7 +263,7 @@ class fitresults:
         fig = plt.figure()
         ax0 = fig.add_subplot(1, 1, 1)
         ax0.set_yscale("log")
-        ax0.set_xlim(0, 5)
+        ax0.set_xlim(0, 2)
 
         # plot single replicas
         for p in tmds["TMD"]:

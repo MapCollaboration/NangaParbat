@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from ruamel import yaml
+from scipy.special import loggamma
 from modules.bcolours import *
 
 
@@ -143,3 +144,12 @@ def PlotScan(path):
         # Save plot
         plt.savefig(path + "/" + p["name"] + ".pdf")
         plt.close()
+
+
+def chi2dist(k, x):
+    """
+    chi2 distribution for 'k' degrees of freedom rearranged to avoid
+    overflow problem for large values of 'k'.
+    """
+    x = np.array(x, dtype = np.float128)
+    return np.exp( - k / 2 * np.log(2) + ( k / 2 - 1 ) * np.log(x) - x / 2 - loggamma(k/2))
