@@ -11,7 +11,7 @@
 namespace NangaParbat
 {
   /**
-   * @brief b* prescription a la Collins
+   * @brief b* prescription a la Collins-Soper-Sterman
    * @param b: the impact parameter
    * @param Q: the hard scale
    * @return b*
