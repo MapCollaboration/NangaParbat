@@ -4,6 +4,7 @@ set(fastinterface_source
   utilities.cc
   bstar.cc
   twobodyphasespace.cc
+  tmdgrid.cc
   )
 
 add_library(fastinterface OBJECT ${fastinterface_source})

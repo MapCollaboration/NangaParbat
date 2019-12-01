@@ -5,8 +5,8 @@
 #pragma once
 
 #include "NangaParbat/parameterisation.h"
-#include <apfel/qgrid.h>
 
+#include <apfel/qgrid.h>
 #include <memory>
 
 namespace NangaParbat

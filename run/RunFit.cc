@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
   rout << out.c_str() << std::endl;
   rout.close();
 
-  // Produce plots and modify fitconfig.yaml to dump into to output
+  // Produce plots and modify fitconfig.yaml to dump into the output
   // folder. Do it only for replica 0.
   if (ReplicaID == 0)
     {

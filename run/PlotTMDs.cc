@@ -5,6 +5,7 @@
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/bstar.h"
 #include "NangaParbat/nonpertfunctions.h"
+#include "NangaParbat/tmdgrid.h"
 
 #include <fstream>
 #include <cstring>
@@ -40,12 +41,18 @@ int main(int argc, char* argv[])
 
   // Heavy-quark thresholds
   std::vector<double> Thresholds;
+  std::vector<double> bThresholds;
+  const double Ci  = config["TMDscales"]["Ci"].as<double>();
   for (auto const& v : dist->flavors())
     if (v > 0 && v < 7)
-      Thresholds.push_back(dist->quarkThreshold(v));
+      {
+        Thresholds.push_back(dist->quarkThreshold(v));
+        bThresholds.push_back(Ci * 2 * exp(- apfel::emc) / dist->quarkThreshold(v));
+      }
+  sort(bThresholds.begin(), bThresholds.end());
 
   // Set verbosity level of APFEL++ to the minimum
-  apfel::SetVerbosityLevel(0);
+  //apfel::SetVerbosityLevel(0);
 
   // Define x-space grid
   std::vector<apfel::SubGrid> vsg;
@@ -65,7 +72,6 @@ int main(int argc, char* argv[])
 
   // Build evolved TMD distributions
   const int    pto = config["PerturbativeOrder"].as<int>();
-  const double Ci  = config["TMDscales"]["Ci"].as<double>();
   const auto Alphas = [&] (double const& mu) -> double{ return dist->alphasQ(mu); };
   const auto CollDists = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabDists.Evaluate(mu); };
 
@@ -112,27 +118,30 @@ int main(int argc, char* argv[])
   NangaParbat::Parameterisation *NPFunc = NangaParbat::GetParametersation(parfile["Parameterisation"].as<std::string>());
   const std::vector<std::vector<double>> pars = parfile["Parameters"].as<std::vector<std::vector<double>>>();
 
+  apfel::Timer t;
+
   // Loop over sets of parameters
   std::vector<std::vector<double>> tmds(pars.size(), std::vector<double>(qTv.size()));
   for (int ip = 0; ip < (int) pars.size(); ip++)
     {
       // Set vector of parameters
       NPFunc->SetParameters(pars[ip]);
-
+      /*
+            // bT-space TMD
+            const auto xFb = [&] (double const& bT) -> apfel::Set<apfel::Distribution> { return EvTMDs(bs(bT, Q), Q, Q2) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1)); };
+            const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabxFb{xFb, 300, 0.0001, 10, 3, bThresholds, [] (double const& x)->double{ return log(x); }, [] (double const& x)->double{ return exp(x); }};
+            const auto txFb = [&] (double const& bT) -> double{ return QCDEvToPhys(TabxFb.Evaluate(bT).GetObjects()).at(ifl).Evaluate(x); };
+      */
       // bT-space TMD
-      const auto xFb = [=] (double const& bT) -> double
-      {
-        return QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1));
-      };
+      const auto xFb = [&] (double const& bT) -> double { return QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1)); };
+      const apfel::TabulateObject<double> TabxFb{xFb, 300, 0.0001, 10, 3, bThresholds, [] (double const& x)->double{ return log(x); }, [] (double const& x)->double{ return exp(x); }};
+      const auto txFb = [&] (double const& bT) -> double{ return TabxFb.Evaluate(bT); };
 
-      // Tabulate integrand
-      const apfel::TabulateObject<double> TabxFb{xFb, 300, 0.0001, 10, 3, {}, [] (double const& x)->double{ return log(x); }, [] (double const& x)->double{ return exp(x); }};
-      const auto txFb = [=] (double const& bT) -> double{ return TabxFb.Evaluate(bT); };
-
-      // Compute TMDs in kT space
+      // Compute TMDs in qT space
       for (int iqT = 0; iqT < (int) qTv.size(); iqT++)
         tmds[ip][iqT] = DEObj.transform(txFb, qTv[iqT]);
     }
+  t.stop();
 
   // YAML::Emitter where predictions will be dumped
   YAML::Emitter out;
@@ -153,6 +162,14 @@ int main(int argc, char* argv[])
 
   // Delete LHAPDF set
   delete dist;
-
+  /*
+    t.start();
+    std::unique_ptr<YAML::Emitter> pout = NangaParbat::TMDGrid(config, parfile["Parameterisation"].as<std::string>(), pars[0], pf);
+    // Dump result to file
+    std::ofstream fpout("new_" + output);
+    fpout << pout->c_str() << std::endl;
+    fpout.close();
+    t.stop();
+  */
   return 0;
 }

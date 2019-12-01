@@ -38,5 +38,5 @@ namespace NangaParbat
    * parameterisation.
    * @param name: name of the parameterisation
    */
-  Parameterisation* GetParametersation(std::string const& name) { return AvPars.at(name); };
+  Parameterisation* GetParametersation(std::string const& name);
 }
