@@ -232,8 +232,8 @@ class fitresults:
                     if exp["Name"] == e["Name"]:
                         break
                 c2.append(exp["partial chi2"])
-            par.append((e["Name"], len(e["qT"]), str(round(np.mean(c2),  4)) + " $\pm$ " + str(round(np.std(c2),  4))))
-        par.append(("Total", self.ntot, str(round(np.mean(self.chi2s), 4)) + " $\pm$ " + str(round(np.std(self.chi2s),  4))))
+            par.append((e["Name"], len(e["qT"]), str(round(np.mean(c2), 4)) + " $\pm$ " + str(round(np.std(c2), 4))))
+        par.append(("Total", self.ntot, str(round(np.mean(self.chi2s), 4)) + " $\pm$ " + str(round(np.std(self.chi2s), 4))))
         writemarkdown.table(self.mdout, par, headings)
 
 
@@ -318,7 +318,7 @@ class fitresults:
             """ for three plots: one principal (bigger) and two smaller
             below the principal one:
 
-            gridsize = (3, 2)
+            gridsize = (3,  2)
             fig = plt.figure(figsize = (12, 8))
             princplot = plt.subplot2grid(gridsize, (0, 0), colspan=2, rowspan=2)
             histo1 = plt.subplot2grid(gridsize, (2, 0))
@@ -345,7 +345,7 @@ class fitresults:
                 predictions = [sum(x) for x in zip(exp["Predictions"], exp["Systematic shifts"])]
 
                 # Draw the plot
-                ax1.plot(qT, predictions, linewidth = 0.3, color = "b", alpha = 0.2)
+                ax1.plot(qT, predictions, linewidth = 0.5, color = "b", alpha = 0.2)
 
             # Draw plot of the central and mean replica
             ax1.plot(qT, pred0, label = r"\textbf{Central replica}", color = "k")
@@ -371,7 +371,7 @@ class fitresults:
             If we want to check separately the partial chi2 and the partial error function distribution:
             for three plots: one principal (bigger) and two smaller ones:
 
-            gridsize = (3, 2)
+            gridsize = (3,  2)
             fig = plt.figure(figsize=(12, 8))
             princplot = plt.subplot2grid(gridsize, (0, 0), colspan=2, rowspan=2)
             histo1 = plt.subplot2grid(gridsize, (2, 0))
