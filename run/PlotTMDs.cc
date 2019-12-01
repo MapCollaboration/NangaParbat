@@ -5,7 +5,7 @@
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/bstar.h"
 #include "NangaParbat/nonpertfunctions.h"
-#include "NangaParbat/tmdgrid.h"
+#include "NangaParbat/createtmdgrid.h"
 
 #include <fstream>
 #include <cstring>
@@ -164,7 +164,7 @@ int main(int argc, char* argv[])
   delete dist;
   /*
     t.start();
-    std::unique_ptr<YAML::Emitter> pout = NangaParbat::TMDGrid(config, parfile["Parameterisation"].as<std::string>(), pars[0], pf);
+    std::unique_ptr<YAML::Emitter> pout = NangaParbat::CreateTMDGrid(config, parfile["Parameterisation"].as<std::string>(), pars[0], pf);
     // Dump result to file
     std::ofstream fpout("new_" + output);
     fpout << pout->c_str() << std::endl;

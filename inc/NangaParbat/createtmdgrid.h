@@ -20,8 +20,8 @@ namespace NangaParbat
    * @param pf: whether PDFs ("pdf") of FFs ("ff")
    * @return a YAML emitter
    */
-  std::unique_ptr<YAML::Emitter> TMDGrid(YAML::Node          const& config,
-                                         std::string         const& parameterisation,
-                                         std::vector<double> const& params,
-                                         std::string         const& pf);
+  std::unique_ptr<YAML::Emitter> CreateTMDGrid(YAML::Node          const& config,
+                                               std::string         const& parameterisation,
+                                               std::vector<double> const& params,
+                                               std::string         const& pf);
 }

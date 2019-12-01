@@ -150,8 +150,7 @@ namespace NangaParbat
             _bTg->Interpolant(std::get<0>(bTbounds), ibT, bT) *
             _zetag->Interpolant(std::get<0>(zetabounds), izeta, zeta) *
             _fNP1g[ix][ibT][izeta];
-//    if (sum > 1e-10 && std::abs(result / sum - 1) > 0.5)
-//      std::cout << std::scientific << x << "\t" << bT << "\t" << sqrt(zeta) << "\t" << sum << "\t" << result << "\t" << result / sum << std::endl;
+
     return result;
   }
 

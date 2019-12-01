@@ -2,7 +2,7 @@
 // Author: Valerio Bertone: valerio.bertone@cern.ch
 //
 
-#include "NangaParbat/tmdgrid.h"
+#include "NangaParbat/createtmdgrid.h"
 #include "NangaParbat/bstar.h"
 #include "NangaParbat/nonpertfunctions.h"
 
@@ -12,10 +12,10 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  std::unique_ptr<YAML::Emitter> TMDGrid(YAML::Node          const& config,
-                                         std::string         const& parameterisation,
-                                         std::vector<double> const& params,
-                                         std::string         const& pf)
+  std::unique_ptr<YAML::Emitter> CreateTMDGrid(YAML::Node          const& config,
+                                               std::string         const& parameterisation,
+                                               std::vector<double> const& params,
+                                               std::string         const& pf)
   {
     // Open LHAPDF set
     LHAPDF::PDF* dist = LHAPDF::mkPDF(config[pf + "set"]["name"].as<std::string>(), config[pf + "set"]["member"].as<int>());
@@ -23,7 +23,8 @@ namespace NangaParbat
     // Rotate sets into the QCD evolution basis
     const auto RotDists = [&] (double const& x, double const& mu) -> std::map<int,double> { return apfel::PhysToQCDEv(dist->xfxQ(x, mu)); };
 
-    // Heavy-quark thresholds
+    // Heavy-quark thresholds and their b-space counterparts. Also
+    // collects quarks and anti-quarks indices.
     std::vector<double> Thresholds;
     std::vector<double> bThresholds;
     std::vector<int> flv;
@@ -58,10 +59,9 @@ namespace NangaParbat
     const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabDists{EvolvedDists, 100, dist->qMin(), dist->qMax(), 3, Thresholds};
 
     // Build evolved TMD distributions
+    const int pto = config["PerturbativeOrder"].as<int>();
     const auto Alphas = [&] (double const& mu) -> double{ return dist->alphasQ(mu); };
     const auto CollDists = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabDists.Evaluate(mu); };
-
-    const int pto = config["PerturbativeOrder"].as<int>();
     std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> EvTMDs;
     if (pf == "pdf")
       EvTMDs = BuildTmdPDFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);
@@ -73,7 +73,7 @@ namespace NangaParbat
     // b* prescription
     const std::function<double(double const&, double const&)> bs = bstarMap.at(config["bstar"].as<std::string>());
 
-    // Double exponential quadrature
+    // Double-exponential quadrature
     apfel::DoubleExponentialQuadrature DEObj{};
 
     // Grid in Q
@@ -119,14 +119,18 @@ namespace NangaParbat
     // Get parameterisation and set parameters
     Parameterisation *NPFunc = GetParametersation(parameterisation);
     NPFunc->SetParameters(params);
+
+    // Allocate YAML emitter
     std::unique_ptr<YAML::Emitter> out = std::unique_ptr<YAML::Emitter>(new YAML::Emitter);
+
+    // Dump grids to emitter
     out->SetFloatPrecision(8);
     out->SetDoublePrecision(8);
     (*out) << YAML::BeginMap;
-    (*out) << YAML::Key << "Qg" << YAML::Value << YAML::Flow << Qg;
-    (*out) << YAML::Key << "xg" << YAML::Value << YAML::Flow<< xg;
+    (*out) << YAML::Key << "Qg"    << YAML::Value << YAML::Flow << Qg;
+    (*out) << YAML::Key << "xg"    << YAML::Value << YAML::Flow << xg;
     (*out) << YAML::Key << "qToQg" << YAML::Value << YAML::Flow << qToQg;
-    (*out) << YAML::Key << "TMDs" << YAML::Value << YAML::Flow;
+    (*out) << YAML::Key << "TMDs"  << YAML::Value << YAML::Flow;
     (*out) << YAML::BeginMap;
 
     // Loop over flavours
@@ -162,7 +166,7 @@ namespace NangaParbat
     (*out) << YAML::EndMap;
     (*out) << YAML::EndMap;
 
-    // Delete LHAPDF set
+    // Delete LHAPDF set and NP function
     delete dist;
     delete NPFunc;
 
