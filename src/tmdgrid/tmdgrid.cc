@@ -8,10 +8,13 @@ namespace NangaParbat
 {
   //_________________________________________________________________________________
   TMDGrid::TMDGrid(YAML::Node const& grid):
-    _xg(std::unique_ptr<apfel::QGrid<double>>(new apfel::QGrid<double> {grid["xg"].as<std::vector<double>>(), 3})),
-    _qToQg(std::unique_ptr<apfel::QGrid<double>>(new apfel::QGrid<double> {grid["qToQg"].as<std::vector<double>>(), 3})),
-    _Qg(std::unique_ptr<apfel::QGrid<double>>(new apfel::QGrid<double> {grid["Qg"].as<std::vector<double>>(), 3})),
-    _tmds(grid["TMDs"].as<std::map<int, std::vector<std::vector<std::vector<double>>>>>())
+    _xg(std::unique_ptr<apfel::QGrid<double>>(new apfel::QGrid<double>
+  {
+    grid["xg"].as<std::vector<double>>(), 3
+  })),
+  _qToQg(std::unique_ptr<apfel::QGrid<double>>(new apfel::QGrid<double> {grid["qToQg"].as<std::vector<double>>(), 3})),
+  _Qg(std::unique_ptr<apfel::QGrid<double>>(new apfel::QGrid<double> {grid["Qg"].as<std::vector<double>>(), 3})),
+  _tmds(grid["TMDs"].as<std::map<int, std::vector<std::vector<std::vector<double>>>>>())
   {
   }
 

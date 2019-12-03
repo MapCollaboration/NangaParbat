@@ -2,35 +2,12 @@
 // Author: Valerio Bertone: valerio.bertone@cern.ch
 //
 
-#include "NangaParbat/utilities.h"
+#include "NangaParbat/linearsystems.h"
 
-#include <iostream>
-#include <cmath>
 #include <gsl/gsl_linalg.h>
-#include <apfel/constants.h>
-#include <dirent.h>
 
 namespace NangaParbat
 {
-  //_________________________________________________________________________________
-  std::vector<double> GenerateGrid(int const& n, double const& min, double const& max, int const& ext, bool const& lgt)
-  {
-    std::vector<double> grid(n+ext+1);
-    if (lgt)
-      {
-        const double step = log( max / min ) / n;
-        for (int i = 0; i <= n + ext; i++)
-          grid[i] = min * exp( i * step );
-      }
-    else
-      {
-        const double step = ( max - min ) / n;
-        for (int i = 0; i <= n + ext; i++)
-          grid[i] = min + i * step;
-      }
-    return grid;
-  }
-
   //_________________________________________________________________________________
   apfel::matrix<double> CholeskyDecomposition(apfel::matrix<double> const V)
   {
@@ -150,22 +127,5 @@ namespace NangaParbat
           throw std::runtime_error("[SolveSymmetricSystem]: Problem with the symmetric system.");
       }
     return lambda;
-  }
-
-  //_________________________________________________________________________________
-  std::vector<std::string> list_dir(std::string const& path)
-  {
-    struct dirent *entry;
-    DIR *dir = opendir(path.c_str());
-
-    if (dir == NULL)
-      return {};
-
-    std::vector<std::string> dirlist;
-    while ((entry = readdir(dir)) != NULL)
-      dirlist.push_back(entry->d_name);
-
-    closedir(dir);
-    return dirlist;
   }
 }

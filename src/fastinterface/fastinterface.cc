@@ -3,9 +3,8 @@
 //
 
 #include "NangaParbat/fastinterface.h"
-#include "NangaParbat/utilities.h"
+#include "NangaParbat/generategrid.h"
 #include "NangaParbat/bstar.h"
-#include "NangaParbat/twobodyphasespace.h"
 
 #include <LHAPDF/LHAPDF.h>
 

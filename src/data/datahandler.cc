@@ -3,7 +3,7 @@
 //
 
 #include "NangaParbat/datahandler.h"
-#include "NangaParbat/utilities.h"
+#include "NangaParbat/linearsystems.h"
 
 #include <iostream>
 #include <math.h>

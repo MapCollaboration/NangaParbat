@@ -4,7 +4,7 @@
 
 #include "NangaParbat/meanreplica.h"
 #include "NangaParbat/nonpertfunctions.h"
-#include "NangaParbat/utilities.h"
+#include "NangaParbat/listdir.h"
 
 #include <fstream>
 #include <sys/stat.h>

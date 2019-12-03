@@ -3,7 +3,7 @@
 //
 
 #include "NangaParbat/chisquare.h"
-#include "NangaParbat/utilities.h"
+#include "NangaParbat/linearsystems.h"
 
 #include <numeric>
 #include <math.h>

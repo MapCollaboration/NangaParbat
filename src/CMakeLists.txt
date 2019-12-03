@@ -5,18 +5,19 @@ add_subdirectory(minimisation)
 add_subdirectory(parameterisation)
 add_subdirectory(preprocessing)
 add_subdirectory(tmdgrid)
+add_subdirectory(utilities)
 
 option(SHARED "Build shared-libray instead of static-libray" ON)
 if(SHARED)
   add_library(NangaParbat SHARED $<TARGET_OBJECTS:fastinterface>
   $<TARGET_OBJECTS:data> $<TARGET_OBJECTS:chi2>
   $<TARGET_OBJECTS:minimisation> $<TARGET_OBJECTS:parameterisation>
-  $<TARGET_OBJECTS:preprocessing> $<TARGET_OBJECTS:tmdgrid>)
+  $<TARGET_OBJECTS:preprocessing> $<TARGET_OBJECTS:tmdgrid> $<TARGET_OBJECTS:utilities>)
 else(SHARED)
   add_library(NangaParbat STATIC $<TARGET_OBJECTS:fastinterface>
   $<TARGET_OBJECTS:data> $<TARGET_OBJECTS:chi2>
   $<TARGET_OBJECTS:minimisation> $<TARGET_OBJECTS:parameterisation>
-  $<TARGET_OBJECTS:preprocessing> $<TARGET_OBJECTS:tmdgrid>)
+  $<TARGET_OBJECTS:preprocessing> $<TARGET_OBJECTS:tmdgrid> $<TARGET_OBJECTS:utilities>)
 endif(SHARED)
 
 target_link_libraries(NangaParbat ${YAML_LDFLAGS} ${APFELXX_LIBRARIES} ${ROOT_LIBRARIES}
