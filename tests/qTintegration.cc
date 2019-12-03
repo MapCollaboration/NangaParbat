@@ -7,7 +7,6 @@
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/convolutiontable.h"
 #include "NangaParbat/bstar.h"
-#include "NangaParbat/twobodyphasespace.h"
 
 #include <LHAPDF/LHAPDF.h>
 #include <apfel/apfelxx.h>
@@ -135,7 +134,7 @@ int main()
   apfel::OgataQuadrature bintegrand{};
 
   // Phase-space reduction factor
-  NangaParbat::TwoBodyPhaseSpace ps{pTMin, etaRange.first, etaRange.second};
+  apfel::TwoBodyPhaseSpace ps{pTMin, etaRange.first, etaRange.second};
 
   // Define qT-distribution function using a DoubleObject
   const auto Lumi = [=] (double const& bs) -> apfel::DoubleObject<apfel::Distribution>

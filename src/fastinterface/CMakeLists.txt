@@ -3,8 +3,6 @@ set(fastinterface_source
   convolutiontable.cc
   utilities.cc
   bstar.cc
-  twobodyphasespace.cc
-  createtmdgrid.cc
   )
 
 add_library(fastinterface OBJECT ${fastinterface_source})

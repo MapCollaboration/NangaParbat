@@ -124,8 +124,8 @@ namespace NangaParbat
     std::unique_ptr<YAML::Emitter> out = std::unique_ptr<YAML::Emitter>(new YAML::Emitter);
 
     // Dump grids to emitter
-    out->SetFloatPrecision(8);
-    out->SetDoublePrecision(8);
+    out->SetFloatPrecision(6);
+    out->SetDoublePrecision(6);
     (*out) << YAML::BeginMap;
     (*out) << YAML::Key << "Qg"    << YAML::Value << YAML::Flow << Qg;
     (*out) << YAML::Key << "xg"    << YAML::Value << YAML::Flow << xg;

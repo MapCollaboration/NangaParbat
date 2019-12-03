@@ -268,7 +268,7 @@ namespace NangaParbat
         const std::pair<double,double>              etaRange = kin.etaRange; // Allowed range in eta of the final-state leptons
 
         // Initialise two-particle phase-space object
-        TwoBodyPhaseSpace ps{pTMin, etaRange.first, etaRange.second};
+        apfel::TwoBodyPhaseSpace ps{pTMin, etaRange.first, etaRange.second};
 
         // Ogata-quadrature object of degree one or zero according to
         // weather the cross sections have to be integrated over the
@@ -553,7 +553,7 @@ namespace NangaParbat
         const std::pair<double,double>              etaRange = kin.etaRange; // Allowed range in eta of the final-state leptons
 
         // Initialise two-particle phase-space object
-        TwoBodyPhaseSpace ps{pTMin, etaRange.first, etaRange.second};
+        apfel::TwoBodyPhaseSpace ps{pTMin, etaRange.first, etaRange.second};
 
         // Q integration bounds
         const double Qmin = kin.var1b.first;

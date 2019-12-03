@@ -6,7 +6,6 @@
 
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/convolutiontable.h"
-#include "NangaParbat/twobodyphasespace.h"
 #include "NangaParbat/bstar.h"
 
 #include <fstream>
@@ -111,7 +110,7 @@ int main()
       apfel::OgataQuadrature OgataObj{};
 
       // Phase-space reduction factor
-      NangaParbat::TwoBodyPhaseSpace ps{pTMin, etaRange.first, etaRange.second};
+      apfel::TwoBodyPhaseSpace ps{pTMin, etaRange.first, etaRange.second};
 
       // Loop over the qT-bin bounds
       const auto qTintegrand = [&] (double const& qT) -> double
