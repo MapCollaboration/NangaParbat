@@ -187,10 +187,8 @@ with open(reportfile, "w+") as mdout:
     # Create plots of TMDs in kT space
     writemarkdown.mdtitle(mdout, 2, "TMDs in $k_T$ space")
     results.PlotTMDs("pdf", 1, 2, 0.001)
-    results.PlotTMDs("pdf", 1, 2, 0.01)
     results.PlotTMDs("pdf", 1, 2, 0.1)
-    results.PlotTMDs("pdf", 1, 2, 0.5)
-    results.PlotTMDs("pdf", 1, 2, 0.9)
+    results.PlotTMDs("pdf", 1, 2, 0.3)
 
     # Create one set of plots for each experiment
     writemarkdown.mdtitle(mdout, 2, "Data-theory comparison")

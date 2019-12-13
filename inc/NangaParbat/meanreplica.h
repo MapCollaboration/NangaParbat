@@ -55,7 +55,7 @@ namespace NangaParbat
     std::vector<std::string> GetParameterNames() const;
 
   private:
-    NangaParbat::Parameterisation               * _NPFunc;
+    NangaParbat::Parameterisation                *_NPFunc;
     std::vector<NangaParbat::Parameterisation*>   _NPFuncv;
     std::unique_ptr<apfel::QGrid<double>>         _xg;
     std::unique_ptr<apfel::QGrid<double>>         _bTg;

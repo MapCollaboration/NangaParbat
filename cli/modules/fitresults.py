@@ -208,16 +208,20 @@ class fitresults:
 
         # Central replica
         self.mdout.write("Table: Central-replica $\chi^2$'s:\n")
-        par = [(e["Name"], len(e["qT"]), round(e["partial chi2"] - e["penalty chi2"], 4), round(e["penalty chi2"], 4), round(e["partial chi2"], 4))
+        par = [(e["Name"], len(e["qT"]), round(e["partial chi2"] - e["penalty chi2"], 3), round(e["penalty chi2"], 3), round(e["partial chi2"], 3))
                 for e in self.report0["Experiments"]]
-        par.append(("Total", self.ntot, "-", "-", round(self.report0["Global chi2"], 4)))
+        totunc = round(sum([len(e["qT"]) * ( e["partial chi2"] - e["penalty chi2"] ) for e in self.report0["Experiments"]]) / self.ntot, 3)
+        totcor = round(sum([len(e["qT"]) * e["penalty chi2"] for e in self.report0["Experiments"]]) / self.ntot, 3)
+        par.append(("Total", self.ntot, totunc, totcor, round(self.report0["Global chi2"], 3)))
         writemarkdown.table(self.mdout, par, headings)
 
         # Mean replica
         self.mdout.write("Table: Mean-replica $\chi^2$'s:\n")
-        par = [(e["Name"], len(e["qT"]), round(e["partial chi2"] - e["penalty chi2"], 4), round(e["penalty chi2"], 4), round(e["partial chi2"], 4))
+        par = [(e["Name"], len(e["qT"]), round(e["partial chi2"] - e["penalty chi2"], 3), round(e["penalty chi2"], 3), round(e["partial chi2"], 3))
                 for e in self.report_mean["Experiments"]]
-        par.append(("Total", self.ntot, "-", "-", round(self.report_mean["Global chi2"], 4)))
+        totunc = round(sum([len(e["qT"]) * ( e["partial chi2"] - e["penalty chi2"] ) for e in self.report_mean["Experiments"]]) / self.ntot, 3)
+        totcor = round(sum([len(e["qT"]) * e["penalty chi2"] for e in self.report_mean["Experiments"]]) / self.ntot, 3)
+        par.append(("Total", self.ntot, totunc, totcor, round(self.report_mean["Global chi2"], 3)))
         writemarkdown.table(self.mdout, par, headings)
 
         # Average over replicas
@@ -232,8 +236,8 @@ class fitresults:
                     if exp["Name"] == e["Name"]:
                         break
                 c2.append(exp["partial chi2"])
-            par.append((e["Name"], len(e["qT"]), str(round(np.mean(c2), 4)) + " $\pm$ " + str(round(np.std(c2), 4))))
-        par.append(("Total", self.ntot, str(round(np.mean(self.chi2s), 4)) + " $\pm$ " + str(round(np.std(self.chi2s), 4))))
+            par.append((e["Name"], len(e["qT"]), str(round(np.mean(c2), 3)) + " $\pm$ " + str(round(np.std(c2), 3))))
+        par.append(("Total", self.ntot, str(round(np.mean(self.chi2s), 3)) + " $\pm$ " + str(round(np.std(self.chi2s), 3))))
         writemarkdown.table(self.mdout, par, headings)
 
 
@@ -253,17 +257,17 @@ class fitresults:
         # Now the code ./run/PlotsTMDs is run with the appropriate input
         print(bcolours.ACTREPORT + "\nProducing TMD plots..." + bcolours.ENDC)
         os.system(self.reportfolder + "/../../run/PlotTMDs " + self.reportfolder + "/../tables/config.yaml "
-                  + self.reportfolder + "/tmds.yaml " + dist + " " + str(ifl) + " " + str(Q) + " " + str(x)
+                  + self.reportfolder + "/tmds_Q" + str(Q) + "_x" + str(x) + ".yaml " + dist + " " + str(ifl) + " " + str(Q) + " " + str(x)
                   + " " + self.reportfolder +"/Parameters.yaml")
 
         # Finally the plot is produced and included in the report
-        with open(self.reportfolder +"/tmds.yaml", "r") as fc:
+        with open(self.reportfolder + "/tmds_Q" + str(Q) + "_x" + str(x) + ".yaml", "r") as fc:
             tmds = yaml.load(fc, Loader = yaml.RoundTripLoader)
 
         fig = plt.figure()
         ax0 = fig.add_subplot(1, 1, 1)
-        ax0.set_yscale("log")
-        ax0.set_xlim(0, 2)
+        #ax0.set_yscale("log")
+        ax0.set_xlim(0, Q)
 
         # plot single replicas
         for p in tmds["TMD"]:

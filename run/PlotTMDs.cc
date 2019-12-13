@@ -6,6 +6,7 @@
 #include "NangaParbat/bstar.h"
 #include "NangaParbat/nonpertfunctions.h"
 #include "NangaParbat/createtmdgrid.h"
+#include "NangaParbat/factories.h"
 
 #include <fstream>
 #include <cstring>
@@ -52,7 +53,7 @@ int main(int argc, char* argv[])
   sort(bThresholds.begin(), bThresholds.end());
 
   // Set verbosity level of APFEL++ to the minimum
-  //apfel::SetVerbosityLevel(0);
+  apfel::SetVerbosityLevel(0);
 
   // Define x-space grid
   std::vector<apfel::SubGrid> vsg;
@@ -100,17 +101,25 @@ int main(int argc, char* argv[])
   apfel::DoubleExponentialQuadrature DEObj{};
 
   // Values of qT
-  const std::vector<double> qTv
-  {
-    0.001, 0.01,
-    0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1,
-    1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2,
-    2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3,
-    3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 4,
-    4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 5,
-    6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10
-  };
-
+  const int nqT   = 100;
+  const double qTmin = Q * 1e-4;
+  const double qTmax = Q * 2;
+  const double qTstp = exp( log( qTmax / qTmin ) / ( nqT - 1 ) );
+  std::vector<double> qTv;
+  for (double qT = qTmin; qT <= qTmax * ( 1 + 1e-5 ); qT *= qTstp)
+    qTv.push_back(qT);
+  /*
+    const std::vector<double> qTv
+    {
+      0.00001, 0.0001, 0.001, 0.01,
+      0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1,
+      1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2,
+      2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3,
+      3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 4,
+      4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 5,
+      6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10
+    };
+  */
   // Read file of parameters
   const YAML::Node parfile = YAML::LoadFile(argv[7]);
 
@@ -126,14 +135,9 @@ int main(int argc, char* argv[])
     {
       // Set vector of parameters
       NPFunc->SetParameters(pars[ip]);
-      /*
-            // bT-space TMD
-            const auto xFb = [&] (double const& bT) -> apfel::Set<apfel::Distribution> { return EvTMDs(bs(bT, Q), Q, Q2) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1)); };
-            const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabxFb{xFb, 300, 0.0001, 10, 3, bThresholds, [] (double const& x)->double{ return log(x); }, [] (double const& x)->double{ return exp(x); }};
-            const auto txFb = [&] (double const& bT) -> double{ return QCDEvToPhys(TabxFb.Evaluate(bT).GetObjects()).at(ifl).Evaluate(x); };
-      */
+
       // bT-space TMD
-      const auto xFb = [&] (double const& bT) -> double { return QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1)); };
+      const auto xFb = [&] (double const& bT) -> double { return bT * QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1)); };
       const apfel::TabulateObject<double> TabxFb{xFb, 300, 0.0001, 10, 3, bThresholds, [] (double const& x)->double{ return log(x); }, [] (double const& x)->double{ return exp(x); }};
       const auto txFb = [&] (double const& bT) -> double{ return TabxFb.Evaluate(bT); };
 
@@ -163,13 +167,25 @@ int main(int argc, char* argv[])
   // Delete LHAPDF set
   delete dist;
   /*
-    t.start();
-    std::unique_ptr<YAML::Emitter> pout = NangaParbat::CreateTMDGrid(config, parfile["Parameterisation"].as<std::string>(), pars[0], pf);
-    // Dump result to file
-    std::ofstream fpout("new_" + output);
-    fpout << pout->c_str() << std::endl;
-    fpout.close();
-    t.stop();
+  // Dump info to file
+  std::ofstream ipout("new_tmds.info");
+  ipout << NangaParbat::EmitTMDInfo(config, 1, pf)->c_str() << std::endl;
+  ipout.close();
+
+  t.start();
+  // Dump grid to file
+  std::ofstream fpout("new_" + output);
+  fpout << NangaParbat::EmitTMDGrid(config, parfile["Parameterisation"].as<std::string>(), pars[0], pf)->c_str() << std::endl;
+  fpout.close();
+  t.stop();
+
+  // Read configuration file
+  NangaParbat::TMDGrid* TMDs = NangaParbat::mkTMD("PV19_n3ll");
+  std::cout << std::scientific;
+  for (int iqT = 0; iqT < (int) qTv.size(); iqT++)
+    std::cout << qTv[iqT] << "\t" << TMDs->Evaluate(x, qTv[iqT], Q).at(ifl) / tmds[0][iqT] << std::endl;
+  std::cout << "\n";
+  delete TMDs;
   */
   return 0;
 }

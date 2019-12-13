@@ -19,7 +19,7 @@ namespace NangaParbat
      * @brief The "TMDGrid" constructor
      * @param grid: the YAML node containing the grid
      */
-    TMDGrid(YAML::Node const& grid);
+    TMDGrid(YAML::Node const& info, YAML::Node const& grid);
 
     /**
      * @brief Function that returns the value of one of the functions.
@@ -30,10 +30,16 @@ namespace NangaParbat
      */
     std::map<int, double> Evaluate(double const& x, double const& qT, double const& Q) const;
 
+    /**
+     * @brief Function that returns the YAML Node with the set info
+     */
+    YAML::Node GetInfoNode() const { return _info; };
+
   private:
-    std::unique_ptr<apfel::QGrid<double>>                              _xg;
-    std::unique_ptr<apfel::QGrid<double>>                              _qToQg;
-    std::unique_ptr<apfel::QGrid<double>>                              _Qg;
-    std::map<int, std::vector<std::vector<std::vector<double>>>> const _tmds;
+    YAML::Node                                                   const& _info;
+    std::unique_ptr<apfel::QGrid<double>>                        const  _xg;
+    std::unique_ptr<apfel::QGrid<double>>                        const  _qToQg;
+    std::unique_ptr<apfel::QGrid<double>>                        const  _Qg;
+    std::map<int, std::vector<std::vector<std::vector<double>>>> const  _tmds;
   };
 }

@@ -7,7 +7,8 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  TMDGrid::TMDGrid(YAML::Node const& grid):
+  TMDGrid::TMDGrid(YAML::Node const& info, YAML::Node const& grid):
+    _info(info),
     _xg(std::unique_ptr<apfel::QGrid<double>>(new apfel::QGrid<double>
   {
     grid["xg"].as<std::vector<double>>(), 3
