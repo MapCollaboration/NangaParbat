@@ -90,7 +90,7 @@ The reports above have been generated using the CLI ``cli/report.py``.
 
 ## References
 
--*Transverse-momentum-dependent parton distributions up to N3LL from Drell-Yan data*; Alessandro Bacchetta, Valerio Bertone, Chiara Bissolotti, Giuseppe Bozzi, Filippo Delcarro, Fulvio Piacenza, Marco Radici [[arXiv:1912.07550](https://arxiv.org/pdf/1912.07550.pdf)]
+- *Transverse-momentum-dependent parton distributions up to N3LL from Drell-Yan data*; Alessandro Bacchetta, Valerio Bertone, Chiara Bissolotti, Giuseppe Bozzi, Filippo Delcarro, Fulvio Piacenza, Marco Radici [[arXiv:1912.07550](https://arxiv.org/pdf/1912.07550.pdf)]
 
 ## Contacts
 
