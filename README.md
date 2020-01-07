@@ -35,7 +35,7 @@ In order to install the code a number of external but relatively standard librar
 - [``LHAPDF6``](https://lhapdf.hepforge.org),
 - [``APFEL++``](https://github.com/vbertone/apfelxx).
 
-Most of these libraries can be installed through standard package managers such as [``Homerew``](https://brew.sh) on MacOS and ``apt-get`` on Linux.
+Most of these libraries can be installed through standard package managers such as [``Homebrew``](https://brew.sh) on MacOS and ``apt-get`` on Linux.
 
 ## Installation 
 
@@ -61,7 +61,7 @@ Despite the core of the code is written in ``C++``, the main functionalities can
 ```Shell
 python3 cli/fit.py
 ```
-and following the instructions. Any such fits relie on the dataset, the interpolation tables, and the TMD parameterisations currently present in the code. It is however possible to generate new interpolation tables using the ``cli/tables.py`` utility that gives the possibility change the theory settings (perturbative order, collinear PDF set, etc.). Including more parameterisations and new experimental datasets is also possible but requires some additional work on the core of the code. Feel free to contact us should you want to extend the code in this respect.
+and following the instructions. Any such fit relies on the dataset, the interpolation tables, and the TMD parameterisations currently present in the code. It is however possible to generate new interpolation tables using the ``cli/tables.py`` utility that gives the possibility change the theory settings (perturbative order, collinear PDF set, etc.). Including more parameterisations and new experimental datasets is also possible but requires some additional work on the core of the code. Feel free to contact us should you want to extend the code in this respect.
 
 Once the fit is complete (including a number of Monte Carlo replicas), it is possible to create a summary report of the fit by running ``cli/report.py``. This will create a document (in markdown and html format) that collects the main statistical features of the fit, histograms, data-theory comparison plots, and TMD plots.
 
