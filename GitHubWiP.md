@@ -5,7 +5,8 @@ This is a test file to check if the following procedure was successful. Tha aim 
 If this file arrives to the original NangaParbat repository through a pull request, then the procedure worked, at least for the ``push`` case.
 
 ## Procedure followed
-From:  https://stackoverflow.com/questions/10065526/github-how-to-make-a-fork-of-public-repository-private
+From:  https://stackoverflow.com/questions/10065526/github-how-to-make-a-fork-of-public-repository-private or
+https://medium.com/@bilalbayasut/github-how-to-make-a-fork-of-public-repository-private-6ee8cacaf9d3
 
 Create a new repo (let’s call it private-repo) via the Github UI. Then:
 ```
@@ -24,7 +25,7 @@ make some changes
 git commit
 git push origin master
 ```
-To pull new hotness from the public repo:
+To pull new changes from the public repo:
 ```
 cd private-repo
 git remote add public https://github.com/exampleuser/public-repo.git
@@ -47,3 +48,42 @@ git push origin pull_request_yourname
 Now simply create a pull request via the Github UI for public-repo, as described here.
 
 Once project owners review your pull request, they can merge it.
+
+# Other useful info on GitHub
+[https://stackoverflow.com/questions/3959924/whats-the-difference-between-git-clone-mirror-and-git-clone-bare]
+Suppose origin has a few branches (master (HEAD), next, pu, and maint), some tags (v1, v2, v3), some remote branches (devA/master, devB/master), and some other refs (refs/foo/bar, refs/foo/baz, which might be notes, stashes, other devs' namespaces, who knows).
+
+__git clone origin-url (non-bare)__: You will get all of the tags copied, a local branch master (HEAD) tracking a remote branch origin/master, and remote branches origin/next, origin/pu, and origin/maint. The tracking branches are set up so that if you do something like git fetch origin, they'll be fetched as you expect. Any remote branches (in the cloned remote) and other refs are completely ignored.
+
+Copies contents of the repository.
+
+__git clone --bare origin-url__: You will get all of the tags copied, local branches master (HEAD), next, pu, and maint, no remote tracking branches. That is, all branches are copied as is, and it's set up completely independent, with no expectation of fetching again. Any remote branches (in the cloned remote) and other refs are completely ignored.
+
+Copies tags of the repository and the info about it, but no folders and stuff.
+
+__git clone --mirror origin-url__: Every last one of those refs will be copied as-is. You'll get all the tags, local branches master (HEAD), next, pu, and maint, remote branches devA/master and devB/master, other refs refs/foo/bar and refs/foo/baz. Everything is exactly as it was in the cloned remote. Remote tracking is set up so that if you run git remote update all refs will be overwritten from origin, as if you'd just deleted the mirror and recloned it. As the docs originally said, it's a mirror. It's supposed to be a functionally identical copy, interchangeable with the original.
+
+### git remote add
+[https://stackoverflow.com/questions/5617211/what-is-git-remote-add-and-git-push-origin-master]
+```
+git remote add ...
+```
+As you probably know, git is a distributed version control system. Most operations are done locally. To communicate with the outside world, git uses what are called remotes. These are repositories other than the one on your local disk which you can push your changes into (so that other people can see them) or pull from (so that you can get others changes). The command git remote add origin git@github.com:peter/first_app.gitcreates a new remote called origin located at git@github.com:peter/first_app.git. Once you do this, in your push commands, you can push to origin instead of typing out the whole URL.
+
+### git push origin master
+[https://stackoverflow.com/questions/5617211/what-is-git-remote-add-and-git-push-origin-master]
+```
+git push origin master
+```
+
+This is a command that says "push the commits in the local branch named master to the remote named origin". Once this is executed, all the stuff that you last synchronised with origin will be sent to the remote repository and other people will be able to see them there.
+
+## About forks
+[https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/about-forks]
+
+A fork is a copy of a repository that you manage. Forks let you make changes to a project without affecting the original repository. You can fetch updates from or submit changes to the original repository with pull requests.
+
+Any user or organization on GitHub can fork a repository. Forking a repository is similar to copying another repository, with two major differences:
+
+1. You can use a pull request to suggest changes from your fork to the original repository, also known as the upstream repository.
+2. You can bring changes from the upstream repository to your local fork by synchronizing your fork with the upstream repository.
