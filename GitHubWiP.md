@@ -49,7 +49,9 @@ Now simply create a pull request via the Github UI for public-repo, as described
 
 Once project owners review your pull request, they can merge it.
 
-# Other useful info on GitHub
+
+
+# Appendix: useful info on GitHub
 [https://stackoverflow.com/questions/3959924/whats-the-difference-between-git-clone-mirror-and-git-clone-bare]
 Suppose origin has a few branches (master (HEAD), next, pu, and maint), some tags (v1, v2, v3), some remote branches (devA/master, devB/master), and some other refs (refs/foo/bar, refs/foo/baz, which might be notes, stashes, other devs' namespaces, who knows).
 
@@ -70,6 +72,11 @@ git remote add ...
 ```
 As you probably know, git is a distributed version control system. Most operations are done locally. To communicate with the outside world, git uses what are called remotes. These are repositories other than the one on your local disk which you can push your changes into (so that other people can see them) or pull from (so that you can get others changes). The command git remote add origin git@github.com:peter/first_app.gitcreates a new remote called origin located at git@github.com:peter/first_app.git. Once you do this, in your push commands, you can push to origin instead of typing out the whole URL.
 
+### git pull origin master
+```
+git pull PalmTree-FruIT_bissolotti master
+```
+This is a command that says "pull the commits from the remote named PalmTree-FruIT_bissolotti, from the branch named master" (I think).
 ### git push origin master
 [https://stackoverflow.com/questions/5617211/what-is-git-remote-add-and-git-push-origin-master]
 ```
@@ -77,6 +84,29 @@ git push origin master
 ```
 
 This is a command that says "push the commits in the local branch named master to the remote named origin". Once this is executed, all the stuff that you last synchronised with origin will be sent to the remote repository and other people will be able to see them there.
+
+### git checkout -b
+```
+git checkout -b pull_request_yourname
+```
+Command line that has to be executed from inside the public repository into which you want to merge your new objects or changes from the private repository.
+So, in this case:
+```
+cd NangaParbat
+git checkout -b pull_request_yourname
+```
+this creates a new branch in NangaParbat, called ``pull_request_yourname``.
+
+## About branches
+We can view all existing branches by typing
+```git branch -a
+```
+into terminal, which tells git that we want to see ALL the branches in this project, even ones that are not in our local workspace.
+
+We can also use the git checkout command to toggle back and forth between our two branches. Type
+```git checkout branchName
+```
+to switch to that branch. So, ``git checkout master`` takes you to ``master`` while ``git checkout hello_octo`` takes you back to ``hello_octo`` branch.
 
 ## About forks
 [https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/about-forks]
