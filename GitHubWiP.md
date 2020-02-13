@@ -99,12 +99,14 @@ this creates a new branch in NangaParbat, called ``pull_request_yourname``.
 
 ## About branches
 We can view all existing branches by typing
-```git branch -a
+```
+git branch -a
 ```
 into terminal, which tells git that we want to see ALL the branches in this project, even ones that are not in our local workspace.
 
 We can also use the git checkout command to toggle back and forth between our two branches. Type
-```git checkout branchName
+```
+git checkout branchName
 ```
 to switch to that branch. So, ``git checkout master`` takes you to ``master`` while ``git checkout hello_octo`` takes you back to ``hello_octo`` branch.
 
