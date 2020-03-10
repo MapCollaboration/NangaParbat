@@ -101,7 +101,6 @@ The reports above have been generated using the CLI ``cli/report.py``.
 
 NangaParbat has been developed with the support of the European
 Research Council (ERC) under the European Union's Horizon 2020
-research and innovation program (grant agreement No. 647981, 3DSPIN)
+research and innovation program (grant agreement No. 647981, 3DSPIN).
 
-![alt text](https://github.com/vbertone/NangaParbat/raw/master/resources/3DSPIN-col.png
- "3DSPIN logo")
+<img src="resources/3DSPIN-col.png" alt="3DSPIN log" width="200"/> <img src="resources/ERC.jpg" alt="ERC logo" width="200"/>
