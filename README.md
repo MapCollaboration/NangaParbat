@@ -96,3 +96,12 @@ The reports above have been generated using the CLI ``cli/report.py``.
 
 - Valerio Bertone: valerio.bertone@cern.ch
 - Chiara Bissolotti: chiara.bissolotti01@universitadipavia.it
+
+## Credits
+
+NangaParbat has been developed with the support of the European
+Research Council (ERC) under the European Union's Horizon 2020
+research and innovation program (grant agreement No. 647981, 3DSPIN)
+
+![alt text](https://github.com/vbertone/NangaParbat/raw/master/resources/3DSPIN-col.png
+ "3DSPIN logo")
