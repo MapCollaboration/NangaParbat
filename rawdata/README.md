@@ -24,4 +24,5 @@ link to the HepData page:
 - [HEPData-ins1471281-v1-yaml](https://www.hepdata.net/search/?q=ins1471281): CMS 8 TeV,
 - [HEPData-ins1373300-v1-yaml](https://www.hepdata.net/search/?q=ins1373300): LHCb 7 TeV,
 - [HEPData-ins1406555-v1-yaml](https://www.hepdata.net/search/?q=ins1406555): LHCb 8 TeV,
-- [LHCb_13TeV](https://arxiv.org/pdf/1607.06495.pdf): LHCb at 13 TeV.
+- [LHCb_13TeV](https://arxiv.org/pdf/1607.06495.pdf): LHCb at 13 TeV,
+- [HEPData-ins1208547-v1-yaml](https://www.hepdata.net/record/ins1208547) HERMES data.

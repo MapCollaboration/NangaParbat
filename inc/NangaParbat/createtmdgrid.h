@@ -16,7 +16,7 @@ namespace NangaParbat
   /**
    * @brief Structure that contains the 3D grid in Q,x, and qT
    */
-  struct TDGrid
+  struct ThreeDGrid
   {
     // Grid in Q
     std::vector<double> Qg
@@ -65,6 +65,15 @@ namespace NangaParbat
   const std::map<int, std::string> PtOrderMap{{0, "LL"}, {1, "NLL"}, {-1, "NLL'"}, {2, "NNLL"}, {-2, "NNLL'"}, {3, "NNNLL"}};
 
   /**
+   * @brief This function encapsulates and streamlines the production
+   * of an interpolation grid strting from the report produced by a
+   * NangaParbat fit.
+   * @param ReportFolder: path to the report folder
+   * @param Output: name of the output grid
+   */
+  void ProduceTMDGrid(std::string const& ReportFolder, std::string const& Output);
+
+  /**
    * @brief Function that produces the TMD interpolation grid in
    * momentum space. This is suppose to resamble an LHAPDF grid for
    * the TMDs. We use plain YAML format.
@@ -78,7 +87,7 @@ namespace NangaParbat
                                              std::string         const& parameterisation,
                                              std::vector<double> const& params,
                                              std::string         const& pf,
-                                             TDGrid              const& tdg = TDGrid{});
+                                             ThreeDGrid          const& tdg = ThreeDGrid{});
 
   /**
    * @brief Function that produces the info file of the TMD set. This

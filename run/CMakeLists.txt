@@ -25,3 +25,6 @@ target_link_libraries(AvailableParameterisations NangaParbat)
 
 add_executable(AvailableBstar AvailableBstar.cc)
 target_link_libraries(AvailableBstar NangaParbat)
+
+add_executable(CreateGrids CreateGrids.cc)
+target_link_libraries(CreateGrids NangaParbat)

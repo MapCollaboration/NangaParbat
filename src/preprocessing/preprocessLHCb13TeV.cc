@@ -5,7 +5,6 @@
 #include "NangaParbat/preprocessing.h"
 
 #include <iostream>
-#include <fstream>
 #include <sys/stat.h>
 
 namespace NangaParbat
@@ -25,7 +24,6 @@ namespace NangaParbat
     const std::string ofolder = "LHCb";
 
     // In this case just copy the file
-    // Loop over tables
     std::string opath = ProcessedDataPath + "/" + ofolder;
     mkdir(opath.c_str(), ACCESSPERMS);
 

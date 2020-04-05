@@ -162,7 +162,7 @@ namespace NangaParbat
   apfel::DoubleObject<apfel::Distribution> FastInterface::LuminositySIDIS(double const& bT, double const& Q, double const& targetiso) const
   {
     // TMD scales
-    const int    pto   = _config["PerturbativeOrder"].as<int>();
+    //const int    pto   = _config["PerturbativeOrder"].as<int>();
     const double Cf    = _config["TMDscales"]["Cf"].as<double>();
     const double aref  = _config["alphaem"]["aref"].as<double>();
     const bool   arun  = _config["alphaem"]["run"].as<bool>();
@@ -186,10 +186,11 @@ namespace NangaParbat
     const double aem2 = pow((arun ? _TabAlphaem->Evaluate(Q) : aref), 2);
 
     // Compute the hard factor
-    const double hcs = apfel::HardFactorSIDIS(pto, _TabAlphas->Evaluate(muf), nf, Cf);
+    const double hcs = 1;//apfel::HardFactorSIDIS(pto, _TabAlphas->Evaluate(muf), nf, Cf);
 
     // Global factor (TO BE ADJUSTED!)
-    const double factor = apfel::ConvFact * aem2 * hcs;
+    const double factor = apfel::ConvFact * 2 * M_PI * aem2 * hcs;
+    //const double factor = apfel::ConvFact * 8 * M_PI * aem2 * hcs / 9 / pow(Q, 3);
 
     const std::map<int,apfel::Distribution> xF = QCDEvToPhys(_EvTMDPDFs(bT, muf, zetaf).GetObjects());
     const std::map<int,apfel::Distribution> xD = QCDEvToPhys(_EvTMDFFs(bT, muf, zetaf).GetObjects());
