@@ -31,6 +31,13 @@ int main(int argc, char* argv[])
   std::cout << "\nxf_" << ifl << "(x = " << x << ", kT =" << kT << " GeV, Q = " << Q << " GeV) = " << TMDs->Evaluate(x, kT, Q).at(ifl) << std::endl;
   std::cout << "\n";
 
+  // Performance test
+  apfel::Timer t;
+  const int n = 1000000;
+  std::cout << "Making " << n << " TMD calls... ";
+  for (int i = 0; i < n; i++)
+    TMDs->Evaluate(x, kT, Q);
+  t.stop();
   delete TMDs;
 
   return 0;

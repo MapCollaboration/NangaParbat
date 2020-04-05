@@ -63,8 +63,13 @@ namespace NangaParbat
                 for (auto const p : NPFunc->GetParameterNames())
                   vpars.push_back(pars.at(p));
 
-                // Compute grid and push it back
-                grids.push_back(EmitTMDGrid(config, pms, vpars, pf));
+                // Compute grid and push it back. In the case of
+                // replica_0 push it in the front to make sure it's
+                // the first replica.
+		if (f == "replica_0")
+		  grids.insert(grids.begin(), EmitTMDGrid(config, pms, vpars, pf));
+		else
+		  grids.push_back(EmitTMDGrid(config, pms, vpars, pf));
 
                 // Delete Parameterisation object
                 delete NPFunc;
@@ -194,9 +199,10 @@ namespace NangaParbat
           }
         // Report computation status
         const double perc = 100. * ( iQ + 1 ) / tdg.Qg.size();
-        std::cout << "Status report for the TMD grid computation ...: "<< std::setw(6) << std::setprecision(4) << perc << "\% completed...\r";
+        std::cout << "Status report for the TMD grid computation: "<< std::setw(6) << std::setprecision(4) << perc << "\% completed...\r";
         std::cout.flush();
       }
+    std::cout << "\n";
 
     // Dump grids to emitter
     std::unique_ptr<YAML::Emitter> out = std::unique_ptr<YAML::Emitter>(new YAML::Emitter);
