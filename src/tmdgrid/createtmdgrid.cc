@@ -6,10 +6,11 @@
 #include "NangaParbat/bstar.h"
 #include "NangaParbat/nonpertfunctions.h"
 #include "NangaParbat/listdir.h"
+#include "NangaParbat/direxists.h"
+#include "NangaParbat/numtostring.h"
 
 #include <LHAPDF/LHAPDF.h>
 #include <fstream>
-#include <sys/stat.h>
 
 namespace NangaParbat
 {
@@ -17,8 +18,7 @@ namespace NangaParbat
   void ProduceTMDGrid(std::string const& ReportFolder, std::string const& Output)
   {
     // Check if output folder already exists
-    struct stat buffer;
-    if (stat(Output.c_str(), &buffer) == 0)
+    if (dir_exists(Output))
       throw std::runtime_error("[ProduceTMDGrid]: output folder already exists.");
 
     // Distribution type
@@ -83,11 +83,7 @@ namespace NangaParbat
     // Dump grids to file
     for (int i = 0; i < (int) grids.size(); i++)
       {
-        std::string count = std::to_string(i);
-        const int bf = 4 - count.size();
-        for (int j = 0; j < bf; j++)
-          count = "0" + count;
-        std::ofstream fpout(Output + "/" + Output + "_" + count + ".yaml");
+        std::ofstream fpout(Output + "/" + Output + "_" + num_to_string(i) + ".yaml");
         fpout << grids[i]->c_str() << std::endl;
         fpout.close();
       }
@@ -175,7 +171,6 @@ namespace NangaParbat
                                                                                                      std::vector<double>(tdg.qToQg.size())))});
     for (int iQ = 0; iQ < (int) tdg.Qg.size(); iQ++)
       {
-        std::cout << iQ << std::endl;
         // Integrand
         const std::function<apfel::Set<apfel::Distribution>(double const&)> bTintegrand = [=] (double const& b) -> apfel::Set<apfel::Distribution>
         {
@@ -197,6 +192,10 @@ namespace NangaParbat
                   TMDs[f][iQ][ix][iqT] = Df.Evaluate(tdg.xg[ix]);
               }
           }
+        // Report computation status
+        const double perc = 100. * ( iQ + 1 ) / tdg.Qg.size();
+        std::cout << "Status report for the TMD grid computation ...: "<< std::setw(6) << std::setprecision(4) << perc << "\% completed...\r";
+        std::cout.flush();
       }
 
     // Dump grids to emitter

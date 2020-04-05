@@ -3,14 +3,16 @@
 //
 
 #include "NangaParbat/factories.h"
+#include "NangaParbat/numtostring.h"
 
 namespace NangaParbat
 {
   //_________________________________________________________________________________
   TMDGrid* mkTMD(std::string const& name, int const& mem)
   {
+    std::cout << "[NangaParbat]: loading " << name + "/" + name + "_" + num_to_string(mem) + ".yaml" << std::endl;
     return new NangaParbat::TMDGrid{YAML::LoadFile(name + "/" + name + ".info"),
-                                    YAML::LoadFile(name + "/" + name + "_" + std::to_string(mem) + ".yaml")};
+                                    YAML::LoadFile(name + "/" + name + "_" + num_to_string(mem) + ".yaml")};
   }
 
   //_________________________________________________________________________________

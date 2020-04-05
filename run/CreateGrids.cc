@@ -3,6 +3,7 @@
 //
 
 #include "NangaParbat/createtmdgrid.h"
+#include "NangaParbat/factories.h"
 
 //_________________________________________________________________________________
 int main(int argc, char* argv[])
@@ -17,14 +18,20 @@ int main(int argc, char* argv[])
 
   // Produce the folder with the grids
   NangaParbat::ProduceTMDGrid(argv[1], argv[2]);
-  /*
-  // Read configuration file
-  NangaParbat::TMDGrid* TMDs = NangaParbat::mkTMD("PV19_n3ll");
+
+  // Read in grid
+  NangaParbat::TMDGrid* TMDs = NangaParbat::mkTMD(argv[2]);
+
+  //  Test grid
+  const int ifl   = 2;
+  const double x  = 0.1;
+  const double kT = 0.2;
+  const double Q  = 90;
   std::cout << std::scientific;
-  for (int iqT = 0; iqT < (int) qTv.size(); iqT++)
-    std::cout << qTv[iqT] << "\t" << TMDs->Evaluate(x, qTv[iqT], Q).at(ifl) / tmds[0][iqT] << std::endl;
+  std::cout << "\nxf_" << ifl << "(x = " << x << ", kT =" << kT << " GeV, Q = " << Q << " GeV) = " << TMDs->Evaluate(x, kT, Q).at(ifl) << std::endl;
   std::cout << "\n";
+
   delete TMDs;
-  */
+
   return 0;
 }
