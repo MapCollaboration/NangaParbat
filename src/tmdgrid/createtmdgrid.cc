@@ -66,10 +66,10 @@ namespace NangaParbat
                 // Compute grid and push it back. In the case of
                 // replica_0 push it in the front to make sure it's
                 // the first replica.
-		if (f == "replica_0")
-		  grids.insert(grids.begin(), EmitTMDGrid(config, pms, vpars, pf));
-		else
-		  grids.push_back(EmitTMDGrid(config, pms, vpars, pf));
+                if (f == "replica_0")
+                  grids.insert(grids.begin(), EmitTMDGrid(config, pms, vpars, pf));
+                else
+                  grids.push_back(EmitTMDGrid(config, pms, vpars, pf));
 
                 // Delete Parameterisation object
                 delete NPFunc;
