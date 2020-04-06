@@ -37,3 +37,8 @@ add_test(TestMinimisation TestMinimisation)
 add_executable(SIDISCrossSection SIDISCrossSection.cc)
 target_link_libraries(SIDISCrossSection NangaParbat)
 add_test(SIDISCrossSection SIDISCrossSection)
+
+# build tests
+add_executable(GridProduction GridProduction.cc)
+target_link_libraries(GridProduction NangaParbat)
+add_test(GridProduction GridProduction)

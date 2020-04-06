@@ -155,7 +155,6 @@ namespace NangaParbat
 
     // Get b* prescription
     const std::function<double(double const&, double const&)> bstar = bstarMap.at(config["bstar"].as<std::string>());
-    //const std::function<double(double const&, double const&)> bstar = bstarMap.at("bstarCSS");
 
     // Allocate parameterisation object and set parameters
     Parameterisation *NPFunc = GetParametersation(parameterisation);
@@ -184,7 +183,7 @@ namespace NangaParbat
           const double bs = bstar(b, Q);
           apfel::Set<apfel::Distribution> tdist = Tmds(bs, Q, Q2);
           tdist.SetMap(cevb);
-          return [&] (double const& x) -> double{ return NPFunc->Evaluate(x, b, Q2, (pf == "pdf" ? 0 : 1)); } * tdist;
+          return [&] (double const& x) -> double{ return b * NPFunc->Evaluate(x, b, Q2, (pf == "pdf" ? 0 : 1)); } * tdist;
         };
         for (int iqT = 0; iqT < (int) tdg.qToQg.size(); iqT++)
           {
@@ -243,21 +242,21 @@ namespace NangaParbat
     // Dump grids to emitter
     out->SetFloatPrecision(8);
     out->SetDoublePrecision(8);
-    (*out) << YAML::BeginMap;
-    (*out) << YAML::Key << "SetDesc"        << YAML::Value << SetDesc;
-    (*out) << YAML::Key << "Authors"        << YAML::Value << Authors;
-    (*out) << YAML::Key << "Reference"      << YAML::Value << Reference;
-    (*out) << YAML::Key << "SetIndex"       << YAML::Value << SetIndex;
-    (*out) << YAML::Key << "DistType"       << YAML::Value << pf;
-    (*out) << YAML::Key << "CollDist"       << YAML::Value << config[pf + "set"]["name"].as<std::string>();
-    (*out) << YAML::Key << "CollDistMember" << YAML::Value << config[pf + "set"]["member"].as<std::string>();
-    (*out) << YAML::Key << "Format"         << YAML::Value << Format;
-    (*out) << YAML::Key << "DataVersion"    << YAML::Value << DataVersion;
-    (*out) << YAML::Key << "OrderQCD"       << YAML::Value << PtOrderMap.at(config["PerturbativeOrder"].as<int>());
-    (*out) << YAML::Key << "Regularisation" << YAML::Value << config["bstar"].as<std::string>();
-    (*out) << YAML::Key << "NumMembers"     << YAML::Value << NumMembers;
-    (*out) << YAML::Key << "ErrorType"      << YAML::Value << ErrorType;
-    (*out) << YAML::EndMap;
+    *out << YAML::BeginMap;
+    *out << YAML::Key << "SetDesc"        << YAML::Value << SetDesc;
+    *out << YAML::Key << "Authors"        << YAML::Value << Authors;
+    *out << YAML::Key << "Reference"      << YAML::Value << Reference;
+    *out << YAML::Key << "SetIndex"       << YAML::Value << SetIndex;
+    *out << YAML::Key << "DistType"       << YAML::Value << pf;
+    *out << YAML::Key << "CollDist"       << YAML::Value << config[pf + "set"]["name"].as<std::string>();
+    *out << YAML::Key << "CollDistMember" << YAML::Value << config[pf + "set"]["member"].as<std::string>();
+    *out << YAML::Key << "Format"         << YAML::Value << Format;
+    *out << YAML::Key << "DataVersion"    << YAML::Value << DataVersion;
+    *out << YAML::Key << "OrderQCD"       << YAML::Value << PtOrderMap.at(config["PerturbativeOrder"].as<int>());
+    *out << YAML::Key << "Regularisation" << YAML::Value << config["bstar"].as<std::string>();
+    *out << YAML::Key << "NumMembers"     << YAML::Value << NumMembers;
+    *out << YAML::Key << "ErrorType"      << YAML::Value << ErrorType;
+    *out << YAML::EndMap;
 
     // Return the emitter
     return out;
