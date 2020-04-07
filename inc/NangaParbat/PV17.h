@@ -18,7 +18,7 @@ namespace NangaParbat
   {
   public:
     // The default parameters correspond to those of replica 105 of
-    // the PV17 fit. See Tabs, X and XI of
+    // the PV17 fit. See Tabs. X and XI of
     // https://arxiv.org/pdf/1703.10157.pdf.
     PV17(): Parameterisation{"PV17", 2, std::vector<double>{0.128, 0.285, 2.98, 0.173, 0.39, 0.212, 2.10, 2.52, 0.094, 5.29, 0.135}} { };
 
@@ -31,45 +31,38 @@ namespace NangaParbat
       if (x >= 1)
         return 0;
 
-      // Free parameters
       // Evolution
-      const double g2      = this->_pars[0];
-
-      // PDFs
-      const double N1      = this->_pars[1];
-      const double alpha   = this->_pars[2];
-      const double sigma   = this->_pars[3];
-      const double lambda  = this->_pars[4];
-
-      // FFs
-      const double N3      = this->_pars[5];
-      const double beta    = this->_pars[6];
-      const double delta   = this->_pars[7];
-      const double gamma   = this->_pars[8];
-      const double lambdaF = this->_pars[9];
-      const double N4      = this->_pars[10];
-
-      // Evolution
+      const double g2   = this->_pars[0];
       const double Q02  = 1;
       const double evol = exp( - g2 * log(zeta / Q02) * b * b / 2 );
 
       // TMD PDFs
       if (ifunc == 0)
         {
-          const double xhat = 0.1;
-          const double g1   = N1 * pow(x / xhat, sigma) * pow((1 - x) / (1 - xhat), alpha);
-          return evol * exp( - g1 * b * b / 4 ) * ( 1 - lambda * pow(g1 * b / 2, 2) / ( 1 + lambda * g1 ) );
+          const double N1     = this->_pars[1];
+          const double alpha  = this->_pars[2];
+          const double sigma  = this->_pars[3];
+          const double lambda = this->_pars[4];
+          const double xhat   = 0.1;
+          const double g1     = N1 * pow(x / xhat, sigma) * pow((1 - x) / (1 - xhat), alpha);
+          return evol * exp( - g1 * pow(b / 2, 2) ) * ( 1 - lambda * pow(g1 * b / 2, 2) / ( 1 + lambda * g1 ) );
         }
       // TMD FFs
       else
         {
-          const double zhat = 0.1;
-          const double cmn  = ( ( pow(x, beta) + delta ) / ( pow(zhat, beta) + delta ) ) * pow((1 - x) / (1 - zhat), gamma);
-          const double g3   = N3 * cmn;
-          const double g4   = N4 * cmn;
-          const double z2   = x * x;
-          return evol * ( g3 * exp( - g3 * b * b / 4 / z2 )
-                          + ( lambdaF / z2 ) * g4 * ( 1 - g4 * pow(b / 2, 2) / z2 ) * exp( - g3 * b * b / 4 / z2 ) )
+          const double N3      = this->_pars[5];
+          const double beta    = this->_pars[6];
+          const double delta   = this->_pars[7];
+          const double gamma   = this->_pars[8];
+          const double lambdaF = this->_pars[9];
+          const double N4      = this->_pars[10];
+          const double zhat    = 0.1;
+          const double cmn     = ( ( pow(x, beta) + delta ) / ( pow(zhat, beta) + delta ) ) * pow((1 - x) / (1 - zhat), gamma);
+          const double g3      = N3 * cmn;
+          const double g4      = N4 * cmn;
+          const double z2      = x * x;
+          return evol * ( g3 * exp( - g3 * pow(b / 2, 2) / z2 )
+                          + ( lambdaF / z2 ) * g4 * ( 1 - g4 * pow(b / 2, 2) / z2 ) * exp( - g3 * pow(b / 2, 2) / z2 ) )
                  / ( z2 * ( g3 + ( lambdaF / z2 ) * g4 ) );
         }
     };
