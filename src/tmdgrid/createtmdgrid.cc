@@ -11,6 +11,7 @@
 
 #include <LHAPDF/LHAPDF.h>
 #include <fstream>
+#include <sys/stat.h>
 
 namespace NangaParbat
 {

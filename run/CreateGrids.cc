@@ -5,6 +5,8 @@
 #include "NangaParbat/createtmdgrid.h"
 #include "NangaParbat/factories.h"
 
+#include <cstring>
+
 //_________________________________________________________________________________
 int main(int argc, char* argv[])
 {

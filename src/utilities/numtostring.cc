@@ -4,6 +4,8 @@
 
 #include "NangaParbat/numtostring.h"
 
+#include <stdexcept>
+
 namespace NangaParbat
 {
   //_________________________________________________________________________________
