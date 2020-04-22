@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
   const double kT = 0.2;
   const double Q  = 90;
   std::cout << std::scientific;
-  std::cout << "\nxf_" << ifl << "(x = " << x << ", kT =" << kT << " GeV, Q = " << Q << " GeV) = " << TMDs->Evaluate(x, kT, Q).at(ifl) << std::endl;
+  std::cout << "\nxf_" << ifl << "(x = " << x << ", kT = " << kT << " GeV, Q = " << Q << " GeV) = " << TMDs->Evaluate(x, kT, Q).at(ifl) << std::endl;
   std::cout << "\n";
 
   // Performance test

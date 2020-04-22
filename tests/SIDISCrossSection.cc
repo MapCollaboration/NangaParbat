@@ -86,8 +86,8 @@ int main()
   const auto CollFFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabFFs.Evaluate(mustar(mu, kappa, css)); };
 
   // Initialize TMD objects
-  const auto TmdObjPDF = apfel::InitializeTmdObjects(gpdf, Thresholds);
-  const auto TmdObjFF  = apfel::InitializeTmdObjects(gff, Thresholds);
+  const auto TmdObjPDF = apfel::InitializeTmdObjectsLite(gpdf, Thresholds);
+  const auto TmdObjFF  = apfel::InitializeTmdObjectsLite(gff, Thresholds);
 
   // Alpha_em
   const double aref = 0.007555310522369057;

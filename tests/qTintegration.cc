@@ -24,10 +24,10 @@ double fNP(double const&, double const& b, double const& zetaf)
 int main()
 {
   // Allocate "FastInterface" object
-  const YAML::Node config = YAML::LoadFile("../cards/config.yaml");
+  const YAML::Node config = YAML::LoadFile("../tables/N3LL/config.yaml");
 
   // Datafiles
-  const NangaParbat::DataHandler DHObj{"qTintegration_test", YAML::LoadFile("../data/TestData/Table2.yaml")};
+  const NangaParbat::DataHandler DHObj{"qTintegration_test", YAML::LoadFile("../data/CDF/CDF_RunII.yaml")};
 
   // Now start direct computation
   // Open LHAPDF set
@@ -155,7 +155,7 @@ int main()
   {
     // Construct the TMD luminosity in b scale to be fed to be
     // trasformed in qT space.
-    const auto TMDLumibNew = [=] (double const& b) -> double{ return b * TabLumi.EvaluatexzQ(x1, x2, NangaParbat::bstarCSS(b, 0)) * fNP(0, b, zetaf) * fNP(0, b, zetaf) / 2; };
+    const std::function<double(double const&)> TMDLumibNew = [=] (double const& b) -> double{ return b * TabLumi.EvaluatexzQ(x1, x2, NangaParbat::bstarCSS(b, 0)) * fNP(0, b, zetaf) * fNP(0, b, zetaf) / 2; };
     return apfel::ConvFact * qT * 8 * M_PI * aem2 * hcs * ps.PhaseSpaceReduction(Q, y, qT) * bintegrand.transform(TMDLumibNew, qT) / pow(Q, 3) / 9;
   };
 
@@ -167,7 +167,7 @@ int main()
             << std::endl;
   const apfel::Integrator IntQt{qTdist};
   for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
-    std::cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: " << IntQt.integrate(qTv[iqT], qTv[iqT+1], 1e-5) << std::endl;
+    std::cout << "[" << qTv[iqT] << ": " << qTv[iqT+1] << "]: " << IntQt.integrate(qTv[iqT], qTv[iqT+1], 1e-5) << std::endl;
   std::cout << "\n";
   t.stop();
 
@@ -177,7 +177,7 @@ int main()
   {
     // Construct the TMD luminosity in b scale to be fed to be
     // trasformed in qT space.
-    const auto TMDLumibPrim = [=] (double const& b) -> double{ return TabLumi.EvaluatexzQ(x1, x2, NangaParbat::bstarCSS(b, 0)) * fNP(0, b, zetaf) * fNP(0, b, zetaf) / 2; };
+    const std::function<double(double const&)> TMDLumibPrim = [=] (double const& b) -> double{ return TabLumi.EvaluatexzQ(x1, x2, NangaParbat::bstarCSS(b, 0)) * fNP(0, b, zetaf) * fNP(0, b, zetaf) / 2; };
     const double DqT    = (lower ? 1 : -1); // This assumes that the bin-width is equal to 2 GeV
     const double PSRed  = ps.PhaseSpaceReduction(Q, y, qT);
     const double dPSRed = ps.DerivePhaseSpaceReduction(Q, y, qT);
@@ -190,7 +190,7 @@ int main()
             << "   sigma      "
             << std::endl;
   for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
-    std::cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: "
+    std::cout << "[" << qTv[iqT] << ": " << qTv[iqT+1] << "]: "
               << qTPrimitive(qTv[iqT+1], false) - qTPrimitive(qTv[iqT], true) << "  "
               << std::endl;
   std::cout << "\n";
@@ -206,7 +206,7 @@ int main()
   fout.close();
   const NangaParbat::ConvolutionTable CTable{YAML::Load(tab[0].c_str())};
   */
-  const NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/qTintegration_test.yaml")};
+  const NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/N3LL/CDF_RunII.yaml")};
   const std::vector<double> Conv = CTable.GetPredictions(fNP);
   t.start();
   std::cout << "\nGrid computation of the integral in qT" << std::endl;
@@ -214,7 +214,7 @@ int main()
             << "   sigma      "
             << std::endl;
   for (int iqT = 0; iqT < (int) qTv.size() - 1; iqT++)
-    std::cout << "[" << qTv[iqT] << ":" << qTv[iqT+1] << "]: "
+    std::cout << "[" << qTv[iqT] << ": " << qTv[iqT+1] << "]: "
               << Conv[iqT] << "  "
               << std::endl;
   std::cout << "\n";

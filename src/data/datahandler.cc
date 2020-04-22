@@ -22,9 +22,11 @@ namespace NangaParbat
       qTfact({}),
       var1b({0, 0}),
       var2b({0, 0}),
+      var3b({0, 0}),
       IntqT(false),
       Intv1(false),
       Intv2(false),
+      Intv3(false),
       PSRed(false),
       pTMin(0),
       etaRange({-10, 10})
@@ -35,7 +37,9 @@ namespace NangaParbat
   bool DataHandler::Kinematics::empty() const
   {
     if (ndata == 0 || Vs == 0 || qTv.empty() || qTmap.empty() || qTfact.empty() ||
-        ( var1b.first == 0 && var1b.second == 0 && var1b.first == 0 && var1b.second == 0 ))
+        ( var1b.first == 0 && var1b.second == 0 &&
+          var2b.first == 0 && var2b.second == 0 &&
+          var3b.first == 0 && var3b.second == 0 ))
       return true;
     else
       return false;
@@ -84,21 +88,28 @@ namespace NangaParbat
             if (ql["name"].as<std::string>() == "Vs")
               _kin.Vs = ql["value"].as<double>();
 
-            // Invariant-mass interval
+            // Invariant-mass (DY) or virtuality (SIDIS) interval
             if (ql["name"].as<std::string>() == "Q")
               {
                 _kin.var1b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
                 _kin.Intv1 = ql["integrate"].as<bool>();
               }
 
-            // Rapidity interval
-            if (ql["name"].as<std::string>() == "y")
+            // Rapidity (DY) or Bjorken-x (SIDIS) interval
+            if (ql["name"].as<std::string>() == "y" || ql["name"].as<std::string>() == "x")
               {
                 _kin.var2b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
                 _kin.Intv2 = ql["integrate"].as<bool>();
               }
 
-            // Lepton cuts
+            // z interval (SIDIS only)
+            if (ql["name"].as<std::string>() == "z")
+              {
+                _kin.var3b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
+                _kin.Intv3 = ql["integrate"].as<bool>();
+              }
+
+            // Lepton cuts (DY only)
             if (ql["name"].as<std::string>() == "PS_reduction")
               {
                 _kin.PSRed    = true;
@@ -201,8 +212,7 @@ namespace NangaParbat
         }
 
     // Check that the "DataHandler" has been properly filled in
-    if (_proc == UnknownProcess ||
-        _kin.empty())
+    if (_proc == UnknownProcess || _kin.empty())
       throw std::runtime_error("[DataHandler::DataHandler]: Object not properly filled in. Probably one or more required keys are missing");
 
     // Check that the t0 vector is either empty or contains exactly
@@ -299,10 +309,10 @@ namespace NangaParbat
     else
       os << "- Process: Unknown\n";
 
-    os << "- Target isoscalarity: " << DH._targetiso << "\n";
-    os << "- Overall prefactor: " << DH._prefact << "\n";
-    os << "- Number of points: " << DH._kin.ndata << "\n";
-    os << "- Center-of-mass energy: " << DH._kin.Vs << " GeV\n";
+    os << "- Target isoscalarity: "   << DH._targetiso << "\n";
+    os << "- Overall prefactor: "     << DH._prefact   << "\n";
+    os << "- Number of points: "      << DH._kin.ndata << "\n";
+    os << "- Center-of-mass energy: " << DH._kin.Vs    << " GeV\n";
 
     os << "- qT bin-bounds: [ ";
     for (auto const& qTp : DH._kin.qTmap)
@@ -328,6 +338,14 @@ namespace NangaParbat
       os << "- Integration bounds of the second kinematic variable: [" << DH._kin.var2b.first << ": " << DH._kin.var2b.second << "]\n";
     else
       os << "- Value of the second kinematic variable: " << ( DH._kin.var2b.first + DH._kin.var2b.second ) / 2 << "\n";
+
+    if (DH._proc == DataHandler::Process::SIDIS)
+      {
+        if (DH._kin.Intv3)
+          os << "- Integration bounds of the third kinematic variable: [" << DH._kin.var3b.first << ": " << DH._kin.var3b.second << "]\n";
+        else
+          os << "- Value of the second kinematic variable: " << ( DH._kin.var3b.first + DH._kin.var3b.second ) / 2 << "\n";
+      }
 
     if (DH._kin.PSRed)
       {

@@ -57,10 +57,10 @@ namespace NangaParbat
               qTb.push_back(std::make_pair(qTc - hbin, qTc + hbin));
               low  = qTc + hbin;
             }
-          /*
-          for (auto const& qT : qTb)
-            std::cout << qT.first << "   " << qT.second << std::endl;
-          */
+        /*
+        for (auto const& qT : qTb)
+          std::cout << qT.first << "   " << qT.second << std::endl;
+        */
 
         // Run over the energy ranges
         for (auto const& yb : exp["dependent_variables"])
@@ -108,7 +108,7 @@ namespace NangaParbat
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
                  << "low" << YAML::Value << 76.1876 << YAML::Key << "high" << YAML::Value << 106.1876 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
-                << "low" << YAML::Value << ylims.first << YAML::Key << "high" << YAML::Value << ylims.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+                 << "low" << YAML::Value << ylims.first << YAML::Key << "high" << YAML::Value << ylims.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
                  << "pTmin" << YAML::Value << 25 << YAML::Key << "pTmax" << YAML::Value << 1500 << YAML::Key << "etamin" << YAML::Value << -2.4 << YAML::Key << "etamax" << YAML::Value << 2.4 << YAML::EndMap;
             emit << YAML::EndSeq;
@@ -164,14 +164,14 @@ namespace NangaParbat
             std::ofstream fout(opath + "/" + ofile);
             fout << emit.c_str() << std::endl;
             fout.close();
+          }
       }
-      }
-      return
-        "  - {name: CMS_13TeV_y_0_0.4,   file: CMS_13TeV_y_0_0.4.yaml}\n"
-        "  - {name: CMS_13TeV_y_0.4_0.8, file: CMS_13TeV_y_0.4_0.8.yaml}\n"
-        "  - {name: CMS_13TeV_y_0.8_1.2, file: CMS_13TeV_y_0.8_1.2.yaml}\n"
-        "  - {name: CMS_13TeV_y_1.2_1.6, file: CMS_13TeV_y_1.2_1.6.yaml}\n"
-        "  - {name: CMS_13TeV_y_1.6_2.4, file: CMS_13TeV_y_1.6_2.4.yaml}\n";
+    return
+      "  - {name: CMS_13TeV_y_0_0.4,   file: CMS_13TeV_y_0_0.4.yaml}\n"
+      "  - {name: CMS_13TeV_y_0.4_0.8, file: CMS_13TeV_y_0.4_0.8.yaml}\n"
+      "  - {name: CMS_13TeV_y_0.8_1.2, file: CMS_13TeV_y_0.8_1.2.yaml}\n"
+      "  - {name: CMS_13TeV_y_1.2_1.6, file: CMS_13TeV_y_1.2_1.6.yaml}\n"
+      "  - {name: CMS_13TeV_y_1.6_2.4, file: CMS_13TeV_y_1.6_2.4.yaml}\n";
 
 
   }

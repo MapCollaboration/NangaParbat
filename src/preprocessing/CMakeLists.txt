@@ -16,6 +16,7 @@ set(preprocessing_source
   preprocessCMS13TeV.cc
   preprocessATLAS7TeV.cc
   preprocessATLAS8TeV.cc
+  preprocessEICPseudodata.cc
   )
 
 add_library(preprocessing OBJECT ${preprocessing_source})

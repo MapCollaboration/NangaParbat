@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
   const auto CollDists = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabDists.Evaluate(mu); };
 
   std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> EvTMDs = BuildTmdPDFs(apfel::InitializeTmdObjectsLite(g, Thresholds),
-														    CollDists, Alphas, pto, Ci);
+                                                                                                                    CollDists, Alphas, pto, Ci);
 
   // b* prescription
   const std::function<double(double const&, double const&)> bs = NangaParbat::bstarMap.at(config["bstar"].as<std::string>());
@@ -106,22 +106,22 @@ int main(int argc, char* argv[])
 
   std::cout << std::scientific;
   std::cout << "\nGrid / Direct:   xf_" << ifl << "(x = " << x << ", kT = " << kT << " GeV, Q = " << Q << " GeV) = "
-	    << TMDs->Evaluate(x, kT, Q).at(ifl) / DEObj.transform(txFb, kT) << std::endl;
+            << TMDs->Evaluate(x, kT, Q).at(ifl) / DEObj.transform(txFb, kT) << std::endl;
   //std::cout << "Direct: xf_" << ifl << "(x = " << x << ", kT = " << kT << " GeV, Q = " << Q << " GeV) = " << DEObj.transform(txFb, kT) << std::endl;
   std::cout << "\n";
-/*
-  // Try a convolution
-  const auto conv = Convolution(TMDs, [] (double const&) -> std::vector<double> { return apfel::QCh2; });
+  /*
+    // Try a convolution
+    const auto conv = Convolution(TMDs, [] (double const&) -> std::vector<double> { return apfel::QCh2; });
 
-  // Values of qT
-  const int nqT   = 10;
-  const double qTmin = Q * 1e-4;
-  const double qTmax = 0.2 * Q;
-  const double qTstp = exp( log( qTmax / qTmin ) / ( nqT - 1 ) );
-  std::vector<double> qTv;
-  for (double qT = qTmin; qT <= qTmax * ( 1 + 1e-5 ); qT *= qTstp)
-    std::cout << qT << "  " << qT * conv(x, x, Q, qT) << std::endl;
-*/
+    // Values of qT
+    const int nqT   = 10;
+    const double qTmin = Q * 1e-4;
+    const double qTmax = 0.2 * Q;
+    const double qTstp = exp( log( qTmax / qTmin ) / ( nqT - 1 ) );
+    std::vector<double> qTv;
+    for (double qT = qTmin; qT <= qTmax * ( 1 + 1e-5 ); qT *= qTstp)
+      std::cout << qT << "  " << qT * conv(x, x, Q, qT) << std::endl;
+  */
   delete TMDs;
   return 0;
 }

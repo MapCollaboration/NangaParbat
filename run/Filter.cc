@@ -69,6 +69,9 @@ int main(int argc, char* argv[])
   fout << NangaParbat::PreprocessATLAS7TeV(RawDataPath, ProcessedDataPath, pdferr);
   fout << NangaParbat::PreprocessATLAS8TeV(RawDataPath, ProcessedDataPath, pdferr);
 
+  //fout << "EIC:\n";
+  //fout << NangaParbat::PreprocessEICPseudodata(RawDataPath, ProcessedDataPath, pdferr);
+
   fout.close();
 
   return 0;

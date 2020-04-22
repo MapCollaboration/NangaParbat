@@ -21,12 +21,13 @@ namespace NangaParbat
     const double bmax  = 2 * exp( - apfel::emc);
     const double bmin  = bmax / Q;
     const double power = 4;
-
     // Avoid numerical problems when b is too small
     if (b < 1e-4)
       return bmin;
     else
-      return bmax * pow( ( 1 - exp( - pow(b / bmax, power) ) ) /
-                         ( 1 - exp( - pow(b / bmin, power) ) ), 1 / power);
+      //return bmax * pow( ( 1 - exp( - pow(b / bmax, power) ) ) /
+      //		 ( 1 - exp( - pow(b / bmin, power) ) ), 1 / power);
+      return bmax * pow( ( - expm1( - pow(b / bmax, power) ) ) /
+                         ( - expm1( - pow(b / bmin, power) ) ), 1 / power);
   }
 }
