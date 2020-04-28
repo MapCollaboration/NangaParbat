@@ -54,7 +54,7 @@ def BinsAndTicks(_min, _max):
     # First bin starts at the multiple of 0.5 nearest to the minimum of the distribution
     start = round(_min, 2)
     startbin = np.floor(start / 0.5) * 0.5
-    
+
     if  range <=  0.5:
         nbins      = np.arange(start = startbin - 0.1, stop = round(_max, 2) + 0.1, step = 0.01).tolist()
         majorticks = np.arange(start = nbins[0], stop = nbins[-1], step = 0.05).tolist()
@@ -83,14 +83,18 @@ def BinsAndTicks(_min, _max):
         nbins      = np.arange(start = round(startbin, 1) - 1, stop = round(_max, 1) + 1, step = 1).tolist()
         majorticks = np.arange(start = nbins[0], stop = nbins[-1], step = 10).tolist()
         minorticks = np.arange(start = round(startbin, 1) - 1, stop = round(_max, 1) + 1, step = 5).tolist()
-    elif range >= 100 and range < 1000:
-        nbins      = np.arange(start = round(startbin, 1) - 1, stop = round(_max, 1) + 1, step = 2.5).tolist()
+    elif range >= 100 and range < 500:
+        nbins      = np.arange(start = np.floor((round(startbin, 1))/ 5) * 5, stop = round(_max, 1), step = 2.5).tolist()
         majorticks = np.arange(start = nbins[0], stop = nbins[-1], step = 20).tolist()
-        minorticks = np.arange(start = round(startbin, 1) - 1, stop = round(_max, 1) + 1, step = 5).tolist()
-    elif range >= 1000:
-        nbins      = np.arange(start = round(startbin, 1) - 1, stop = round(_max, 1) + 1, step = 5).tolist()
+        minorticks = np.arange(start = round(startbin, 1) - 5, stop = round(_max, 1) + 1, step = 5).tolist()
+    elif range >= 500 and range < 1000:
+        nbins      = np.arange(start = np.floor((round(startbin, 1))/ 5) * 5, stop = round(_max, 1), step = 5).tolist()
         majorticks = np.arange(start = nbins[0], stop = nbins[-1], step = 50).tolist()
-        minorticks = np.arange(start = round(startbin, 1) - 1, stop = round(_max, 1) + 1, step = 25).tolist()
+        minorticks = np.arange(start = round(startbin, 1) - 5, stop = round(_max, 1) + 1, step = 10).tolist()
+    elif range >= 1000:
+        nbins      = np.arange(start = np.floor((round(startbin, 1))/ 5) * 5, stop = round(_max, 1), step = 25).tolist()
+        majorticks = np.arange(start = nbins[0], stop = nbins[-1], step = 50).tolist()
+        minorticks = np.arange(start = round(startbin, 1) - 5, stop = round(_max, 1) + 1, step = 25).tolist()
 
     return nbins, majorticks, minorticks
 

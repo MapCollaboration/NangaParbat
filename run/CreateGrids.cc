@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
   if (argc < 3 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./CreateGrid <report folder> <output>\n" << std::endl;
+      std::cout << "Syntax: ./CreateGrids <report folder> <output>\n" << std::endl;
       exit(-10);
     }
 
