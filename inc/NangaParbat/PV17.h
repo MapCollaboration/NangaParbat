@@ -20,7 +20,7 @@ namespace NangaParbat
     // The default parameters correspond to those of replica 105 of
     // the PV17 fit. See Tabs. X and XI of
     // https://arxiv.org/pdf/1703.10157.pdf.
-    PV17(): Parameterisation{"PV17", 2, std::vector<double>{0.128, 0.285, 2.98, 0.173, 0.39, 0.212, 2.10, 2.52, 0.094, 5.29, 0.135}} { };
+    PV17(): Parameterisation{"PV17", 2, std::vector<double>{0.128, 0.285, 2.98, 0.173, 0.39, 0.212, 2.10, 0.094, 2.52, 5.29, 0.033}} { };
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
@@ -56,14 +56,14 @@ namespace NangaParbat
           const double gamma   = this->_pars[8];
           const double lambdaF = this->_pars[9];
           const double N4      = this->_pars[10];
-          const double zhat    = 0.1;
+          const double zhat    = 0.5;
           const double cmn     = ( ( pow(x, beta) + delta ) / ( pow(zhat, beta) + delta ) ) * pow((1 - x) / (1 - zhat), gamma);
           const double g3      = N3 * cmn;
           const double g4      = N4 * cmn;
           const double z2      = x * x;
           return evol * ( g3 * exp( - g3 * pow(b / 2, 2) / z2 )
-                          + ( lambdaF / z2 ) * g4 * ( 1 - g4 * pow(b / 2, 2) / z2 ) * exp( - g3 * pow(b / 2, 2) / z2 ) )
-                 / ( z2 * ( g3 + ( lambdaF / z2 ) * g4 ) );
+                          + ( lambdaF / z2 ) * pow(g4, 2) * ( 1 - g4 * pow(b / 2, 2) / z2 ) * exp( - g4 * pow(b / 2, 2) / z2 ) )
+                 / ( z2 * ( g3 + ( lambdaF / z2 ) * pow(g4, 2) ) );
         }
     };
 

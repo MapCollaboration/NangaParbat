@@ -24,7 +24,7 @@ Percentile cut: '5'
 # prescriprion is enabled). They have to be as many and ordered as the
 # "Parameters" below.
 t0prescription: true
-t0parameters: [0.128, 0.285, 2.98, 0.173, 0.39, 0.212, 2.10, 2.52, 0.094, 5.29, 0.135]
+t0parameters: [0.128, 0.285, 2.98, 0.173, 0.39, 0.212, 2.10, 0.094, 2.52, 5.29, 0.033]
 
 # Parameterisation to be fitted to data. This has to correspond to a
 # derivarion of the "Parameterisation" class.
@@ -44,7 +44,7 @@ Parameters:
   - {name: "lambda",  starting_value: 0.39,  step: 0.005, fix: true }#, lower_bound: 0, upper_bound: 10}
   - {name: "N3",      starting_value: 0.212, step: 0.002, fix: true }#, lower_bound: 0, upper_bound: 10}
   - {name: "beta",    starting_value: 2.10,  step: 0.02,  fix: true }#, lower_bound: 0, upper_bound: 10}
-  - {name: "delta",   starting_value: 2.52,  step: 0.02,  fix: true }#, lower_bound: 0, upper_bound: 10}
-  - {name: "gamma",   starting_value: 0.094, step: 0.001, fix: true }#, lower_bound: 0, upper_bound: 10}
+  - {name: "delta",   starting_value: 0.094, step: 0.02,  fix: true }#, lower_bound: 0, upper_bound: 10}
+  - {name: "gamma",   starting_value: 2.52,  step: 0.001, fix: true }#, lower_bound: 0, upper_bound: 10}
   - {name: "lambdaF", starting_value: 5.29,  step: 0.05,  fix: true }#, lower_bound: 0, upper_bound: 10}
-  - {name: "N4",      starting_value: 0.135, step: 0.001, fix: true }#, lower_bound: 0, upper_bound: 10}
+  - {name: "N4",      starting_value: 0.033, step: 0.001, fix: true }#, lower_bound: 0, upper_bound: 10}
