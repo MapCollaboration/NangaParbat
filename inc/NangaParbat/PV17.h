@@ -63,7 +63,7 @@ namespace NangaParbat
           const double z2      = x * x;
           return evol * ( g3 * exp( - g3 * pow(b / 2, 2) / z2 )
                           + ( lambdaF / z2 ) * pow(g4, 2) * ( 1 - g4 * pow(b / 2, 2) / z2 ) * exp( - g4 * pow(b / 2, 2) / z2 ) )
-                 / ( z2 * ( g3 + ( lambdaF / z2 ) * pow(g4, 2) ) );
+                 / ( g3 + ( lambdaF / z2 ) * pow(g4, 2) );
         }
     };
 

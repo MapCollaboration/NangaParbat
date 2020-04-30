@@ -68,9 +68,9 @@ namespace NangaParbat
                 // replica_0 push it in the front to make sure it's
                 // the first replica.
                 if (f == "replica_0")
-                  grids.insert(grids.begin(), EmitTMDGrid(config, pms, vpars, pf));
+                  grids.insert(grids.begin(), EmitTMDGrid(config, pms, vpars, pf, InterGrid(pf)));
                 else
-                  grids.push_back(EmitTMDGrid(config, pms, vpars, pf));
+                  grids.push_back(EmitTMDGrid(config, pms, vpars, pf, InterGrid(pf)));
 
                 // Delete Parameterisation object
                 //delete NPFunc;
@@ -184,7 +184,7 @@ namespace NangaParbat
           const double bs = bstar(b, Q);
           apfel::Set<apfel::Distribution> tdist = Tmds(bs, Q, Q2);
           tdist.SetMap(cevb);
-          return [&] (double const& x) -> double{ return b * NPFunc->Evaluate(x, b, Q2, (pf == "pdf" ? 0 : 1)); } * tdist;
+          return [&] (double const& x) -> double{ return b * NPFunc->Evaluate(x, b, Q2, (pf == "pdf" ? 0 : 1)) / (pf == "pdf" ? 1 : x * x); } * tdist;
         };
         for (int iqT = 0; iqT < (int) tdg.qToQg.size(); iqT++)
           {
