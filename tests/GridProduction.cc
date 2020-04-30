@@ -16,17 +16,17 @@
 int main(int argc, char* argv[])
 {
   // Check that the input is correct otherwise stop the code
-  if (argc < 3 || strcmp(argv[1], "--help") == 0)
+  if (argc < 4 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./GridProduction <report folder> <output>\n" << std::endl;
+      std::cout << "Syntax: ./GridProduction <report folder> <pdf/ff> <output>\n" << std::endl;
       exit(-10);
     }
 
-  const std::string pf = "ff";
+  const std::string pf = argv[2];
 
   // Produce the folder with the grids
-  NangaParbat::ProduceTMDGrid(argv[1], argv[2], pf);
+  NangaParbat::ProduceTMDGrid(argv[1], argv[3], pf);
 
   // ===========================================================================
   // Now start direct computation
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
   std::cout << "Start testing grids against direct calculation" << std::endl;
 
   // Create folder to store the output
-  const std::string outdir = std::string(argv[2]) + "/testresults";
+  const std::string outdir = std::string(argv[3]) + "/testresults";
   mkdir(outdir.c_str(), ACCESSPERMS);
   std::cout << "Creating folder " + outdir << std::endl;
   std::cout << "\n";
@@ -109,22 +109,22 @@ int main(int argc, char* argv[])
   // Values of Q to test
   std::vector<double> Qg
   {
-    2//, 3.000000e+00, 7.000000e+00//,
-    //2.800000e+01, 4.342641e+01, 6.000000e+01, 9.118760e+01,
+    2, 3.000000e+00, 7.000000e+00,
+    2.800000e+01//, 4.342641e+01, 6.000000e+01, 9.118760e+01,
     //2.000000e+02//, 2.466432e+02
-    // 1.100000e+03
+    //1.100000e+03
   };
 
   // Values of x to test
   std::vector<double> xg
   {
     //2.050000e-04, 8.070000e-03,
-    //1.750000e-02, 5.800000e-01
+    //1.750000e-02,
     0.1, 0.3, 0.5, 0.7
   };
 
   // Read in grid
-  NangaParbat::TMDGrid* TMDs = NangaParbat::mkTMD(argv[2]);
+  NangaParbat::TMDGrid* TMDs = NangaParbat::mkTMD(argv[3]);
 
   // Read grids and test interpolation
   for (int iq = 0; iq < (int) Qg.size(); iq++)
