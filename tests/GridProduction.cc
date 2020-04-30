@@ -88,14 +88,6 @@ int main(int argc, char* argv[])
   for (auto const p : NPFunc->GetParameterNames())
     vpars.push_back(pars.at(p));
 
-  // // Collect parameters in vector
-  // std::vector<double> vpars;
-  // for (auto const p : NPFunc->GetParameterNames())
-  //   vpars.push_back(pars.at(p));
-
-  std::cout << "\n";
-  std::cout << "Check for the \U0001F41B" << std::endl;
-
   // Set vector of parameters
   NPFunc->SetParameters(vpars);
 
