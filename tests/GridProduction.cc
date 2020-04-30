@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
   const auto CollDists = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabDists.Evaluate(mu); };
 
   std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> EvTMDs = BuildTmdPDFs(apfel::InitializeTmdObjectsLite(g, Thresholds),
-														    CollDists, Alphas, pto, Ci);
+                                                                                                                    CollDists, Alphas, pto, Ci);
 
   // b* prescription
   const std::function<double(double const&, double const&)> bs = NangaParbat::bstarMap.at(config["bstar"].as<std::string>());
@@ -109,9 +109,9 @@ int main(int argc, char* argv[])
   // Values of Q to test
   std::vector<double> Qg
   {
-    3.000000e+00, 7.000000e+00,
-    2.800000e+01, 4.342641e+01, 6.000000e+01, 9.118760e+01,
-    2.000000e+02//, 2.466432e+02
+    2//, 3.000000e+00, 7.000000e+00//,
+    //2.800000e+01, 4.342641e+01, 6.000000e+01, 9.118760e+01,
+    //2.000000e+02//, 2.466432e+02
     // 1.100000e+03
   };
 
@@ -119,7 +119,8 @@ int main(int argc, char* argv[])
   std::vector<double> xg
   {
     //2.050000e-04, 8.070000e-03,
-    1.750000e-02, 5.800000e-01
+    //1.750000e-02, 5.800000e-01
+    0.1, 0.3, 0.5, 0.7
   };
 
   // Read in grid
@@ -142,17 +143,11 @@ int main(int argc, char* argv[])
           const double kTstp = (kTmax - kTmin)/ nkT;
 
           // bT-space TMD
-          const auto xFb = [&] (double const& bT) -> double { return bT * QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1)); };
+          const auto xFb = [&] (double const& bT) -> double
+          {
+            return bT * QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1)) / (pf == "pdf" ? 1 : x * x);
+          };
           const std::function<double(double const&)> txFb = [&] (double const& bT) -> double{ return xFb(bT); };
-
-          /*
-          // Print on terminal
-          std::cout << std::scientific;
-          for (double kT = kTmin; kT <= kTmax * ( 1 + 1e-5 ); kT += kTstp)
-            std::cout << "\nGrid / Direct:   xf_" << ifl << "(x = " << x << ", kT = " << kT << " GeV, Q = " << Q << " GeV) = "
-              << TMDs->Evaluate(x, kT, Q).at(ifl) / DEObj.transform(txFb, kT) << std::endl;
-          std::cout << "\n";
-          */
 
           // Fill vectors with grid interpolation and direct computation
           std::vector<double> gridinterp;
