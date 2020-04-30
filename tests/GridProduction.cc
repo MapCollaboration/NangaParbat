@@ -23,8 +23,10 @@ int main(int argc, char* argv[])
       exit(-10);
     }
 
+  const std::string pf = "ff";
+
   // Produce the folder with the grids
-  // NangaParbat::ProduceTMDGrid(argv[1], argv[2], "ff");
+  NangaParbat::ProduceTMDGrid(argv[1], argv[2], pf);
 
   // ===========================================================================
   // Now start direct computation
@@ -33,7 +35,7 @@ int main(int argc, char* argv[])
   const YAML::Node config = YAML::LoadFile(RepFolder + "/tables/config.yaml");
 
   // Open LHAPDF set
-  LHAPDF::PDF* dist = LHAPDF::mkPDF(config["pdfset"]["name"].as<std::string>(), config["pdfset"]["member"].as<int>());
+  LHAPDF::PDF* dist = LHAPDF::mkPDF(config[pf + "set"]["name"].as<std::string>(), config["pdfset"]["member"].as<int>());
 
   // Rotate sets into the QCD evolution basis
   const auto RotDists = [&] (double const& x, double const& mu) -> std::map<int,double> { return apfel::PhysToQCDEv(dist->xfxQ(x, mu)); };
@@ -81,22 +83,10 @@ int main(int argc, char* argv[])
   // Get parameters
   const std::map<std::string, double> pars = rep["Parameters"].as<std::map<std::string, double>>();
 
-  std::cout << "The \U0001F41B is in Collect parameters in vector" << std::endl;
-
   // Collect parameters in vector
   std::vector<double> vpars;
   for (auto const p : NPFunc->GetParameterNames())
-    {
-      std::cout << pars.at(p) << std::endl;
-      vpars.push_back(pars.at(p));
-    }
-  // // Collect parameters in vector
-  // std::vector<double> vpars;
-  // for (auto const p : NPFunc->GetParameterNames())
-  //   vpars.push_back(pars.at(p));
-
-  std::cout << "\n";
-  std::cout << "Check for the \U0001F41B" << std::endl;
+    vpars.push_back(pars.at(p));
 
   // Set vector of parameters
   NPFunc->SetParameters(vpars);
@@ -121,16 +111,19 @@ int main(int argc, char* argv[])
   {
     3.000000e+00, 7.000000e+00,
     2.800000e+01, 4.342641e+01, 6.000000e+01, 9.118760e+01,
-    2.300000e+02//, 2.466432e+02
+    2.000000e+02//, 2.466432e+02
     // 1.100000e+03
   };
 
   // Values of x to test
   std::vector<double> xg
   {
-    2.050000e-04, 8.070000e-03,
+    //2.050000e-04, 8.070000e-03,
     1.750000e-02, 5.800000e-01
   };
+
+  // Read in grid
+  NangaParbat::TMDGrid* TMDs = NangaParbat::mkTMD(argv[2]);
 
   // Read grids and test interpolation
   for (int iq = 0; iq < (int) Qg.size(); iq++)
@@ -149,11 +142,8 @@ int main(int argc, char* argv[])
           const double kTstp = (kTmax - kTmin)/ nkT;
 
           // bT-space TMD
-          const auto xFb = [&] (double const& bT) -> double { return bT * QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, 1); };
+          const auto xFb = [&] (double const& bT) -> double { return bT * QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1)); };
           const std::function<double(double const&)> txFb = [&] (double const& bT) -> double{ return xFb(bT); };
-
-          // Read in grid
-          NangaParbat::TMDGrid* TMDs = NangaParbat::mkTMD(argv[2]);
 
           /*
           // Print on terminal
@@ -218,9 +208,8 @@ int main(int argc, char* argv[])
             for (double qT = qTmin; qT <= qTmax * ( 1 + 1e-5 ); qT *= qTstp)
               std::cout << qT << "  " << qT * conv(x, x, Q, qT) << std::endl;
           */
-
-          delete TMDs;
         }
     }
+  delete TMDs;
   return 0;
 }
