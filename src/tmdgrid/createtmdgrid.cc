@@ -23,7 +23,6 @@ namespace NangaParbat
       throw std::runtime_error("[ProduceTMDGrid]: output folder already exists.");
 
     // Distribution type
-    // const std::string pf = "pdf";
     const std::string pf = distype;
 
     // Read configuration file
@@ -74,7 +73,7 @@ namespace NangaParbat
                   grids.push_back(EmitTMDGrid(config, pms, vpars, pf));
 
                 // Delete Parameterisation object
-                delete NPFunc;
+                //delete NPFunc;
               }
           }
       }
