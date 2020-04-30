@@ -15,15 +15,16 @@
 
 namespace NangaParbat
 {
-  //_________________________________________________________________________________
-  void ProduceTMDGrid(std::string const& ReportFolder, std::string const& Output)
+  //____________________________________________________________________________________________________
+  void ProduceTMDGrid(std::string const& ReportFolder, std::string const& Output, std::string const& distype)
   {
     // Check if output folder already exists
     if (dir_exists(Output))
       throw std::runtime_error("[ProduceTMDGrid]: output folder already exists.");
 
     // Distribution type
-    const std::string pf = "pdf";
+    // const std::string pf = "pdf";
+    const std::string pf = distype;
 
     // Read configuration file
     const YAML::Node config = YAML::LoadFile(ReportFolder + "/tables/config.yaml");

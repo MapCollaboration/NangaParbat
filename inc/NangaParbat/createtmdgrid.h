@@ -14,7 +14,7 @@
 namespace NangaParbat
 {
   /**
-   * @brief Structure that contains the 3D grid in Q,x, and qT
+   * @brief Structure that contains the 3D grid in Q, x, and qT
    */
   struct ThreeDGrid
   {
@@ -26,9 +26,10 @@ namespace NangaParbat
       4.750000e+00, 5.099020e+00, 6.324555e+00, 7.100000e+00, 8.000000e+00, 1.000000e+01,
       1.264911e+01, 1.549193e+01, 2.000000e+01, 2.529822e+01, 3.162278e+01, 4.242641e+01,
       5.656854e+01, 7.483315e+01, 9.118760e+01, 1.000000e+02, 1.341641e+02, 1.788854e+02,
-      2.366432e+02, 3.162278e+02, 4.242641e+02, 5.656854e+02, 6.506854e+02, 7.483315e+02,
-      1.000000e+03, 1.341641e+03, 1.500000e+03, 1.788854e+03, 2.366432e+03, 3.162278e+03,
-      4.242641e+03, 5.656854e+03, 7.483315e+03, 1.000000e+04
+      2.366432e+02//,
+      // 3.162278e+02, 4.242641e+02, 5.656854e+02, 6.506854e+02, 7.483315e+02,
+      // 1.000000e+03, 1.341641e+03, 1.500000e+03, 1.788854e+03, 2.366432e+03, 3.162278e+03,
+      // 4.242641e+03, 5.656854e+03, 7.483315e+03, 1.000000e+04
     };
 
 
@@ -77,8 +78,9 @@ namespace NangaParbat
    * NangaParbat fit.
    * @param ReportFolder: path to the report folder
    * @param Output: name of the output grid
+   * @param pf: whether PDFs ("pdf") of FFs ("ff")
    */
-  void ProduceTMDGrid(std::string const& ReportFolder, std::string const& Output);
+  void ProduceTMDGrid(std::string const& ReportFolder, std::string const& Output, std::string const& distype = "pdf");
 
   /**
    * @brief Function that produces the TMD interpolation grid in

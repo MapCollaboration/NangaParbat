@@ -8,6 +8,8 @@
 #include "NangaParbat/nonpertfunctions.h"
 
 #include <LHAPDF/LHAPDF.h>
+#include <sys/stat.h>
+#include <fstream>
 #include <cstring>
 
 //_________________________________________________________________________________
@@ -17,14 +19,14 @@ int main(int argc, char* argv[])
   if (argc < 3 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./CreateGrid <report folder> <output>\n" << std::endl;
+      std::cout << "Syntax: ./GridProduction <report folder> <output>\n" << std::endl;
       exit(-10);
     }
 
   // Produce the folder with the grids
-  //NangaParbat::ProduceTMDGrid(argv[1], argv[2]);
+  // NangaParbat::ProduceTMDGrid(argv[1], argv[2], "ff");
 
-  // =================================================================
+  // ===========================================================================
   // Now start direct computation
   // Read configuration file
   const std::string RepFolder = argv[1];
@@ -65,7 +67,7 @@ int main(int argc, char* argv[])
   const auto CollDists = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabDists.Evaluate(mu); };
 
   std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> EvTMDs = BuildTmdPDFs(apfel::InitializeTmdObjectsLite(g, Thresholds),
-                                                                                                                    CollDists, Alphas, pto, Ci);
+														    CollDists, Alphas, pto, Ci);
 
   // b* prescription
   const std::function<double(double const&, double const&)> bs = NangaParbat::bstarMap.at(config["bstar"].as<std::string>());
@@ -79,10 +81,22 @@ int main(int argc, char* argv[])
   // Get parameters
   const std::map<std::string, double> pars = rep["Parameters"].as<std::map<std::string, double>>();
 
+  std::cout << "The \U0001F41B is in Collect parameters in vector" << std::endl;
+
   // Collect parameters in vector
   std::vector<double> vpars;
   for (auto const p : NPFunc->GetParameterNames())
-    vpars.push_back(pars.at(p));
+    {
+      std::cout << pars.at(p) << std::endl;
+      vpars.push_back(pars.at(p));
+    }
+  // // Collect parameters in vector
+  // std::vector<double> vpars;
+  // for (auto const p : NPFunc->GetParameterNames())
+  //   vpars.push_back(pars.at(p));
+
+  std::cout << "\n";
+  std::cout << "Check for the \U0001F41B" << std::endl;
 
   // Set vector of parameters
   NPFunc->SetParameters(vpars);
@@ -90,38 +104,123 @@ int main(int argc, char* argv[])
   // Double exponential quadrature
   apfel::DoubleExponentialQuadrature DEObj{};
 
-  //  Test grid against direct calculation
-  const int ifl   = 2;
-  const double x  = 0.1111;
-  const double kT = 5;
-  const double Q  = 100;
-  const double Q2 = Q * Q;
+  // Test grid against direct calculation
+  std::cout << "Start testing grids against direct calculation" << std::endl;
 
-  // bT-space TMD
-  const auto xFb = [&] (double const& bT) -> double { return bT * QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, 0); };
-  const std::function<double(double const&)> txFb = [&] (double const& bT) -> double{ return xFb(bT); };
-
-  // Read in grid
-  NangaParbat::TMDGrid* TMDs = NangaParbat::mkTMD(argv[2]);
-
-  std::cout << std::scientific;
-  std::cout << "\nGrid / Direct:   xf_" << ifl << "(x = " << x << ", kT = " << kT << " GeV, Q = " << Q << " GeV) = "
-            << TMDs->Evaluate(x, kT, Q).at(ifl) / DEObj.transform(txFb, kT) << std::endl;
-  //std::cout << "Direct: xf_" << ifl << "(x = " << x << ", kT = " << kT << " GeV, Q = " << Q << " GeV) = " << DEObj.transform(txFb, kT) << std::endl;
+  // Create folder to store the output
+  const std::string outdir = std::string(argv[2]) + "/testresults";
+  mkdir(outdir.c_str(), ACCESSPERMS);
+  std::cout << "Creating folder " + outdir << std::endl;
   std::cout << "\n";
-  /*
-    // Try a convolution
-    const auto conv = Convolution(TMDs, [] (double const&) -> std::vector<double> { return apfel::QCh2; });
 
-    // Values of qT
-    const int nqT   = 10;
-    const double qTmin = Q * 1e-4;
-    const double qTmax = 0.2 * Q;
-    const double qTstp = exp( log( qTmax / qTmin ) / ( nqT - 1 ) );
-    std::vector<double> qTv;
-    for (double qT = qTmin; qT <= qTmax * ( 1 + 1e-5 ); qT *= qTstp)
-      std::cout << qT << "  " << qT * conv(x, x, Q, qT) << std::endl;
-  */
-  delete TMDs;
+  // Select flavour
+  const int ifl = 2; // quark up
+
+  // Values of Q to test
+  std::vector<double> Qg
+  {
+    3.000000e+00, 7.000000e+00,
+    2.800000e+01, 4.342641e+01, 6.000000e+01, 9.118760e+01,
+    2.300000e+02//, 2.466432e+02
+    // 1.100000e+03
+  };
+
+  // Values of x to test
+  std::vector<double> xg
+  {
+    2.050000e-04, 8.070000e-03,
+    1.750000e-02, 5.800000e-01
+  };
+
+  // Read grids and test interpolation
+  for (int iq = 0; iq < (int) Qg.size(); iq++)
+    {
+      const double Q  = Qg[iq];
+      const double Q2 = Q * Q;
+      for (int ix = 0; ix < (int) xg.size(); ix++)
+        {
+          const double x  = xg[ix];
+
+          // Values of kT
+          const int nkT   = 50;
+          const double kTmin = Q * 1e-4;
+          const double kTmax = 0.5 * Q;
+          // const double kTstp = exp( log( kTmax / kTmin ) / ( nkT - 1 ) );
+          const double kTstp = (kTmax - kTmin)/ nkT;
+
+          // bT-space TMD
+          const auto xFb = [&] (double const& bT) -> double { return bT * QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, 1); };
+          const std::function<double(double const&)> txFb = [&] (double const& bT) -> double{ return xFb(bT); };
+
+          // Read in grid
+          NangaParbat::TMDGrid* TMDs = NangaParbat::mkTMD(argv[2]);
+
+          /*
+          // Print on terminal
+          std::cout << std::scientific;
+          for (double kT = kTmin; kT <= kTmax * ( 1 + 1e-5 ); kT += kTstp)
+            std::cout << "\nGrid / Direct:   xf_" << ifl << "(x = " << x << ", kT = " << kT << " GeV, Q = " << Q << " GeV) = "
+              << TMDs->Evaluate(x, kT, Q).at(ifl) / DEObj.transform(txFb, kT) << std::endl;
+          std::cout << "\n";
+          */
+
+          // Fill vectors with grid interpolation and direct computation
+          std::vector<double> gridinterp;
+          std::vector<double> direct;
+          for (double kT = kTmin; kT <= kTmax * ( 1 + 1e-5 ); kT += kTstp)
+            {
+              gridinterp.push_back(TMDs->Evaluate(x, kT, Q).at(ifl));
+              direct.push_back(DEObj.transform(txFb, kT));
+            }
+
+          // YAML Emitter
+          YAML::Emitter em;
+
+          em << YAML::BeginMap;
+          em << YAML::Key << "ifl" << YAML::Value << ifl;
+          em << YAML::Key << "Q"   << YAML::Value << Q;
+          em << YAML::Key << "x"   << YAML::Value << x;
+          em << YAML::Key << "kT"  << YAML::Value << YAML::Flow << YAML::BeginSeq;
+          for (double kT = kTmin; kT <= kTmax * ( 1 + 1e-5 ); kT += kTstp)
+            em << kT;
+          em << YAML::EndSeq;
+          em << YAML::Key << "Grid interpolation" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+          for (int i = 0; i < gridinterp.size(); i++)
+            em << gridinterp[i];
+          em << YAML::EndSeq;
+          em << YAML::Key << "Direct calculation" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+          for (int i = 0; i < direct.size(); i++)
+            em << direct[i];
+          em << YAML::EndSeq;
+          em << YAML::Key << "GridoverDirect" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+          for (int i = 0; i < gridinterp.size(); i++)
+            em << gridinterp[i] / direct[i];
+          em << YAML::EndSeq;
+          em << YAML::EndMap;
+
+          // Produce output file
+          std::ofstream fout(outdir + "/test_Q_" + std::to_string(Q) + "_x_" + std::to_string(x) + ".yaml");
+          fout << em.c_str() << std::endl;
+          fout.close();
+
+          // ===================================================================
+
+          /*
+            // Try a convolution
+            const auto conv = Convolution(TMDs, [] (double const&) -> std::vector<double> { return apfel::QCh2; });
+
+            // Values of qT
+            const int nqT   = 10;
+            const double qTmin = Q * 1e-4;
+            const double qTmax = 0.2 * Q;
+            const double qTstp = exp( log( qTmax / qTmin ) / ( nqT - 1 ) );
+            std::vector<double> qTv;
+            for (double qT = qTmin; qT <= qTmax * ( 1 + 1e-5 ); qT *= qTstp)
+              std::cout << qT << "  " << qT * conv(x, x, Q, qT) << std::endl;
+          */
+
+          delete TMDs;
+        }
+    }
   return 0;
 }
