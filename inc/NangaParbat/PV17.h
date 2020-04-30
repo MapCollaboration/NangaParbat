@@ -34,7 +34,7 @@ namespace NangaParbat
       // Evolution
       const double g2   = this->_pars[0];
       const double Q02  = 1;
-      const double evol = exp( - g2 * log(zeta / Q02) * b * b / 2 );
+      const double evol = exp( - g2 * log(zeta / Q02) * b * b / 4 );
 
       // TMD PDFs
       if (ifunc == 0)
