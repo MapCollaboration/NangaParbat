@@ -42,3 +42,8 @@ add_test(SIDISCrossSection SIDISCrossSection)
 add_executable(GridProduction GridProduction.cc)
 target_link_libraries(GridProduction NangaParbat)
 add_test(GridProduction GridProduction)
+
+# build tests
+add_executable(TestConvolution TestConvolution.cc)
+target_link_libraries(TestConvolution NangaParbat)
+add_test(TestConvolution TestConvolution)
