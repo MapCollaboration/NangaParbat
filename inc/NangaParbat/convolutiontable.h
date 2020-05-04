@@ -22,12 +22,21 @@ namespace NangaParbat
   public:
     /**
      * @brief The "ConvolutionTable" constructor.
+     * @param name: name assigned to the convolution table
+     * @note This constructor is supposed to be used only when
+     * inherinting this class as it does not fully define a
+     * "ConvolutionTable" object.
+     */
+    ConvolutionTable(std::string const& name);
+
+    /**
+     * @brief The "ConvolutionTable" constructor.
      * @param table: the YAML:Node with the interpolation table
      * @param acc: the Ogata-quadrature required accuracy (default: 10<SUP>-7</SUP>)
      * @param qToQmax: maximum value allowed for the ratio qT /Q (default: 100)
      * @note The accuracy has to be intended as the best accuracy over
      * the tabulated Ogata-quadrature points. This accuracy may not be
-     * met withing the tabulated points.
+     * met within the tabulated points.
      */
     ConvolutionTable(YAML::Node const& table, double const& qToQmax = 100, double const& acc = 1e-7);
 
@@ -38,7 +47,7 @@ namespace NangaParbat
      * @param qToQmax: maximum value allowed for the ratio qT /Q (default: 100)
      * @note The accuracy has to be intended as the best accuracy over
      * the tabulated Ogata-quadrature points. This accuracy may not be
-     * met withing the tabulated points.
+     * met within the tabulated points.
      */
     ConvolutionTable(std::string const& infile, double const& qToQmax = 100, double const& acc = 1e-7);
 
@@ -68,8 +77,8 @@ namespace NangaParbat
      * @param fNP2: the second non-perturbative input function
      * @return a vector of predictions.
      */
-    std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP1,
-                                       std::function<double(double const&, double const&, double const&)> const& fNP2) const;
+    virtual std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP1,
+                                               std::function<double(double const&, double const&, double const&)> const& fNP2) const;
 
     /**
      * @brief This function returns a vector of predictions given a
@@ -77,7 +86,7 @@ namespace NangaParbat
      * @param fNP: the non-perturbative input functions parameterised by an index
      * @return a vector of predictions.
      */
-    std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP) const;
+    virtual std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP) const;
 
     /**
      * @brief This function returns a vector of predictions with a
@@ -88,7 +97,7 @@ namespace NangaParbat
      * purposes because it "decides" internally how to use the
      * function "fNP" and may behave unexpectedly.
      */
-    std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&, int const&)> const& fNP) const;
+    virtual std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&, int const&)> const& fNP) const;
 
     /**
      * @brief This function returns a vector of predictions given two
@@ -105,8 +114,8 @@ namespace NangaParbat
      * is used to compute the anaylitic derivative of the chi2 used
      * duering the minimisation.
      */
-    std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&, int const&)> const& fNP,
-                                       std::function<double(double const&, double const&, double const&, int const&)> const& dNP) const;
+    virtual  std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&, int const&)> const& fNP,
+                                                std::function<double(double const&, double const&, double const&, int const&)> const& dNP) const;
 
     /**
      * @name Getters

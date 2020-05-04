@@ -13,7 +13,7 @@
 
 namespace NangaParbat
 {
-  //_________________________________________________________________________________
+  //_________________________________________________________________________
   DataHandler::Kinematics::Kinematics():
     ndata(0),
     Vs(0),
@@ -33,7 +33,7 @@ namespace NangaParbat
   {
   }
 
-  //_________________________________________________________________________________
+  //_________________________________________________________________________
   bool DataHandler::Kinematics::empty() const
   {
     if (ndata == 0 || Vs == 0 || qTv.empty() || qTmap.empty() || qTfact.empty() ||
@@ -130,7 +130,7 @@ namespace NangaParbat
             std::vector<double> m;
             for (auto const& err : vl["errors"])
               {
-                // Sum in quadrature all uncurrelated uncertainties.
+                // Sum in quadrature all uncorrelated uncertainties
                 if (err["label"].as<std::string>() == "unc")
                   u += pow(err["value"].as<double>(), 2);
 
@@ -293,6 +293,46 @@ namespace NangaParbat
               }
           }
       }
+  }
+
+  //_________________________________________________________________________
+  void DataHandler::SetCovarianceMatrix(apfel::matrix<double> const& covmat)
+  {
+    // Check if the input matrix is square
+    if (covmat.size(0) != covmat.size(1))
+      throw std::runtime_error("[DataHandler::SetCovarianceMatrix]: The input covariance matrix is not square.");
+
+    // Check that the size of the covariance matrix matches the number
+    // of data.
+    if (covmat.size(0) != _kin.ndata)
+      throw std::runtime_error("[DataHandler::SetCovarianceMatrix]: The input covariance matrix does not match the data.");
+
+    // Set covariance matrix
+    _covmat = covmat;
+
+    // Cholesky decomposition of the covariance matrix
+    _CholL = CholeskyDecomposition(_covmat);
+  }
+
+  //_________________________________________________________________________
+  void DataHandler::UpdateCovarianceMatrix(apfel::matrix<double> const& covmat)
+  {
+    // Check if the input matrix is square
+    if (covmat.size(0) != covmat.size(1))
+      throw std::runtime_error("[DataHandler::UpdateCovarianceMatrix]: The input covariance matrix is not square.");
+
+    // Check that the size of the covariance matrix matches the number
+    // of data.
+    if (covmat.size(0) != _kin.ndata)
+      throw std::runtime_error("[DataHandler::UpdateCovarianceMatrix]: The input covariance matrix does not match the data.");
+
+    // Update covariance matrix
+    for (int i = 0; i < _covmat.size(0); i++)
+      for (int j = 0; j < _covmat.size(1); j++)
+        _covmat(i, j) += covmat(i, j);
+
+    // Cholesky decomposition of the covariance matrix
+    _CholL = CholeskyDecomposition(_covmat);
   }
 
   //_________________________________________________________________________

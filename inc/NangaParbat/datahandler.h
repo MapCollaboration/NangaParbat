@@ -63,6 +63,20 @@ namespace NangaParbat
     DataHandler(std::string const& name, YAML::Node const& datafile, gsl_rng* rng = NULL, int const& fluctuation = 0, std::vector<double> const& t0 = {});
 
     /**
+     * @brief Function that sets the covariance matrix replacing that
+     * computed in the constructor. The Choleski is also recomputed.
+     * @param covmat: the new covariance matrix
+     */
+    void SetCovarianceMatrix(apfel::matrix<double> const& covmat);
+
+    /**
+     * @brief Function that updates the covariance matrix computed in
+     * the constructor. The Choleski is also recomputed.
+     * @param covmat: the new covariance matrix
+     */
+    void UpdateCovarianceMatrix(apfel::matrix<double> const& covmat);
+
+    /**
      * @brief Function that returns the name of the dataset
      */
     std::string GetName() const { return _name; };
