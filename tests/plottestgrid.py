@@ -1,18 +1,50 @@
 import os
+import sys
+import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 from ruamel import yaml
 
 # in order to import modules from a folder in path '../cli/'
-import sys
-sys.path.insert(1, '../cli/') # insert at 1, 0 is the script path (or '' in REPL)
+sys.path.insert(1, '../cli/')         # insert at 1, 0 is the script path (or '' in REPL)
 import modules.utilities as utilities
+import modules.MatplotlibSettings     # this will override some of the settings of this script
+                                      # in favor of the plot settings in the module MatplotlibSettings
 
+"""
+Usage:
+python3 plottestgrid.py <folder> <distribution name> <distribution type (PDF/FF)>
+
+<folder>             - output of NangaParbat/tests/GridProduction.cc
+<distribution name>  - distribution name, string that goes in the plot title.
+<distribution type>  - distribution type (PDF or FF), string that goes in the plot
+                       title.
+"""
+
+# Parse arguments
+parser = argparse.ArgumentParser(prog = "plottestgrid.py",
+                                 usage = " \n python3 plottestgrid.py <folder> <distribution name> <distribution type (PDF/FF)> \n",
+                                 description = "Script to plot the output of the grid test done with tests/GridPriduction.cc")
+
+parser.add_argument('folder',            help = 'output folder of NangaParbat/tests/GridProduction.cc')
+parser.add_argument('distribution name', help = 'string that goes in the plot title.')
+parser.add_argument('distribution type', help = 'PDF or FF, string that goes in the plot title.')
+
+# Print error if the required arguments are not given
+try:
+    options = parser.parse_args()
+except:
+    parser.print_help()
+    sys.exit(0)
+
+# Arguments
+fold     = sys.argv[1]
+distname = sys.argv[2]
+distype  = sys.argv[3]
 
 # Set folder
 RunFolder = os.path.dirname(os.path.realpath(__file__))
-# fol = sys.argv
-Ofolder = "TestGrid_PV17FF_NLL/testresults"
+Ofolder = fold + "/testresults"
 
 testfiles = []
 for tf in os.listdir(Ofolder):
@@ -25,28 +57,45 @@ for file in testfiles:
         toplot = yaml.load(test, Loader = yaml.RoundTripLoader)
         print("Loading output to plot: " + file)
 
-    if (str(toplot["GridoverDirect"][0])[-2:] != "an"):
+    if (str(toplot["Grid over direct"][0])[-2:] != "an"):
         # Exstract data
         ifl = toplot["ifl"]
         Q   = toplot["Q"]
         x   = toplot["x"]
         kT  = toplot["kT"]
 
-        tgrid = toplot["Grid interpolation"]
-        direct = toplot["Direct calculation"]
-        gridodir = toplot["GridoverDirect"]
+        tgrid    = toplot["Grid interpolation"]
+        direct   = toplot["Direct calculation"]
+        gridodir = toplot["Grid over direct"]
 
         # Plots
-        fig, (ax1, ax2) = plt.subplots(nrows = 2, ncols = 1, figsize = (10, 6))
+        fig, (ax1, ax2) = plt.subplots(nrows = 2, ncols = 1, figsize = (14, 8), sharex = "all", gridspec_kw = dict(width_ratios = [1], height_ratios = [4, 1]))
+        plt.subplots_adjust(wspace = 0, hspace = 0)
 
-        plt.suptitle("TMDGrids PV19 test - " + "flavour = " + str(ifl) + "\n" + "Q = " + str(Q) + " , x = " + str(x))
+        """
+        wspace = 0.2  # the amount of width reserved for space between subplots,
+                      # expressed as a fraction of the average axis width
+        hspace = 0.2  # the amount of height reserved for space between subplots,
+                      # expressed as a fraction of the average axis height
+        """
+
+        if distype == "FF" or distype == "ff":
+            plt.suptitle("TMDGrids " +  distname + " " + distype + " flavour = " + str(ifl) + "\n" + "Q = " + str(Q) + "[GeV] , z = " + str(x))
+        elif distype == "PDF" or distype == "pdf":
+            plt.suptitle("TMDGrids " +  distname + " " + distype + " flavour = " + str(ifl) + "\n" + "Q = " + str(Q) + "[GeV] , x = " + str(x))
 
         # Define equally spaced bins and ticks for x axis
         nticks_x, majorticks, minorticks = utilities.BinsAndTicks(min(kT), max(kT))
 
-        # Upper plot
-        ax1.set_xlabel("kT")
-        ax1.set_ylabel(r"$xf(x, k_T, Q)$")
+        # ---  Upper plot ---
+
+        # Labels
+        if distype == "FF" or distype == "ff":
+            ax1.set_xlabel(r"$P_{\perp}$ [GeV]")
+            ax1.set_ylabel(r"$zD_1(z, P_{\perp}; Q^2)$")
+        elif distype == "PDF" or distype == "pdf":
+            ax1.set_xlabel(r"$k_T$ [GeV]")
+            ax1.set_ylabel(r"$xf_1(x, k_T; Q^2)$")
 
         # Plot in log scale
         ax1.set_yscale("log")
@@ -63,18 +112,31 @@ for file in testfiles:
         ax1.set_xticks(minorticks, minor=True)
         ax1.legend()
 
-        # Lower plot
-        ax2.set_xlabel("kT")
+        # Start x axis from 0
+        ax1.set_xlim(left = 0)
+
+        # --- Lower plot ---
+
+        # Labels
+        if distype == "FF" or distype == "ff":
+            ax2.set_xlabel(r"$P_{\perp}$ [GeV]")
+        elif distype == "PDF" or distype == "pdf":
+            ax2.set_xlabel(r"$k_T$ [GeV]")
         ax2.set_ylabel("Grid / Direct")
 
+        # Plot
         ax2.plot(kT, gridodir,  linewidth = 1.5, color = "g", alpha = 0.3, label = "Grid / Direct")
         ax2.plot(kT, gridodir,  linewidth = 1.5, color = "g", alpha = 0.4, marker = 'o', markersize = 3)
         ax2.axhline(1, linewidth = 0.8, color = "black")
 
-        # Ticks and settings y axis
+        # Ticks and settings
         ax2.set_xticks(majorticks)
         ax2.set_xticks(minorticks, minor=True)
 
+        # Start x axis from 0
+        ax2.set_xlim(left = 0)
+
+        # Ticks for y axis
         # First tick starts at the multiple of 0.25 nearest to the minimum of the distribution
         ystart = round(min(gridodir), 2)
         start_yticks = np.floor(ystart / 0.25) * 0.25
@@ -101,7 +163,7 @@ for file in testfiles:
 print("Plots completed!")
 
 """
-# Way to have automatic ticks custom spaced
+# Another way to have automatic ticks custom spaced
 from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,
                                AutoMinorLocator)
 

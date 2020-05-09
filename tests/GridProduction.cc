@@ -109,17 +109,17 @@ int main(int argc, char* argv[])
   // Values of Q to test
   std::vector<double> Qg
   {
-    2, 3.000000e+00, 7.000000e+00,
-    2.800000e+01//, 4.342641e+01, 6.000000e+01, 9.118760e+01,
-    //2.000000e+02//, 2.466432e+02
+    3.000000e+00, 7.000000e+00,
+    2.800000e+01, 4.342641e+01, 6.000000e+01, 9.118760e+01,
+    2.000000e+02, 2.466432e+02
     //1.100000e+03
   };
 
   // Values of x to test
   std::vector<double> xg
   {
-    //2.050000e-04, 8.070000e-03,
-    //1.750000e-02,
+    2.050000e-04, 8.070000e-03,
+    1.750000e-02,
     0.1, 0.3, 0.5, 0.7
   };
 
@@ -177,7 +177,7 @@ int main(int argc, char* argv[])
           for (int i = 0; i < direct.size(); i++)
             em << direct[i];
           em << YAML::EndSeq;
-          em << YAML::Key << "GridoverDirect" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+          em << YAML::Key << "Grid over direct" << YAML::Value << YAML::Flow << YAML::BeginSeq;
           for (int i = 0; i < gridinterp.size(); i++)
             em << gridinterp[i] / direct[i];
           em << YAML::EndSeq;
