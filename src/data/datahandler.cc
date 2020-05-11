@@ -304,7 +304,7 @@ namespace NangaParbat
 
     // Check that the size of the covariance matrix matches the number
     // of data.
-    if (covmat.size(0) != _kin.ndata)
+    if ((int) covmat.size(0) != _kin.ndata)
       throw std::runtime_error("[DataHandler::SetCovarianceMatrix]: The input covariance matrix does not match the data.");
 
     // Set covariance matrix
@@ -323,12 +323,12 @@ namespace NangaParbat
 
     // Check that the size of the covariance matrix matches the number
     // of data.
-    if (covmat.size(0) != _kin.ndata)
+    if ((int) covmat.size(0) != _kin.ndata)
       throw std::runtime_error("[DataHandler::UpdateCovarianceMatrix]: The input covariance matrix does not match the data.");
 
     // Update covariance matrix
-    for (int i = 0; i < _covmat.size(0); i++)
-      for (int j = 0; j < _covmat.size(1); j++)
+    for (int i = 0; i < (int) _covmat.size(0); i++)
+      for (int j = 0; j < (int) _covmat.size(1); j++)
         _covmat(i, j) += covmat(i, j);
 
     // Cholesky decomposition of the covariance matrix
