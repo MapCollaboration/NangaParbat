@@ -89,21 +89,21 @@ int main(int argc, char* argv[])
   apfel::DoubleExponentialQuadrature DEObj{};
   const int nf = apfel::NF(Q, Thresholds);
   const std::function<apfel::DoubleObject<apfel::Distribution>(double const&)> Lumib = [=] (double const& bs) -> apfel::DoubleObject<apfel::Distribution>
-    {
-      const std::map<int, apfel::Distribution> xF = QCDEvToPhys(EvTMDPDFs(bs, Q, Q * Q).GetObjects());
-      const std::map<int, apfel::Distribution> xD = QCDEvToPhys(EvTMDFFs(bs, Q, Q * Q).GetObjects());
-      apfel::DoubleObject<apfel::Distribution> L{};
-      for (int i = 1; i <= nf; i++)
-	{
-	  L.AddTerm({Bq(0)[i-1], xF.at(i), xD.at(i)});
-	  L.AddTerm({Bq(0)[i-1], xF.at(-i), xD.at(-i)});
-	}
-      return L;
-    };
+  {
+    const std::map<int, apfel::Distribution> xF = QCDEvToPhys(EvTMDPDFs(bs, Q, Q * Q).GetObjects());
+    const std::map<int, apfel::Distribution> xD = QCDEvToPhys(EvTMDFFs(bs, Q, Q * Q).GetObjects());
+    apfel::DoubleObject<apfel::Distribution> L{};
+    for (int i = 1; i <= nf; i++)
+      {
+        L.AddTerm({Bq(0)[i-1], xF.at(i), xD.at(i)});
+        L.AddTerm({Bq(0)[i-1], xF.at(-i), xD.at(-i)});
+      }
+    return L;
+  };
   const std::function<double(double const&)> bInt = [=] (double const& b) -> double
-    {
-      return 2 * M_PI * b * fNP->Evaluate(z, b, Q * Q, 1) * fNP->Evaluate(x, b, Q * Q, 0) * Lumib(NangaParbat::bstarmin(b, Q)).Evaluate(x, z) / z / z;
-    };
+  {
+    return 2 * M_PI * b * fNP->Evaluate(z, b, Q * Q, 1) * fNP->Evaluate(x, b, Q * Q, 0) * Lumib(NangaParbat::bstarmin(b, Q)).Evaluate(x, z) / z / z;
+  };
 
   // Read in grid and convolute them
   NangaParbat::TMDGrid* TMD1 = NangaParbat::mkTMD(argv[1]);
@@ -123,15 +123,15 @@ int main(int argc, char* argv[])
   std::vector<double> qTv;
   std::cout << std::scientific;
   for (double qT = qTmin; qT <= qTmax; qT += qTstp)
-    std::cout << qT << "\t" <<  DEObj.transform(bInt, qT) << "\t"
-	      << conv1(x, z, Q, qT) << "\t"
-	      << conv2(x, z, Q, qT) << "\t"
-	      << conv3(x, z, Q, qT) << "\t"
-	      << conv4(x, z, Q, qT) << "\t"
-	      << conv5(x, z, Q, qT) << "\t"
-	      << conv5(x, z, Q, qT) << "\t"
-	      << conv6(x, z, Q, qT) << "\t"
-	      << std::endl;
+    std::cout << qT / Q << "\t" << DEObj.transform(bInt, qT) << "\t"
+              << conv1(x, z, Q, qT) << "\t"
+              << conv2(x, z, Q, qT) << "\t"
+              << conv3(x, z, Q, qT) << "\t"
+              << conv4(x, z, Q, qT) << "\t"
+              << conv5(x, z, Q, qT) << "\t"
+              << conv5(x, z, Q, qT) << "\t"
+              << conv6(x, z, Q, qT) << "\t"
+              << std::endl;
 
   delete TMD1;
   delete TMD2;

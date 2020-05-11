@@ -16,8 +16,8 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  ConvolutionTable::ConvolutionTable(std::string const& name):
-    _name(name),
+  ConvolutionTable::ConvolutionTable():
+    _name("No name"),
     _proc(-1),
     _Vs(-1),
     _IntqT(false),

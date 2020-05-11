@@ -22,12 +22,11 @@ namespace NangaParbat
   public:
     /**
      * @brief The "ConvolutionTable" constructor.
-     * @param name: name assigned to the convolution table
      * @note This constructor is supposed to be used only when
      * inherinting this class as it does not fully define a
      * "ConvolutionTable" object.
      */
-    ConvolutionTable(std::string const& name);
+    ConvolutionTable();
 
     /**
      * @brief The "ConvolutionTable" constructor.

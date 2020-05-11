@@ -155,61 +155,60 @@ namespace NangaParbat
       }
 
     // Transverse-momentum bin bounds
-    for (auto const& iv : datafile["independent_variables"])
-      for (auto const& vl : iv["values"])
-        {
-          // Increment number of datapoints
-          _kin.ndata++;
+    for (auto const& vl : datafile["independent_variables"][0]["values"])
+      {
+        // Increment number of datapoints
+        _kin.ndata++;
 
-          // If the keys "low" and "high" are present the data-point
-          // is integrated over the qT bin. If instead the key "value"
-          // is found the bin is not integrated. Save in the "_qTv"
-          // vector values of qT without repetitions. Don't allow for
-          // values smaller than 10^{-5} GeV. Create a vector of pairs
-          // to map the values of qT to the single data points. If the
-          // data point is not integrate over qT the first entry of
-          // the map pair is set to -1. Make also sure that all bins
-          // are either all integrated or all are not by checking if
-          // "_kin.IntqT" has changed after the first data
-          // point. Finally, if the key "factor" is present, gather
-          // the factors to be used to multiply the single bins in
-          // qT. Set the factors to one be default.
-          if (vl["low"] && vl["high"])
-            {
-              if (_kin.ndata > 1 and _kin.IntqT != true)
-                throw std::runtime_error("[DataHandler::DataHandler]: Mixed qT integrated/non-integrated data points found");
+        // If the keys "low" and "high" are present the data-point
+        // is integrated over the qT bin. If instead the key "value"
+        // is found the bin is not integrated. Save in the "_qTv"
+        // vector values of qT without repetitions. Don't allow for
+        // values smaller than 10^{-5} GeV. Create a vector of pairs
+        // to map the values of qT to the single data points. If the
+        // data point is not integrate over qT the first entry of
+        // the map pair is set to -1. Make also sure that all bins
+        // are either all integrated or all are not by checking if
+        // "_kin.IntqT" has changed after the first data
+        // point. Finally, if the key "factor" is present, gather
+        // the factors to be used to multiply the single bins in
+        // qT. Set the factors to one be default.
+        if (vl["low"] && vl["high"])
+          {
+            if (_kin.ndata > 1 and _kin.IntqT != true)
+              throw std::runtime_error("[DataHandler::DataHandler]: Mixed qT integrated/non-integrated data points found");
 
-              _kin.IntqT = true;
-              const double qTl = vl["low"].as<double>();
-              const double qTh = vl["high"].as<double>();
-              if(std::find(_kin.qTv.begin(), _kin.qTv.end(), qTl) == _kin.qTv.end())
-                _kin.qTv.push_back(std::max(vl["low"].as<double>(), 1e-5));
-              if(std::find(_kin.qTv.begin(), _kin.qTv.end(), qTh) == _kin.qTv.end())
-                _kin.qTv.push_back(vl["high"].as<double>());
+            _kin.IntqT = true;
+            const double qTl = vl["low"].as<double>();
+            const double qTh = vl["high"].as<double>();
+            if(std::find(_kin.qTv.begin(), _kin.qTv.end(), qTl) == _kin.qTv.end())
+              _kin.qTv.push_back(std::max(vl["low"].as<double>(), 1e-5));
+            if(std::find(_kin.qTv.begin(), _kin.qTv.end(), qTh) == _kin.qTv.end())
+              _kin.qTv.push_back(vl["high"].as<double>());
 
-              _kin.qTmap.push_back(std::make_pair(std::max(qTl, 1e-5), qTh));
-            }
-          else if (vl["value"])
-            {
-              if (_kin.ndata > 1 and _kin.IntqT != false)
-                throw std::runtime_error("[DataHandler::DataHandler]: Mixed qT integrated/non-integrated data points found");
+            _kin.qTmap.push_back(std::make_pair(std::max(qTl, 1e-5), qTh));
+          }
+        else if (vl["value"])
+          {
+            if (_kin.ndata > 1 and _kin.IntqT != false)
+              throw std::runtime_error("[DataHandler::DataHandler]: Mixed qT integrated/non-integrated data points found");
 
-              _kin.IntqT = false;
-              const double qTval = vl["value"].as<double>();
-              if(std::find(_kin.qTv.begin(), _kin.qTv.end(), qTval) == _kin.qTv.end())
-                _kin.qTv.push_back(std::max(vl["value"].as<double>(), 1e-5));
+            _kin.IntqT = false;
+            const double qTval = vl["value"].as<double>();
+            if(std::find(_kin.qTv.begin(), _kin.qTv.end(), qTval) == _kin.qTv.end())
+              _kin.qTv.push_back(std::max(vl["value"].as<double>(), 1e-5));
 
-              _kin.qTmap.push_back(std::make_pair(-1, qTval));
-            }
-          else
-            throw std::runtime_error("[DataHandler::DataHandler]: Invalid qT-bin structure");
+            _kin.qTmap.push_back(std::make_pair(-1, qTval));
+          }
+        else
+          throw std::runtime_error("[DataHandler::DataHandler]: Invalid qT-bin structure");
 
-          // Now fill in vector of bin-by-bin prefactors.
-          if (vl["factor"])
-            _kin.qTfact.push_back(vl["factor"].as<double>());
-          else
-            _kin.qTfact.push_back(1);
-        }
+        // Now fill in vector of bin-by-bin prefactors.
+        if (vl["factor"])
+          _kin.qTfact.push_back(vl["factor"].as<double>());
+        else
+          _kin.qTfact.push_back(1);
+      }
 
     // Check that the "DataHandler" has been properly filled in
     if (_proc == UnknownProcess || _kin.empty())
