@@ -170,15 +170,15 @@ int main(int argc, char* argv[])
             em << kT;
           em << YAML::EndSeq;
           em << YAML::Key << "Grid interpolation" << YAML::Value << YAML::Flow << YAML::BeginSeq;
-          for (int i = 0; i < gridinterp.size(); i++)
+          for (int i = 0; i < (int) gridinterp.size(); i++)
             em << gridinterp[i];
           em << YAML::EndSeq;
           em << YAML::Key << "Direct calculation" << YAML::Value << YAML::Flow << YAML::BeginSeq;
-          for (int i = 0; i < direct.size(); i++)
+          for (int i = 0; i < (int) direct.size(); i++)
             em << direct[i];
           em << YAML::EndSeq;
           em << YAML::Key << "Grid over direct" << YAML::Value << YAML::Flow << YAML::BeginSeq;
-          for (int i = 0; i < gridinterp.size(); i++)
+          for (int i = 0; i < (int) gridinterp.size(); i++)
             em << gridinterp[i] / direct[i];
           em << YAML::EndSeq;
           em << YAML::EndMap;
