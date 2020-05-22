@@ -194,7 +194,7 @@ namespace NangaParbat
               {
                 const apfel::Distribution Df = DqT.at(f);
                 for (int ix = 0; ix < (int) tdg.xg.size(); ix++)
-                  TMDs[f][iQ][ix][iqT] = Df.Evaluate(tdg.xg[ix]);
+                  TMDs[f][iQ][ix][iqT] = Df.Evaluate(tdg.xg[ix]) / 2 / M_PI;
               }
           }
         // Report computation status

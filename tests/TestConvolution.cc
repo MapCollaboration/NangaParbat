@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
   };
   const std::function<double(double const&)> bInt = [=] (double const& b) -> double
   {
-    return 2 * M_PI * b * fNP->Evaluate(z, b, Q * Q, 1) * fNP->Evaluate(x, b, Q * Q, 0) * Lumib(NangaParbat::bstarmin(b, Q)).Evaluate(x, z) / z / z;
+    return b * fNP->Evaluate(z, b, Q * Q, 1) * fNP->Evaluate(x, b, Q * Q, 0) * Lumib(NangaParbat::bstarmin(b, Q)).Evaluate(x, z) / z / z;
   };
 
   // Read in grid and convolute them

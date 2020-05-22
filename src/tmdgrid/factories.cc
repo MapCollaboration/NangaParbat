@@ -53,7 +53,7 @@ namespace NangaParbat
           return kT * integrandTheta.integrate(0, 2 * M_PI, IntEps);
         }
       };
-      return integrandKT.integrate(0, kTCutOff * Q, IntEps);
+      return 2 * M_PI * integrandKT.integrate(0, kTCutOff * Q, IntEps);
     };
   }
 
