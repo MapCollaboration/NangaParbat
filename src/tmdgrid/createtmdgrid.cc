@@ -18,10 +18,6 @@ namespace NangaParbat
   //____________________________________________________________________________________________________
   void ProduceTMDGrid(std::string const& ReportFolder, std::string const& Output, std::string const& distype)
   {
-    // Check if output folder already exists
-    if (dir_exists(Output))
-      throw std::runtime_error("[ProduceTMDGrid]: output folder already exists.");
-
     // Distribution type
     const std::string pf = distype;
 
@@ -52,6 +48,7 @@ namespace NangaParbat
             if (rep["Status"].as<int>() == 1)
               {
                 std::cout << "Computing grid for " << repfile << " ..." << std::endl;
+
                 // Get parameterisation
                 const std::string pms = rep["Parameterisation"].as<std::string>();
                 NangaParbat::Parameterisation *NPFunc = NangaParbat::GetParametersation(pms);
@@ -78,18 +75,22 @@ namespace NangaParbat
           }
       }
 
-    // Create output directory
-    mkdir(Output.c_str(), ACCESSPERMS);
+    // Output directory
+    const std::string outdir = ReportFolder + "/" + Output;
+
+    // Create output directory if it does not exist
+    if (!dir_exists(Output))
+      mkdir(outdir.c_str(), ACCESSPERMS);
 
     // Write info file
-    std::ofstream iout(Output + "/" + Output + ".info");
+    std::ofstream iout(outdir + "/" + Output + ".info");
     iout << NangaParbat::EmitTMDInfo(config, grids.size(), pf)->c_str() << std::endl;
     iout.close();
 
     // Dump grids to file
     for (int i = 0; i < (int) grids.size(); i++)
       {
-        std::ofstream fpout(Output + "/" + Output + "_" + num_to_string(i) + ".yaml");
+        std::ofstream fpout(outdir + "/" + Output + "_" + num_to_string(i) + ".yaml");
         fpout << grids[i]->c_str() << std::endl;
         fpout.close();
       }

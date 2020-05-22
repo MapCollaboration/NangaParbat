@@ -1,6 +1,0 @@
-for f in Report_1.yaml
-do
-    dir="$(echo $f | sed s/Report/replica/ | sed s/.yaml/)"
-    mkdir ../"$dir"
-    cp -i "$f" ../$dir/Report.yaml
-done
