@@ -1,8 +1,13 @@
 # GitHubWiP
+author: Chiara Bissolotti
 
-This is a test file to check if the following procedure was successful. Tha aim of the procedure is to obtain a private repository (now temporarily called PalmTree-FruIT but to become NangaParbatWiP maybe in the future) that can communicate with the public NangaParbat to ``push`` and ``pull`` changes.
+This is a test file to check if the following procedure was successful. Tha aim of the procedure is to obtain a private repository (to become NangaParbatPrivate) that can communicate with the public NangaParbat to ``push`` and ``pull`` changes.
 
 If this file arrives to the original NangaParbat repository through a pull request, then the procedure worked, at least for the ``push`` case.
+- If this file arrives to the original NangaParbat repository through a pull request, then the procedure worked, at least for the ``push`` case.
+The ``push`` procedure was successfully tested by doing what is reported in the previous line.
+- The ``pull`` procedure described in the following was also tested and it works.
+NangaParbatPrivate had fallen behind NangaParbat, as we worked on the public repository, and I brought NangaParbatPrivate up to speed with NangaParbat using the four lines of code under 'To pull new chages form the public repo' in the next section. There were few conflicts, highlighted by git during the pulling procedure, and I handled them as it is normally done in github repositories (``git checkout`` of the selected files).
 
 ## Procedure followed
 From:  https://stackoverflow.com/questions/10065526/github-how-to-make-a-fork-of-public-repository-private or
