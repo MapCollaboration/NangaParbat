@@ -16,6 +16,24 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
+  ConvolutionTable::ConvolutionTable():
+    _name("No name"),
+    _proc(-1),
+    _Vs(-1),
+    _IntqT(false),
+    _qTv({}),
+  _qTmap({{}}),
+  _qTfact({}),
+  _prefact(1),
+  _z({}),
+  _Qg({}),
+  _xig({}),
+  _qToQmax(1000),
+  _acc(1e-7)
+  {
+  }
+
+  //_________________________________________________________________________________
   ConvolutionTable::ConvolutionTable(YAML::Node const& table, double const& qToQmax, double const& acc):
     _name(table["name"].as<std::string>()),
     _proc(table["process"].as<int>()),

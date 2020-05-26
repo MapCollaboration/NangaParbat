@@ -41,10 +41,12 @@ namespace NangaParbat
       std::vector<std::pair<double, double>> qTmap;    //!< Map of qT bounds to associate to the single bins
       std::vector<double>                    qTfact;   //!< Possible bin-by-bin prefactors to multiply the theoretical predictions
       std::pair<double, double>              var1b;    //!< Variable 1 integration bounds
-      std::pair<double, double>              var2b;    //!< Variable 1 integration bounds
+      std::pair<double, double>              var2b;    //!< Variable 2 integration bounds
+      std::pair<double, double>              var3b;    //!< Variable 3 integration bounds
       bool                                   IntqT;    //!< Whether the bins in qTv are integrated over
-      bool                                   Intv1;    //!< Whether the bins in Q are integrated over
-      bool                                   Intv2;    //!< Whether the bins in y are integrated over
+      bool                                   Intv1;    //!< Whether the bins variable 1 are integrated over
+      bool                                   Intv2;    //!< Whether the bins variable 2 are integrated over
+      bool                                   Intv3;    //!< Whether the bins variable 3 are integrated over
       bool                                   PSRed;    //!< Whether there is a final-state PS reduction
       double                                 pTMin;    //!< Minimum pT of the final-state leptons
       std::pair<double, double>              etaRange; //!< Allowed range in eta of the final-state leptons
@@ -59,6 +61,20 @@ namespace NangaParbat
      * @param t0: vector of predictions to be used for the t0-prescription
      */
     DataHandler(std::string const& name, YAML::Node const& datafile, gsl_rng* rng = NULL, int const& fluctuation = 0, std::vector<double> const& t0 = {});
+
+    /**
+     * @brief Function that sets the covariance matrix replacing that
+     * computed in the constructor. The Choleski is also recomputed.
+     * @param covmat: the new covariance matrix
+     */
+    void SetCovarianceMatrix(apfel::matrix<double> const& covmat);
+
+    /**
+     * @brief Function that updates the covariance matrix computed in
+     * the constructor. The Choleski is also recomputed.
+     * @param covmat: the new covariance matrix
+     */
+    void UpdateCovarianceMatrix(apfel::matrix<double> const& covmat);
 
     /**
      * @brief Function that returns the name of the dataset
@@ -151,7 +167,7 @@ namespace NangaParbat
     double                             _targetiso;    //!< Isoscalarity of the target
     double                             _prefact;      //!< Possible overall prefactor to multiply the theoretical predictions
     Kinematics                         _kin;          //!< Kinematics block
-    std::vector<double>                _means;         //!< Vector of central values
+    std::vector<double>                _means;        //!< Vector of central values
     std::vector<double>                _uncor;        //!< Vector of uncorrelated uncertainties
     std::vector<std::vector<double>>   _corra;        //!< Additive correlated uncertainties
     std::vector<std::vector<double>>   _corrm;        //!< Multiplicative correlated uncertainties

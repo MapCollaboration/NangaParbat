@@ -74,14 +74,15 @@ namespace NangaParbat
               (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedFFs, 100, distff->qMin(), distff->qMax(), 3, _Thresholds});
 
     // Initialise TMD objects for PDFs
-    _TmdPdfObjs = apfel::InitializeTmdObjects(*_gpdf, _Thresholds);
+    _TmdPdfObjs = apfel::InitializeTmdObjectsLite(*_gpdf, _Thresholds);
 
     // Initialise TMD objects for FFs
-    _TmdFfObjs = apfel::InitializeTmdObjects(*_gff, _Thresholds);
+    _TmdFfObjs = apfel::InitializeTmdObjectsLite(*_gff, _Thresholds);
 
     // Build evolved TMD PDFs and FFs
     const int    pto = _config["PerturbativeOrder"].as<int>();
     const double Ci  = _config["TMDscales"]["Ci"].as<double>();
+    const double Cf  = _config["TMDscales"]["Cf"].as<double>();
     const auto Alphas = [&] (double const& mu) -> double{ return _TabAlphas->Evaluate(mu); };
 
     const auto CollPDFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return _TabPDFs->Evaluate(mu); };
@@ -89,6 +90,9 @@ namespace NangaParbat
 
     const auto CollFFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return _TabFFs->Evaluate(mu); };
     _EvTMDFFs = BuildTmdFFs(_TmdFfObjs, CollFFs, Alphas, pto, Ci);
+
+    _HardFactorDY    = apfel::HardFactor("DY",    _TmdPdfObjs, Alphas, pto, Cf);
+    _HardFactorSIDIS = apfel::HardFactor("SIDIS", _TmdPdfObjs, Alphas, pto, Cf);
 
     // Delete LHAPDF sets
     delete distpdf;
@@ -106,7 +110,6 @@ namespace NangaParbat
   apfel::DoubleObject<apfel::Distribution> FastInterface::LuminosityDY(double const& bT, double const& Q, double const& targetiso) const
   {
     // TMD scales
-    const int    pto   = _config["PerturbativeOrder"].as<int>();
     const double Cf    = _config["TMDscales"]["Cf"].as<double>();
     const double aref  = _config["alphaem"]["aref"].as<double>();
     const bool   arun  = _config["alphaem"]["run"].as<bool>();
@@ -127,13 +130,12 @@ namespace NangaParbat
 
     // EW charges
     const std::vector<double> Bq = apfel::ElectroWeakCharges(Q, true);
-    // const std::vector<double> Bq = apfel::ElectroWeakChargesNWA(); // for narrow-width approx.
 
     // Electromagnetic coupling squared
     const double aem2 = pow((arun ? _TabAlphaem->Evaluate(Q) : aref), 2);
 
     // Compute the hard factor
-    const double hcs = apfel::HardFactorDY(pto, _TabAlphas->Evaluate(muf), nf, Cf);
+    const double hcs = _HardFactorDY(muf);
 
     // Global factor
     const double factor = apfel::ConvFact * 8 * M_PI * aem2 * hcs / 9 / pow(Q, 3);
@@ -162,7 +164,6 @@ namespace NangaParbat
   apfel::DoubleObject<apfel::Distribution> FastInterface::LuminositySIDIS(double const& bT, double const& Q, double const& targetiso) const
   {
     // TMD scales
-    const int    pto   = _config["PerturbativeOrder"].as<int>();
     const double Cf    = _config["TMDscales"]["Cf"].as<double>();
     const double aref  = _config["alphaem"]["aref"].as<double>();
     const bool   arun  = _config["alphaem"]["run"].as<bool>();
@@ -186,10 +187,11 @@ namespace NangaParbat
     const double aem2 = pow((arun ? _TabAlphaem->Evaluate(Q) : aref), 2);
 
     // Compute the hard factor
-    const double hcs = apfel::HardFactorSIDIS(pto, _TabAlphas->Evaluate(muf), nf, Cf);
+    const double hcs = _HardFactorSIDIS(muf);
 
     // Global factor (TO BE ADJUSTED!)
-    const double factor = apfel::ConvFact * aem2 * hcs;
+    const double factor = apfel::ConvFact * 2 * M_PI * aem2 * hcs;
+    //const double factor = apfel::ConvFact * 8 * M_PI * aem2 * hcs / 9 / pow(Q, 3);
 
     const std::map<int,apfel::Distribution> xF = QCDEvToPhys(_EvTMDPDFs(bT, muf, zetaf).GetObjects());
     const std::map<int,apfel::Distribution> xD = QCDEvToPhys(_EvTMDFFs(bT, muf, zetaf).GetObjects());
@@ -300,20 +302,20 @@ namespace NangaParbat
         Tabs[i].SetDoublePrecision(8);
         Tabs[i] << YAML::BeginMap;
         Tabs[i] << YAML::Comment("Kinematics and grid information");
-        Tabs[i] << YAML::Key << "name" << YAML::Value << name;
-        Tabs[i] << YAML::Key << "process" << YAML::Value << proc;
-        Tabs[i] << YAML::Key << "CME" << YAML::Value << Vs;
+        Tabs[i] << YAML::Key << "name"         << YAML::Value << name;
+        Tabs[i] << YAML::Key << "process"      << YAML::Value << proc;
+        Tabs[i] << YAML::Key << "CME"          << YAML::Value << Vs;
         Tabs[i] << YAML::Key << "qTintegrated" << YAML::Value << IntqT;
-        Tabs[i] << YAML::Key << "qT_bounds" << YAML::Value << YAML::Flow << qTv;
-        Tabs[i] << YAML::Key << "qT_map" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+        Tabs[i] << YAML::Key << "qT_bounds"    << YAML::Value << YAML::Flow << qTv;
+        Tabs[i] << YAML::Key << "qT_map"       << YAML::Value << YAML::Flow << YAML::BeginSeq;
         for (auto const& qTp : qTmap)
           Tabs[i] << YAML::Flow << YAML::BeginSeq << qTp.first << qTp.second << YAML::EndSeq;
         Tabs[i] << YAML::EndSeq;
-        Tabs[i] << YAML::Key << "bin_factors" << YAML::Value << YAML::Flow << qTfact;
-        Tabs[i] << YAML::Key << "prefactor" << YAML::Value << prefactor;
+        Tabs[i] << YAML::Key << "bin_factors"       << YAML::Value << YAML::Flow << qTfact;
+        Tabs[i] << YAML::Key << "prefactor"         << YAML::Value << prefactor;
         Tabs[i] << YAML::Key << "Ogata_coordinates" << YAML::Value << YAML::Flow << std::vector<double>(zo.begin(), zo.begin() + nO);
-        Tabs[i] << YAML::Key << "Qgrid" << YAML::Value << YAML::Flow << Qg;
-        Tabs[i] << YAML::Key << "xigrid" << YAML::Value << YAML::Flow << xig;
+        Tabs[i] << YAML::Key << "Qgrid"             << YAML::Value << YAML::Flow << Qg;
+        Tabs[i] << YAML::Key << "xigrid"            << YAML::Value << YAML::Flow << xig;
 
         // Phase-space reduction factor and its derivative on the grid
         // in Q and xi for each value of qT. Equal to one and zero
@@ -397,11 +399,19 @@ namespace NangaParbat
                 // parameter. If no integration in Q is requested
                 // compute the luminosity at "Qav" even when
                 // tabulating.
-                const auto Lumi = [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
-                {
-                  const double Qt = (IntQ ? Q : Qav);
-                  return LuminosityDY(_bstar(b, Qt), Qt, targetiso);
-                };
+                std::function<apfel::DoubleObject<apfel::Distribution>(double const&)> Lumi;
+                if (proc == DataHandler::DY)
+                  Lumi = [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
+                  {
+                    const double Qt = (IntQ ? Q : Qav);
+                    return LuminosityDY(_bstar(b, Qt), Qt, targetiso);
+                  };
+                else //if (proc == DataHandler::SIDIS)
+                  Lumi = [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
+                  {
+                    const double Qt = (IntQ ? Q : Qav);
+                    return LuminositySIDIS(_bstar(b, Qt), Qt, targetiso);
+                  };
                 const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabLumi{Lumi, (IntQ ? 200 : 2), Qb.first, Qb.second, 1, {}};
 
                 // Initialise vector of fixed points for the integration in Q
@@ -582,7 +592,7 @@ namespace NangaParbat
 
             // Construct the TMD luminosity in b scale to be fed to be
             // trasformed in qT space.
-            const auto TMDLumib = [&] (double const& b) -> double
+            const std::function<double(double const&)> TMDLumib = [&] (double const& b) -> double
             {
               // Function to be integrated in Q
               const auto Qintegrand = [&] (double const& Q) -> double

@@ -5,8 +5,6 @@
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/bstar.h"
 #include "NangaParbat/nonpertfunctions.h"
-#include "NangaParbat/createtmdgrid.h"
-#include "NangaParbat/factories.h"
 
 #include <fstream>
 #include <cstring>
@@ -139,7 +137,7 @@ int main(int argc, char* argv[])
       // bT-space TMD
       const auto xFb = [&] (double const& bT) -> double { return bT * QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1)); };
       const apfel::TabulateObject<double> TabxFb{xFb, 300, 0.0001, 10, 3, bThresholds, [] (double const& x)->double{ return log(x); }, [] (double const& x)->double{ return exp(x); }};
-      const auto txFb = [&] (double const& bT) -> double{ return TabxFb.Evaluate(bT); };
+      const std::function<double(double const&)> txFb = [&] (double const& bT) -> double{ return TabxFb.Evaluate(bT); };
 
       // Compute TMDs in qT space
       for (int iqT = 0; iqT < (int) qTv.size(); iqT++)
@@ -166,26 +164,6 @@ int main(int argc, char* argv[])
 
   // Delete LHAPDF set
   delete dist;
-  /*
-  // Dump info to file
-  std::ofstream ipout("new_tmds.info");
-  ipout << NangaParbat::EmitTMDInfo(config, 1, pf)->c_str() << std::endl;
-  ipout.close();
 
-  t.start();
-  // Dump grid to file
-  std::ofstream fpout("new_" + output);
-  fpout << NangaParbat::EmitTMDGrid(config, parfile["Parameterisation"].as<std::string>(), pars[0], pf)->c_str() << std::endl;
-  fpout.close();
-  t.stop();
-
-  // Read configuration file
-  NangaParbat::TMDGrid* TMDs = NangaParbat::mkTMD("PV19_n3ll");
-  std::cout << std::scientific;
-  for (int iqT = 0; iqT < (int) qTv.size(); iqT++)
-    std::cout << qTv[iqT] << "\t" << TMDs->Evaluate(x, qTv[iqT], Q).at(ifl) / tmds[0][iqT] << std::endl;
-  std::cout << "\n";
-  delete TMDs;
-  */
   return 0;
 }

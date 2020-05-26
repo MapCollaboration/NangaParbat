@@ -32,3 +32,18 @@ add_test(TestChi2 TestChi2)
 add_executable(TestMinimisation TestMinimisation.cc)
 target_link_libraries(TestMinimisation NangaParbat)
 add_test(TestMinimisation TestMinimisation)
+
+# build tests
+add_executable(SIDISCrossSection SIDISCrossSection.cc)
+target_link_libraries(SIDISCrossSection NangaParbat)
+add_test(SIDISCrossSection SIDISCrossSection)
+
+# build tests
+add_executable(GridProduction GridProduction.cc)
+target_link_libraries(GridProduction NangaParbat)
+add_test(GridProduction GridProduction)
+
+# build tests
+add_executable(TestConvolution TestConvolution.cc)
+target_link_libraries(TestConvolution NangaParbat)
+add_test(TestConvolution TestConvolution)

@@ -20,4 +20,31 @@ namespace NangaParbat
    * @param name: name of the TMD set (assumed to be in the current folder for now)
    */
   std::vector<TMDGrid*> mkTMDs(std::string const& name);
+
+  /**
+   * @brief Function that performs the convolution of two TMD
+   * distributions in kT space.
+   * @param TMD1: first distribution
+   * @param TMD2: second distribution
+   * @param Charges: to be used as weights of the partonic combinations
+   * @param kTCutOff: cutoff on the integration in kT relative to Q (default: 1)
+   * @param IntEps: integration relative accuracy (default: 1e-5)
+   */
+  std::function<double(double const&, double const&, double const&, double const&)> Convolution(TMDGrid                                           const* TMD1,
+                                                                                                TMDGrid                                           const* TMD2,
+                                                                                                std::function<std::vector<double>(double const&)> const& Charges,
+                                                                                                double                                            const& kTCutOff = 1,
+                                                                                                double                                            const& IntEps = 1e-5);
+
+  /**
+   * @brief Function that performs the convolution of two TMD
+   * distributions in kT space assuming that first and second
+   * distributions are equal.
+   * @param TMD: distribution
+   * @param Charges: to be used as weights of the partonic combinations
+   */
+  std::function<double(double const&, double const&, double const&, double const&)> Convolution(TMDGrid                                           const* TMD,
+                                                                                                std::function<std::vector<double>(double const&)> const& Charges,
+                                                                                                double                                            const& kTCutOff = 1,
+                                                                                                double                                            const& IntEps = 1e-5);
 }

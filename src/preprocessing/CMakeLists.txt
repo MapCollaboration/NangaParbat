@@ -13,8 +13,10 @@ set(preprocessing_source
   preprocessLHCb13TeV.cc
   preprocessCMS7TeV.cc
   preprocessCMS8TeV.cc
+  preprocessCMS13TeV.cc
   preprocessATLAS7TeV.cc
   preprocessATLAS8TeV.cc
+  preprocessEICPseudodata.cc
   )
 
 add_library(preprocessing OBJECT ${preprocessing_source})

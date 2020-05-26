@@ -25,7 +25,6 @@ namespace NangaParbat
     const std::string ofolder = "STAR";
 
     // In this case just copy the file
-    // Loop over tables
     std::string opath = ProcessedDataPath + "/" + ofolder;
     mkdir(opath.c_str(), ACCESSPERMS);
 

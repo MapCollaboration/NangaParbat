@@ -118,7 +118,7 @@ int main()
       {
         // Construct the TMD luminosity in b scale to be fed to be
         // trasformed in qT space.
-        const auto TMDLumib = [&] (double const& b) -> double
+        const std::function<double(double const&)> TMDLumib = [&] (double const& b) -> double
         {
           // Tabulate TMDs in Q
           const auto EvolvedTMDPDFs = [&] (double const& Q) -> apfel::Set<apfel::Distribution>{ return EvTMDPDFs(NangaParbat::bstarCSS(b, Q), Cf * Q, Q * Q); };

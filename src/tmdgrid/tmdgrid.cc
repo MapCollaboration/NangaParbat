@@ -22,9 +22,13 @@ namespace NangaParbat
   //_________________________________________________________________________________
   std::map<int, double> TMDGrid::Evaluate(double const& x, double const& qT, double const& Q) const
   {
+    // If qT/Q < the first point of the grid, put qT/Q  equal to it.
+    // Do not compute below the first point of the grid.
+    const double qToQ = std::max(qT / Q, _qToQg->GetQGrid().front());
+
     // Get summation bounds
     const std::tuple<int, int, int> xbounds    = _xg->SumBounds(x);
-    const std::tuple<int, int, int> qToQbounds = _qToQg->SumBounds(qT/Q);
+    const std::tuple<int, int, int> qToQbounds = _qToQg->SumBounds(qToQ);
     const std::tuple<int, int, int> Qbounds    = _Qg->SumBounds(Q);
 
     // Compute interpolating functions singularly to minimise the
@@ -47,7 +51,7 @@ namespace NangaParbat
     const int nqT  = std::get<2>(qToQbounds) - inqT;
     std::vector<double> IqT(nqT);
     for (int iqT = 0; iqT < nqT; iqT++)
-      IqT[iqT] = _qToQg->Interpolant(std::get<0>(qToQbounds), inqT + iqT, qT/Q);
+      IqT[iqT] = _qToQg->Interpolant(std::get<0>(qToQbounds), inqT + iqT, qToQ);
 
     // Initialise output map to zero
     std::map<int, double> result;

@@ -258,7 +258,7 @@ class fitresults:
         print(bcolours.ACTREPORT + "\nProducing TMD plots..." + bcolours.ENDC)
         os.system(self.reportfolder + "/../../run/PlotTMDs " + self.reportfolder + "/../tables/config.yaml "
                   + self.reportfolder + "/tmds_Q" + str(Q) + "_x" + str(x) + ".yaml " + dist + " " + str(ifl) + " " + str(Q) + " " + str(x)
-                  + " " + self.reportfolder +"/Parameters.yaml")
+                  + " " + self.reportfolder + "/Parameters.yaml")
 
         # Finally the plot is produced and included in the report
         with open(self.reportfolder + "/tmds_Q" + str(Q) + "_x" + str(x) + ".yaml", "r") as fc:
