@@ -109,18 +109,30 @@ int main(int argc, char* argv[])
   // Values of Q to test
   std::vector<double> Qg
   {
-    3.000000e+00, 7.000000e+00,
-    2.800000e+01, 4.342641e+01, 6.000000e+01, 9.118760e+01,
-    2.000000e+02, 2.466432e+02
-    //1.100000e+03
+    1.000000e+00, 2.529822e+00, 4.750000e+00, 1.000000e+01
+    // 3.000000e+00, 7.000000e+00,
+    // 2.800000e+01, 4.342641e+01, 9.118760e+01,
+    // 2.000000e+02
   };
 
   // Values of x to test
   std::vector<double> xg
   {
-    2.050000e-04, 8.070000e-03,
-    1.750000e-02,
-    0.1, 0.3, 0.5, 0.7
+    0.045, 0.047, 0.050, 0.055,
+    0.45, 0.47, 0.50, 0.55
+    // 0.1, 0.3, 0.5, 0.7
+  };
+
+  // Values of kToQg to test
+  std::vector<double> kToQg
+  {
+    0.0001,
+    0.0010, 0.0025, 0.0050, 0.0075, 0.0100, 0.0200, 0.0300, 0.0400,
+    0.0500, 0.0600, 0.0700, 0.0800, 0.0900, 0.1000, 0.1100, 0.1200,
+    0.1300, 0.1400, 0.1500, 0.1600, 0.1700, 0.1800, 0.1900, 0.2000,
+    0.2200, 0.2400, 0.2600, 0.2800, 0.3000, 0.3200, 0.3400, 0.3600,
+    0.3800, 0.4000, 0.4500, 0.5000, 0.5500, 0.6000, 0.6500, 0.7000,
+    0.8000, 0.9000, 1
   };
 
   // Read in grid
@@ -135,12 +147,12 @@ int main(int argc, char* argv[])
         {
           const double x  = xg[ix];
 
-          // Values of kT
-          const int nkT   = 50;
-          const double kTmin = Q * 1e-4;
-          const double kTmax = 0.5 * Q;
-          // const double kTstp = exp( log( kTmax / kTmin ) / ( nkT - 1 ) );
-          const double kTstp = (kTmax - kTmin)/ nkT;
+          // // Values of kT
+          // const int nkT   = 50;
+          // const double kTmin = Q * 1e-4;
+          // const double kTmax = 0.5 * Q;
+          // // const double kTstp = exp( log( kTmax / kTmin ) / ( nkT - 1 ) );
+          // const double kTstp = (kTmax - kTmin)/ nkT;
 
           // bT-space TMD
           const auto xFb = [&] (double const& bT) -> double
@@ -152,12 +164,31 @@ int main(int argc, char* argv[])
           // Fill vectors with grid interpolation and direct computation
           std::vector<double> gridinterp;
           std::vector<double> direct;
-          for (double kT = kTmin; kT <= kTmax * ( 1 + 1e-5 ); kT += kTstp)
+          // for (double kT = kTmin; kT <= kTmax * ( 1 + 1e-5 ); kT += kTstp)
+          for (double ik = 0; ik < (int) kToQg.size(); ik ++)
             {
-              gridinterp.push_back(TMDs->Evaluate(x, kT, Q).at(ifl));
-              direct.push_back(DEObj.transform(txFb, kT));
+              gridinterp.push_back(TMDs->Evaluate(x , (Q * kToQg[ik] * x) / x , Q).at(ifl));
+              // direct.push_back(DEObj.transform(txFb, kT));
             }
 
+          // YAML Emitter
+          YAML::Emitter em;
+
+          em << YAML::BeginMap;
+          em << YAML::Key << "ifl" << YAML::Value << ifl;
+          em << YAML::Key << "Q"   << YAML::Value << Q;
+          em << YAML::Key << "z"   << YAML::Value << x;
+          em << YAML::Key << "P_p" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+          for (double ik = 0; ik < kToQg.size(); ik ++)
+            em << Q * kToQg[ik] * x ;
+          em << YAML::EndSeq;
+          em << YAML::Key << "z * D1(z, P_p, Q)" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+          for (int i = 0; i < (int) gridinterp.size(); i++)
+            em << gridinterp[i];
+          em << YAML::EndSeq;
+          em << YAML::EndMap;
+
+          /*
           // YAML Emitter
           YAML::Emitter em;
 
@@ -182,9 +213,11 @@ int main(int argc, char* argv[])
             em << gridinterp[i] / direct[i];
           em << YAML::EndSeq;
           em << YAML::EndMap;
+          */
 
           // Produce output file
-          std::ofstream fout(outdir + "/test_Q_" + std::to_string(Q) + "_x_" + std::to_string(x) + ".yaml");
+          std::ofstream fout(outdir + "/PV17FF_Q_" + std::to_string(Q) + "_z_" + std::to_string(x) + ".yaml");
+          // std::ofstream fout(outdir + "/test_Q_" + std::to_string(Q) + "_x_" + std::to_string(x) + ".yaml");
           fout << em.c_str() << std::endl;
           fout.close();
 
