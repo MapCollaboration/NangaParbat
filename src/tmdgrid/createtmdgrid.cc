@@ -27,6 +27,9 @@ namespace NangaParbat
     // Read fir configuration file
     const YAML::Node fitconfig = YAML::LoadFile(ReportFolder + "/fitconfig.yaml");
 
+    // Define vector for grid names
+    std::vector<std::string> fnames;
+
     // Collect reports of valid replicas
     std::vector<std::unique_ptr<YAML::Emitter>> grids;
     for (auto const f : list_dir(ReportFolder))
@@ -65,9 +68,15 @@ namespace NangaParbat
                 // replica_0 push it in the front to make sure it's
                 // the first replica.
                 if (f == "replica_0")
-                  grids.insert(grids.begin(), EmitTMDGrid(config, pms, vpars, pf, InterGrid(pf)));
+                  {
+                    grids.insert(grids.begin(), EmitTMDGrid(config, pms, vpars, pf, InterGrid(pf)));
+                    fnames.insert(fnames.begin(), f);
+                  }
                 else
-                  grids.push_back(EmitTMDGrid(config, pms, vpars, pf, InterGrid(pf)));
+                  {
+                    grids.push_back(EmitTMDGrid(config, pms, vpars, pf, InterGrid(pf)));
+                    fnames.push_back(f);
+                  }
 
                 // Delete Parameterisation object
                 //delete NPFunc;
@@ -90,7 +99,11 @@ namespace NangaParbat
     // Dump grids to file
     for (int i = 0; i < (int) grids.size(); i++)
       {
-        std::ofstream fpout(outdir + "/" + Output + "_" + num_to_string(i) + ".yaml");
+        // Grids numbered sequentially
+        // std::ofstream fpout(outdir + "/" + Output + "_" + num_to_string(i) + ".yaml");
+
+        // Grid number = replica number
+        std::ofstream fpout(outdir + "/" + Output + "_" + num_to_string(std::stoi(fnames[i].erase(0,8))) + ".yaml");
         fpout << grids[i]->c_str() << std::endl;
         fpout.close();
       }

@@ -91,8 +91,8 @@ for file in testfiles:
 
         # Labels
         if distype == "FF" or distype == "ff":
-            ax1.set_xlabel(r"$P_{\perp}$ [GeV]")
-            ax1.set_ylabel(r"$zD_1(z, P_{\perp}; Q^2)$")
+            ax1.set_xlabel(r"$p_{\perp}$ [GeV]")
+            ax1.set_ylabel(r"$zD_1(z, p_{\perp}; Q^2)$")
         elif distype == "PDF" or distype == "pdf":
             ax1.set_xlabel(r"$k_T$ [GeV]")
             ax1.set_ylabel(r"$xf_1(x, k_T; Q^2)$")
@@ -119,7 +119,7 @@ for file in testfiles:
 
         # Labels
         if distype == "FF" or distype == "ff":
-            ax2.set_xlabel(r"$P_{\perp}$ [GeV]")
+            ax2.set_xlabel(r"$p_{\perp}$ [GeV]")
         elif distype == "PDF" or distype == "pdf":
             ax2.set_xlabel(r"$k_T$ [GeV]")
         ax2.set_ylabel("Grid / Direct")
