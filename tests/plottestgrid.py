@@ -49,15 +49,18 @@ Ofolder = fold + "/testresults"
 testfiles = []
 for tf in os.listdir(Ofolder):
     if tf[-4:] == "yaml":
+    # if tf[:4] == "grid":
         testfiles.append(tf)
 
 for file in testfiles:
+
     # Read file to plot
     with open(Ofolder + "/" + file, "r") as test:
         toplot = yaml.load(test, Loader = yaml.RoundTripLoader)
-        print("Loading output to plot: " + file)
+        print("Plot from: " + file)
 
     if (str(toplot["Grid over direct"][0])[-2:] != "an"):
+
         # Exstract data
         ifl = toplot["ifl"]
         Q   = toplot["Q"]
@@ -80,9 +83,9 @@ for file in testfiles:
         """
 
         if distype == "FF" or distype == "ff":
-            plt.suptitle("TMDGrids " +  distname + " " + distype + " flavour = " + str(ifl) + "\n" + "Q = " + str(Q) + "[GeV] , z = " + str(x))
+            plt.suptitle("TMDGrids " +  distname + " " + distype + "\n fl. = " + str(ifl) + " ,  Q = " + str(Q) + "[GeV] ,  z = " + str(x))
         elif distype == "PDF" or distype == "pdf":
-            plt.suptitle("TMDGrids " +  distname + " " + distype + " flavour = " + str(ifl) + "\n" + "Q = " + str(Q) + "[GeV] , x = " + str(x))
+            plt.suptitle("TMDGrids " +  distname + " " + distype + "\n fl. = " + str(ifl) + " ,  Q = " + str(Q) + "[GeV] ,  x = " + str(x))
 
         # Define equally spaced bins and ticks for x axis
         nticks_x, majorticks, minorticks = utilities.BinsAndTicks(min(kT), max(kT))
@@ -91,15 +94,14 @@ for file in testfiles:
 
         # Labels
         if distype == "FF" or distype == "ff":
-            ax1.set_xlabel(r"$p_{\perp}$ [GeV]")
             ax1.set_ylabel(r"$zD_1(z, p_{\perp}; Q^2)$")
         elif distype == "PDF" or distype == "pdf":
-            ax1.set_xlabel(r"$k_T$ [GeV]")
             ax1.set_ylabel(r"$xf_1(x, k_T; Q^2)$")
 
         # Plot in log scale
         ax1.set_yscale("log")
-        ax1.plot(kT, tgrid,  linewidth = 1.5, color = "r", alpha = 0.3, label = "grid interpolation")
+        ax1.plot(kT, tgrid,  linewidth = 1.5, color = "r", alpha = 0.3, label = "grid")
+        # ax1.plot(kT, tgrid,  linewidth = 1.5, color = "r", alpha = 0.3, label = "grid interpolation")
         ax1.plot(kT, tgrid,  linewidth = 1.5, color = "r", alpha = 0.4, marker = 'o', markersize = 3)
 
         ax1.plot(kT, direct, linewidth = 1.5, color = "b", alpha = 0.3, label = "direct calculation")
@@ -110,7 +112,16 @@ for file in testfiles:
         # Ticks
         ax1.set_xticks(majorticks)
         ax1.set_xticks(minorticks, minor=True)
-        ax1.legend()
+
+        # If the folder name contains "_" replace it with the latex underscore
+        if "_" in fold:
+            legendfold = fold.replace("_", "\_")
+
+            # Create legend
+            ax1.legend(title_fontsize = 12, title = "from " + legendfold)
+
+        # Create legend
+        ax1.legend(title_fontsize = 12, title = "from " + fold)
 
         # Start x axis from 0
         ax1.set_xlim(left = 0)
@@ -125,7 +136,8 @@ for file in testfiles:
         ax2.set_ylabel("Grid / Direct")
 
         # Plot
-        ax2.plot(kT, gridodir,  linewidth = 1.5, color = "g", alpha = 0.3, label = "Grid / Direct")
+        ax2.plot(kT, gridodir,  linewidth = 1.5, color = "g", alpha = 0.3, label = "grid / direct")
+        # ax2.plot(kT, gridodir,  linewidth = 1.5, color = "g", alpha = 0.3, label = "grid interpolation / direct")
         ax2.plot(kT, gridodir,  linewidth = 1.5, color = "g", alpha = 0.4, marker = 'o', markersize = 3)
         ax2.axhline(1, linewidth = 0.8, color = "black")
 
@@ -137,14 +149,15 @@ for file in testfiles:
         ax2.set_xlim(left = 0)
 
         # Ticks for y axis
-        # First tick starts at the multiple of 0.25 nearest to the minimum of the distribution
+        # *** no effect with MatplotlibSettings ***
+        # First tick starts at the multiple of 0.05 nearest to the minimum of the distribution
         ystart = round(min(gridodir), 2)
-        start_yticks = np.floor(ystart / 0.25) * 0.25
-        ax2.set_ylim(bottom = start_yticks, top = max(gridodir) + 0.1)
+        start_yticks = np.trunc(ystart / 0.05) * 0.05
+        ax2.set_ylim(bottom = start_yticks, top = max(gridodir) + 0.05)
+        # *****************************************
 
         nticks_y, majorticks_y, minorticks_y = utilities.BinsAndTicks(min(gridodir), max(gridodir))
-        ax2.set_yticks(majorticks_y)
-        ax2.set_yticks(minorticks_y, minor=True)
+        ax2.set_yticks(majorticks_y, minor = True)
 
         ax2.legend()
 

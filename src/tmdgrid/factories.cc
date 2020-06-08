@@ -16,6 +16,14 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
+  TMDGrid* mkTMD(std::string const& name, std::string const& folder, int const& mem)
+  {
+    std::cout << "[NangaParbat]: loading " << folder + "/" + name + "/" + name + "_" + num_to_string(mem) + ".yaml" << std::endl;
+    return new NangaParbat::TMDGrid{YAML::LoadFile(folder + "/"  + name + "/" + name + ".info"),
+                                    YAML::LoadFile(folder + "/"  + name + "/" + name + "_" + num_to_string(mem) + ".yaml")};
+  }
+
+  //_________________________________________________________________________________
   std::vector<TMDGrid*> mkTMDs(std::string const& name)
   {
     const YAML::Node info = YAML::LoadFile(name + "/" + name + ".info");

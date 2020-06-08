@@ -16,6 +16,14 @@ namespace NangaParbat
   TMDGrid* mkTMD(std::string const& name, int const& mem = 0);
 
   /**
+   * @brief Factory that returns a "TMDGrid" object.
+   * @param name: name of the TMD set
+   * @param name: name of the folder where the TMD set is 
+   * @param mem: member to be read (defaul: 0, i.e. central member)
+   */
+  TMDGrid* mkTMD(std::string const& name, std::string const& folder, int const& mem = 0);
+
+  /**
    * @brief Factory that returns a vector of "TMDGrid" objects.
    * @param name: name of the TMD set (assumed to be in the current folder for now)
    */
