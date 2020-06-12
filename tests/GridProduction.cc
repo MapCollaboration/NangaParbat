@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
   const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabDists{EvolvedDists, 100, dist->qMin(), dist->qMax(), 3, Thresholds};
 
   // Build evolved TMD distributions
-  const int    pto = config["PerturbativeOrder"].as<int>();
+  const int pto = config["PerturbativeOrder"].as<int>();
   const auto Alphas = [&] (double const& mu) -> double{ return dist->alphasQ(mu); };
   const auto CollDists = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabDists.Evaluate(mu); };
 

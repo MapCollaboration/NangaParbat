@@ -24,7 +24,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # export version to file
 configure_file(
   "${PROJECT_SOURCE_DIR}/inc/NangaParbat/version.h.in"
-  "${PROJECT_BINARY_DIR}/inc/NangaParbat/version.h"
+  "${PROJECT_SOURCE_DIR}/inc/NangaParbat/version.h"
 )
 
 find_package(PkgConfig REQUIRED)
@@ -60,6 +60,8 @@ if (LHAPDF_CONFIG)
     OUTPUT_VARIABLE LHAPDF_LIBRARIES
   )
   set(LHAPDF_LIBRARIES ${LHAPDF_LIBRARIES} CACHE STRING INTERNAL)
+else(LHAPDF_CONFIG)
+  message(FATAL_ERROR "LHAPDF not found!")
 endif(LHAPDF_CONFIG)
 
 # APFEL++
@@ -75,6 +77,8 @@ if (APFELXX_CONFIG)
     OUTPUT_VARIABLE APFELXX_LIBRARIES
   )
   set(APFELXX_LIBRARIES ${APFELXX_LIBRARIES} CACHE STRING INTERNAL)
+else(APFELXX_CONFIG)
+  message(FATAL_ERROR "APFEL++ not found!")
 endif(APFELXX_CONFIG)
 
 # GSL
@@ -90,6 +94,8 @@ if (GSL_CONFIG)
     OUTPUT_VARIABLE GSL_LIBRARIES
   )
   set(GSL_LIBRARIES ${GSL_LIBRARIES} CACHE STRING INTERNAL)
+else(GSL_CONFIG)
+  message(FATAL_ERROR "GSL not found!")
 endif(GSL_CONFIG)
 
 # ROOT
@@ -105,6 +111,8 @@ if (ROOT_CONFIG)
     OUTPUT_VARIABLE ROOT_LIBRARIES
   )
   set(ROOT_LIBRARIES ${ROOT_LIBRARIES} CACHE STRING INTERNAL)
+else(ROOT_CONFIG)
+  message(FATAL_ERROR "ROOT not found!")
 endif(ROOT_CONFIG)
 
 # Include Minuit2 to the libraries of ROOT (not included by default)
