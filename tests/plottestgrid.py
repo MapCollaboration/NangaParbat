@@ -101,7 +101,6 @@ for file in testfiles:
         # Plot in log scale
         ax1.set_yscale("log")
         ax1.plot(kT, tgrid,  linewidth = 1.5, color = "r", alpha = 0.3, label = "grid")
-        # ax1.plot(kT, tgrid,  linewidth = 1.5, color = "r", alpha = 0.3, label = "grid interpolation")
         ax1.plot(kT, tgrid,  linewidth = 1.5, color = "r", alpha = 0.4, marker = 'o', markersize = 3)
 
         ax1.plot(kT, direct, linewidth = 1.5, color = "b", alpha = 0.3, label = "direct calculation")
@@ -119,9 +118,10 @@ for file in testfiles:
 
             # Create legend
             ax1.legend(title_fontsize = 12, title = "from " + legendfold)
-
-        # Create legend
-        ax1.legend(title_fontsize = 12, title = "from " + fold)
+            
+        else:
+            # Create legend
+            ax1.legend(title_fontsize = 12, title = "from " + fold)
 
         # Start x axis from 0
         ax1.set_xlim(left = 0)
