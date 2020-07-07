@@ -66,7 +66,11 @@ namespace NangaParbat
           0.0500, 0.0600, 0.0700, 0.0800, 0.0900, 0.1000, 0.1250, 0.1500, 0.1750,
           0.2000, 0.2250, 0.2500, 0.2750, 0.3000, 0.3500, 0.4000, 0.4500, 0.5000,
           0.5500, 0.6000, 0.6500, 0.7000, 0.8000, 0.9000, 1,
-          1.1000, 1.2000, 1.3000, 1.4000, 1.5000, 1.6000, 1.7000, 1.8000, 1.9000 
+          1.1000, 1.2000, 1.3000, 1.4000, 1.5000, 1.6000, 1.7000, 1.8000, 1.9000,
+          2.1000//, 2.2000, 2.3000, 2.4500, 2.5500, 2.6000, 2.7000, 2.8000,
+          // 2.9000, 3,
+          // 3.2000, 3.4000, 3.6000, 3.8000, 4,
+          // 4.2000, 4.4000, 4.6000, 4.8000, 5
         };
       }
     else
@@ -148,14 +152,17 @@ namespace NangaParbat
    * @param pf: whether PDFs ("pdf") of FFs ("ff")
    * @return a YAML emitter
    */
-  std::unique_ptr<YAML::Emitter> EmitTMDInfo(YAML::Node  const& config,
-                                             int         const& NumMembers,
-                                             std::string const& pf,
-                                             std::string const& SetDesc = "Set produced with NangaParbat + APFEL++",
-                                             std::string const& Authors = "A. Bacchetta, V. Bertone, C. Bissolotti, G. Bozzi, F. Delcarro, F. Piacenza, M. Radici",
-                                             std::string const& Reference = "arXiv:xxxx.xxxxx",
-                                             std::string const& SetIndex = "000000",
-                                             std::string const& Format = "TMDlib1",
-                                             std::string const& DataVersion = "1",
-                                             std::string const& ErrorType = "Monte Carlo");
+  std::unique_ptr<YAML::Emitter> EmitTMDInfo(YAML::Node       const& config,
+                                             int              const& NumMembers,
+                                             std::string      const& pf,
+                                             ThreeDGrid       const& tdg,
+                                             std::vector<int> const& Flavors = {-5, -4, -3, -2, -1, 1, 2, 3, 4, 5},
+                                             std::string      const& SetDesc = "Set produced with NangaParbat + APFEL++",
+                                             std::string      const& Authors = "A. Bacchetta, V. Bertone, C. Bissolotti, G. Bozzi, F. Delcarro, F. Piacenza, M. Radici",
+                                             std::string      const& Reference = "arXiv:xxxx.xxxxx",
+                                             std::string      const& SetIndex = "000000",
+                                             std::string      const& Format = "TMDlib1",
+                                             std::string      const& DataVersion = "1",
+                                             std::string      const& ErrorType = "Monte Carlo",
+                                             std::string      const& FlavorScheme = "LHAPDF");
 }

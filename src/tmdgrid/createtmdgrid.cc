@@ -93,7 +93,7 @@ namespace NangaParbat
 
     // Write info file
     std::ofstream iout(outdir + "/" + Output + ".info");
-    iout << NangaParbat::EmitTMDInfo(config, grids.size(), pf)->c_str() << std::endl;
+    iout << NangaParbat::EmitTMDInfo(config, grids.size(), pf, InterGrid(pf))->c_str() << std::endl;
     iout.close();
 
     // Dump grids to file
@@ -240,16 +240,19 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  std::unique_ptr<YAML::Emitter> EmitTMDInfo(YAML::Node  const& config,
-                                             int         const& NumMembers,
-                                             std::string const& pf,
-                                             std::string const& SetDesc,
-                                             std::string const& Authors,
-                                             std::string const& Reference,
-                                             std::string const& SetIndex,
-                                             std::string const& Format,
-                                             std::string const& DataVersion,
-                                             std::string const& ErrorType)
+  std::unique_ptr<YAML::Emitter> EmitTMDInfo(YAML::Node       const& config,
+                                             int              const& NumMembers,
+                                             std::string      const& pf,
+                                             ThreeDGrid       const& tdg,
+                                             std::vector<int> const& Flavors,
+                                             std::string      const& SetDesc,
+                                             std::string      const& Authors,
+                                             std::string      const& Reference,
+                                             std::string      const& SetIndex,
+                                             std::string      const& Format,
+                                             std::string      const& DataVersion,
+                                             std::string      const& ErrorType,
+                                             std::string      const& FlavorScheme)
   {
     // Allocate YAML emitter
     std::unique_ptr<YAML::Emitter> out = std::unique_ptr<YAML::Emitter>(new YAML::Emitter);
@@ -271,6 +274,15 @@ namespace NangaParbat
     *out << YAML::Key << "Regularisation" << YAML::Value << config["bstar"].as<std::string>();
     *out << YAML::Key << "NumMembers"     << YAML::Value << NumMembers;
     *out << YAML::Key << "ErrorType"      << YAML::Value << ErrorType;
+    *out << YAML::Key << "FlavorScheme"   << YAML::Value << FlavorScheme;
+    *out << YAML::Key << "Flavors"        << YAML::Value << YAML::Flow << Flavors;
+    *out << YAML::Key << "NumFlavors"     << YAML::Value << std::round(Flavors.size() / 2);
+    *out << YAML::Key << "XMin"           << YAML::Value << tdg.xg[0];
+    *out << YAML::Key << "XMax"           << YAML::Value << tdg.xg.back();
+    *out << YAML::Key << "QMin"           << YAML::Value << tdg.Qg[0];
+    *out << YAML::Key << "QMax"           << YAML::Value << tdg.Qg.back();
+    *out << YAML::Key << "KtoQMin"        << YAML::Value << tdg.qToQg[0];
+    *out << YAML::Key << "KtoQMax"        << YAML::Value << tdg.qToQg.back();
     *out << YAML::EndMap;
 
     // Return the emitter
