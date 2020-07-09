@@ -21,7 +21,7 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  ChiSquare::ChiSquare(std::vector<std::pair<DataHandler, ConvolutionTable>> const& DSVect, Parameterisation& NPFunc):
+  ChiSquare::ChiSquare(std::vector<std::pair<DataHandler*, ConvolutionTable*>> DSVect, Parameterisation& NPFunc):
     _NPFunc(NPFunc)
   {
     // The input parameterisation has to contain 2 functions, othewise
@@ -42,14 +42,14 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  void ChiSquare::AddBlock(std::pair<DataHandler, ConvolutionTable> const& DSBlock)
+  void ChiSquare::AddBlock(std::pair<DataHandler*, ConvolutionTable*> DSBlock)
   {
     // Push "DataHandler-ConvolutionTable" back
     _DSVect.push_back(DSBlock);
 
     // Determine number of data points that pass the cut qT / Q.
-    const DataHandler::Kinematics kin     = DSBlock.first.GetKinematics();
-    const double                  qToQMax = DSBlock.second.GetCutqToverQ();
+    const DataHandler::Kinematics kin     = DSBlock.first->GetKinematics(); 
+    const double                  qToQMax = DSBlock.second->GetCutqToverQ();
     const std::vector<double>     qTv     = kin.qTv;
     const double                  Qmin    = (kin.Intv1 ? kin.var1b.first : ( kin.var1b.first + kin.var1b.second ) / 2);
 
@@ -58,7 +58,8 @@ namespace NangaParbat
     int idata = 0;
     for (auto const& qT : qTv)
       if (qT / Qmin < qToQMax)
-        idata++;
+      idata++;
+    
     _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
   };
 
@@ -69,18 +70,19 @@ namespace NangaParbat
       throw std::runtime_error("[ChiSquare::GetResiduals]: index out of range");
 
     // Get "DataHandler" and "ConvolutionTable" objects
-    const DataHandler      &dh = _DSVect[ids].first;
-    const ConvolutionTable &ct = _DSVect[ids].second;
+    DataHandler      * dh = _DSVect[ids].first;
+    ConvolutionTable * ct = _DSVect[ids].second;
 
     // Get experimental values
     std::vector<double> mean;
     if (central)
-      mean = dh.GetMeanValues();
+      mean = dh->GetMeanValues();
     else
-      mean = dh.GetFluctutatedData();
+      mean = dh->GetFluctutatedData();
 
     // Get predictions
-    const std::vector<double> pred = ct.GetPredictions(_NPFunc.Function());
+    //const std::vector<double> pred = ct->GetPredictions(_NPFunc.Function());
+    const std::vector<double> pred = ct->GetPredictions([](double const &, double const &, double const &) -> double { return 0; });
 
     // Check that the number of points in the DataHandler and
     // Convolution table objects is the same.
@@ -90,11 +92,17 @@ namespace NangaParbat
     // Compute residuals only for the points that pass the cut qT
     // / Q, set the others to zero.
     std::vector<double> res(_ndata[ids], 0.);
+
+    //std::cout<<"ndata="<<_ndata[ids]<<" mean.size, pred.size="<<mean.size()<<" "<<pred.size()<<std::endl;
     for (int j = 0; j < _ndata[ids]; j++)
-      res[j] = mean[j] - pred[j];
+      {
+        res[j] = mean[j] - pred[j];
+        //std::cout<<"j="<<j<<", res="<<res[j]<<std::endl;
+      }
+
 
     // Solve lower-diagonal system and return the result
-    return SolveLowerSystem(dh.GetCholeskyDecomposition(), res);
+    return SolveLowerSystem(dh->GetCholeskyDecomposition(), res);
   }
 
   //_________________________________________________________________________________
@@ -104,15 +112,15 @@ namespace NangaParbat
       throw std::runtime_error("[ChiSquare::GetResidualDerivatives]: index out of range");
 
     // Get "DataHandler" and "ConvolutionTable" objects
-    const DataHandler      &dh = _DSVect[ids].first;
-    const ConvolutionTable &ct = _DSVect[ids].second;
+    DataHandler      * dh = _DSVect[ids].first;
+    ConvolutionTable * ct = _DSVect[ids].second;
 
     // Get (fluctuated) experimental central values
-    const std::vector<double> mean = dh.GetFluctutatedData();
+    const std::vector<double> mean = dh->GetFluctutatedData();
 
     // Get predictions
     auto const dNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return _NPFunc.Derive(x, b, zeta, ifun, ipar); };
-    const std::vector<double> dpred = ct.GetPredictions(_NPFunc.Function(), dNP);
+    const std::vector<double> dpred = ct->GetPredictions(_NPFunc.Function(), dNP);
 
     // Check that the number of points in the DataHandler and
     // Convolution table objects is the same.
@@ -126,7 +134,7 @@ namespace NangaParbat
       res[j] = - dpred[j];
 
     // Solve lower-diagonal system and return the result
-    return SolveLowerSystem(dh.GetCholeskyDecomposition(), res);
+    return SolveLowerSystem(dh->GetCholeskyDecomposition(), res);
   }
 
   //_________________________________________________________________________________
@@ -139,18 +147,18 @@ namespace NangaParbat
     const int nd = _ndata[ids];
 
     // Get "DataHandler" and "ConvolutionTable" objects
-    const DataHandler      &dh = _DSVect[ids].first;
-    const ConvolutionTable &ct = _DSVect[ids].second;
+    DataHandler      * dh = _DSVect[ids].first;
+    ConvolutionTable * ct = _DSVect[ids].second;
 
     // Get experimental central values, uncorrelated and correlated
     // uncertainties. Rescale the multiplicative correlation if the t0
     // prescription is being used.
-    const std::vector<double> fluc = dh.GetFluctutatedData();
-    const std::vector<double> mean = dh.GetMeanValues();
-    const std::vector<double> uncu = dh.GetUncorrelatedUnc();
-    const std::vector<double> t0   = dh.GetT0();
-    const std::vector<std::vector<double>> corra = dh.GetAddCorrelatedUnc();
-    const std::vector<std::vector<double>> corrm = dh.GetMultCorrelatedUnc();
+    const std::vector<double> fluc = dh->GetFluctutatedData();
+    const std::vector<double> mean = dh->GetMeanValues();
+    const std::vector<double> uncu = dh->GetUncorrelatedUnc();
+    const std::vector<double> t0   = dh->GetT0();
+    const std::vector<std::vector<double>> corra = dh->GetAddCorrelatedUnc();
+    const std::vector<std::vector<double>> corrm = dh->GetMultCorrelatedUnc();
     std::vector<std::vector<double>> corr(mean.size());
     for (int j = 0; j < nd; j++)
       {
@@ -164,7 +172,7 @@ namespace NangaParbat
       }
 
     // Get predictions
-    const std::vector<double> pred = ct.GetPredictions(_NPFunc.Function());
+    const std::vector<double> pred = ct->GetPredictions(_NPFunc.Function());
 
     // Compute residuals only for the points that pass the cut qT / Q,
     // set the others to zero.
@@ -210,6 +218,7 @@ namespace NangaParbat
   //_________________________________________________________________________________
   double ChiSquare::Evaluate(int const& ids, bool const& central) const
   {
+
     // Define index range
     int istart = 0;
     int iend   = _DSVect.size();
@@ -219,13 +228,14 @@ namespace NangaParbat
         iend   = ids + 1;
       }
 
-    // Initialise chi2 and number of data points
-    double chi2 = 0;
-    int ntot = 0;
+      // Initialise chi2 and number of data points
+      double chi2 = 0;
+      int ntot = 0;
 
-    // Loop over the the blocks
-    for (int i = istart; i < iend; i++)
+      // Loop over the the blocks
+      for (int i = istart; i < iend; i++)
       {
+
         // Get residuals
         const std::vector<double> x = GetResiduals(i, central);
 
@@ -235,7 +245,8 @@ namespace NangaParbat
         // Increment number of points
         ntot += _ndata[i];
       }
-    return chi2 / ntot;
+
+      return chi2 / ntot;
   }
 
   //_________________________________________________________________________________
@@ -293,23 +304,23 @@ namespace NangaParbat
         const int nd = _ndata[i];
 
         // Get "DataHandler" and "ConvolutionTable" objects
-        const DataHandler      &dh = _DSVect[i].first;
-        const ConvolutionTable &ct = _DSVect[i].second;
+        DataHandler      * dh = _DSVect[i].first;
+        ConvolutionTable * ct = _DSVect[i].second;
 
         // Get predictions
-        const std::vector<double> pred = ct.GetPredictions(_NPFunc.Function());
+        const std::vector<double> pred = ct->GetPredictions(_NPFunc.Function());
 
         // Get experimental central values, uncorrelated
         // uncertainties, and correlated shifts.
-        const std::vector<double> mean   = dh.GetFluctutatedData();
-        const std::vector<double> uncu   = dh.GetUncorrelatedUnc();
+        const std::vector<double> mean   = dh->GetFluctutatedData();
+        const std::vector<double> uncu   = dh->GetUncorrelatedUnc();
         const std::vector<double> shifts = GetSystematicShifts(i).first;
 
         // Get values of qT
-        const std::vector<double> qT = dh.GetKinematics().qTv;
+        const std::vector<double> qT = dh->GetKinematics().qTv;
 
         // Get plotting labels
-        const std::map<std::string, std::string> labels = dh.GetLabels();
+        const std::map<std::string, std::string> labels = dh->GetLabels();
 
         // Now produce plots with ROOT
         gStyle->SetImageScaling(3.);
@@ -318,7 +329,7 @@ namespace NangaParbat
         TGraph* theoshift = new TGraph{};
         for (int j = 0; j < nd; j++)
           {
-            const double x = (dh.GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]);
+            const double x = (dh->GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]);
             exp->SetPoint(j, x, mean[j]);
             exp->SetPointError(j, 0, uncu[j]);
             theo->SetPoint(j, x, pred[j]);
@@ -369,7 +380,7 @@ namespace NangaParbat
         leg->Draw("SAME");
 
         // Save graph on file
-        c->SaveAs((outdir + dh.GetName() + ".pdf").c_str());
+        c->SaveAs((outdir + dh->GetName() + ".pdf").c_str());
 
         delete exp;
         delete theo;
@@ -405,11 +416,11 @@ namespace NangaParbat
         const int nd = chi2._ndata[i];
 
         // Get "DataHandler" and "ConvolutionTable" objects
-        const DataHandler      &dh = chi2._DSVect[i].first;
-        const ConvolutionTable &ct = chi2._DSVect[i].second;
+        DataHandler      * dh = chi2._DSVect[i].first;
+        ConvolutionTable * ct = chi2._DSVect[i].second;
 
         // Get predictions
-        const std::vector<double> pred = ct.GetPredictions(chi2._NPFunc.Function());
+        const std::vector<double> pred = ct->GetPredictions(chi2._NPFunc.Function());
 
         // Get systematic shifts and associated penalty
         const std::pair<std::vector<double>, double> sp = chi2.GetSystematicShifts(i);
@@ -417,9 +428,9 @@ namespace NangaParbat
 
         // Get experimental central values and uncorrelated
         // uncertainties.
-        const std::vector<double> mean = dh.GetMeanValues();
-        const std::vector<double> fluc = dh.GetFluctutatedData();
-        const std::vector<double> uncu = dh.GetUncorrelatedUnc();
+        const std::vector<double> mean = dh->GetMeanValues();
+        const std::vector<double> fluc = dh->GetFluctutatedData();
+        const std::vector<double> uncu = dh->GetUncorrelatedUnc();
 
         // Compute chi2 starting from the penalty
         double chi2n = sp.second;
@@ -435,15 +446,15 @@ namespace NangaParbat
           throw std::runtime_error("[ChiSquare::operator<<]: chi2 reconstruction failed");
 
         // Get values of qT
-        const std::vector<double> qT = dh.GetKinematics().qTv;
+        const std::vector<double> qT = dh->GetKinematics().qTv;
 
         // Get plotting labels
-        const std::map<std::string, std::string> labels = dh.GetLabels();
+        const std::map<std::string, std::string> labels = dh->GetLabels();
 
         // Print predictions, experimental central value, uncorrelated
         // uncertainty and systemetic shift.
         os << YAML::BeginMap;
-        os << YAML::Key << "Name" << YAML::Value << dh.GetName();
+        os << YAML::Key << "Name" << YAML::Value << dh->GetName();
         os << YAML::Key << "Plot title" << YAML::Value << labels.at("title");
         os << YAML::Key << "xlabel" << YAML::Value << labels.at("xlabel");
         os << YAML::Key << "ylabel" << YAML::Value << labels.at("ylabel");
@@ -455,7 +466,7 @@ namespace NangaParbat
         os << YAML::Key << "penalty chi2" << YAML::Value << sp.second / nd;
         os << YAML::Key << "qT" << YAML::Value << YAML::Flow << YAML::BeginSeq;
         for (int j = 0; j < nd; j++)
-          os << (dh.GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]);
+          os << (dh->GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]);
         os << YAML::EndSeq;
         os << YAML::Key << "Predictions" << YAML::Value << YAML::Flow << YAML::BeginSeq;
         for (int j = 0; j < nd; j++)
