@@ -56,14 +56,14 @@ int main(int argc, char* argv[])
 
         // Convolution table
         const std::string table = std::string(argv[4]) + "/" + ds["name"].as<std::string>() + ".yaml";
-        const NangaParbat::ConvolutionTable ct{YAML::LoadFile(table), fitconfig["qToQmax"].as<double>()};
+        NangaParbat::ConvolutionTable ct{YAML::LoadFile(table), fitconfig["qToQmax"].as<double>()};
 
         // Datafile
         const std::string datafile = std::string(argv[3]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
-        const NangaParbat::DataHandler dh{ds["name"].as<std::string>(), YAML::LoadFile(datafile)};
+        NangaParbat::DataHandler dh{ds["name"].as<std::string>(), YAML::LoadFile(datafile)};
 
         // Add chi2 block
-        chi2.AddBlock(std::make_pair(dh, ct));
+        chi2.AddBlock(std::make_pair(&dh, &ct));
       }
   // Report time elapsed
   t.stop();
