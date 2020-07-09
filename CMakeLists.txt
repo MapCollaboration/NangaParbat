@@ -24,7 +24,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # export version to file
 configure_file(
   "${PROJECT_SOURCE_DIR}/inc/NangaParbat/version.h.in"
-  "${PROJECT_BINARY_DIR}/inc/NangaParbat/version.h"
+  "${PROJECT_SOURCE_DIR}/inc/NangaParbat/version.h"
 )
 
 find_package(PkgConfig REQUIRED)
