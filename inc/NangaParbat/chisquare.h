@@ -28,7 +28,7 @@ namespace NangaParbat
      * @param NPFunc: "Parameterisation" object containing the
      * non-perturbative function(s)
      */
-    ChiSquare(std::vector<std::pair<DataHandler, ConvolutionTable>> const& DSVect, Parameterisation& NPFunc);
+    ChiSquare(std::vector<std::pair<DataHandler *, ConvolutionTable *>>  DSVect, Parameterisation& NPFunc);
 
     /**
      * @brief The default "ChiSquare" constructor.
@@ -44,7 +44,7 @@ namespace NangaParbat
      * @param DSBlock: the ("DataHandler","ConvolutionTable")-pair
      * block to be appended
      */
-    void AddBlock(std::pair<DataHandler, ConvolutionTable> const& DSBlock);
+    virtual void AddBlock(std::pair<DataHandler *, ConvolutionTable*> DSBlock);
 
     /**
      * @brief Function that returns the residuals of the
@@ -119,7 +119,7 @@ namespace NangaParbat
      * @return The vector of ("DataHandler", "ConvolutionTable")
      * object-pairs
      */
-    std::vector<std::pair<DataHandler, ConvolutionTable>> GetBlocks() const { return _DSVect; };
+    std::vector<std::pair<DataHandler*, ConvolutionTable*>> GetBlocks() const { return _DSVect; };
 
     /**
      * @brief Function that returns the "Parameterisation" object
@@ -176,7 +176,7 @@ namespace NangaParbat
     void MakePlots(std::string const& path) const;
 
   protected:
-    std::vector<std::pair<DataHandler, ConvolutionTable>> _DSVect;  //!< Vector of "DataHandler-ConvolutionTable" pairs
+    std::vector<std::pair<DataHandler*, ConvolutionTable*>> _DSVect;  //!< Vector of "DataHandler-ConvolutionTable" pairs
     Parameterisation&                                     _NPFunc;  //!< Parameterisation of the non-perturbative component
     std::vector<int>                                      _ndata;   //!< Vector constaining the number of data points per dataset that pass the qT/Q cut
 
