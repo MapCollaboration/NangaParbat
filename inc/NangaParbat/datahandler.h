@@ -22,6 +22,7 @@ namespace NangaParbat
   class DataHandler
   {
   public:
+  
     /**
      * @brief The process enumerator
      */
@@ -68,6 +69,8 @@ namespace NangaParbat
      * @param covmat: the new covariance matrix
      */
     void SetCovarianceMatrix(apfel::matrix<double> const& covmat);
+
+    virtual int GetNkins() const { return this->GetNkins(); }
 
     /**
      * @brief Function that updates the covariance matrix computed in
