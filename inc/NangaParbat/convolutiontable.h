@@ -10,6 +10,8 @@
 #include <vector>
 #include <yaml-cpp/yaml.h>
 
+#include <NangaParbat/parameterisation.h>
+
 namespace NangaParbat
 {
   /**
@@ -68,6 +70,9 @@ namespace NangaParbat
      * @return a map that associates each value of qT to a prediction.
      */
     std::map<double, double> Convolute(std::function<double(double const&, double const&, double const&)> const& fNP) const;
+
+    //TODO: RAK
+    virtual void SetInputFFs(std::function<std::map<int, double>(double const &, double const &)> const &InDistFunc){this->SetInputFFs(InDistFunc);};
 
     /**
      * @brief This function returns a vector of predictions given two
