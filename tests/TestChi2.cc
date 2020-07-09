@@ -17,16 +17,16 @@ int main()
   NangaParbat::DWS NPFunc{};
 
   // Datafile
-  const NangaParbat::DataHandler DHand{"CDF_Run_I", YAML::LoadFile("../data/TestData/Table1.yaml")};
+  NangaParbat::DataHandler DHand{"CDF_Run_I", YAML::LoadFile("../data/TestData/Table1.yaml")};
 
   // Convolution table
-  const NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/Test_data.yaml"), 0.1};
+  NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/Test_data.yaml"), 0.1};
 
   // Define "ChiSquare" object
   NangaParbat::ChiSquare chi2{NPFunc};
 
   // Append dataset to the chi2 object
-  chi2.AddBlock(std::make_pair(DHand, CTable));
+  chi2.AddBlock(std::make_pair(&DHand, &CTable));
 
   // Compute chi2
   std::cout << "chi2 = " << chi2() << std::endl;
