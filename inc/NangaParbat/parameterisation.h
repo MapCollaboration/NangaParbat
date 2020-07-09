@@ -7,6 +7,7 @@
 #include <vector>
 #include <iostream>
 #include <functional>
+#include <map>
 
 namespace NangaParbat
 {
@@ -54,6 +55,7 @@ namespace NangaParbat
      * a std::function.
      */
     std::function<double(double const&, double const&, double const&, int const&)> Function() const;
+    virtual std::function<std::map<int, double>(double const &, double const &)> LHAPDF_Function() const { this->LHAPDF_Function(); }
 
     /**
      * @brief Virtual function that returns the value of the
