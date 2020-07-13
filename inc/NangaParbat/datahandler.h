@@ -70,7 +70,7 @@ namespace NangaParbat
      */
     void SetCovarianceMatrix(apfel::matrix<double> const& covmat);
 
-    virtual int GetNkins() const { return this->GetNkins(); }
+    virtual int GetNkins() const{return -1;};
 
     /**
      * @brief Function that updates the covariance matrix computed in

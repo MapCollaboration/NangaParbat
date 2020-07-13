@@ -72,7 +72,7 @@ namespace NangaParbat
     std::map<double, double> Convolute(std::function<double(double const&, double const&, double const&)> const& fNP) const;
 
     //TODO: RAK
-    virtual void SetInputFFs(std::function<std::map<int, double>(double const &, double const &)> const &InDistFunc){this->SetInputFFs(InDistFunc);};
+    virtual void SetInputFFs(std::function<std::map<int, double>(double const &, double const &)> const &InDistFunc){};
 
     /**
      * @brief This function returns a vector of predictions given two
