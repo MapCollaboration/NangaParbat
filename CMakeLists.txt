@@ -24,16 +24,19 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # export version to file
 configure_file(
   "${PROJECT_SOURCE_DIR}/inc/NangaParbat/version.h.in"
-  "${PROJECT_BINARY_DIR}/inc/NangaParbat/version.h"
+  "${PROJECT_SOURCE_DIR}/inc/NangaParbat/version.h"
 )
 
 find_package(PkgConfig REQUIRED)
 pkg_search_module(YAML REQUIRED yaml-cpp)
-pkg_search_module(EIGEN3 REQUIRED eigen3)
-#pkg_search_module(CERES REQUIRED ceres-solver)
-find_package(Ceres REQUIRED)
-pkg_search_module(GLOG REQUIRED libglog)
-pkg_search_module(GFLAGS REQUIRED gflags)
+#pkg_search_module(CERES ceres-solver)
+find_package(Ceres QUIET)
+if (NOT Ceres_FOUND)
+  message ("CERES not found. Some parts of the code will not be compiled.")
+endif ()
+pkg_search_module(EIGEN3 eigen3)
+pkg_search_module(GLOG libglog)
+pkg_search_module(GFLAGS gflags)
 
 # Configuration script
 set(prefix ${CMAKE_INSTALL_PREFIX})
@@ -60,6 +63,8 @@ if (LHAPDF_CONFIG)
     OUTPUT_VARIABLE LHAPDF_LIBRARIES
   )
   set(LHAPDF_LIBRARIES ${LHAPDF_LIBRARIES} CACHE STRING INTERNAL)
+else(LHAPDF_CONFIG)
+  message(FATAL_ERROR "LHAPDF not found!")
 endif(LHAPDF_CONFIG)
 
 # APFEL++
@@ -75,10 +80,12 @@ if (APFELXX_CONFIG)
     OUTPUT_VARIABLE APFELXX_LIBRARIES
   )
   set(APFELXX_LIBRARIES ${APFELXX_LIBRARIES} CACHE STRING INTERNAL)
+else(APFELXX_CONFIG)
+  message(FATAL_ERROR "APFEL++ not found!")
 endif(APFELXX_CONFIG)
 
 # GSL
-find_program(GSL_CONFIG gsl-config REQUIRED)
+find_program(GSL_CONFIG gsl-config)
 if (GSL_CONFIG)
   exec_program(${GSL_CONFIG}
     ARGS --cflags
@@ -90,10 +97,12 @@ if (GSL_CONFIG)
     OUTPUT_VARIABLE GSL_LIBRARIES
   )
   set(GSL_LIBRARIES ${GSL_LIBRARIES} CACHE STRING INTERNAL)
+else(GSL_CONFIG)
+  message ("GSL not found. Some parts of the code will not be compiled.")
 endif(GSL_CONFIG)
 
 # ROOT
-find_program(ROOT_CONFIG root-config REQUIRED)
+find_program(ROOT_CONFIG root-config)
 if (ROOT_CONFIG)
   exec_program(${ROOT_CONFIG}
     ARGS --cflags
@@ -105,23 +114,27 @@ if (ROOT_CONFIG)
     OUTPUT_VARIABLE ROOT_LIBRARIES
   )
   set(ROOT_LIBRARIES ${ROOT_LIBRARIES} CACHE STRING INTERNAL)
-endif(ROOT_CONFIG)
 
-# Include Minuit2 to the libraries of ROOT (not included by default)
-set(ROOT_LIBRARIES ${ROOT_LIBRARIES} -lMinuit2)
+  # Include Minuit2 to the libraries of ROOT (not included by default)
+  set(ROOT_LIBRARIES ${ROOT_LIBRARIES} -lMinuit2)
+else(ROOT_CONFIG)
+  message ("ROOT not found. Some parts of the code will not be compiled.")
+endif(ROOT_CONFIG)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LHAPDF_CXX_FLAGS} ${APFELXX_CXX_FLAGS} ${GSL_CXX_FLAGS} ${YAML_CFLAGS} ${ROOT_CXX_FLAGS} ${EIGEN3_CFLAGS} ${Ceres_CFLAGS} ${GLOG_CFLAGS} ${GFLAGS_CFLAGS} -std=c++11 -Wall -fPIC -Wunused")
 
 # build target library
 add_subdirectory(src)
-add_subdirectory(run)
+if (GSL_CONFIG AND ROOT_CONFIG AND Ceres_FOUND)
+  add_subdirectory(run)
+endif ()
 
 option(BUILD_TESTS "Build tests code" ON)
-if(BUILD_TESTS)
+if(BUILD_TESTS AND GSL_CONFIG AND ROOT_CONFIG AND Ceres_FOUND)
   enable_testing()
   add_subdirectory(tests)
-endif(BUILD_TESTS)
+endif ()
 
 install(FILES ${PROJECT_SOURCE_DIR}/bin/NangaParbat-config
 	   DESTINATION bin
