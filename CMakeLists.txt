@@ -126,12 +126,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LHAPDF_CXX_FLAGS} ${APFELXX_CXX_FLAGS}
 
 # build target library
 add_subdirectory(src)
-if (GSL_CONFIG AND ROOT_CONFIG AND Ceres_FOUND)
-  add_subdirectory(run)
-endif ()
+add_subdirectory(run)
 
 option(BUILD_TESTS "Build tests code" ON)
-if(BUILD_TESTS AND GSL_CONFIG AND ROOT_CONFIG AND Ceres_FOUND)
+if(BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)
 endif ()
