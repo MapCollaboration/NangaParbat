@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
   mkdir((OutputFolder).c_str(), ACCESSPERMS);
 
   // Define "ChiSquare" object with a given qT / Q cut
-  NangaParbat::ChiSquare chi2{*NPFunc};
+  NangaParbat::ChiSquare chi2{NPFunc};
 
   // Open datasets.yaml file that contains the list of datasets to be
   // fitted and push the corresponding pairs of "DataHandler" and

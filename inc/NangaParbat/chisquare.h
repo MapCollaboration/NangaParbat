@@ -28,7 +28,7 @@ namespace NangaParbat
      * @param NPFunc: "Parameterisation" object containing the
      * non-perturbative function(s)
      */
-    ChiSquare(std::vector<std::pair<DataHandler *, ConvolutionTable *>>  DSVect, Parameterisation& NPFunc);
+    ChiSquare(std::vector<std::pair<DataHandler *, ConvolutionTable *>>  DSVect, Parameterisation * NPFunc);
 
     /**
      * @brief The default "ChiSquare" constructor.
@@ -36,7 +36,7 @@ namespace NangaParbat
      * @param NPFunc: "Parameterisation" object containing the
      * non-perturbative function(s)
      */
-    ChiSquare(Parameterisation& NPFunc);
+    ChiSquare(Parameterisation* NPFunc);
 
     /**
      * @brief Add ("DataHandler","ConvolutionTable") pair block to the
@@ -66,7 +66,7 @@ namespace NangaParbat
      * @param ipar: the parameter index
      * @return the vector of derivatives of the residuals
      */
-    std::vector<double> GetResidualDerivatives(int const& ids, int const& ipar) const;
+    virtual std::vector<double> GetResidualDerivatives(int const& ids, int const& ipar) const;
 
     /**
      * @brief Function that returns the systematic shifts and the
@@ -111,7 +111,7 @@ namespace NangaParbat
      * parameterisation.
      * @param pars: the vector of parameters
      */
-    void SetParameters(std::vector<double> const& pars) { _NPFunc.SetParameters(pars); };
+    void SetParameters(std::vector<double> const& pars) { _NPFunc->SetParameters(pars); };
 
     /**
      * @brief Function that returns the vector of ("DataHandler",
@@ -126,7 +126,7 @@ namespace NangaParbat
      * associated to this chisquare object.
      * @return The "Parameterisation" object
      */
-    Parameterisation& GetNonPerturbativeFunction() const { return _NPFunc; };
+    Parameterisation* GetNonPerturbativeFunction() const { return _NPFunc; };
 
     /**
      * @brief Function that gets the number of data points that pass
@@ -156,14 +156,14 @@ namespace NangaParbat
      * parameterisation objects.
      * @return The number of parameters.
      */
-    int GetNumberOfParameters() const { return (int) _NPFunc.GetParameters().size(); };
+    int GetNumberOfParameters() const { return (int) _NPFunc->GetParameters().size(); };
 
     /**
      * @brief Function that returns the parameters of the
      * parameterisation objects.
      * @return The vector containing the parameters.
      */
-    std::vector<double> GetParameters() const { return _NPFunc.GetParameters(); };
+    std::vector<double> GetParameters() const { return _NPFunc->GetParameters(); };
 
     /**
      * @brief Function that produces data-theory comparison plots
@@ -177,7 +177,7 @@ namespace NangaParbat
 
   protected:
     std::vector<std::pair<DataHandler*, ConvolutionTable*>> _DSVect;  //!< Vector of "DataHandler-ConvolutionTable" pairs
-    Parameterisation&                                     _NPFunc;  //!< Parameterisation of the non-perturbative component
+    Parameterisation*                                     _NPFunc;  //!< Parameterisation of the non-perturbative component
     std::vector<int>                                      _ndata;   //!< Vector constaining the number of data points per dataset that pass the qT/Q cut
 
     friend YAML::Emitter& operator << (YAML::Emitter& os, ChiSquare const& chi2);

@@ -29,7 +29,7 @@ int main()
   NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/Test_data.yaml")};
 
   // Define "ChiSquare" object
-  NangaParbat::ChiSquare chi2{NPFunc};
+  NangaParbat::ChiSquare chi2{&NPFunc};
 
   // Append dataset to the chi2 object
   chi2.AddBlock(std::make_pair(&DHand, &CTable));

@@ -21,12 +21,12 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  ChiSquare::ChiSquare(std::vector<std::pair<DataHandler*, ConvolutionTable*>> DSVect, Parameterisation& NPFunc):
+  ChiSquare::ChiSquare(std::vector<std::pair<DataHandler*, ConvolutionTable*>> DSVect, Parameterisation* NPFunc):
     _NPFunc(NPFunc)
   {
     // The input parameterisation has to contain 2 functions, othewise
     // stop the code.
-    if (_NPFunc.GetNumberOfFunctions() != 2)
+    if (_NPFunc->GetNumberOfFunctions() != 2)
       throw std::runtime_error("[ChiSquare::ChiSquare]: the number of functions of the input parameterisation is different from two");
 
     // Loop over the the blocks and and push them into the "_DSVect"
@@ -36,7 +36,7 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  ChiSquare::ChiSquare(Parameterisation& NPFunc):
+  ChiSquare::ChiSquare(Parameterisation* NPFunc):
     ChiSquare{{}, NPFunc}
   {
   }
@@ -81,7 +81,7 @@ namespace NangaParbat
       mean = dh->GetFluctutatedData();
 
     // Get predictions
-    //const std::vector<double> pred = ct->GetPredictions(_NPFunc.Function());
+    //const std::vector<double> pred = ct->GetPredictions(_NPFunc->Function());
     const std::vector<double> pred = ct->GetPredictions([](double const &, double const &, double const &) -> double { return 0; });
 
     // Check that the number of points in the DataHandler and
@@ -119,8 +119,8 @@ namespace NangaParbat
     const std::vector<double> mean = dh->GetFluctutatedData();
 
     // Get predictions
-    auto const dNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return _NPFunc.Derive(x, b, zeta, ifun, ipar); };
-    const std::vector<double> dpred = ct->GetPredictions(_NPFunc.Function(), dNP);
+    auto const dNP = [&] (double const& x, double const& b, double const& zeta, int const& ifun) -> double{ return _NPFunc->Derive(x, b, zeta, ifun, ipar); };
+    const std::vector<double> dpred = ct->GetPredictions(_NPFunc->Function(), dNP);
 
     // Check that the number of points in the DataHandler and
     // Convolution table objects is the same.
@@ -172,7 +172,7 @@ namespace NangaParbat
       }
 
     // Get predictions
-    const std::vector<double> pred = ct->GetPredictions(_NPFunc.Function());
+    const std::vector<double> pred = ct->GetPredictions(_NPFunc->Function());
 
     // Compute residuals only for the points that pass the cut qT / Q,
     // set the others to zero.
@@ -253,7 +253,7 @@ namespace NangaParbat
   std::vector<double> ChiSquare::Derive() const
   {
     // Get number of parameters of the parametersation
-    const int npars = _NPFunc.GetParameters().size();
+    const int npars = _NPFunc->GetParameters().size();
 
     // Number of data sets
     const int nsets = _DSVect.size();
@@ -308,7 +308,7 @@ namespace NangaParbat
         ConvolutionTable * ct = _DSVect[i].second;
 
         // Get predictions
-        const std::vector<double> pred = ct->GetPredictions(_NPFunc.Function());
+        const std::vector<double> pred = ct->GetPredictions(_NPFunc->Function());
 
         // Get experimental central values, uncorrelated
         // uncertainties, and correlated shifts.
@@ -399,13 +399,13 @@ namespace NangaParbat
     os << YAML::BeginMap;
     os << YAML::Key << "Global error function" << YAML::Value << chi2.Evaluate();
     os << YAML::Key << "Global chi2" << YAML::Value << chi2.Evaluate(-1, true);
-    os << YAML::Key << "Parameterisation" << YAML::Value << chi2._NPFunc.GetName();
-    os << YAML::Key << "Non-perturbative function" << YAML::Value << chi2.GetNonPerturbativeFunction().LatexFormula();
+    os << YAML::Key << "Parameterisation" << YAML::Value << chi2._NPFunc->GetName();
+    os << YAML::Key << "Non-perturbative function" << YAML::Value << chi2.GetNonPerturbativeFunction()->LatexFormula();
 
     os << YAML::Key << "Parameters" << YAML::Value << YAML::Flow;
     os << YAML::BeginMap;
     for (int i = 0; i < (int) chi2.GetParameters().size(); i++)
-      os << YAML::Key << chi2.GetNonPerturbativeFunction().GetParameterNames()[i] << YAML::Value << chi2.GetParameters()[i];
+      os << YAML::Key << chi2.GetNonPerturbativeFunction()->GetParameterNames()[i] << YAML::Value << chi2.GetParameters()[i];
     os << YAML::EndMap;
 
     // Loop over the blocks
@@ -420,7 +420,7 @@ namespace NangaParbat
         ConvolutionTable * ct = chi2._DSVect[i].second;
 
         // Get predictions
-        const std::vector<double> pred = ct->GetPredictions(chi2._NPFunc.Function());
+        const std::vector<double> pred = ct->GetPredictions(chi2._NPFunc->Function());
 
         // Get systematic shifts and associated penalty
         const std::pair<std::vector<double>, double> sp = chi2.GetSystematicShifts(i);

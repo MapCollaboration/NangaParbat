@@ -37,7 +37,7 @@ namespace NangaParbat
      * parameterisation.
      * @param pars: the vector of parameters
      */
-    void SetParameters(std::vector<double> const& pars) { _pars = pars; };
+    virtual void SetParameters(std::vector<double> const& pars) { _pars = pars; };
 
     /**
      * @brief Virtual function that returns the value of one of the functions.
@@ -55,8 +55,13 @@ namespace NangaParbat
      * a std::function.
      */
     std::function<double(double const&, double const&, double const&, int const&)> Function() const;
-    virtual std::function<std::map<int, double>(double const &, double const &)> LHAPDF_Function() const {
-      return [=](double const & x, double const & y) -> std::map<int, double> { std::map<int, double> v = {{0,0.}}; return v; };
+    virtual std::function<std::map<int, double>(double const &, double const &)> LHAPDF_Function() const
+    {
+      return [=](double const &x, double const &y) -> std::map<int, double> { std::map<int, double> v = {{0,0.}}; return v; };
+    };
+    virtual std::function<std::map<int, double>(double const &, double const &)> LHAPDF_Derivative(int) const
+    {
+      return [=](double const &x, double const &y) -> std::map<int, double> { std::map<int, double> v = {{0,0.}}; return v; };
     };
 
     /**
@@ -103,7 +108,8 @@ namespace NangaParbat
     ///@{
     std::string         GetName()              const { return _name; }
     int                 GetNumberOfFunctions() const { return _nfuncs; }
-    std::vector<double> GetParameters()        const { return _pars; }
+    virtual std::vector<double> GetParameters() const { return _pars; }
+    virtual int GetParameterNumber() const { return _pars.size(); }
     bool                HasGradient()          const { return _anders; }
     ///@}
 
