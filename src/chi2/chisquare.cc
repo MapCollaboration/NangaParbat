@@ -92,14 +92,8 @@ namespace NangaParbat
     // Compute residuals only for the points that pass the cut qT
     // / Q, set the others to zero.
     std::vector<double> res(_ndata[ids], 0.);
-
-    //std::cout<<"ndata="<<_ndata[ids]<<" mean.size, pred.size="<<mean.size()<<" "<<pred.size()<<std::endl;
     for (int j = 0; j < _ndata[ids]; j++)
-      {
-        res[j] = mean[j] - pred[j];
-        //std::cout<<"j="<<j<<", res="<<res[j]<<std::endl;
-      }
-
+      res[j] = mean[j] - pred[j];
 
     // Solve lower-diagonal system and return the result
     return SolveLowerSystem(dh->GetCholeskyDecomposition(), res);

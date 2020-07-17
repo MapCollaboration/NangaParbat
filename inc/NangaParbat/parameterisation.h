@@ -106,11 +106,11 @@ namespace NangaParbat
      * Functions to retrieve the feauture of the parameterisation
      */
     ///@{
-    std::string         GetName()              const { return _name; }
-    int                 GetNumberOfFunctions() const { return _nfuncs; }
+    std::string GetName()                       const { return _name; }
+    int GetNumberOfFunctions()                  const { return _nfuncs; }
     virtual std::vector<double> GetParameters() const { return _pars; }
-    virtual int GetParameterNumber() const { return _pars.size(); }
-    bool                HasGradient()          const { return _anders; }
+    virtual int GetParameterNumber()            const { return _pars.size(); }
+    bool HasGradient()                          const { return _anders; }
     ///@}
 
   protected:
