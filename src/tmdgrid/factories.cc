@@ -35,6 +35,33 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
+  StructGrid* mkSF(std::string const& name, int const& mem)
+  {
+    std::cout << "[NangaParbat]: loading " << name + "/" + name + "_" + num_to_string(mem) + ".yaml" << std::endl;
+    return new NangaParbat::StructGrid{YAML::LoadFile(name + "/" + name + ".info"),
+                                       YAML::LoadFile(name + "/" + name + "_" + num_to_string(mem) + ".yaml")};
+  }
+
+  //_________________________________________________________________________________
+  StructGrid* mkSF(std::string const& name, std::string const& folder, int const& mem)
+  {
+    std::cout << "[NangaParbat]: loading " << folder + "/" + name + "/" + name + "_" + num_to_string(mem) + ".yaml" << std::endl;
+    return new NangaParbat::StructGrid{YAML::LoadFile(folder + "/"  + name + "/" + name + ".info"),
+                                       YAML::LoadFile(folder + "/"  + name + "/" + name + "_" + num_to_string(mem) + ".yaml")};
+  }
+
+  //_________________________________________________________________________________
+  std::vector<StructGrid*> mkSFs(std::string const& name)
+  {
+    const YAML::Node info = YAML::LoadFile(name + "/" + name + ".info");
+    const int nmem = info["NumMembers"].as<int>();
+    std::vector<StructGrid*> sfs(nmem);
+    for (int mem = 0; mem < nmem; mem++)
+      sfs[mem] = new NangaParbat::StructGrid{info, YAML::LoadFile(name + "/" + name + std::to_string(mem) + ".yaml")};
+    return sfs;
+  }
+
+  //_________________________________________________________________________________
   std::function<double(double const&, double const&, double const&, double const&)> Convolution(TMDGrid                                           const* TMD1,
                                                                                                 TMDGrid                                           const* TMD2,
                                                                                                 std::function<std::vector<double>(double const&)> const& Charges,

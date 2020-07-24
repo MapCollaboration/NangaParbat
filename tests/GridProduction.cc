@@ -1,5 +1,6 @@
 //
 // Author: Valerio Bertone: valerio.bertone@cern.ch
+//          Chiara Bissolotti: chiara.bissolotti01@universitadipavia.it
 //
 
 #include "NangaParbat/createtmdgrid.h"
@@ -156,7 +157,7 @@ int main(int argc, char* argv[])
           // Values of kT
           const double kTmin = Q * 1e-4;
           const double kTmax = 5 * Q;
-          const int nkT      = 50;
+          const int    nkT   = 50;
           const double kTstp = (kTmax - kTmin)/ nkT;
 
 

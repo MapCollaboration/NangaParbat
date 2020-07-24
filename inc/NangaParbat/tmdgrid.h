@@ -36,7 +36,7 @@ namespace NangaParbat
     YAML::Node GetInfoNode() const { return _info; };
 
   private:
-    YAML::Node                                                   const _info;
+    YAML::Node                                                   const  _info;
     std::unique_ptr<apfel::QGrid<double>>                        const  _xg;
     std::unique_ptr<apfel::QGrid<double>>                        const  _qToQg;
     std::unique_ptr<apfel::QGrid<double>>                        const  _Qg;

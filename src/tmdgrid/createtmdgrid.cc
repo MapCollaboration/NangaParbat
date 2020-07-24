@@ -24,7 +24,7 @@ namespace NangaParbat
     // Read configuration file
     const YAML::Node config = YAML::LoadFile(ReportFolder + "/tables/config.yaml");
 
-    // Read fir configuration file
+    // Read fit configuration file
     const YAML::Node fitconfig = YAML::LoadFile(ReportFolder + "/fitconfig.yaml");
 
     // Define vector for grid names
@@ -69,12 +69,12 @@ namespace NangaParbat
                 // the first replica.
                 if (f == "replica_0")
                   {
-                    grids.insert(grids.begin(), EmitTMDGrid(config, pms, vpars, pf, InterGrid(pf)));
+                    grids.insert(grids.begin(), EmitTMDGrid(config, pms, vpars, pf, Inter3DGrid(pf)));
                     fnames.insert(fnames.begin(), f);
                   }
                 else
                   {
-                    grids.push_back(EmitTMDGrid(config, pms, vpars, pf, InterGrid(pf)));
+                    grids.push_back(EmitTMDGrid(config, pms, vpars, pf, Inter3DGrid(pf)));
                     fnames.push_back(f);
                   }
 
@@ -93,7 +93,7 @@ namespace NangaParbat
 
     // Write info file
     std::ofstream iout(outdir + "/" + Output + ".info");
-    iout << NangaParbat::EmitTMDInfo(config, grids.size(), pf, InterGrid(pf))->c_str() << std::endl;
+    iout << NangaParbat::EmitTMDInfo(config, grids.size(), pf, Inter3DGrid(pf))->c_str() << std::endl;
     iout.close();
 
     // Dump grids to file

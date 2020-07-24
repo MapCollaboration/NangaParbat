@@ -27,12 +27,12 @@ namespace NangaParbat
    * @brief Function that returns ThreeDGrid object better tuned for
    * PDFs or FFs, according to the input string.
    */
-  ThreeDGrid InterGrid(std::string const& pf)
+  ThreeDGrid Inter3DGrid(std::string const& pf)
   {
     ThreeDGrid grid{};
     if (pf == "pdf")
       {
-        grid.Qg =
+        grid.Qg = std::vector<double>
         {
           1.000000e+00, 1.118034e+00, 1.224745e+00, 1.400000e+00, 1.581139e+00, 1.788854e+00,
           2.000000e+00, 2.236068e+00, 2.529822e+00, 2.828427e+00, 3.162278e+00, 3.464102e+00,
@@ -42,7 +42,7 @@ namespace NangaParbat
           5.099020e+01, 6.324555e+01, 7.100000e+01, 8.000000e+01, 1.000000e+02, 1.118034e+02,
           1.224745e+02, 1.400000e+02, 1.581139e+02, 1.788854e+02, 2.000000e+02
         };
-        grid.xg =
+        grid.xg = std::vector<double>
         {
           1.000000e-05, 2.000000e-05, 4.000000e-05, 6.000000e-05, 8.000000e-05,
           1.000000e-04, 2.000000e-04, 4.000000e-04, 6.000000e-04, 8.000000e-04,
@@ -60,7 +60,7 @@ namespace NangaParbat
           8.500000e-01, 9.000000e-01, 9.250000e-01, 9.500000e-01, 9.750000e-01,
           1.000000e+00
         };
-        grid.qToQg =
+        grid.qToQg = std::vector<double>
         {
           0.0001, 0.0010, 0.0025, 0.0050, 0.0075, 0.0100, 0.0200, 0.0300, 0.0400,
           0.0500, 0.0600, 0.0700, 0.0800, 0.0900, 0.1000, 0.1250, 0.1500, 0.1750,
@@ -72,7 +72,7 @@ namespace NangaParbat
       }
     else
       {
-        grid.Qg =
+        grid.Qg = std::vector<double>
         {
           1.000000e+00, 1.080000e+00, 1.118034e+00, 1.170000e+00, 1.224745e+00, 1.300000e+00,
           1.400000e+00, 1.581139e+00, 1.788854e+00, 2.000000e+00, 2.236068e+00, 2.529822e+00,
@@ -117,7 +117,7 @@ namespace NangaParbat
 
   /**
    * @brief This function encapsulates and streamlines the production
-   * of an interpolation grid strting from the report produced by a
+   * of an interpolation grid starting from the report produced by a
    * NangaParbat fit.
    * @param ReportFolder: path to the report folder
    * @param Output: name of the output grid
