@@ -11,6 +11,7 @@
 #include "NangaParbat/direxists.h"
 #include "NangaParbat/numtostring.h"
 
+#include <iomanip>
 #include <fstream>
 #include <sys/stat.h>
 
