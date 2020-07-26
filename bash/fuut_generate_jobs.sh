@@ -1,6 +1,7 @@
 
 # Folder to use (results of the fit)
 fitfolder="tRep105"
+#fitfolder="PV17_NLL"
 
 # TMD PDF grids name 
 TMDPDFgrids="grid_pdf"
@@ -22,13 +23,7 @@ do
     echo "#SBATCH -o grid_fuut_$i.txt "               >> job_$i.sh
     echo "#SBATCH -e errors.txt "                     >> job_$i.sh
 
-    
-    echo mkdir Replica_$i                                                              >> job_$i.sh
-    echo mkdir Replica_$i/tables                                                       >> job_$i.sh
-    echo cp ../FitResults/$fitfolder/tables/config.yaml Replica_$i/tables/             >> job_$i.sh
-    echo cp ../FitResults/$fitfolder/fitconfig.yaml Replica_$i/                        >> job_$i.sh
-    echo cp -R ../FitResults/$fitfolder/replica_$i Replica_$i/                         >> job_$i.sh
-    echo "./../tests/FUUTGridProduction ../FitResults/${fitfolder} ${TMDPDFgrids} ${TMDFFgrids} ${Output}"          >> job_$i.sh
+    echo "./../run/CreateStructGrids ../FitResults/${fitfolder} ${TMDPDFgrids} ${TMDFFgrids} ${Output} $i"          >> job_$i.sh
 done
 
 # ------------------------------------------------------------------

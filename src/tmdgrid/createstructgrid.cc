@@ -22,6 +22,7 @@ namespace NangaParbat
                          std::string const& GridTMDPDFfolder,
                          std::string const& GridTMDFFfolder,
                          std::string const& Output,
+                         std::string const& repID,
                          std::string const& structype)
   {
     // Distribution type
@@ -35,37 +36,53 @@ namespace NangaParbat
 
     // Collect TMD grids to compute the structure function
     std::vector<std::unique_ptr<YAML::Emitter>> grids;
-    for (auto const f : list_dir(GridsDirectory + "/" + GridTMDPDFfolder))
+
+    // If the replica number (replica ID) is not specified, produce one structure function grid
+    // for every TMD PDF grid present in the TMDPDF folder. TMD PDF and TMD FF are matched by replica ID.
+    if (repID == "none")
       {
-        const std::string gridfile = GridsDirectory + "/" + GridTMDPDFfolder + "/" + f;
-
-        // Check if the grid file exists
-        std::fstream fs(gridfile);
-
-        if (!fs.fail())
+        for (auto const f : list_dir(GridsDirectory + "/" + GridTMDPDFfolder))
           {
-            if (f.substr(f.size() - 5, 5) == ".yaml")
+            // TMDPDF grid file
+            const std::string gridfile = GridsDirectory + "/" + GridTMDPDFfolder + "/" + f;
+
+            // Check if the TMDPDF grid file exists
+            std::fstream fs(gridfile);
+
+            if (!fs.fail())
               {
-                // Get replica number from the name of the PDF Grids
-                const std::string repnum = f.substr(f.size() - 9, 4);
-
-                std::cout << "Computing grid for structure function with replica " << repnum << " ..." << std::endl;
-
-                // Compute grid and push it back. In the case of
-                // replica_0 push it in the front to make sure it's
-                // the first replica.
-                if (repnum == "0000")
+                if (f.substr(f.size() - 5, 5) == ".yaml")
                   {
-                    grids.insert(grids.begin(), EmitStructGrid(GridsDirectory, GridTMDPDFfolder, GridTMDFFfolder, std::stoi(repnum), pf, Inter4DGrid(pf)));
-                    fnames.insert(fnames.begin(), repnum);
-                  }
-                else
-                  {
-                    grids.push_back(EmitStructGrid(GridsDirectory, GridTMDPDFfolder, GridTMDFFfolder, std::stoi(repnum), pf, Inter4DGrid(pf)));
-                    fnames.push_back(repnum);
+                    // Get replica number from the name of the PDF Grids
+                    const std::string repnum = f.substr(f.size() - 9, 4);
+
+                    std::cout << "Computing grid for structure function with replica " << repnum << " ..." << std::endl;
+
+                    // Compute grid and push it back. In the case of
+                    // replica_0 push it in the front to make sure it's
+                    // the first replica.
+                    if (repnum == "0000")
+                      {
+                        grids.insert(grids.begin(), EmitStructGrid(GridsDirectory, GridTMDPDFfolder, GridTMDFFfolder, std::stoi(repnum), pf, Inter4DGrid(pf)));
+                        fnames.insert(fnames.begin(), repnum);
+                      }
+                    else
+                      {
+                        grids.push_back(EmitStructGrid(GridsDirectory, GridTMDPDFfolder, GridTMDFFfolder, std::stoi(repnum), pf, Inter4DGrid(pf)));
+                        fnames.push_back(repnum);
+                      }
                   }
               }
           }
+      }
+
+    // If the replica ID is specified, do only the grid for that replica.
+    else
+      {
+        std::cout << "Computing grid for structure function with replica " << repID << " ..." << std::endl;
+
+        grids.push_back(EmitStructGrid(GridsDirectory, GridTMDPDFfolder, GridTMDFFfolder, std::stoi(repID), pf, Inter4DGrid(pf)));
+        fnames.push_back(repID);
       }
 
     // Output directory
@@ -87,7 +104,7 @@ namespace NangaParbat
         // std::ofstream fpout(outdir + "/" + Output + "_" + num_to_string(i) + ".yaml");
 
         // Grid number = replica number
-        std::ofstream fpout(outdir + "/" + Output + "_" + fnames[i] + ".yaml");
+        std::ofstream fpout(outdir + "/" + Output + "_" + num_to_string(std::stoi(fnames[i])) + ".yaml");
         fpout << grids[i]->c_str() << std::endl;
         fpout.close();
       }

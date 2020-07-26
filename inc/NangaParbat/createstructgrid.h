@@ -94,12 +94,14 @@ namespace NangaParbat
    * @param GridTMDPDFfolder: name of TMDPDF grids (subfolder of main folder)
    * @param GridTMDFFfolder: name of TMDFF grids (subfolder of main folder)
    * @param Output: name of the output grid
+   * @param repID: number of the replica
    * @param structype: whether F_UUT or others (not implemented yet)
    */
   void ProduceStructGrid(std::string const& GridsDirectory,
                          std::string const& GridTMDPDFfolder,
                          std::string const& GridTMDFFfolder,
                          std::string const& Output,
+                         std::string const& repID = "none",
                          std::string const& structype = "FUUT");
 
   /**
