@@ -118,7 +118,6 @@ for file in testfiles:
 
             # Create legend
             ax1.legend(title_fontsize = 12, title = "from " + legendfold)
-            
         else:
             # Create legend
             ax1.legend(title_fontsize = 12, title = "from " + fold)
@@ -162,18 +161,20 @@ for file in testfiles:
         ax2.legend()
 
         # Create directory for the plots if it does not exist
-        plotspath = Ofolder + "/plots"
+        plotspath = fold + "/plots"
         try:
             os.mkdir(plotspath)
-            print ("Creating '/plots' directory")
+            print ("Creating '/plots' directory - plots will be there ...")
         except FileExistsError:
+            # print ("'/plots' directory already exists - plots will be there ...")
             pass
 
         # Save plot
         fig.savefig(plotspath + "/" + file[:-5] + ".pdf")
         plt.close()
 
-print("Plots completed!")
+    else:
+        print("Something went wrong, there are 'nan' in the file!")
 
 """
 # Another way to have automatic ticks custom spaced

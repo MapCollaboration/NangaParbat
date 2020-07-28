@@ -70,7 +70,7 @@ namespace NangaParbat
   {
     // Changes q and qbar in order to properly compute the luminosity, taking into
     // account if the convolution is computed between two distributions of the
-    // same type (DY and e+e-) or between one PDF and one FF (SIDIS case).
+    // same type (DY and e+e- case) or between one PDF and one FF (SIDIS case).
     int sgn = 1; // SIDIS
     if (TMD1->GetInfoNode()["TMDType"].as<std::string>() == TMD2->GetInfoNode()["TMDType"].as<std::string>())
       sgn = -1;  // DY, e+e-
