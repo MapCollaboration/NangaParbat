@@ -1,7 +1,7 @@
 
 # Folder to use (results of the fit)
-fitfolder="tRep105"
-#fitfolder="PV17_NLL"
+#fitfolder="tRep105"
+fitfolder="PV17_NLL"
 
 # TMD PDF grids name 
 TMDPDFgrids="grid_pdf"
@@ -14,7 +14,7 @@ Output="grid_FUUT"
 
 # ------------------------------------------------------------------
 
-for (( i=105; i<106; i++ ))
+for (( i=100; i<=150; i++ ))
 do
     rm -f job_$i.sh
     echo "#!/bin/bash "                               >> job_$i.sh

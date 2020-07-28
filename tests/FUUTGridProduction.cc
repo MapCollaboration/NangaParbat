@@ -43,9 +43,7 @@ int main(int argc, char* argv[])
   // ===========================================================================
 
   // Create directory to store the output, if not already there
-  const std::string testdir = std::string(argv[4]);
-  mkdir(testdir.c_str(), ACCESSPERMS);
-  const std::string outdir = std::string(argv[4]) + "/test";
+  const std::string outdir = "test_" + std::string(argv[4]);
   mkdir(outdir.c_str(), ACCESSPERMS);
   std::cout << "Creating folder " + outdir << std::endl;
   std::cout << "\n";
@@ -111,11 +109,9 @@ int main(int argc, char* argv[])
 
   // Tabulate collinear PDFs and FFs
   const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 100, 0.5, distpdf->qMax(), 3, ThresholdsPDF};
-  // const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 100, distpdf->qMin(), distpdf->qMax(), 3, ThresholdsPDF};
   const auto CollPDFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabPDFs.Evaluate(mu); };
 
   const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabFFs{EvolvedFFs, 100, 0.5, distff->qMax(), 3, ThresholdsPDF};
-  // const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabFFs{EvolvedFFs, 100, distff->qMin(), distff->qMax(), 3, ThresholdsPDF};
   const auto CollFFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabFFs.Evaluate(mu); };
 
   // Initialize TMD objects
@@ -165,17 +161,19 @@ int main(int argc, char* argv[])
   const std::vector<double> zv  = kin["z"].as<std::vector<double>>();
 
   // Test grid against direct calculation
-  std::cout << "Start testing grids against direct calculation" << std::endl;
+  std::cout << "Start testing grids against direct calculation ... " << std::endl;
 
   // Read grids and test interpolation
   for (int iQ = 0; iQ < (int) Qv.size(); iQ++)
     {
       // value of Q
       const double Q  = Qv[iQ];
+
       for (int ix = 0; ix < (int) xv.size(); ix++)
         {
           // value of x
           const double x  = xv[ix];
+
           for (int iz = 0; iz < (int) zv.size(); iz++)
             {
               // value of z
@@ -241,9 +239,8 @@ int main(int argc, char* argv[])
               // Fill vectors with grid interpolation and direct computation
               for (double qT = qTmin; qT <= qTmax * ( 1 + 1e-5 ); qT += qTstp)
               {
-                // std::cout << "Q = " << Q << " , qT = " << qT << std::endl;
+                // Grid interpolation
                 gridinterp.push_back(SFs->Evaluate(x ,z, qT, Q));
-                // std::cout << "SF = " <<  SFs->Evaluate(x ,z, qT, Q) << std::endl;
 
                 // Direct calculation
                 direct.push_back(DEObj.transform(bInt, qT)/ z / (2 * M_PI));
@@ -287,5 +284,6 @@ int main(int argc, char* argv[])
   delete distff;
   delete fNP;
   delete SFs;
+
   return 0;
 }
