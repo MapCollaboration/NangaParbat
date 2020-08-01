@@ -5,8 +5,6 @@
 
 #pragma once
 
-#include "NangaParbat/tmdgrid.h"
-
 #include <yaml-cpp/yaml.h>
 #include <apfel/apfelxx.h>
 
@@ -15,7 +13,7 @@ namespace NangaParbat
   /**
    * @brief Class for the interpolation of a single TMD grid
    */
-  class StructGrid: public NangaParbat::TMDGrid
+  class StructGrid
   {
   public:
     /**
