@@ -24,8 +24,11 @@ namespace NangaParbat
     // Read configuration file
     const YAML::Node config = YAML::LoadFile(ReportFolder + "/tables/config.yaml");
 
-    // Read fir configuration file
+    // Read fit configuration file
     const YAML::Node fitconfig = YAML::LoadFile(ReportFolder + "/fitconfig.yaml");
+
+    // Define vector for grid names
+    std::vector<std::string> fnames;
 
     // Collect reports of valid replicas
     std::vector<std::unique_ptr<YAML::Emitter>> grids;
@@ -65,9 +68,15 @@ namespace NangaParbat
                 // replica_0 push it in the front to make sure it's
                 // the first replica.
                 if (f == "replica_0")
-                  grids.insert(grids.begin(), EmitTMDGrid(config, pms, vpars, pf, InterGrid(pf)));
+                  {
+                    grids.insert(grids.begin(), EmitTMDGrid(config, pms, vpars, pf, Inter3DGrid(pf)));
+                    fnames.insert(fnames.begin(), f);
+                  }
                 else
-                  grids.push_back(EmitTMDGrid(config, pms, vpars, pf, InterGrid(pf)));
+                  {
+                    grids.push_back(EmitTMDGrid(config, pms, vpars, pf, Inter3DGrid(pf)));
+                    fnames.push_back(f);
+                  }
 
                 // Delete Parameterisation object
                 //delete NPFunc;
@@ -84,13 +93,17 @@ namespace NangaParbat
 
     // Write info file
     std::ofstream iout(outdir + "/" + Output + ".info");
-    iout << NangaParbat::EmitTMDInfo(config, grids.size(), pf)->c_str() << std::endl;
+    iout << NangaParbat::EmitTMDInfo(config, grids.size(), pf, Inter3DGrid(pf))->c_str() << std::endl;
     iout.close();
 
     // Dump grids to file
     for (int i = 0; i < (int) grids.size(); i++)
       {
-        std::ofstream fpout(outdir + "/" + Output + "_" + num_to_string(i) + ".yaml");
+        // Grids numbered sequentially
+        // std::ofstream fpout(outdir + "/" + Output + "_" + num_to_string(i) + ".yaml");
+
+        // Grid number = replica number
+        std::ofstream fpout(outdir + "/" + Output + "_" + num_to_string(std::stoi(fnames[i].erase(0,8))) + ".yaml");
         fpout << grids[i]->c_str() << std::endl;
         fpout.close();
       }
@@ -227,16 +240,19 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  std::unique_ptr<YAML::Emitter> EmitTMDInfo(YAML::Node  const& config,
-                                             int         const& NumMembers,
-                                             std::string const& pf,
-                                             std::string const& SetDesc,
-                                             std::string const& Authors,
-                                             std::string const& Reference,
-                                             std::string const& SetIndex,
-                                             std::string const& Format,
-                                             std::string const& DataVersion,
-                                             std::string const& ErrorType)
+  std::unique_ptr<YAML::Emitter> EmitTMDInfo(YAML::Node       const& config,
+                                             int              const& NumMembers,
+                                             std::string      const& pf,
+                                             ThreeDGrid       const& tdg,
+                                             std::vector<int> const& Flavors,
+                                             std::string      const& SetDesc,
+                                             std::string      const& Authors,
+                                             std::string      const& Reference,
+                                             std::string      const& SetIndex,
+                                             std::string      const& Format,
+                                             std::string      const& DataVersion,
+                                             std::string      const& ErrorType,
+                                             std::string      const& FlavorScheme)
   {
     // Allocate YAML emitter
     std::unique_ptr<YAML::Emitter> out = std::unique_ptr<YAML::Emitter>(new YAML::Emitter);
@@ -258,6 +274,15 @@ namespace NangaParbat
     *out << YAML::Key << "Regularisation" << YAML::Value << config["bstar"].as<std::string>();
     *out << YAML::Key << "NumMembers"     << YAML::Value << NumMembers;
     *out << YAML::Key << "ErrorType"      << YAML::Value << ErrorType;
+    *out << YAML::Key << "FlavorScheme"   << YAML::Value << FlavorScheme;
+    *out << YAML::Key << "Flavors"        << YAML::Value << YAML::Flow << Flavors;
+    *out << YAML::Key << "NumFlavors"     << YAML::Value << std::round(Flavors.size() / 2);
+    *out << YAML::Key << "XMin"           << YAML::Value << tdg.xg[0];
+    *out << YAML::Key << "XMax"           << YAML::Value << tdg.xg.back();
+    *out << YAML::Key << "QMin"           << YAML::Value << tdg.Qg[0];
+    *out << YAML::Key << "QMax"           << YAML::Value << tdg.Qg.back();
+    *out << YAML::Key << "KtoQMin"        << YAML::Value << tdg.qToQg[0];
+    *out << YAML::Key << "KtoQMax"        << YAML::Value << tdg.qToQg.back();
     *out << YAML::EndMap;
 
     // Return the emitter

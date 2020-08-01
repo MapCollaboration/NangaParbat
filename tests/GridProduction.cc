@@ -1,5 +1,6 @@
 //
 // Author: Valerio Bertone: valerio.bertone@cern.ch
+//          Chiara Bissolotti: chiara.bissolotti01@universitadipavia.it
 //
 
 #include "NangaParbat/createtmdgrid.h"
@@ -74,8 +75,8 @@ int main(int argc, char* argv[])
   // b* prescription
   const std::function<double(double const&, double const&)> bs = NangaParbat::bstarMap.at(config["bstar"].as<std::string>());
 
-  // Get report
-  const YAML::Node rep = YAML::LoadFile(RepFolder + "/replica_0/Report.yaml");
+  // Get report (from repl. 105)
+  const YAML::Node rep = YAML::LoadFile(RepFolder + "/replica_105/Report.yaml");
 
   // Get parameterisation and sets of parameters
   NangaParbat::Parameterisation *NPFunc = NangaParbat::GetParametersation(rep["Parameterisation"].as<std::string>());
@@ -92,12 +93,15 @@ int main(int argc, char* argv[])
   NPFunc->SetParameters(vpars);
 
   // Double exponential quadrature
-  apfel::DoubleExponentialQuadrature DEObj{};
+  // apfel::DoubleExponentialQuadrature DEObj{};
+  apfel::DoubleExponentialQuadrature DEObj{0, 1e-07};
 
   // Test grid against direct calculation
   std::cout << "Start testing grids against direct calculation" << std::endl;
 
-  // Create folder to store the output
+  // Create directory to store the output, if not already there
+  const std::string testdir = std::string(argv[3]);
+  mkdir(testdir.c_str(), ACCESSPERMS);
   const std::string outdir = std::string(argv[3]) + "/testresults";
   mkdir(outdir.c_str(), ACCESSPERMS);
   std::cout << "Creating folder " + outdir << std::endl;
@@ -109,22 +113,37 @@ int main(int argc, char* argv[])
   // Values of Q to test
   std::vector<double> Qg
   {
+    // grid
+    // 1.000000e+00, 2.529822e+00,
+    // 4.750000e+00, 1.000000e+01
+    // interpolation
+    1.050000e+00, 1.130000e+00, 1.210000e+00,
     3.000000e+00, 7.000000e+00,
-    2.800000e+01, 4.342641e+01, 6.000000e+01, 9.118760e+01,
-    2.000000e+02, 2.466432e+02
-    //1.100000e+03
+    2.800000e+01//, 4.342641e+01, 9.118760e+01,
+    // 2.000000e+02
   };
 
   // Values of x to test
   std::vector<double> xg
   {
-    2.050000e-04, 8.070000e-03,
-    1.750000e-02,
-    0.1, 0.3, 0.5, 0.7
+    // grid
+    // 1.000000e-05, 1.000000e-04, 5.000000e-03,
+    // 1.000000e-02, 5.000000e-02,
+    // 0.450, 0.470, 0.500, 0.550
+    // 0.1, 0.2, 0.3, 0.5, 0.7
+    // interpolation
+    1.500000e-05, 1.500000e-04, 5.000000e-03,
+    1.200000e-02, 5.100000e-02,
+    0.11, 0.19, 0.33, 0.44
+    // 0.66
   };
 
-  // Read in grid
-  NangaParbat::TMDGrid* TMDs = NangaParbat::mkTMD(argv[3]);
+  // Get kT values from grid (repl. 105)
+ const YAML::Node grd = YAML::LoadFile(RepFolder + "/" + argv[3] + "/" + argv[3] + "_0105.yaml");
+ const std::vector<double> kToQg = grd["qToQg"].as<std::vector<double>>();
+
+  // Read TMDs in grid (repl. 105)
+  NangaParbat::TMDGrid* TMDs = NangaParbat::mkTMD(argv[3], RepFolder, 105);
 
   // Read grids and test interpolation
   for (int iq = 0; iq < (int) Qg.size(); iq++)
@@ -136,11 +155,11 @@ int main(int argc, char* argv[])
           const double x  = xg[ix];
 
           // Values of kT
-          const int nkT   = 50;
           const double kTmin = Q * 1e-4;
-          const double kTmax = 0.5 * Q;
-          // const double kTstp = exp( log( kTmax / kTmin ) / ( nkT - 1 ) );
+          const double kTmax = 5 * Q;
+          const int    nkT   = 50;
           const double kTstp = (kTmax - kTmin)/ nkT;
+
 
           // bT-space TMD
           const auto xFb = [&] (double const& bT) -> double
@@ -152,11 +171,38 @@ int main(int argc, char* argv[])
           // Fill vectors with grid interpolation and direct computation
           std::vector<double> gridinterp;
           std::vector<double> direct;
-          for (double kT = kTmin; kT <= kTmax * ( 1 + 1e-5 ); kT += kTstp)
+          for (double kT = kTmin; kT <= kTmax * ( 1 + 1e-5 ); kT += kTstp) // interpolation
+          // for (double ik = 0; ik < (int) kToQg.size(); ik ++) // grid
             {
-              gridinterp.push_back(TMDs->Evaluate(x, kT, Q).at(ifl));
-              direct.push_back(DEObj.transform(txFb, kT));
+              gridinterp.push_back(TMDs->Evaluate(x , kT , Q).at(ifl));
+              direct.push_back(DEObj.transform(txFb, kT)/ 2 / M_PI);
+
+              // // grid
+              // gridinterp.push_back(TMDs->Evaluate(x , kToQg[ik] , Q).at(ifl));
+              // direct.push_back(DEObj.transform(txFb, kToQg[ik])/ 2 / M_PI);
+
+              // // grid FF in P_p
+              // gridinterp.push_back(TMDs->Evaluate(x , (Q * kToQg[ik] * x) / x , Q).at(ifl));
             }
+
+          /* // for FF grids in Pp
+          // YAML Emitter
+          YAML::Emitter em;
+
+          em << YAML::BeginMap;
+          em << YAML::Key << "ifl" << YAML::Value << ifl;
+          em << YAML::Key << "Q"   << YAML::Value << Q;
+          em << YAML::Key << "z"   << YAML::Value << x;
+          em << YAML::Key << "P_p" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+          for (double ik = 0; ik < kToQg.size(); ik ++)
+            em << Q * kToQg[ik] * x ;
+          em << YAML::EndSeq;
+          em << YAML::Key << "z * D1(z, P_p, Q)" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+          for (int i = 0; i < (int) gridinterp.size(); i++)
+            em << gridinterp[i];
+          em << YAML::EndSeq;
+          em << YAML::EndMap;
+          */
 
           // YAML Emitter
           YAML::Emitter em;
@@ -168,6 +214,8 @@ int main(int argc, char* argv[])
           em << YAML::Key << "kT"  << YAML::Value << YAML::Flow << YAML::BeginSeq;
           for (double kT = kTmin; kT <= kTmax * ( 1 + 1e-5 ); kT += kTstp)
             em << kT;
+          // for (double ik = 0; ik < (int) kToQg.size(); ik ++)
+          //   em << kToQg[ik];
           em << YAML::EndSeq;
           em << YAML::Key << "Grid interpolation" << YAML::Value << YAML::Flow << YAML::BeginSeq;
           for (int i = 0; i < (int) gridinterp.size(); i++)
@@ -183,8 +231,9 @@ int main(int argc, char* argv[])
           em << YAML::EndSeq;
           em << YAML::EndMap;
 
+
           // Produce output file
-          std::ofstream fout(outdir + "/test_Q_" + std::to_string(Q) + "_x_" + std::to_string(x) + ".yaml");
+          std::ofstream fout(outdir + (pf == "pdf" ? "/PV17PDF_Q_" + std::to_string(Q) + "_x_" : "/PV17FF_Q_" + std::to_string(Q) + "_z_")  + std::to_string(x) + ".yaml");
           fout << em.c_str() << std::endl;
           fout.close();
 
