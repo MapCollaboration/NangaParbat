@@ -207,7 +207,7 @@ namespace NangaParbat
     *out << YAML::Key << "Authors"        << YAML::Value << Authors;
     *out << YAML::Key << "Reference"      << YAML::Value << Reference;
     *out << YAML::Key << "SetIndex"       << YAML::Value << SetIndex;
-    *out << YAML::Key << "TMDType"        << YAML::Value << pf;
+    *out << YAML::Key << "StructFunctType"   << YAML::Value << pf;
     *out << YAML::Key << "CollDistPDF"       << YAML::Value << config["pdfset"]["name"].as<std::string>();
     *out << YAML::Key << "CollDistMemberPDF" << YAML::Value << config["pdfset"]["member"].as<std::string>();
     *out << YAML::Key << "CollDistFF"        << YAML::Value << config["ffset"]["name"].as<std::string>();
