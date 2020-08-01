@@ -4,7 +4,6 @@
 //
 
 #include "NangaParbat/createstructgrid.h"
-// #include "NangaParbat/createtmdgrid.h"
 #include "NangaParbat/tmdgrid.h"
 #include "NangaParbat/factories.h"
 #include "NangaParbat/listdir.h"
@@ -216,6 +215,7 @@ namespace NangaParbat
     *out << YAML::Key << "Format"         << YAML::Value << Format;
     *out << YAML::Key << "DataVersion"    << YAML::Value << DataVersion;
     *out << YAML::Key << "OrderQCD"       << YAML::Value << config["PerturbativeOrder"].as<int>();
+    // *out << YAML::Key << "OrderQCD"       << YAML::Value << NangaParbat::PtOrderMap.at(config["PerturbativeOrder"].as<int>());
     *out << YAML::Key << "Regularisation" << YAML::Value << "bstar";
     *out << YAML::Key << "NumMembers"     << YAML::Value << NumMembers;
     *out << YAML::Key << "ErrorType"      << YAML::Value << ErrorType;

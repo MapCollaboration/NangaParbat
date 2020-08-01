@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "NangaParbat/tmdgrid.h"
+
 #include <yaml-cpp/yaml.h>
 #include <apfel/apfelxx.h>
 
@@ -13,7 +15,7 @@ namespace NangaParbat
   /**
    * @brief Class for the interpolation of a single TMD grid
    */
-  class StructGrid
+  class StructGrid: public NangaParbat::TMDGrid
   {
   public:
     /**
@@ -39,7 +41,7 @@ namespace NangaParbat
     YAML::Node GetInfoNode() const { return _info; };
 
   private:
-    YAML::Node                                                   const _info;
+    YAML::Node                                                   const  _info;
     std::unique_ptr<apfel::QGrid<double>>                        const  _xg;
     std::unique_ptr<apfel::QGrid<double>>                        const  _zg;
     std::unique_ptr<apfel::QGrid<double>>                        const  _qToQg;

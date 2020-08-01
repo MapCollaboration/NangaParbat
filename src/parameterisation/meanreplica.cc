@@ -21,7 +21,7 @@ namespace NangaParbat
     // Open configuration file
     const YAML::Node fitconfig = YAML::LoadFile(FitConfigFile);
 
-    // Get paremetersisation name as a string
+    // Get parameterisation name as a string
     const std::string parameterisation = fitconfig["Parameterisation"].as<std::string>();
 
     // Allocate "Parameterisation" derived object using the same

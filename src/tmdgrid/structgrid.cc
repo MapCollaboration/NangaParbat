@@ -8,7 +8,7 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  StructGrid::StructGrid(YAML::Node const& info, YAML::Node const& grid):
+  StructGrid::StructGrid(YAML::Node const& info, YAML::Node const& grid): TMDGrid{info, grid},
     _info(info),
     _xg(std::unique_ptr<apfel::QGrid<double>>(new apfel::QGrid<double>
   {
