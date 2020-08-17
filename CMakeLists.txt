@@ -29,11 +29,14 @@ configure_file(
 
 find_package(PkgConfig REQUIRED)
 pkg_search_module(YAML REQUIRED yaml-cpp)
-pkg_search_module(EIGEN3 REQUIRED eigen3)
-#pkg_search_module(CERES REQUIRED ceres-solver)
-find_package(Ceres REQUIRED)
-pkg_search_module(GLOG REQUIRED libglog)
-pkg_search_module(GFLAGS REQUIRED gflags)
+#pkg_search_module(CERES ceres-solver)
+find_package(Ceres QUIET)
+if (NOT Ceres_FOUND)
+  message ("CERES not found. Some parts of the code will not be compiled.")
+endif ()
+pkg_search_module(EIGEN3 eigen3)
+pkg_search_module(GLOG libglog)
+pkg_search_module(GFLAGS gflags)
 
 # Configuration script
 set(prefix ${CMAKE_INSTALL_PREFIX})
@@ -82,7 +85,7 @@ else(APFELXX_CONFIG)
 endif(APFELXX_CONFIG)
 
 # GSL
-find_program(GSL_CONFIG gsl-config REQUIRED)
+find_program(GSL_CONFIG gsl-config)
 if (GSL_CONFIG)
   exec_program(${GSL_CONFIG}
     ARGS --cflags
@@ -99,7 +102,7 @@ else(GSL_CONFIG)
 endif(GSL_CONFIG)
 
 # ROOT
-find_program(ROOT_CONFIG root-config REQUIRED)
+find_program(ROOT_CONFIG root-config)
 if (ROOT_CONFIG)
   exec_program(${ROOT_CONFIG}
     ARGS --cflags
@@ -129,7 +132,7 @@ option(BUILD_TESTS "Build tests code" ON)
 if(BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)
-endif(BUILD_TESTS)
+endif ()
 
 install(FILES ${PROJECT_SOURCE_DIR}/bin/NangaParbat-config
 	   DESTINATION bin
