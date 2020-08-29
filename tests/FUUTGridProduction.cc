@@ -142,7 +142,6 @@ int main(int argc, char* argv[])
 
   // Set vector of parameters
   fNP->SetParameters(vpars);
-  // *************
 
   // Apfel timer
   apfel::Timer t;

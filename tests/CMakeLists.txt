@@ -44,3 +44,8 @@ add_test(TestConvolution TestConvolution)
 add_executable(FUUTGridProduction FUUTGridProduction.cc)
 target_link_libraries(FUUTGridProduction NangaParbat)
 add_test(FUUTGridProduction FUUTGridProduction)
+
+add_executable(GridsConvolution GridsConvolution.cc)
+target_link_libraries(GridsConvolution NangaParbat)
+add_test(GridsConvolution GridsConvolution)
+
