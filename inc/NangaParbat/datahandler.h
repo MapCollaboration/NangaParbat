@@ -72,8 +72,6 @@ namespace NangaParbat
      */
     void SetCovarianceMatrix(apfel::matrix<double> const& covmat);
 
-    virtual int GetNkins() const{return -1;};
-
     /**
      * @brief Function that updates the covariance matrix computed in
      * the constructor. The Choleski is also recomputed.
@@ -167,6 +165,8 @@ namespace NangaParbat
     std::map<std::string, std::string> GetLabels() const { return _labels; };
 
   protected:
+    virtual int GetNkins() const { return -1; }; //FF_SIDIS
+
     std::string                        _name;         //!< Name of the dataset
     Process                            _proc;         //!< The process
     double                             _targetiso;    //!< Isoscalarity of the target

@@ -71,9 +71,6 @@ namespace NangaParbat
      */
     std::map<double, double> Convolute(std::function<double(double const&, double const&, double const&)> const& fNP) const;
 
-    //TODO: RAK
-    virtual void SetInputFFs(std::function<std::map<int, double>(double const &, double const &)> const &InDistFunc){};
-
     /**
      * @brief This function returns a vector of predictions given two
      * user-given non-perturbative functions.
@@ -131,7 +128,6 @@ namespace NangaParbat
     double                           GetCME()        const { return _Vs; }
     std::vector<std::vector<double>> GetqTBins()     const { return _qTmap; }
     double                           GetCutqToverQ() const { return _qToQmax; }
-    virtual std::vector<double> GetGrid() const {};
     ///@}
 
     /**
@@ -149,6 +145,10 @@ namespace NangaParbat
      * @param fNP1: the non-perturbative input function(s)
      */
     void NumericalAccuracy(std::function<double(double const&, double const&, double const&, int const&)> const& fNP) const;
+
+  protected:
+    virtual void SetInputFFs(std::function<std::map<int, double>(double const &, double const &)> const &InDistFunc){}; //FF_SIDIS
+    virtual std::vector<double> GetGrid() const {}; //FF_SIDIS
 
   private:
     std::string                                              const _name;    //!< Name of the table

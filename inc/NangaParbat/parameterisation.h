@@ -55,14 +55,6 @@ namespace NangaParbat
      * a std::function.
      */
     std::function<double(double const&, double const&, double const&, int const&)> Function() const;
-    virtual std::function<std::map<int, double>(double const &, double const &)> LHAPDF_Function() const
-    {
-      return [=](double const &x, double const &y) -> std::map<int, double> { std::map<int, double> v = {{0,0.}}; return v; };
-    };
-    virtual std::function<std::map<int, double>(double const &, double const &)> LHAPDF_Derivative(int) const
-    {
-      return [=](double const &x, double const &y) -> std::map<int, double> { std::map<int, double> v = {{0,0.}}; return v; };
-    };
 
     /**
      * @brief Virtual function that returns the value of the
@@ -114,6 +106,16 @@ namespace NangaParbat
     ///@}
 
   protected:
+  
+    virtual std::function<std::map<int, double>(double const &, double const &)> LHAPDF_Function() const 
+    {
+      return [=](double const &x, double const &y) -> std::map<int, double> { std::map<int, double> v = {{0,0.}}; return v; };
+    }; //FF_SIDIS
+    virtual std::function<std::map<int, double>(double const &, double const &)> LHAPDF_Derivative(int) const
+    {
+      return [=](double const &x, double const &y) -> std::map<int, double> { std::map<int, double> v = {{0,0.}}; return v; };
+    }; //FF_SIDIS
+
     std::string         _name;   //!< Name of the parameterisation
     int                 _nfuncs; //!< Number of output functions
     std::vector<double> _pars;   //!< The vector of free parameters
