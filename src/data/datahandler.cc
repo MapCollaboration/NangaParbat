@@ -72,6 +72,8 @@ namespace NangaParbat
                   _proc = DY;
                 else if (ql["value"].as<std::string>() == "SIDIS")
                   _proc = SIDIS;
+                else if (ql["value"].as<std::string>() == "SIA")
+                  _proc = SIA;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown process.");
               }
