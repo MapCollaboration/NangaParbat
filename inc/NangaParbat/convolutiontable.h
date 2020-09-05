@@ -148,7 +148,7 @@ namespace NangaParbat
 
   protected:
     virtual void SetInputFFs(std::function<std::map<int, double>(double const &, double const &)> const &InDistFunc){}; //FF_SIDIS
-    virtual std::vector<double> GetGrid() const {}; //FF_SIDIS
+    virtual std::vector<double> GetGrid() const { return {};}; //FF_SIDIS
 
   private:
     std::string                                              const _name;    //!< Name of the table
