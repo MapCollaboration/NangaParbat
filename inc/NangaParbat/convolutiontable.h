@@ -146,7 +146,6 @@ namespace NangaParbat
      */
     void NumericalAccuracy(std::function<double(double const&, double const&, double const&, int const&)> const& fNP) const;
 
-  protected:
     virtual void SetInputFFs(std::function<std::map<int, double>(double const &, double const &)> const &InDistFunc){}; //FF_SIDIS
     virtual std::vector<double> GetGrid() const { return {};}; //FF_SIDIS
 

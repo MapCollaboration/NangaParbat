@@ -105,9 +105,7 @@ namespace NangaParbat
     bool HasGradient()                          const { return _anders; }
     ///@}
 
-  protected:
-  
-    virtual std::function<std::map<int, double>(double const &, double const &)> LHAPDF_Function() const 
+    virtual std::function<std::map<int, double>(double const &, double const &)> LHAPDF_Function() const
     {
       return [=](double const &x, double const &y) -> std::map<int, double> { std::map<int, double> v = {{0,0.}}; return v; };
     }; //FF_SIDIS
@@ -115,6 +113,8 @@ namespace NangaParbat
     {
       return [=](double const &x, double const &y) -> std::map<int, double> { std::map<int, double> v = {{0,0.}}; return v; };
     }; //FF_SIDIS
+    
+  protected:
 
     std::string         _name;   //!< Name of the parameterisation
     int                 _nfuncs; //!< Number of output functions
