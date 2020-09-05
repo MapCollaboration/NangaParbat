@@ -131,6 +131,7 @@ namespace NangaParbat
     double                           GetCME()        const { return _Vs; }
     std::vector<std::vector<double>> GetqTBins()     const { return _qTmap; }
     double                           GetCutqToverQ() const { return _qToQmax; }
+    virtual std::vector<double> GetGrid() const {};
     ///@}
 
     /**
