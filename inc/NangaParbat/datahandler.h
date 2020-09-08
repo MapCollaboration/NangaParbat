@@ -8,7 +8,7 @@
 #include <vector>
 #include <utility>
 
-#include <apfel/matrix.h>
+#include <apfel/apfelxx.h>
 #include <yaml-cpp/yaml.h>
 #include <gsl/gsl_rng.h>
 
@@ -22,7 +22,7 @@ namespace NangaParbat
   class DataHandler
   {
   public:
-  
+
     /**
      * @brief The process enumerator
      */
@@ -98,6 +98,24 @@ namespace NangaParbat
     double GetTargetIsoscalarity() const { return _targetiso; };
 
     /**
+     * @brief Function that returns the possible identified hadron
+     * species in the final state.
+     */
+    std::string GetHadron() const { return _hadron; };
+
+    /**
+     * @brief Function that returns the charge of the identified final
+     * state.
+     */
+    int GetCharge() const { return _charge; };
+
+    /**
+     * @brief Function that returns the quark-tagged compoments. Zero
+     * corresponds to total.
+     */
+    std::vector<apfel::QuarkFlavour> GetTagging() const { return _tagging; };
+
+    /**
      * @brief Function that returns any possible constant prefactor to
      * be used to multiply the theoretical predictions.
      */
@@ -171,6 +189,9 @@ namespace NangaParbat
     std::string                        _name;         //!< Name of the dataset
     Process                            _proc;         //!< The process
     double                             _targetiso;    //!< Isoscalarity of the target
+    std::string                        _hadron;       //!< Hadron species identified in the final state
+    double                             _charge;       //!< Charge of the identified final state
+    std::vector<apfel::QuarkFlavour>   _tagging;      //!< Possible quark-tagged components
     double                             _prefact;      //!< Possible overall prefactor to multiply the theoretical predictions
     Kinematics                         _kin;          //!< Kinematics block
     std::vector<double>                _means;        //!< Vector of central values

@@ -50,9 +50,12 @@ namespace NangaParbat
     _name(name),
     _proc(UnknownProcess),
     _targetiso(1),
-    _prefact(1),
-    _kin(DataHandler::Kinematics{}),
-    _labels({}),
+    _hadron("NONE"),
+    _charge(0),
+    _tagging({apfel::QuarkFlavour::TOTAL}),
+  _prefact(1),
+  _kin(DataHandler::Kinematics{}),
+  _labels({}),
   _t0(t0)
   {
     // Retrieve kinematics
@@ -81,6 +84,35 @@ namespace NangaParbat
             // Isoscalarity
             if (ql["name"].as<std::string>() == "target_isoscalarity")
               _targetiso = ql["value"].as<double>();
+
+            // Hadron species
+            if (ql["name"].as<std::string>() == "hadron")
+              _hadron = ql["value"].as<std::string>();
+
+            // Final state charge
+            if (ql["name"].as<std::string>() == "charge")
+              _charge = ql["value"].as<double>();
+
+            // Quark-tagging
+            if (ql["name"].as<std::string>() == "tagging")
+              {
+                _tagging.clear();
+                for (std::string t : ql["value"].as<std::vector<std::string>>())
+                  if (t == "d")
+                    _tagging.push_back(apfel::QuarkFlavour::DOWN);
+                  else if (t == "u")
+                    _tagging.push_back(apfel::QuarkFlavour::UP);
+                  else if (t == "s")
+                    _tagging.push_back(apfel::QuarkFlavour::STRANGE);
+                  else if (t == "c")
+                    _tagging.push_back(apfel::QuarkFlavour::CHARM);
+                  else if (t == "b")
+                    _tagging.push_back(apfel::QuarkFlavour::BOTTOM);
+                  else if (t == "t")
+                    _tagging.push_back(apfel::QuarkFlavour::TOP);
+                  else
+                    throw std::runtime_error("[DataHandler::DataHandler]: Unknown quark-flavour tag");
+              }
 
             // Possible prefactor
             if (ql["name"].as<std::string>() == "prefactor")

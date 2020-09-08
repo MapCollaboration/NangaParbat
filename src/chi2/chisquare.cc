@@ -48,7 +48,7 @@ namespace NangaParbat
     _DSVect.push_back(DSBlock);
 
     // Determine number of data points that pass the cut qT / Q.
-    const DataHandler::Kinematics kin     = DSBlock.first->GetKinematics(); 
+    const DataHandler::Kinematics kin     = DSBlock.first->GetKinematics();
     const double                  qToQMax = DSBlock.second->GetCutqToverQ();
     const std::vector<double>     qTv     = kin.qTv;
     const double                  Qmin    = (kin.Intv1 ? kin.var1b.first : ( kin.var1b.first + kin.var1b.second ) / 2);
@@ -58,8 +58,8 @@ namespace NangaParbat
     int idata = 0;
     for (auto const& qT : qTv)
       if (qT / Qmin < qToQMax)
-      idata++;
-    
+        idata++;
+
     _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
   };
 
@@ -222,12 +222,12 @@ namespace NangaParbat
         iend   = ids + 1;
       }
 
-      // Initialise chi2 and number of data points
-      double chi2 = 0;
-      int ntot = 0;
+    // Initialise chi2 and number of data points
+    double chi2 = 0;
+    int ntot = 0;
 
-      // Loop over the the blocks
-      for (int i = istart; i < iend; i++)
+    // Loop over the the blocks
+    for (int i = istart; i < iend; i++)
       {
 
         // Get residuals
@@ -240,7 +240,7 @@ namespace NangaParbat
         ntot += _ndata[i];
       }
 
-      return chi2 / ntot;
+    return chi2 / ntot;
   }
 
   //_________________________________________________________________________________

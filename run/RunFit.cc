@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
         // Datafile
         const std::string datafile = std::string(argv[3]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
         NangaParbat::DataHandler dh{ds["name"].as<std::string>(), YAML::LoadFile(datafile), rng, ReplicaID,
-                                          (fitconfig["t0prescription"].as<bool>() ? ct.GetPredictions(NPFunc->Function()) : std::vector<double>{})};
+                                    (fitconfig["t0prescription"].as<bool>() ? ct.GetPredictions(NPFunc->Function()) : std::vector<double>{})};
 
         // Add chi2 block
         chi2.AddBlock(std::make_pair(&dh, &ct));
