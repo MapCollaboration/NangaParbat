@@ -8,6 +8,7 @@
 #include <iostream>
 #include <functional>
 #include <map>
+#include <apfel/apfelxx.h>
 
 namespace NangaParbat
 {
@@ -106,14 +107,11 @@ namespace NangaParbat
     bool HasGradient()                          const { return _anders; }
     ///@}
 
-    virtual std::function<std::map<int, double>(double const &, double const &)> LHAPDF_Function() const
-    {
-      return [=](double const &x, double const &y) -> std::map<int, double> { std::map<int, double> v = {{0,0.}}; return v; };
-    }; //FF_SIDIS
-    virtual std::function<std::map<int, double>(double const &, double const &)> LHAPDF_Derivative(int) const
-    {
-      return [=](double const &x, double const &y) -> std::map<int, double> { std::map<int, double> v = {{0,0.}}; return v; };
-    }; //FF_SIDIS
+    // FF_SIDIS
+    virtual std::function<std::map<int, double>(double const&, double const&)> LHAPDF_Function() const { return nullptr; }
+    virtual std::function<std::map<int, double>(double const&, double const&)> LHAPDF_Derivative(int) const { return nullptr; }
+    virtual std::function<apfel::Set<apfel::Distribution>(double const&)> DistributionFunction() const { return nullptr; }
+    virtual std::function<apfel::Set<apfel::Distribution>(double const&)> DistributionDerivative(int) const { return nullptr; }
 
   protected:
 

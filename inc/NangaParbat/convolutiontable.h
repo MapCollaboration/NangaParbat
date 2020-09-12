@@ -146,9 +146,6 @@ namespace NangaParbat
      */
     void NumericalAccuracy(std::function<double(double const&, double const&, double const&, int const&)> const& fNP) const;
 
-    virtual void SetInputFFs(std::function<std::map<int, double>(double const &, double const &)> const &InDistFunc) {}; //FF_SIDIS
-    virtual std::vector<double> GetGrid() const { return {};}; //FF_SIDIS
-
   private:
     std::string                                              const _name;    //!< Name of the table
     int                                                      const _proc;    //!< Index of the process (0: DY, 1: SIDIS)
@@ -166,5 +163,16 @@ namespace NangaParbat
     std::map<double,std::vector<std::vector<std::vector<double>>>> _W;       //!< The weights
     double                                                         _qToQmax; //!< Maximum value allowed for the ratio qT / Q
     double                                                         _acc;     //!< The Ogata-quadrature accuracy
+
+    /**
+     * @name FF_SIDIS
+     * Virtual functions required by FF_SIDIS
+     */
+    ///@{
+  public:
+    virtual std::shared_ptr<const apfel::Grid> GetGrid() const { return nullptr; };
+    virtual void SetInputFFs(std::function<std::map<int, double>(double const &, double const &)> const &InDistFunc) {};
+    virtual void SetInputFFs(std::function<apfel::Set<apfel::Distribution>(double const&)> const& InDistFunc) {};
+    ///@}
   };
 }
