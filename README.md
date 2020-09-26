@@ -111,4 +111,4 @@ NangaParbat has been developed with the support of the European
 Research Council (ERC) under the European Union's Horizon 2020
 research and innovation program (grant agreement No. 647981, 3DSPIN).
 
-<img src="resources/3DSPIN-col.png" alt="3DSPIN log" width="200"/> <img src="resources/ERC.jpg" alt="ERC logo" width="200"/>
+<img src="resources/3DSPIN_ERC_logo.png" alt="3DSPIN log" height="200"/>
