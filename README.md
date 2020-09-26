@@ -88,6 +88,10 @@ The results obtained with NangaParbat for the fit of TMD PDFs to Drell-Yan data 
 
 The reports above have been generated using the CLI ``cli/report.py``.
 
+## TMD grids
+
+At this link https://drive.google.com/drive/folders/1cXHZKS0OmY7woUBR2zw_Nf6RmAQYimjl?usp=sharing you can temporarily find the grids of the TMDs and structure functions obtained with past fists. Interpolation routines are avaiable in Nanga Parbat. The grids will be made available also through the TMDlib library.
+
 ## References
 
 - *Transverse-momentum-dependent parton distributions up to N3LL from Drell-Yan data*; Alessandro Bacchetta, Valerio Bertone, Chiara Bissolotti, Giuseppe Bozzi, Filippo Delcarro, Fulvio Piacenza, Marco Radici [[arXiv:1912.07550](https://arxiv.org/pdf/1912.07550.pdf)]
