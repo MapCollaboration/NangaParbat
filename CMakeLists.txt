@@ -98,7 +98,7 @@ if (GSL_CONFIG)
   )
   set(GSL_LIBRARIES ${GSL_LIBRARIES} CACHE STRING INTERNAL)
 else(GSL_CONFIG)
-  message(FATAL_ERROR "GSL not found!")
+  message ("GSL not found. Some parts of the code will not be compiled.")
 endif(GSL_CONFIG)
 
 # ROOT
@@ -114,12 +114,12 @@ if (ROOT_CONFIG)
     OUTPUT_VARIABLE ROOT_LIBRARIES
   )
   set(ROOT_LIBRARIES ${ROOT_LIBRARIES} CACHE STRING INTERNAL)
-else(ROOT_CONFIG)
-  message(FATAL_ERROR "ROOT not found!")
-endif(ROOT_CONFIG)
 
-# Include Minuit2 to the libraries of ROOT (not included by default)
-set(ROOT_LIBRARIES ${ROOT_LIBRARIES} -lMinuit2)
+  # Include Minuit2 to the libraries of ROOT (not included by default)
+  set(ROOT_LIBRARIES ${ROOT_LIBRARIES} -lMinuit2)
+else(ROOT_CONFIG)
+  message ("ROOT not found. Some parts of the code will not be compiled.")
+endif(ROOT_CONFIG)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LHAPDF_CXX_FLAGS} ${APFELXX_CXX_FLAGS} ${GSL_CXX_FLAGS} ${YAML_CFLAGS} ${ROOT_CXX_FLAGS} ${EIGEN3_CFLAGS} ${Ceres_CFLAGS} ${GLOG_CFLAGS} ${GFLAGS_CFLAGS} -std=c++11 -Wall -fPIC -Wunused")
@@ -132,6 +132,7 @@ option(BUILD_TESTS "Build tests code" ON)
 if(BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)
+  add_subdirectory(tools)
 endif ()
 
 install(FILES ${PROJECT_SOURCE_DIR}/bin/NangaParbat-config
