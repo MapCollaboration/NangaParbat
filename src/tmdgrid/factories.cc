@@ -30,7 +30,10 @@ namespace NangaParbat
     const int nmem = info["NumMembers"].as<int>();
     std::vector<TMDGrid*> tmds(nmem);
     for (int mem = 0; mem < nmem; mem++)
-      tmds[mem] = new NangaParbat::TMDGrid{info, YAML::LoadFile(name + "/" + name + std::to_string(mem) + ".yaml")};
+      {
+	std::cout << "[NangaParbat]: loading " << name + "/" + name + "_" + num_to_string(mem) + ".yaml" << std::endl;
+	tmds[mem] = new NangaParbat::TMDGrid{info, YAML::LoadFile(name + "/" + name + "_" + num_to_string(mem) + ".yaml")};
+      }
     return tmds;
   }
 
