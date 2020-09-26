@@ -90,7 +90,10 @@ The reports above have been generated using the CLI ``cli/report.py``.
 
 ## TMD grids
 
-At this link https://drive.google.com/drive/folders/1cXHZKS0OmY7woUBR2zw_Nf6RmAQYimjl?usp=sharing you can temporarily find the grids of the TMDs and structure functions obtained with past fists. Interpolation routines are avaiable in Nanga Parbat. The grids will be made available also through the TMDlib library.
+Below you can find a list of TMD and structure functions grids that are compatible with NangaParbat specifications and can be used with the Nanga Parbat interpolation routines. The grids will be made available also through the TMDlib library.
+
+- PV17 fit [Reference: [arXiv:1703.10157](https://arxiv.org/pdf/1703.10157.pdf)]: here https://drive.google.com/drive/folders/1cXHZKS0OmY7woUBR2zw_Nf6RmAQYimjl?usp=sharing you can find the grids of the TMD PDFs and FFs, and the SIDIS F_UUT structure functions
+
 
 ## References
 
@@ -100,6 +103,7 @@ At this link https://drive.google.com/drive/folders/1cXHZKS0OmY7woUBR2zw_Nf6RmAQ
 
 - Valerio Bertone: valerio.bertone@cern.ch
 - Chiara Bissolotti: chiara.bissolotti01@universitadipavia.it
+- Alessandro Bacchetta: alessandro.bacchetta@unipv.it
 
 ## Credits
 
