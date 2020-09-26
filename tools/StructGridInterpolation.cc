@@ -31,22 +31,14 @@ int main(int argc, char* argv[])
   // Select flavour
   const int ifl = 2; // quark up
 
-  // Values of Q to test
-  std::vector<double> Qg
-  {
-    1.500000e+00
-  };
+  // Read values
+  YAML::Node kin = YAML::LoadFile("inputs/StructGridInterpolation.yaml");
 
-  // Values of x to test
-  std::vector<double> xg
-  {
-    0.15
-  };
-  // Values of z to test
-  std::vector<double> zg
-  {
-    0.35
-  };
+  const std::vector<double> qTg = kin["qToQ"].as<std::vector<double>>();
+  const std::vector<double> Qg  = kin["Q"].as<std::vector<double>>();
+  const std::vector<double> xg  = kin["x"].as<std::vector<double>>();
+  const std::vector<double> zg  = kin["z"].as<std::vector<double>>();
+
   // ===========================================================================
   // Read info file
   std::cout << "\n";
@@ -55,9 +47,7 @@ int main(int argc, char* argv[])
 
   // Create directory to store the output
   mkdir(Output.c_str(), ACCESSPERMS);
-  const std::string outdir = Output + "/testresults";
-  mkdir(outdir.c_str(), ACCESSPERMS);
-  std::cout << "Creating folder " + outdir << std::endl;
+  std::cout << "Creating folder " + Output << std::endl;
   std::cout << "\n";
 
   // Start intepolation
@@ -80,15 +70,18 @@ int main(int argc, char* argv[])
               // value of z
               const double z  = zg[iz];
 
+              /*
               // Values of qT
               const double qTmin = Q * 1e-4;
               const double qTmax = 3 * Q;
               const int    nqT   = 40;
               const double qTstp = (qTmax - qTmin)/ nqT;
+              */
 
               // Fill vectors with grid interpolation
               std::vector<double> gridinterp;
-              for (double qT = qTmin; qT <= qTmax * ( 1 + 1e-5 ); qT += qTstp)
+              // for (double qT = qTmin; qT <= qTmax * ( 1 + 1e-5 ); qT += qTstp)
+              for (const double qT : qTg)
                 gridinterp.push_back(SFs->Evaluate(x ,z, qT, Q));
 
               // YAML Emitter
@@ -100,7 +93,8 @@ int main(int argc, char* argv[])
               em << YAML::Key << "x"   << YAML::Value << x;
               em << YAML::Key << "z"   << YAML::Value << z;
               em << YAML::Key << "qT"  << YAML::Value << YAML::Flow << YAML::BeginSeq;
-              for (double qT = qTmin; qT <= qTmax * ( 1 + 1e-5 ); qT += qTstp)
+              // for (double qT = qTmin; qT <= qTmax * ( 1 + 1e-5 ); qT += qTstp)
+              for (const double qT : qTg)
                 em << qT;
               em << YAML::EndSeq;
               em << YAML::Key << "Grid interpolation" << YAML::Value << YAML::Flow << YAML::BeginSeq;
@@ -110,7 +104,7 @@ int main(int argc, char* argv[])
               em << YAML::EndMap;
 
               // Produce output file
-              std::ofstream fout(outdir + "/" + infofile["StructFuncType"].as<std::string>() + "_Q_" + std::to_string(Q) + "_x_" + std::to_string(x) + "_z_"  + std::to_string(z) + ".yaml");
+              std::ofstream fout(Output + "/" + infofile["StructFuncType"].as<std::string>() + "_Q_" + std::to_string(Q) + "_x_" + std::to_string(x) + "_z_"  + std::to_string(z) + ".yaml");
               fout << em.c_str() << std::endl;
               fout.close();
             }

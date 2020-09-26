@@ -14,15 +14,15 @@
 int main(int argc, char* argv[])
 {
   // Check that the input is correct otherwise stop the code
-  if (argc < 6 || strcmp(argv[1], "--help") == 0)
+  if (argc < 5 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./GridsConvolution <Fit folder> <directory with TMD grids> <name of TMD PDF set> <name of TMD FF set> <replica ID> \n" << std::endl;
+      std::cout << "Syntax: ./GridsConvolution <directory with TMD grids> <name of TMD PDF set> <name of TMD FF set> <replica ID> \n" << std::endl;
       exit(-10);
     }
 
   // Read Kinematics
-  YAML::Node kin = YAML::LoadFile("KinGridsConvolution.yaml");
+  YAML::Node kin = YAML::LoadFile("inputs/GridsConvolution.yaml");
 
   const double qToQcut = kin["qT/Q cut"].as<double>();
   const std::vector<double> qTv = kin["qToQ"].as<std::vector<double>>();
@@ -32,8 +32,8 @@ int main(int argc, char* argv[])
 
   // Read in grid
 	std::cout << "Read TMD grids " << std::endl;
-  NangaParbat::TMDGrid* TMDPDFs = NangaParbat::mkTMD(argv[3],argv[2],std::stoi(argv[5]));
-  NangaParbat::TMDGrid* TMDFFs  = NangaParbat::mkTMD(argv[4],argv[2],std::stoi(argv[5]));
+  NangaParbat::TMDGrid* TMDPDFs = NangaParbat::mkTMD(argv[2],argv[1],std::stoi(argv[4]));
+  NangaParbat::TMDGrid* TMDFFs  = NangaParbat::mkTMD(argv[3],argv[1],std::stoi(argv[4]));
 
   // Create directory to store yaml output
   const std::string outdir = "testGridsConvolution";

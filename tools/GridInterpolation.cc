@@ -31,21 +31,13 @@ int main(int argc, char* argv[])
   // Select flavour
   const int ifl = 2; // quark up
 
-  // Values of Q to test
-  std::vector<double> Qg
-  {
-    1.050000e+00, 1.210000e+00, 3.000000e+00, 7.000000e+00,
-    2.800000e+01, 4.342641e+01//, 9.118760e+01,
-    // 2.000000e+02
-  };
+  // Read Kinematics
+  YAML::Node kin = YAML::LoadFile("inputs/GridInterpolation.yaml");
 
-  // Values of x to test
-  std::vector<double> xg
-  {
-    1.500000e-05, 1.500000e-04, 5.000000e-03, 5.100000e-02,
-    0.11, 0.19, 0.33, 0.44
-    // 0.66
-  };
+  const std::vector<double> kTg = kin["qToQ"].as<std::vector<double>>();
+  const std::vector<double> Qg  = kin["Q"].as<std::vector<double>>();
+  const std::vector<double> xg  = kin["x"].as<std::vector<double>>();
+  const std::vector<double> zg  = kin["z"].as<std::vector<double>>();
 
   // ===========================================================================
   // Read info file
@@ -58,9 +50,7 @@ int main(int argc, char* argv[])
 
   // Create directory to store the output
   mkdir(Output.c_str(), ACCESSPERMS);
-  const std::string outdir = Output + "/testresults";
-  mkdir(outdir.c_str(), ACCESSPERMS);
-  std::cout << "Creating folder " + outdir << std::endl;
+  std::cout << "Creating folder " + Output << std::endl;
   std::cout << "\n";
 
   // Start intepolation
@@ -73,19 +63,23 @@ int main(int argc, char* argv[])
   for (int iq = 0; iq < (int) Qg.size(); iq++)
     {
       const double Q  = Qg[iq];
+      
       for (int ix = 0; ix < (int) xg.size(); ix++)
         {
           const double x  = xg[ix];
 
+          /*
           // Values of kT
           const double kTmin = Q * 1e-4;
           const double kTmax = 3 * Q;
           const int    nkT   = 40;
           const double kTstp = (kTmax - kTmin)/ nkT;
+          */
 
           // Fill vectors with grid interpolation
           std::vector<double> gridinterp;
-          for (double kT = kTmin; kT <= kTmax * ( 1 + 1e-5 ); kT += kTstp)
+          // for (double kT = kTmin; kT <= kTmax * ( 1 + 1e-5 ); kT += kTstp)
+          for (const double kT : kTg)
               gridinterp.push_back(TMDs->Evaluate(x , kT , Q).at(ifl));
 
           // YAML Emitter
@@ -96,7 +90,8 @@ int main(int argc, char* argv[])
           em << YAML::Key << "Q"   << YAML::Value << Q;
           em << YAML::Key << "x"   << YAML::Value << x;
           em << YAML::Key << "kT"  << YAML::Value << YAML::Flow << YAML::BeginSeq;
-          for (double kT = kTmin; kT <= kTmax * ( 1 + 1e-5 ); kT += kTstp)
+          // for (double kT = kTmin; kT <= kTmax * ( 1 + 1e-5 ); kT += kTstp)
+          for (const double kT : kTg)
             em << kT;
           em << YAML::EndSeq;
           em << YAML::Key << "Grid interpolation" << YAML::Value << YAML::Flow << YAML::BeginSeq;
@@ -106,7 +101,7 @@ int main(int argc, char* argv[])
           em << YAML::EndMap;
 
           // Produce output file
-          std::ofstream fout(outdir + "/" + Name + (pf == "pdf" ? "_PDF_Q_" + std::to_string(Q) + "_x_" : "_FF_Q_" + std::to_string(Q) + "_z_")  + std::to_string(x) + ".yaml");
+          std::ofstream fout(Output + "/" + Name + (pf == "pdf" ? "_PDF_Q_" + std::to_string(Q) + "_x_" : "_FF_Q_" + std::to_string(Q) + "_z_")  + std::to_string(x) + ".yaml");
           fout << em.c_str() << std::endl;
           fout.close();
         }
