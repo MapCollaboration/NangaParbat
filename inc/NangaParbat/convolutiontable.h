@@ -170,8 +170,6 @@ namespace NangaParbat
      */
     ///@{
   public:
-    virtual std::shared_ptr<const apfel::Grid> GetFullGrid() const { return nullptr; };
-    virtual std::vector<double> GetGrid() const { return {}; };
     virtual void SetInputFFs(std::function<std::map<int, double>(double const &, double const &)> const &InDistFunc) {};
     virtual void SetInputFFs(std::function<apfel::Set<apfel::Distribution>(double const&)> const& InDistFunc) {};
     ///@}

@@ -44,7 +44,7 @@ namespace NangaParbat
      * @param DSBlock: the ("DataHandler","ConvolutionTable")-pair
      * block to be appended
      */
-    virtual void AddBlock(std::pair<DataHandler *, ConvolutionTable*> DSBlock);
+    virtual void AddBlock(std::pair<DataHandler*, ConvolutionTable*> DSBlock);
 
     /**
      * @brief Function that returns the residuals of the
@@ -177,8 +177,8 @@ namespace NangaParbat
 
   protected:
     std::vector<std::pair<DataHandler*, ConvolutionTable*>> _DSVect;  //!< Vector of "DataHandler-ConvolutionTable" pairs
-    Parameterisation*                                     _NPFunc;  //!< Parameterisation of the non-perturbative component
-    std::vector<int>                                      _ndata;   //!< Vector constaining the number of data points per dataset that pass the qT/Q cut
+    Parameterisation*                                       _NPFunc;  //!< Parameterisation of the non-perturbative component
+    std::vector<int>                                        _ndata;   //!< Vector constaining the number of data points per dataset that pass the qT/Q cut
 
     friend YAML::Emitter& operator << (YAML::Emitter& os, ChiSquare const& chi2);
   };

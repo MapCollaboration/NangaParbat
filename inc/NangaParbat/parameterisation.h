@@ -114,7 +114,6 @@ namespace NangaParbat
     virtual std::function<apfel::Set<apfel::Distribution>(double const&)> DistributionDerivative(int) const { return nullptr; }
 
   protected:
-
     std::string         _name;   //!< Name of the parameterisation
     int                 _nfuncs; //!< Number of output functions
     std::vector<double> _pars;   //!< The vector of free parameters

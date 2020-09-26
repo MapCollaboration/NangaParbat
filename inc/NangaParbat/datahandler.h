@@ -182,8 +182,6 @@ namespace NangaParbat
      */
     std::map<std::string, std::string> GetLabels() const { return _labels; };
 
-    virtual int GetNkins() const { return -1; }; //FF_SIDIS
-
   protected:
 
     std::string                        _name;         //!< Name of the dataset
