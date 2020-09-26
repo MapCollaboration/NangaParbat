@@ -60,7 +60,11 @@ namespace NangaParbat
     const int nmem = info["NumMembers"].as<int>();
     std::vector<StructGrid*> sfs(nmem);
     for (int mem = 0; mem < nmem; mem++)
-      sfs[mem] = new NangaParbat::StructGrid{info, YAML::LoadFile(name + "/" + name + std::to_string(mem) + ".yaml")};
+      {
+	std::cout << "[NangaParbat]: loading " << name + "/" + name + "_" + num_to_string(mem) + ".yaml" << std::endl;
+	sfs[mem] = new NangaParbat::StructGrid{info, YAML::LoadFile(name + "/" + name + "_" + num_to_string(mem) + ".yaml")};
+      }
+
     return sfs;
   }
 
