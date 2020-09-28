@@ -92,8 +92,8 @@ namespace NangaParbat
     // Get cut mask
     const std::valarray<bool> cm = ct->GetCutMask();
 
-    // Compute residuals only for the points that pass the cut qT
-    // / Q, set the others to zero.
+    // Compute residuals only for the points that pass the cuts, set
+    // the others to zero.
     std::vector<double> res(_ndata[ids], 0.);
     for (int j = 0; j < _ndata[ids]; j++)
       res[j] = (cm[j] ? mean[j] - pred[j] : 0);
@@ -127,8 +127,8 @@ namespace NangaParbat
     // Get cut mask
     const std::valarray<bool> cm = ct->GetCutMask();
 
-    // Compute residuals only for the points that pass the cut qT
-    // / Q, set the others to zero.
+    // Compute residuals only for the points that pass the cuts, set
+    // the others to zero.
     std::vector<double> res(_ndata[ids], 0.);
     for (int j = 0; j < _ndata[ids]; j++)
       res[j] = (cm[j] ? - dpred[j] : 0);
@@ -174,11 +174,14 @@ namespace NangaParbat
     // Get predictions
     const std::vector<double> pred = ct->GetPredictions(_NPFunc->Function());
 
-    // Compute residuals only for the points that pass the cut qT / Q,
-    // set the others to zero.
+    // Get cut mask
+    const std::valarray<bool> cm = ct->GetCutMask();
+
+    // Compute residuals only for the points that pass the cuts, set
+    // the others to zero.
     std::vector<double> res(mean.size(), 0.);
     for (int j = 0; j < nd; j++)
-      res[j] = fluc[j] - pred[j];
+      res[j] = (cm[j] ? fluc[j] - pred[j] : 0);
 
     // Construct matrix A and vector rho
     const int nsys = corr[0].size();
@@ -235,7 +238,6 @@ namespace NangaParbat
     // Loop over the the blocks
     for (int i = istart; i < iend; i++)
       {
-
         // Get residuals
         const std::vector<double> x = GetResiduals(i, central);
 
