@@ -34,6 +34,23 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________
+  DataHandler::Binning::Binning():
+    zmin(-1),
+    zmax(-1),
+    zav(-1),
+    xmin(-1),
+    xmax(-1),
+    xav(-1),
+    Qmin(-1),
+    Qmax(-1),
+    Qav(-1),
+    ymin(-1),
+    ymax(-1),
+    yav(-1)
+  {
+  }
+
+  //_________________________________________________________________________
   bool DataHandler::Kinematics::empty() const
   {
     if (ndata == 0 || Vs == 0 || qTv.empty() || qTmap.empty() || qTfact.empty() ||
@@ -325,6 +342,69 @@ namespace NangaParbat
                 _fluctuations[i] = _means[i] * Fmult * ( 1 + Func + Fadd );
               }
           }
+      }
+
+    // Resize vector of bins according to the number of data
+    // point. The following code is currently used only by the
+    // FF_SIDIS project and need to be better integrated.
+    _bins.resize(_kin.ndata);
+
+    // Fill in binning
+    for (auto const& iv : datafile["independent_variables"])
+      {
+        int i = 0;
+
+        // z
+        if (iv["header"]["name"].as<std::string>() == "z")
+          for (auto const& vl : iv["values"])
+            {
+              if (vl["low"])
+                _bins[i].zmin = vl["low"].as<double>();
+              if (vl["high"])
+                _bins[i].zmax = vl["high"].as<double>();
+              if (vl["value"])
+                _bins[i].zav = vl["value"].as<double>();
+              i++;
+            }
+
+        // x
+        if (iv["header"]["name"].as<std::string>() == "x")
+          for (auto const& vl : iv["values"])
+            {
+              if (vl["low"])
+                _bins[i].xmin = vl["low"].as<double>();
+              if (vl["high"])
+                _bins[i].xmax = vl["high"].as<double>();
+              if (vl["value"])
+                _bins[i].xav = vl["value"].as<double>();
+              i++;
+            }
+
+        // y
+        if (iv["header"]["name"].as<std::string>() == "y")
+          for (auto const& vl : iv["values"])
+            {
+              if (vl["low"])
+                _bins[i].ymin = vl["low"].as<double>();
+              if (vl["high"])
+                _bins[i].ymax = vl["high"].as<double>();
+              if (vl["value"])
+                _bins[i].yav = vl["value"].as<double>();
+              i++;
+            }
+
+        // Q
+        if (iv["header"]["name"].as<std::string>() == "Q2")
+          for (auto const& vl : iv["values"])
+            {
+              if (vl["low"])
+                _bins[i].Qmin = sqrt(vl["low"].as<double>());
+              if (vl["high"])
+                _bins[i].Qmax = sqrt(vl["high"].as<double>());
+              if (vl["value"])
+                _bins[i].Qav = sqrt(vl["value"].as<double>());
+              i++;
+            }
       }
   }
 

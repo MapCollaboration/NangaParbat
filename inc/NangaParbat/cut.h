@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <valarray>
+
 #include "NangaParbat/datahandler.h"
 
 namespace NangaParbat
@@ -20,8 +22,15 @@ namespace NangaParbat
     /**
      * @brief The "Cut" constructor
      * @param dataset: the DataHandler object subject to the cuts
+     * @param min: mininum value
+     * @param max: maximal value
      */
-    Cut(DataHandler const& dataset);
+    Cut(DataHandler const& dataset, double const& min, double const& max);
+
+    /**
+     * @brief The "Cut" destructor
+     */
+    virtual ~Cut() {};
 
     /**
      * @brief Purely virtual function to be used implemented in the
@@ -32,10 +41,12 @@ namespace NangaParbat
     /**
      * @brief Function that returns the cut mask
      */
-    std::vector<bool> GetMask() const { return _mask; }
+    std::valarray<bool> GetMask() const { return _mask; }
 
   protected:
-    DataHandler       const& _dataset; //!< The dataset to be processed
-    std::vector<bool>        _mask;    //!< Cut mask 
+    DataHandler         const& _dataset; //!< The dataset to be processed
+    double              const  _min;     //!< Minimal value
+    double              const  _max;     //!< Maximal value
+    std::valarray<bool>        _mask;    //!< Cut mask
   };
 }

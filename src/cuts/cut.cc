@@ -7,8 +7,10 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  Cut::Cut(DataHandler const& dataset):
+  Cut::Cut(DataHandler const& dataset, double const& min, double const& max):
     _dataset(dataset),
+    _min(min),
+    _max(max),
     _mask({})
   {
   }

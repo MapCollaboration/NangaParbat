@@ -89,11 +89,14 @@ namespace NangaParbat
     if (mean.size() != pred.size())
       throw std::runtime_error("[ChiSquare::GetResiduals]: mismatch in the number of points");
 
+    // Get cut mask
+    const std::valarray<bool> cm = ct->GetCutMask();
+
     // Compute residuals only for the points that pass the cut qT
     // / Q, set the others to zero.
     std::vector<double> res(_ndata[ids], 0.);
     for (int j = 0; j < _ndata[ids]; j++)
-      res[j] = mean[j] - pred[j];
+      res[j] = (cm[j] ? mean[j] - pred[j] : 0);
 
     // Solve lower-diagonal system and return the result
     return SolveLowerSystem(dh->GetCholeskyDecomposition(), res);
@@ -106,8 +109,8 @@ namespace NangaParbat
       throw std::runtime_error("[ChiSquare::GetResidualDerivatives]: index out of range");
 
     // Get "DataHandler" and "ConvolutionTable" objects
-    DataHandler      * dh = _DSVect[ids].first;
-    ConvolutionTable * ct = _DSVect[ids].second;
+    DataHandler      *dh = _DSVect[ids].first;
+    ConvolutionTable *ct = _DSVect[ids].second;
 
     // Get (fluctuated) experimental central values
     const std::vector<double> mean = dh->GetFluctutatedData();
@@ -121,11 +124,14 @@ namespace NangaParbat
     if (mean.size() != dpred.size())
       throw std::runtime_error("[ChiSquare::GetResidualDerivatives]: mismatch in the number of points");
 
+    // Get cut mask
+    const std::valarray<bool> cm = ct->GetCutMask();
+
     // Compute residuals only for the points that pass the cut qT
     // / Q, set the others to zero.
     std::vector<double> res(_ndata[ids], 0.);
     for (int j = 0; j < _ndata[ids]; j++)
-      res[j] = - dpred[j];
+      res[j] = (cm[j] ? - dpred[j] : 0);
 
     // Solve lower-diagonal system and return the result
     return SolveLowerSystem(dh->GetCholeskyDecomposition(), res);

@@ -54,6 +54,28 @@ namespace NangaParbat
     };
 
     /**
+     * @brief Structure containing the single bin information. This is
+     * currently used only for the FF_SIDIS project.
+     * @todo Integrate it better in the rest of the class.
+     */
+    struct Binning
+    {
+      Binning();
+      double zmin;
+      double zmax;
+      double zav;
+      double xmin;
+      double xmax;
+      double xav;
+      double Qmin;
+      double Qmax;
+      double Qav;
+      double ymin;
+      double ymax;
+      double yav;
+    };
+
+    /**
      * @brief The "DataHandler" constructor.
      * @param name: the name associated to the data set
      * @param datafile: the YAML:Node with the interpolation table
@@ -182,6 +204,14 @@ namespace NangaParbat
      */
     std::map<std::string, std::string> GetLabels() const { return _labels; };
 
+    /**
+     * @brief Get vector of bins. This is currently used only for the
+     * FF_SIDIS project.
+     * @todo Integrate it better in the rest of the
+     * class.
+     */
+    std::vector<Binning> GetBinning() const { return _bins; }
+
   protected:
 
     std::string                        _name;         //!< Name of the dataset
@@ -202,6 +232,7 @@ namespace NangaParbat
     std::map<std::string, std::string> _labels;       //!< Labels used for plotting
     std::vector<double>                _fluctuations; //!< Vector of fluctuated data
     std::vector<double>                _t0;           //!< Vector of t0-predictions
+    std::vector<Binning>               _bins;         //!< Vector of bins (currently used only for the FF_SIDIS project)
 
     friend std::ostream& operator << (std::ostream& os, DataHandler const& DH);
   };

@@ -8,6 +8,7 @@
 #include <functional>
 #include <map>
 #include <vector>
+#include <valarray>
 #include <yaml-cpp/yaml.h>
 
 #include <NangaParbat/parameterisation.h>
@@ -172,6 +173,7 @@ namespace NangaParbat
   public:
     virtual void SetInputFFs(std::function<std::map<int, double>(double const &, double const &)> const &InDistFunc) {};
     virtual void SetInputFFs(std::function<apfel::Set<apfel::Distribution>(double const&)> const& InDistFunc) {};
+    virtual std::valarray<bool> GetCutMask() const { return std::valarray<bool>(true, _qTv.size()); };
     ///@}
   };
 }

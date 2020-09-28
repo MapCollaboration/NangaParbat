@@ -28,7 +28,7 @@ namespace NangaParbat
      * @param NPFunc: "Parameterisation" object containing the
      * non-perturbative function(s)
      */
-    ChiSquare(std::vector<std::pair<DataHandler *, ConvolutionTable *>>  DSVect, Parameterisation * NPFunc);
+    ChiSquare(std::vector<std::pair<DataHandler*, ConvolutionTable*>> DSVect, Parameterisation* NPFunc);
 
     /**
      * @brief The default "ChiSquare" constructor.
