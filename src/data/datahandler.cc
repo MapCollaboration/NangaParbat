@@ -38,15 +38,19 @@ namespace NangaParbat
     zmin(-1),
     zmax(-1),
     zav(-1),
+    Intz(true),
     xmin(-1),
     xmax(-1),
     xav(-1),
+    Intx(true),
     Qmin(-1),
     Qmax(-1),
     Qav(-1),
+    IntQ(true),
     ymin(-1),
     ymax(-1),
-    yav(-1)
+    yav(-1),
+    Inty(true)
   {
   }
 
@@ -153,7 +157,7 @@ namespace NangaParbat
                 _kin.Intv2 = ql["integrate"].as<bool>();
               }
 
-            // z interval (SIDIS only)
+            // z interval (SIDIS and SIA)
             if (ql["name"].as<std::string>() == "z")
               {
                 _kin.var3b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
@@ -364,6 +368,7 @@ namespace NangaParbat
                 _bins[i].zmax = vl["high"].as<double>();
               if (vl["value"])
                 _bins[i].zav = vl["value"].as<double>();
+	      _bins[i].Intz = _kin.Intv3;
               i++;
             }
 

@@ -64,15 +64,19 @@ namespace NangaParbat
       double zmin;
       double zmax;
       double zav;
+      bool Intz;
       double xmin;
       double xmax;
       double xav;
+      bool Intx;
       double Qmin;
       double Qmax;
       double Qav;
+      bool IntQ;
       double ymin;
       double ymax;
       double yav;
+      bool Inty;
     };
 
     /**
