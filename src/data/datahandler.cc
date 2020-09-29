@@ -314,7 +314,8 @@ namespace NangaParbat
         // Fluctuate the full data-set "fluctuation" times and keep
         // only the last fluctuation. This is non efficient but allows
         // one to identify a given random replica by its ID and the
-        // random seed.
+        // random seed. This is useful when running fits on different
+        // computation nodes.
         for (int irep = 0; irep < fluctuation; irep++)
           {
             // Additive correlation random numbers

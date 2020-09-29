@@ -151,8 +151,8 @@ namespace NangaParbat
     const int nd = _ndata[ids];
 
     // Get "DataHandler" and "ConvolutionTable" objects
-    DataHandler      * dh = _DSVect[ids].first;
-    ConvolutionTable * ct = _DSVect[ids].second;
+    DataHandler      *dh = _DSVect[ids].first;
+    ConvolutionTable *ct = _DSVect[ids].second;
 
     // Get experimental central values, uncorrelated and correlated
     // uncertainties. Rescale the multiplicative correlation if the t0
