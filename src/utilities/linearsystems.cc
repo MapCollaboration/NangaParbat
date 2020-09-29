@@ -65,7 +65,7 @@ namespace NangaParbat
         double z = 0;
         for (int j = 0; j < ndata; j++)
           z += L(i, j) * x[j];
-        if (abs(z - y[i]) > 1e-8)
+        if (abs(z - y[i]) > 1e-5)
           throw std::runtime_error("[SolveLowerSystem]: Problem with the forward substitution.");
       }
     return x;
@@ -92,7 +92,7 @@ namespace NangaParbat
         double z = 0;
         for (int j = 0; j < ndata; j++)
           z += U(i, j) * x[j];
-        if (abs(z - y[i]) > 1e-8)
+        if (abs(z - y[i]) > 1e-5)
           throw std::runtime_error("[SolveUpperSystem]: Problem with the backward substitution.");
       }
     return x;
@@ -123,7 +123,7 @@ namespace NangaParbat
         double z = 0;
         for (int j = 0; j < ndata; j++)
           z += A(i, j) * lambda[j];
-        if (abs(z - rho[i]) > 1e-8)
+        if (abs(z - rho[i]) > 1e-5)
           throw std::runtime_error("[SolveSymmetricSystem]: Problem with the symmetric system.");
       }
     return lambda;
