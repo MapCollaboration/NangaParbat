@@ -20,8 +20,8 @@ namespace NangaParbat
     _mask.resize(bins.size());
     for (int i = 0; i < (int) bins.size(); i++)
       if (bins[i].Intz)
-	_mask[i] = (bins[i].zmin > _min && bins[i].zmax < _max ? true : false);
+        _mask[i] = (bins[i].zmin > _min && bins[i].zmax < _max ? true : false);
       else
-	_mask[i] = (bins[i].zav > _min && bins[i].zav < _max ? true : false);
+        _mask[i] = (bins[i].zav > _min && bins[i].zav < _max ? true : false);
   }
 }

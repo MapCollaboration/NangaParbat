@@ -368,7 +368,7 @@ namespace NangaParbat
                 _bins[i].zmax = vl["high"].as<double>();
               if (vl["value"])
                 _bins[i].zav = vl["value"].as<double>();
-	      _bins[i].Intz = _kin.Intv3;
+              _bins[i].Intz = _kin.Intv3;
               i++;
             }
 

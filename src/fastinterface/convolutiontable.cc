@@ -29,12 +29,14 @@ namespace NangaParbat
   _Qg({}),
   _xig({}),
   _qToQmax(1000),
-  _acc(1e-7)
+  _acc(1e-7),
+  _cuts({}),
+  _cutmask({})
   {
   }
 
   //_________________________________________________________________________________
-  ConvolutionTable::ConvolutionTable(YAML::Node const& table, double const& qToQmax, double const& acc):
+  ConvolutionTable::ConvolutionTable(YAML::Node const& table, double const& qToQmax, std::vector<std::shared_ptr<Cut>> const& cuts, double const& acc):
     _name(table["name"].as<std::string>()),
     _proc(table["process"].as<int>()),
     _Vs(table["CME"].as<double>()),
@@ -47,8 +49,14 @@ namespace NangaParbat
     _Qg(table["Qgrid"].as<std::vector<double>>()),
     _xig(table["xigrid"].as<std::vector<double>>()),
     _qToQmax(qToQmax),
-    _acc(acc)
+    _acc(acc),
+    _cuts(cuts)
   {
+    // Compute total cut mask as a product of single masks
+    _cutmask.resize(_qTfact.size(), true);
+    for (auto const& c : cuts)
+      _cutmask *= c->GetMask();
+
     // Read the phase-space reduction factors...
     for (auto const& qT : _qTv)
       _PSRed.insert({qT, table["PS_reduction_factor"][qT].as<std::vector<std::vector<double>>>()});
@@ -63,8 +71,8 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  ConvolutionTable::ConvolutionTable(std::string const& infile, double const& qToQmax, double const& acc):
-    ConvolutionTable(YAML::LoadFile(infile), qToQmax, acc)
+  ConvolutionTable::ConvolutionTable(std::string const& infile, double const& qToQmax, std::vector<std::shared_ptr<Cut>> const& cuts, double const& acc):
+    ConvolutionTable(YAML::LoadFile(infile), qToQmax, cuts, acc)
   {
   }
 

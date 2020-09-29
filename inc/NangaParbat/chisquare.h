@@ -179,6 +179,7 @@ namespace NangaParbat
     std::vector<std::pair<DataHandler*, ConvolutionTable*>> _DSVect;  //!< Vector of "DataHandler-ConvolutionTable" pairs
     Parameterisation*                                       _NPFunc;  //!< Parameterisation of the non-perturbative component
     std::vector<int>                                        _ndata;   //!< Vector constaining the number of data points per dataset that pass the qT/Q cut
+    std::vector<int>                                        _ndatac;  //!< Vector constaining the number of data points per dataset that pass all the cuts
 
     friend YAML::Emitter& operator << (YAML::Emitter& os, ChiSquare const& chi2);
   };

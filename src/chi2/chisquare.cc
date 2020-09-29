@@ -61,6 +61,10 @@ namespace NangaParbat
         idata++;
 
     _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
+
+    // Data the pass all the cuts
+    const std::valarray<bool> cm = DSBlock.second->GetCutMask();
+    _ndatac.push_back(std::count(std::begin(cm), std::end(cm), true));
   };
 
   //_________________________________________________________________________________
@@ -245,7 +249,7 @@ namespace NangaParbat
         chi2 += std::inner_product(x.begin(), x.end(), x.begin(), 0.);
 
         // Increment number of points
-        ntot += _ndata[i];
+        ntot += _ndatac[i];
       }
 
     return chi2 / ntot;
