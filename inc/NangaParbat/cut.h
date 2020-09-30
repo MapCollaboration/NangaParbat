@@ -20,6 +20,14 @@ namespace NangaParbat
   {
   public:
     /**
+     * @brief The "Cut" copy constructor
+     * @param dataset: the DataHandler object subject to the cuts
+     * @param min: new mininum value
+     * @param max: new maximal value
+     */
+    Cut(Cut const &cut);
+
+    /**
      * @brief The "Cut" constructor
      * @param dataset: the DataHandler object subject to the cuts
      * @param min: mininum value
@@ -37,6 +45,16 @@ namespace NangaParbat
      * derived class to eforce the cut.
      */
     virtual void EnforceCut() = 0;
+
+    /**
+     * @brief Function that invert the cut mask
+     */
+    void InvertMask() {_mask=!_mask; }
+
+    /**
+     * @brief Function that multiplies the cut mask
+     */
+    void MultiplyMask(std::valarray<bool> mask) { _mask *= mask; }
 
     /**
      * @brief Function that returns the cut mask

@@ -1,6 +1,7 @@
 set(cuts_source
   cut.cc
   zcut.cc
+  Trainingcut.cc
   cutfactory.cc
   )
 
