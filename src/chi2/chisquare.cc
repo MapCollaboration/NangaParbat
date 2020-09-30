@@ -252,7 +252,7 @@ namespace NangaParbat
         ntot += _ndatac[i];
       }
 
-    return chi2 / ntot;
+    return (ntot == 0 ? 0 : chi2 / ntot);
   }
 
   //_________________________________________________________________________________

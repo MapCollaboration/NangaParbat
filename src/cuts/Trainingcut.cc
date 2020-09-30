@@ -7,40 +7,40 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  TrainingCut::TrainingCut(std::valarray<bool> const &KinematicMask, DataHandler const &dataset, double const &TrainingFrac, double const &TestingFrac) : Cut{dataset, TrainingFrac, 1 - TrainingFrac}
+  TrainingCut::TrainingCut(TrainingCut const& cut, bool const& invert, std::vector<std::shared_ptr<NangaParbat::Cut>> const& kincuts):
+    Cut{cut},
+    _NMin(cut._NMin)
   {
-    _mask = KinematicMask;
+    if (invert)
+      _mask = !_mask;
+    for (auto const& c : kincuts)
+      _mask *= c->GetMask();
+  }
+
+  //_________________________________________________________________________________
+  TrainingCut::TrainingCut(DataHandler const& dataset, std::vector<std::shared_ptr<NangaParbat::Cut>> const& kincuts, double const& TrainingFrac, int const& NMin):
+    Cut{dataset, TrainingFrac, 1 - TrainingFrac},
+    _NMin(NMin)
+  {
+    _mask.resize(dataset.GetBinning().size(), true);
+    for (auto const& c : kincuts)
+      _mask *= c->GetMask();
     EnforceCut();
   }
 
   //_________________________________________________________________________________
   void TrainingCut::EnforceCut()
   {
-    int Ndat_aftercut = std::count(&_mask[0], &_mask[_mask.size()-1], true);
-    std::vector<bool> random_mask;
+    const int Ndat_aftercut = std::count(std::begin(_mask), std::end(_mask), true);
+    if (Ndat_aftercut <= _NMin)
+      return;
 
-    if (Ndat_aftercut > 5)
-    {
-      int Ndat_training = int(Ndat_aftercut*_min);
-      std::vector<bool> v_true;
-      v_true.resize(Ndat_training, true);
-      std::vector<bool> v_false;
-      v_false.resize(Ndat_aftercut-Ndat_training, false);
+    std::vector<bool> random_mask(Ndat_aftercut * _min, true);
+    random_mask.resize(Ndat_aftercut, false);
+    std::random_shuffle(random_mask.begin(), random_mask.end());
 
-      random_mask.insert(random_mask.end(), v_true.begin(), v_true.end());
-      random_mask.insert(random_mask.end(), v_false.begin(), v_false.end());
-
-      std::random_shuffle(random_mask.begin(), random_mask.end());
-
-      int j=0;
-      for (int i = 0; i < (int)_mask.size(); i++)
-      {
-        if (_mask[i])
-        {
-          _mask[i] = random_mask[j];
-          j++;
-        }
-      }
-    }
+    int j = 0;
+    for (bool & m : _mask)
+      m = (m ? random_mask[j++] : m);
   }
 }

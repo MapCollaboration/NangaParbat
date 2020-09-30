@@ -17,18 +17,28 @@ namespace NangaParbat
   {
   public:
     /**
-     * @brief The "Trainingcut" constructor
-     * @param Cut: the cut object
-     * @param TrainingFrac: Training fraction
-     * @param TestingFrac: Testing fraction
+     * @brief The "TrainingCut" copy constructor
+     * @param cut: objects to be copied
+     * @param invert: whether to invert the map (default: false)
+     * @param kincuts: vector of possible kinematic cuts to enforce (default: empty)
      */
-    TrainingCut(std::valarray<bool> const &KinematicMask, DataHandler const &dataset, double const &TrainingFrac, double const &TestingFrac=0);
+    TrainingCut(TrainingCut const& cut, bool const& invert = false, std::vector<std::shared_ptr<NangaParbat::Cut>> const& kincuts = {});
+
+    /**
+     * @brief The "Trainingcut" constructor
+     * @param dataset: the DataHandler object subject to the cuts
+     * @param kincuts: the vector kinematic cuts
+     * @param TrainingFrac: Training fraction
+     * @param NMin: Minimum number of points below which all points will be included in the training (default: 5)
+     */
+    TrainingCut(DataHandler const& dataset, std::vector<std::shared_ptr<NangaParbat::Cut>> const& kincuts, double const& TrainingFrac, int const& NMin = 5);
 
     /**
      * @brief Purely virtual function to be used implemented in the
      * derived class to eforce the cut.
      */
     void EnforceCut();
-
+  private:
+    int const _NMin;
   };
 }

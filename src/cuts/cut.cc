@@ -6,7 +6,6 @@
 
 namespace NangaParbat
 {
-
   //_________________________________________________________________________________
   Cut::Cut(Cut const &cut):
     _dataset(cut._dataset),
@@ -15,7 +14,7 @@ namespace NangaParbat
     _mask(cut._mask)
   {
   }
-  
+
   //_________________________________________________________________________________
   Cut::Cut(DataHandler const& dataset, double const& min, double const& max):
     _dataset(dataset),
@@ -24,5 +23,4 @@ namespace NangaParbat
     _mask({})
   {
   }
-
 }
