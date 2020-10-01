@@ -87,7 +87,7 @@ namespace NangaParbat
      * @param fluctuation: ID of the fluctuation (i.e. Monte-Carlo replica ID) (default: 0, i.e. no fluctuations)
      * @param t0: vector of predictions to be used for the t0-prescription
      */
-    DataHandler(std::string const& name, YAML::Node const& datafile, gsl_rng* rng = NULL, int const& fluctuation = 0, std::vector<double> const& t0 = {});
+    DataHandler(std::string const& name, YAML::Node const& datafile, gsl_rng* rng = nullptr, int const& fluctuation = 0, std::vector<double> const& t0 = {});
 
     virtual ~DataHandler() {};
 
