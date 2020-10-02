@@ -111,7 +111,7 @@ namespace NangaParbat
      * parameterisation.
      * @param pars: the vector of parameters
      */
-    void SetParameters(std::vector<double> const& pars) { _NPFunc->SetParameters(pars); };
+    virtual void SetParameters(std::vector<double> const& pars) { _NPFunc->SetParameters(pars); };
 
     /**
      * @brief Function that returns the vector of ("DataHandler",
@@ -143,7 +143,7 @@ namespace NangaParbat
      * @return The number of data points that pass the qT / Q cut for
      * the whole dataset
      */
-    int GetDataPointNumber() const { return std::accumulate(_ndata.begin(), _ndata.end(), 0); };
+    virtual int GetDataPointNumber() const { return std::accumulate(_ndata.begin(), _ndata.end(), 0); };
 
     /**
      * @brief Function that returns the number of experiments.
