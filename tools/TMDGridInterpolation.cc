@@ -21,6 +21,7 @@ int main(int argc, char* argv[])
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
       std::cout << "Syntax: ./TMDGridInterpolation <grid main folder> <grid name> <n. repl.> <output>\n" << std::endl;
+      std::cout << "<n. repl>: number of the replica grid to interpolate. \n" << std::endl;
       exit(-10);
     }
 
