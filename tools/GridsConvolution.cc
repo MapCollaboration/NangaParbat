@@ -18,6 +18,7 @@ int main(int argc, char* argv[])
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
       std::cout << "Syntax: ./GridsConvolution <directory with TMD grids> <name of TMD PDF set> <name of TMD FF set> <replica ID> \n" << std::endl;
+      std::cout << "<directory with TMD grids>: relative path to the folder where the grids are;" << std::endl;
       std::cout << "<replica ID>: number of the replica to select to do the convolution. \n" << std::endl;
       exit(-10);
     }

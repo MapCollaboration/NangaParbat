@@ -21,6 +21,7 @@ int main(int argc, char* argv[])
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
       std::cout << "Syntax: ./TMDGridInterpolation <grid main folder> <grid name> <n. repl.> <output>\n" << std::endl;
+      std::cout << "<grid main folder>: relative path to the folder where the grids are;" << std::endl;
       std::cout << "<n. repl>: number of the replica grid to interpolate. \n" << std::endl;
       exit(-10);
     }
@@ -35,10 +36,10 @@ int main(int argc, char* argv[])
   // Read Kinematics
   YAML::Node kin = YAML::LoadFile("inputs/TMDGridInterpolation.yaml");
 
-  const std::vector<double> kTg = kin["qToQ"].as<std::vector<double>>();
-  const std::vector<double> Qg  = kin["Q"].as<std::vector<double>>();
-  const std::vector<double> xg  = kin["x"].as<std::vector<double>>();
-  const std::vector<double> zg  = kin["z"].as<std::vector<double>>();
+  const std::vector<double> kTgoQ = kin["qToQ"].as<std::vector<double>>();
+  const std::vector<double> Qg    = kin["Q"].as<std::vector<double>>();
+  const std::vector<double> xg    = kin["x"].as<std::vector<double>>();
+  const std::vector<double> zg    = kin["z"].as<std::vector<double>>();
 
   // ===========================================================================
   // Read info file
@@ -69,19 +70,20 @@ int main(int argc, char* argv[])
         {
           const double x  = xg[ix];
 
-          /*
+
           // Values of kT
           const double kTmin = Q * 1e-4;
           const double kTmax = 3 * Q;
           const int    nkT   = 40;
           const double kTstp = (kTmax - kTmin)/ nkT;
-          */
+
 
           // Fill vectors with grid interpolation
           std::vector<double> gridinterp;
           // for (double kT = kTmin; kT <= kTmax * ( 1 + 1e-5 ); kT += kTstp)
-          for (const double kT : kTg)
-              gridinterp.push_back(TMDs->Evaluate(x , kT , Q).at(ifl));
+          //   gridinterp.push_back(TMDs->Evaluate(x , kT , Q).at(ifl));
+          for (const double kToQ : kTgoQ)
+            gridinterp.push_back(TMDs->Evaluate(x , kToQ * Q , Q).at(ifl));
 
           // YAML Emitter
           YAML::Emitter em;
@@ -92,8 +94,9 @@ int main(int argc, char* argv[])
           em << YAML::Key << "x"   << YAML::Value << x;
           em << YAML::Key << "kT"  << YAML::Value << YAML::Flow << YAML::BeginSeq;
           // for (double kT = kTmin; kT <= kTmax * ( 1 + 1e-5 ); kT += kTstp)
-          for (const double kT : kTg)
-            em << kT;
+          //   em << kT;
+          for (const double kToQ : kTgoQ)
+            em << kToQ * Q;
           em << YAML::EndSeq;
           em << YAML::Key << "Grid interpolation" << YAML::Value << YAML::Flow << YAML::BeginSeq;
           for (int i = 0; i < (int) gridinterp.size(); i++)

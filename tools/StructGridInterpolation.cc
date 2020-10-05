@@ -21,6 +21,7 @@ int main(int argc, char* argv[])
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
       std::cout << "Syntax: ./StructGridInterpolation <grid main folder> <grid name> <n. repl.> <output>\n" << std::endl;
+      std::cout << "<grid main folder>: relative path to the folder where the grids are;" << std::endl;
       std::cout << "<n. repl>: number of the replica grid to interpolate. \n" << std::endl;
       exit(-10);
     }
@@ -35,10 +36,10 @@ int main(int argc, char* argv[])
   // Read values
   YAML::Node kin = YAML::LoadFile("inputs/StructGridInterpolation.yaml");
 
-  const std::vector<double> qTg = kin["qToQ"].as<std::vector<double>>();
-  const std::vector<double> Qg  = kin["Q"].as<std::vector<double>>();
-  const std::vector<double> xg  = kin["x"].as<std::vector<double>>();
-  const std::vector<double> zg  = kin["z"].as<std::vector<double>>();
+  const std::vector<double> qTgoQ = kin["qToQ"].as<std::vector<double>>();
+  const std::vector<double> Qg    = kin["Q"].as<std::vector<double>>();
+  const std::vector<double> xg    = kin["x"].as<std::vector<double>>();
+  const std::vector<double> zg    = kin["z"].as<std::vector<double>>();
 
   // ===========================================================================
   // Read info file
@@ -82,8 +83,9 @@ int main(int argc, char* argv[])
               // Fill vectors with grid interpolation
               std::vector<double> gridinterp;
               // for (double qT = qTmin; qT <= qTmax * ( 1 + 1e-5 ); qT += qTstp)
-              for (const double qT : qTg)
-                gridinterp.push_back(SFs->Evaluate(x ,z, qT, Q));
+              //   gridinterp.push_back(SFs->Evaluate(x ,z, qT, Q));
+              for (const double qToQ : qTgoQ)
+                gridinterp.push_back(SFs->Evaluate(x ,z, qToQ * Q, Q));
 
               // YAML Emitter
               YAML::Emitter em;
@@ -95,8 +97,9 @@ int main(int argc, char* argv[])
               em << YAML::Key << "z"   << YAML::Value << z;
               em << YAML::Key << "qT"  << YAML::Value << YAML::Flow << YAML::BeginSeq;
               // for (double qT = qTmin; qT <= qTmax * ( 1 + 1e-5 ); qT += qTstp)
-              for (const double qT : qTg)
-                em << qT;
+                // em << qT;
+              for (const double qToQ : qTgoQ)
+                em << qToQ * Q;
               em << YAML::EndSeq;
               em << YAML::Key << "Grid interpolation" << YAML::Value << YAML::Flow << YAML::BeginSeq;
               for (int i = 0; i < (int) gridinterp.size(); i++)
