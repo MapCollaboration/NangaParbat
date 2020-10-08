@@ -66,7 +66,7 @@ namespace NangaParbat
      * @param ipar: the parameter index
      * @return the vector of derivatives of the residuals
      */
-    virtual std::vector<double> GetResidualDerivatives(int const& ids, int const& ipar) const;
+    std::vector<double> GetResidualDerivatives(int const& ids, int const& ipar) const;
 
     /**
      * @brief Function that returns the systematic shifts and the
@@ -139,11 +139,28 @@ namespace NangaParbat
 
     /**
      * @brief Function that gets the number of data points that pass
+     * all the cuts for each data set in the form of a vector of
+     * integers.
+     * @return The number of data points that pass the qT / Q cut for
+     * each data set
+     */
+    std::vector<int> GetDataPointNumbersAfterCuts() const { return _ndatac; };
+
+    /**
+     * @brief Function that gets the number of data points that pass
      * the qT / Q cut for the whole dataset.
      * @return The number of data points that pass the qT / Q cut for
      * the whole dataset
      */
-    virtual int GetDataPointNumber() const { return std::accumulate(_ndata.begin(), _ndata.end(), 0); };
+    int GetDataPointNumber() const { return std::accumulate(_ndata.begin(), _ndata.end(), 0); };
+
+    /**
+     * @brief Function that gets the number of data points that pass
+     * all the cuts for the whole dataset.
+     * @return The number of data points that pass the qT / Q cut for
+     * the whole dataset
+     */
+    int GetDataPointNumberAfterCuts() const { return std::accumulate(_ndatac.begin(), _ndatac.end(), 0); };
 
     /**
      * @brief Function that returns the number of experiments.
