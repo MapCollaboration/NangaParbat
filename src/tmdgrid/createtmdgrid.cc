@@ -29,7 +29,7 @@ namespace NangaParbat
 
     // Collect reports of valid replicas
     std::vector<std::unique_ptr<YAML::Emitter>> grids;
-    for (auto const f : list_dir(ReportFolder))
+    for (auto const& f : list_dir(ReportFolder))
       {
         const std::string repfile = ReportFolder + "/" + f + "/Report.yaml";
 
@@ -58,7 +58,7 @@ namespace NangaParbat
 
                 // Collect parameters in vector
                 std::vector<double> vpars;
-                for (auto const p : NPFunc->GetParameterNames())
+                for (auto const& p : NPFunc->GetParameterNames())
                   vpars.push_back(pars.at(p));
 
                 // Compute grid and push it back. In the case of
