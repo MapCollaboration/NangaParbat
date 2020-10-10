@@ -325,53 +325,7 @@ namespace NangaParbat
     _CholL = CholeskyDecomposition(_covmat);
 
     // Fluctuate data given the replica ID and the random-number
-    // generator. See Eqs. (13) and (14) of
-    // https://arxiv.org/pdf/0808.1231.pdf for details.
-    if (fluctuation <= 0 || rng == NULL)
-      _fluctuations = _means;
-    else
-      {
-        // The size of the fluctuated-data vector has to be the same
-        // as the vector of mean values.
-        _fluctuations.resize(_means.size());
-
-        // Fluctuate the full data-set "fluctuation" times and keep
-        // only the last fluctuation. This is non efficient but allows
-        // one to identify a given random replica by its ID and the
-        // random seed. This is useful when running fits on different
-        // computation nodes.
-        for (int irep = 0; irep < fluctuation; irep++)
-          {
-            // Additive correlation random numbers
-            std::vector<double> radd(_corra[0].size());
-            for (int j = 0; j < (int) _corra[0].size(); j++)
-              radd[j] = gsl_ran_gaussian(rng, 1);
-
-            // Multiplicative correlation random numbers
-            std::vector<double> rmult(_corrm[0].size());
-            for (int j = 0; j < (int) _corrm[0].size(); j++)
-              rmult[j] = gsl_ran_gaussian(rng, 1);
-
-            for (int i = 0; i < (int) _means.size(); i++)
-              {
-                // Uncorrelated uncertainty fluctuation
-                const double Func = _uncor[i] * gsl_ran_gaussian(rng, 1) / _means[i];
-
-                // Additive correlated uncertainty fluctuation
-                double Fadd = 0;
-                for (int j = 0; j < (int) _corra[i].size(); j++)
-                  Fadd += _corra[i][j] * radd[j];
-
-                // Mulplicative correlated uncertainty fluctuation
-                double Fmult = 1;
-                for (int j = 0; j < (int) _corrm[i].size(); j++)
-                  Fmult *= 1 + _corrm[i][j] * rmult[j];
-
-                // Generate fluctuation
-                _fluctuations[i] = _means[i] * Fmult * ( 1 + Func + Fadd );
-              }
-          }
-      }
+    FluctuateData(rng, fluctuation);
 
     // Resize vector of bins according to the number of data
     // point. The following code is currently used only by the
@@ -436,6 +390,58 @@ namespace NangaParbat
               i++;
             }
       }
+  }
+
+  void DataHandler::FluctuateData(gsl_rng *rng, int const &fluctuation)
+  {
+    // Fluctuate data given the replica ID and the random-number
+    // generator. See Eqs. (13) and (14) of
+    // https://arxiv.org/pdf/0808.1231.pdf for details.
+    if (fluctuation <= 0 || rng == NULL)
+      _fluctuations = _means;
+    else
+    {
+      // The size of the fluctuated-data vector has to be the same
+      // as the vector of mean values.
+      _fluctuations.resize(_means.size());
+
+      // Fluctuate the full data-set "fluctuation" times and keep
+      // only the last fluctuation. This is non efficient but allows
+      // one to identify a given random replica by its ID and the
+      // random seed. This is useful when running fits on different
+      // computation nodes.
+      for (int irep = 0; irep < fluctuation; irep++)
+      {
+        // Additive correlation random numbers
+        std::vector<double> radd(_corra[0].size());
+        for (int j = 0; j < (int)_corra[0].size(); j++)
+          radd[j] = gsl_ran_gaussian(rng, 1);
+
+        // Multiplicative correlation random numbers
+        std::vector<double> rmult(_corrm[0].size());
+        for (int j = 0; j < (int)_corrm[0].size(); j++)
+          rmult[j] = gsl_ran_gaussian(rng, 1);
+
+        for (int i = 0; i < (int)_means.size(); i++)
+        {
+          // Uncorrelated uncertainty fluctuation
+          const double Func = _uncor[i] * gsl_ran_gaussian(rng, 1) / _means[i];
+
+          // Additive correlated uncertainty fluctuation
+          double Fadd = 0;
+          for (int j = 0; j < (int)_corra[i].size(); j++)
+            Fadd += _corra[i][j] * radd[j];
+
+          // Mulplicative correlated uncertainty fluctuation
+          double Fmult = 1;
+          for (int j = 0; j < (int)_corrm[i].size(); j++)
+            Fmult *= 1 + _corrm[i][j] * rmult[j];
+
+          // Generate fluctuation
+          _fluctuations[i] = _means[i] * Fmult * (1 + Func + Fadd);
+        }
+      }
+    }
   }
 
   //_________________________________________________________________________
