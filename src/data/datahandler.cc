@@ -67,6 +67,30 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
+  DataHandler::DataHandler(DataHandler const& DH)
+  {
+    _name         = DH._name;        
+    _proc         = DH._proc;        
+    _targetiso    = DH._targetiso;   
+    _hadron       = DH._hadron;      
+    _charge       = DH._charge;      
+    _tagging      = DH._tagging;     
+    _prefact      = DH._prefact;     
+    _kin          = DH._kin;         
+    _means        = DH._means;       
+    _uncor        = DH._uncor;       
+    _corra        = DH._corra;       
+    _corrm        = DH._corrm;       
+    _corr         = DH._corr;        
+    _covmat       = DH._covmat;      
+    _CholL        = DH._CholL;       
+    _labels       = DH._labels;      
+    _fluctuations = DH._fluctuations;
+    _t0           = DH._t0;          
+    _bins         = DH._bins;        
+  }
+
+  //_________________________________________________________________________________
   DataHandler::DataHandler(std::string const& name, YAML::Node const& datafile, gsl_rng* rng, int const& fluctuation, std::vector<double> const& t0):
     _name(name),
     _proc(UnknownProcess),

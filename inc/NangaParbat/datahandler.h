@@ -80,6 +80,16 @@ namespace NangaParbat
     };
 
     /**
+     * @brief The "DataHandler" default constructor.
+     */
+    DataHandler(){};
+
+    /**
+     * @brief The "DataHandler" copy constructor.
+     */
+    DataHandler(DataHandler const &DH);
+    
+    /**
      * @brief The "DataHandler" constructor.
      * @param name: the name associated to the data set
      * @param datafile: the YAML:Node with the interpolation table
