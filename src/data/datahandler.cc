@@ -435,7 +435,7 @@ namespace NangaParbat
           // Mulplicative correlated uncertainty fluctuation
           double Fmult = 1;
           for (int j = 0; j < (int)_corrm[i].size(); j++)
-            Fmult *= 1 + _corrm[i][j] * rmult[j];
+            Fmult *= sqrt(1 + _corrm[i][j] * rmult[j]);
 
           // Generate fluctuation
           _fluctuations[i] = _means[i] * Fmult * (1 + Func + Fadd);
