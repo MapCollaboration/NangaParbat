@@ -1,7 +1,5 @@
-if (ROOT_CONFIG)
-  add_subdirectory(fastinterface)
-  set(TOBJ ${TOBJ} $<TARGET_OBJECTS:fastinterface>)
-endif ()
+add_subdirectory(fastinterface)
+set(TOBJ ${TOBJ} $<TARGET_OBJECTS:fastinterface>)
 
 if (GSL_CONFIG)
   add_subdirectory(data)

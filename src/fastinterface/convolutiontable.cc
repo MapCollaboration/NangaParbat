@@ -8,11 +8,6 @@
 #include <iostream>
 #include <algorithm>
 
-#include <root/TCanvas.h>
-#include <root/TStyle.h>
-#include <root/TH2.h>
-#include <root/TRandom.h>
-
 namespace NangaParbat
 {
   //_________________________________________________________________________________
@@ -243,45 +238,6 @@ namespace NangaParbat
         std::transform(p1.begin(), p1.end(), p2.begin(), p1.begin(), std::plus<double>());
         return p1;
       }
-  }
-
-  //_________________________________________________________________________________
-  void ConvolutionTable::PlotWeights() const
-  {
-    TCanvas *c2 = new TCanvas("c2", "c2", 600, 400);
-    const int nx = 50;
-    const double xmin = 1e-4;//0.95 * _Qg[0] * _xig[0] / _Vs ;
-    const double xmax = 1;//_Qg.back() / _xig[0] / _Vs ;
-    std::cout << xmin << "  " << xmax << std::endl;
-    const double xstep = exp( std::abs( log( xmax / xmin ) ) / ( nx - 1 ) );
-    double xbins[nx+1];
-    xbins[0] = xmin;
-    for (int i = 1; i <= nx; i++)
-      xbins[i] = xbins[i-1] * xstep;
-    TH2F *hlego2 = new TH2F("statistics", _name.c_str(), 20, 0, 70 / _Qg[0], nx, xbins);
-    hlego2->GetXaxis()->SetTitle("b_{T}");
-    hlego2->GetYaxis()->SetTitle("x_{1,2}");
-    c2->SetLogy();
-    for (int iqT = 0; iqT < (int) _qTv.size(); iqT++)
-      for (int tau = 0; tau < (int) _Qg.size(); tau++)
-        for (int alpha = 0; alpha < (int) _xig.size(); alpha++)
-          {
-            const double x1 = _Qg[tau] / _Vs * _xig[alpha];
-            const double x2 = _Qg[tau] / _Vs / _xig[alpha];
-            for (int n = 0; n < (int) _z.size(); n++)
-              {
-                hlego2->Fill(_z[n] / _qTv[iqT], x1, std::abs(_W.at(_qTv[iqT])[n][tau][alpha]));
-                hlego2->Fill(_z[n] / _qTv[iqT], x2, std::abs(_W.at(_qTv[iqT])[n][tau][alpha]));
-              }
-          }
-    gStyle->SetPalette(kBird);
-    hlego2->Draw("SURF7");
-    //gPad->SetTheta(60); // default is 30
-    gPad->SetPhi(60); // default is 30
-    gPad->Update();
-    c2->SaveAs((_name + "_3D" + ".pdf").c_str());
-    delete hlego2;
-    delete c2;
   }
 
   //_________________________________________________________________________________
