@@ -1,26 +1,41 @@
-add_subdirectory(fastinterface)
-add_subdirectory(data)
-add_subdirectory(chi2)
-add_subdirectory(minimisation)
+if (ROOT_CONFIG)
+  add_subdirectory(fastinterface)
+  set(TOBJ ${TOBJ} $<TARGET_OBJECTS:fastinterface>)
+endif ()
+
+if (GSL_CONFIG)
+  add_subdirectory(data)
+  set(TOBJ ${TOBJ} $<TARGET_OBJECTS:data>)
+  add_subdirectory(preprocessing)
+  set(TOBJ ${TOBJ} $<TARGET_OBJECTS:preprocessing>)
+  add_subdirectory(cuts)
+  set(TOBJ ${TOBJ} $<TARGET_OBJECTS:cuts>)
+endif ()
+
+if (GSL_CONFIG AND ROOT_CONFIG)
+  add_subdirectory(chi2)
+  set(TOBJ ${TOBJ} $<TARGET_OBJECTS:chi2>)
+endif ()
+
+if (GSL_CONFIG AND ROOT_CONFIG AND Ceres_FOUND)
+  add_subdirectory(minimisation)
+  set(TOBJ ${TOBJ} $<TARGET_OBJECTS:minimisation>)
+endif ()
+
 add_subdirectory(parameterisation)
-add_subdirectory(preprocessing)
+set(TOBJ ${TOBJ} $<TARGET_OBJECTS:parameterisation>)
+
 add_subdirectory(tmdgrid)
+set(TOBJ ${TOBJ} $<TARGET_OBJECTS:tmdgrid>)
+
 add_subdirectory(utilities)
-add_subdirectory(cuts)
+set(TOBJ ${TOBJ} $<TARGET_OBJECTS:utilities>)
 
 option(SHARED "Build shared-libray instead of static-libray" ON)
 if(SHARED)
-  add_library(NangaParbat SHARED $<TARGET_OBJECTS:fastinterface>
-  $<TARGET_OBJECTS:data> $<TARGET_OBJECTS:chi2>
-  $<TARGET_OBJECTS:minimisation> $<TARGET_OBJECTS:parameterisation>
-  $<TARGET_OBJECTS:preprocessing> $<TARGET_OBJECTS:tmdgrid>
-  $<TARGET_OBJECTS:utilities> $<TARGET_OBJECTS:cuts>)
+  add_library(NangaParbat SHARED ${TOBJ})
 else(SHARED)
-  add_library(NangaParbat STATIC $<TARGET_OBJECTS:fastinterface>
-  $<TARGET_OBJECTS:data> $<TARGET_OBJECTS:chi2>
-  $<TARGET_OBJECTS:minimisation> $<TARGET_OBJECTS:parameterisation>
-  $<TARGET_OBJECTS:preprocessing> $<TARGET_OBJECTS:tmdgrid>
-  $<TARGET_OBJECTS:utilities> $<TARGET_OBJECTS:cuts>)
+  add_library(NangaParbat STATIC ${TOBJ})
 endif(SHARED)
 
 target_link_libraries(NangaParbat ${YAML_LDFLAGS} ${APFELXX_LIBRARIES} ${ROOT_LIBRARIES}
