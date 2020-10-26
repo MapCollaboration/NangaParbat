@@ -82,7 +82,7 @@ namespace NangaParbat
     /**
      * @brief The "DataHandler" default constructor.
      */
-    DataHandler(){};
+    DataHandler() {};
 
     /**
      * @brief The "DataHandler" copy constructor.

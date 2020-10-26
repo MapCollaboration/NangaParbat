@@ -69,25 +69,25 @@ namespace NangaParbat
   //_________________________________________________________________________________
   DataHandler::DataHandler(DataHandler const& DH)
   {
-    _name         = DH._name;        
-    _proc         = DH._proc;        
-    _targetiso    = DH._targetiso;   
-    _hadron       = DH._hadron;      
-    _charge       = DH._charge;      
-    _tagging      = DH._tagging;     
-    _prefact      = DH._prefact;     
-    _kin          = DH._kin;         
-    _means        = DH._means;       
-    _uncor        = DH._uncor;       
-    _corra        = DH._corra;       
-    _corrm        = DH._corrm;       
-    _corr         = DH._corr;        
-    _covmat       = DH._covmat;      
-    _CholL        = DH._CholL;       
-    _labels       = DH._labels;      
+    _name         = DH._name;
+    _proc         = DH._proc;
+    _targetiso    = DH._targetiso;
+    _hadron       = DH._hadron;
+    _charge       = DH._charge;
+    _tagging      = DH._tagging;
+    _prefact      = DH._prefact;
+    _kin          = DH._kin;
+    _means        = DH._means;
+    _uncor        = DH._uncor;
+    _corra        = DH._corra;
+    _corrm        = DH._corrm;
+    _corr         = DH._corr;
+    _covmat       = DH._covmat;
+    _CholL        = DH._CholL;
+    _labels       = DH._labels;
     _fluctuations = DH._fluctuations;
-    _t0           = DH._t0;          
-    _bins         = DH._bins;        
+    _t0           = DH._t0;
+    _bins         = DH._bins;
   }
 
   //_________________________________________________________________________________
@@ -391,7 +391,8 @@ namespace NangaParbat
             }
       }
   }
-
+/*
+  //_________________________________________________________________________
   void DataHandler::FluctuateData(gsl_rng *rng, int const &fluctuation)
   {
     // Fluctuate data given the replica ID and the random-number
@@ -436,12 +437,42 @@ namespace NangaParbat
           double Fmult = 1;
           for (int j = 0; j < (int)_corrm[i].size(); j++)
             Fmult *= sqrt(1 + _corrm[i][j] * rmult[j]);
+            //Fmult *= 1 + _corrm[i][j] * rmult[j];
 
           // Generate fluctuation
           _fluctuations[i] = _means[i] * Fmult * (1 + Func + Fadd);
         }
       }
     }
+  }
+*/
+  //_________________________________________________________________________
+  void DataHandler::FluctuateData(gsl_rng *rng, int const &fluctuation)
+  {
+    // Fluctuate data given the replica ID and the random-number
+    // generator.
+    _fluctuations = _means;
+    if (fluctuation > 0 && rng != NULL)
+      {
+        // Fluctuate the full data-set "fluctuation" times and keep
+        // only the last fluctuation. This is non efficient but allows
+        // one to identify a given random replica by its ID and the
+        // random seed. This is useful when running fits on different
+        // computation nodes.
+        for (int irep = 0; irep < fluctuation; irep++)
+          {
+            // Collect random numbers
+            std::vector<double> z(_means.size());
+            for (int i = 0; i < (int) _means.size(); i++)
+              z[i] = gsl_ran_gaussian(rng, 1);
+
+            // Include fluctuations on top of the mean values
+            _fluctuations = _means;
+            for (int i = 0; i < (int) _means.size(); i++)
+              for (int j = 0; j < (int) _means.size(); j++)
+                _fluctuations[i] -= _CholL(i, j) * z[j];
+          }
+      }
   }
 
   //_________________________________________________________________________
