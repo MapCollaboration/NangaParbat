@@ -107,7 +107,6 @@ int main(int argc, char* argv[])
   // folder. Do it only for replica 0.
   if (ReplicaID == 0)
     {
-      chi2.MakePlots(OutputFolder);
       const std::vector<double> pars = chi2.GetParameters();
       int i = 0;
       for (auto p : fitconfig["Parameters"])

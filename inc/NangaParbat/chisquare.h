@@ -182,16 +182,6 @@ namespace NangaParbat
      */
     std::vector<double> GetParameters() const { return _NPFunc->GetParameters(); };
 
-    /**
-     * @brief Function that produces data-theory comparison plots
-     * using ROOT.
-     * @param path: path to where the "plots" folder will be placed
-     * @note This function is parlticularly lengthy and relies on ROOT
-     * and is not particularly useful. It may be convenient to remove
-     * it.
-     */
-    void MakePlots(std::string const& path) const;
-
   protected:
     std::vector<std::pair<DataHandler*, ConvolutionTable*>> _DSVect;  //!< Vector of "DataHandler-ConvolutionTable" pairs
     Parameterisation*                                       _NPFunc;  //!< Parameterisation of the non-perturbative component

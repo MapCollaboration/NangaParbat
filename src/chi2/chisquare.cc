@@ -10,14 +10,6 @@
 #include <sys/stat.h>
 #include <fstream>
 
-#include <root/TGraph.h>
-#include <root/TGraphErrors.h>
-#include <root/TLegend.h>
-#include <root/TMultiGraph.h>
-#include <root/TCanvas.h>
-#include <root/TAxis.h>
-#include <root/TStyle.h>
-
 namespace NangaParbat
 {
   //_________________________________________________________________________________
@@ -295,106 +287,6 @@ namespace NangaParbat
         ders[ipar] = dchi2 / ntot;
       }
     return ders;
-  }
-
-  //_________________________________________________________________________________
-  void ChiSquare::MakePlots(std::string const& path) const
-  {
-    // Create folder to store the plots
-    const std::string outdir = path + "/plots/";
-    mkdir(outdir.c_str(), ACCESSPERMS);
-
-    for (int i = 0; i < (int) _DSVect.size(); i++)
-      {
-        // Number of data points
-        const int nd = _ndata[i];
-
-        // Get "DataHandler" and "ConvolutionTable" objects
-        DataHandler      * dh = _DSVect[i].first;
-        ConvolutionTable * ct = _DSVect[i].second;
-
-        // Get predictions
-        const std::vector<double> pred = ct->GetPredictions(_NPFunc->Function());
-
-        // Get experimental central values, uncorrelated
-        // uncertainties, and correlated shifts.
-        const std::vector<double> mean   = dh->GetFluctutatedData();
-        const std::vector<double> uncu   = dh->GetUncorrelatedUnc();
-        const std::vector<double> shifts = GetSystematicShifts(i).first;
-
-        // Get values of qT
-        const std::vector<double> qT = dh->GetKinematics().qTv;
-
-        // Get plotting labels
-        const std::map<std::string, std::string> labels = dh->GetLabels();
-
-        // Now produce plots with ROOT
-        gStyle->SetImageScaling(3.);
-        TGraphErrors* exp = new TGraphErrors{};
-        TGraph* theo      = new TGraph{};
-        TGraph* theoshift = new TGraph{};
-        for (int j = 0; j < nd; j++)
-          {
-            const double x = (dh->GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]);
-            exp->SetPoint(j, x, mean[j]);
-            exp->SetPointError(j, 0, uncu[j]);
-            theo->SetPoint(j, x, pred[j]);
-            theoshift->SetPoint(j, x, pred[j] + shifts[j]);
-          }
-        exp->SetLineColor(1);
-        exp->SetMarkerStyle(20);
-        exp->SetLineWidth(2);
-        exp->SetMarkerSize(1.2);
-        theo->SetLineColor(kBlue-7);
-        theo->SetLineWidth(3);
-        theoshift->SetLineColor(kPink-6);
-        theoshift->SetLineWidth(3);
-
-        // Adjust legend
-        TLegend* leg = new TLegend{0.6, 0.92, 0.89, 0.72};
-        leg->SetFillColor(0);
-        leg->SetBorderSize(0);
-        leg->AddEntry(exp, "Data", "lp");
-        leg->AddEntry(theo, "Predictions");
-        leg->AddEntry(theoshift, "Shifted predictions");
-        leg->AddEntry((TObject*)0,("#it{#chi}^{2} = " + std::to_string(Evaluate(i))).c_str(), "");
-
-        // Produce graph
-        TMultiGraph* mg = new TMultiGraph{};
-        TCanvas* c = new TCanvas{};
-        c->SetLeftMargin(0.17);
-        c->SetTopMargin(0.07);
-        c->SetBottomMargin(0.15);
-        c->SetFrameLineWidth(2);
-        mg->Add(exp, "AP");
-        mg->Add(theo, "AL");
-        mg->Add(theoshift, "AL");
-        mg->SetTitle(labels.at("title").c_str());
-        mg->Draw("AL");
-        // X axis
-        mg->GetXaxis()->CenterTitle();
-        mg->GetXaxis()->SetLabelSize(0.045);
-        mg->GetXaxis()->SetTitleSize(0.05);
-        mg->GetXaxis()->SetTickLength(0.02);
-        mg->GetXaxis()->SetTitle(labels.at("xlabel").c_str());
-        // Y axis
-        mg->GetYaxis()->CenterTitle();
-        mg->GetYaxis()->SetLabelSize(0.045);
-        mg->GetYaxis()->SetTitleSize(0.05);
-        mg->GetYaxis()->SetTickLength(0.015);
-        mg->GetYaxis()->SetTitle(labels.at("ylabel").c_str());
-        leg->Draw("SAME");
-
-        // Save graph on file
-        c->SaveAs((outdir + dh->GetName() + ".pdf").c_str());
-
-        delete exp;
-        delete theo;
-        delete theoshift;
-        delete leg;
-        delete mg;
-        delete c;
-      }
   }
 
   //_________________________________________________________________________________
