@@ -445,6 +445,59 @@ namespace NangaParbat
       }
     }
   }
+
+  //_________________________________________________________________________
+  void DataHandler::FluctuateData(gsl_rng *rng, int const &fluctuation)
+  {
+    // Now construct the covariance matrix with only uncorrelated and
+    // additive correlated uncertainties.
+    apfel::matrix<double> covmatuc(_kin.ndata, _kin.ndata);
+    for (int i = 0; i < _kin.ndata; i++)
+      for (int j = 0; j < _kin.ndata; j++)
+        covmatuc(i, j) =
+          + (i == j ? pow(_uncor[i], 2) : 0)                                                                         // Uncorrelated component (diagonal)
+          + std::inner_product(_corra[i].begin(), _corra[i].end(), _corra[j].begin(), 0.) * _means[i] * _means[j];   // Additive component
+
+    // Get Cholesky decomposition
+    const apfel::matrix<double> cholLuc = CholeskyDecomposition(covmatuc);
+
+    // Fluctuate data given the replica ID and the random-number
+    // generator.
+    _fluctuations = _means;
+    if (fluctuation > 0 && rng != NULL)
+      {
+        // Multiplicative correlation random numbers
+        std::vector<double> rmult(_corrm[0].size());
+        for (int j = 0; j < (int)_corrm[0].size(); j++)
+          rmult[j] = gsl_ran_gaussian(rng, 1);
+
+        for (int irep = 0; irep < fluctuation; irep++)
+          {
+            // Collect random numbers
+            std::vector<double> z(_means.size());
+            for (int i = 0; i < (int) _means.size(); i++)
+              z[i] = gsl_ran_gaussian(rng, 1);
+
+            // Include fluctuations on top of the mean values only
+            // using uncorrelated and correlated uncertainties.
+            _fluctuations = _means;
+            for (int i = 0; i < (int) _means.size(); i++)
+              for (int j = 0; j < (int) _means.size(); j++)
+                _fluctuations[i] += cholLuc(i, j) * z[j];
+
+	    for (int i = 0; i < (int)_means.size(); i++)
+	      {
+		// Mulplicative correlated uncertainty fluctuations
+		double Fmult = 1;
+		for (int j = 0; j < (int) _corrm[i].size(); j++)
+		  Fmult *= 1 + _corrm[i][j] * rmult[j];
+
+		// Include multiplicative uncertainties
+		_fluctuations[i] *= Fmult;
+	      }
+          }
+      }
+  }
 */
   //_________________________________________________________________________
   void DataHandler::FluctuateData(gsl_rng *rng, int const &fluctuation)
