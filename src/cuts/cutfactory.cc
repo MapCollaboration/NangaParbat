@@ -4,6 +4,7 @@
 
 #include "NangaParbat/cutfactory.h"
 #include "NangaParbat/zcut.h"
+#include "NangaParbat/qcut.h"
 
 namespace NangaParbat
 {
@@ -12,6 +13,8 @@ namespace NangaParbat
   {
     if (name == "zcut")
       return std::shared_ptr<NangaParbat::Cut> {new NangaParbat::ZCut{dataset, min, max}};
+    else if (name == "Qcut")
+      return std::shared_ptr<NangaParbat::Cut> {new NangaParbat::QCut{dataset, min, max}};
     else
       throw std::runtime_error("[CutFactory::GetInstance]: Unknown cut.");
   }
