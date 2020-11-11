@@ -66,13 +66,14 @@ namespace NangaParbat
       throw std::runtime_error("[ChiSquare::GetResiduals]: index out of range");
 
     // Get "DataHandler" and "ConvolutionTable" objects
-    DataHandler      * dh = _DSVect[ids].first;
-    ConvolutionTable * ct = _DSVect[ids].second;
+    DataHandler      *dh = _DSVect[ids].first;
+    ConvolutionTable *ct = _DSVect[ids].second;
 
     // Get experimental values
+    const std::vector<double> cntr = dh->GetMeanValues();
     std::vector<double> mean;
     if (central)
-      mean = dh->GetMeanValues();
+      mean = cntr;
     else
       mean = dh->GetFluctutatedData();
 
@@ -92,7 +93,7 @@ namespace NangaParbat
     // the others to zero.
     std::vector<double> res(_ndata[ids], 0.);
     for (int j = 0; j < _ndata[ids]; j++)
-      res[j] = (cm[j] ? mean[j] - pred[j] : 0);
+      res[j] = mean[j] - (cm[j] ? pred[j] : cntr[j]);
 
     // Solve lower-diagonal system and return the result
     return SolveLowerSystem(dh->GetCholeskyDecomposition(), res);
@@ -177,7 +178,7 @@ namespace NangaParbat
     // the others to zero.
     std::vector<double> res(mean.size(), 0.);
     for (int j = 0; j < nd; j++)
-      res[j] = (cm[j] ? fluc[j] - pred[j] : 0);
+      res[j] = fluc[j] - (cm[j] ? pred[j] : mean[j]);
 
     // Construct matrix A and vector rho
     const int nsys = corr[0].size();
@@ -217,7 +218,6 @@ namespace NangaParbat
   //_________________________________________________________________________________
   double ChiSquare::Evaluate(int const& ids, bool const& central) const
   {
-
     // Define index range
     int istart = 0;
     int iend   = _DSVect.size();
@@ -241,7 +241,7 @@ namespace NangaParbat
         chi2 += std::inner_product(x.begin(), x.end(), x.begin(), 0.);
 
         // Increment number of points
-        ntot += _ndatac[i];
+        ntot += _ndata[i];
       }
 
     return (ntot == 0 ? 0 : chi2 / ntot);
