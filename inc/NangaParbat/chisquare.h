@@ -114,6 +114,12 @@ namespace NangaParbat
     virtual void SetParameters(std::vector<double> const& pars) { _NPFunc->SetParameters(pars); };
 
     /**
+     * @brief Function that sets the parameterisation.
+     * @param NPFunc: the point to a Parameterisation object
+     */
+    virtual void SetParameterisation(Parameterisation *NPFunc) { _NPFunc = NPFunc; };
+
+    /**
      * @brief Function that returns the vector of ("DataHandler",
      * "ConvolutionTable") object-pairs for all the datasets.
      * @return The vector of ("DataHandler", "ConvolutionTable")
