@@ -21,12 +21,12 @@ namespace NangaParbat
   public:
     /**
      * @brief The "Parameterisation" constructor
-     * @param name: name of the parameterisation object
-     * @param nfuncs: number of parametric functions
+     * @param name: name of the parameterisation object (default: empty string)
+     * @param nfuncs: number of parametric functions (default: 0)
      * @param pars: vector of parameters (default: empty vector)
      * @param anders: whether analytic derivatives are provided
      */
-    Parameterisation(std::string const& name, int const& nfuncs = 0, std::vector<double> pars = {}, bool const& anders = false);
+    Parameterisation(std::string const& name = "", int const& nfuncs = 0, std::vector<double> pars = {}, bool const& anders = false);
 
     /**
      * @brief The "Parameterisation" destructor
