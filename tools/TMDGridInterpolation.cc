@@ -66,17 +66,15 @@ int main(int argc, char* argv[])
     {
       const double Q  = Qg[iq];
 
-      for (int ix = 0; ix < (int) xg.size(); ix++)
+      for (int ix = 0; ix < (pf == "pdf" ? (int) xg.size(): (int) zg.size()); ix++)
         {
-          const double x  = xg[ix];
-
+          const double x = (pf == "pdf" ? xg[ix]: zg[ix]);
 
           // Values of kT
           const double kTmin = Q * 1e-4;
           const double kTmax = 3 * Q;
           const int    nkT   = 40;
           const double kTstp = (kTmax - kTmin)/ nkT;
-
 
           // Fill vectors with grid interpolation
           std::vector<double> gridinterp;
