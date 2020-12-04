@@ -431,7 +431,6 @@ namespace NangaParbat
     *out << YAML::Key << "Format"            << YAML::Value << Format;
     *out << YAML::Key << "DataVersion"       << YAML::Value << DataVersion;
     *out << YAML::Key << "OrderQCD"          << YAML::Value << pdfinfo["OrderQCD"].as<std::string>();
-    *out << YAML::Key << "AlphaS_OrderQCD"   << YAML::Value << pdfinfo["OrderQCD"];
     *out << YAML::Key << "NumMembers"        << YAML::Value << NumMembers;
     *out << YAML::Key << "ErrorType"         << YAML::Value << ErrorType;
     *out << YAML::Key << "NumFlavors"        << YAML::Value << std::round(Flavors.size() / 2);

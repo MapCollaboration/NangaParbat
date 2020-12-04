@@ -1,4 +1,4 @@
-//
+
 // Author: Valerio Bertone: valerio.bertone@cern.ch
 //
 
@@ -274,7 +274,7 @@ namespace NangaParbat
     *out << YAML::Key << "Format"           << YAML::Value << Format;
     *out << YAML::Key << "DataVersion"      << YAML::Value << DataVersion;
     *out << YAML::Key << "OrderQCD"         << YAML::Value << PtOrderMap.at(config["PerturbativeOrder"].as<int>());
-    *out << YAML::Key << "AlphaS_OrderQCD"  << YAML::Value << config["PerturbativeOrder"];
+    *out << YAML::Key << "AlphaS_OrderQCD"  << YAML::Value << (config["PerturbativeOrder"].as<int>() > 0 ? config["PerturbativeOrder"].as<int>() - 1 : abs(config["PerturbativeOrder"].as<int>()));
     *out << YAML::Key << "Regularisation"   << YAML::Value << config["bstar"].as<std::string>();
     *out << YAML::Key << "NumMembers"       << YAML::Value << NumMembers;
     *out << YAML::Key << "ErrorType"        << YAML::Value << ErrorType;
