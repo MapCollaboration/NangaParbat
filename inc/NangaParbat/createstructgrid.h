@@ -126,6 +126,23 @@ namespace NangaParbat
                                                  int         const& qToQcut = 5);
 
   /**
+   * @brief Function that produces the structure function interpolation grid in
+   * momentum space. This is supposed to resamble an LHAPDF grid.
+   * We use plain YAML format.
+   * @param FitDirectory: path to main folder, output of NangaParbat fit
+   * @param repnumber: replica number
+   * @param fdg: 4D grid used
+   * @param qToQcut: cut for the convolution integral
+   * @param pf: whether F_UUT or others (not implemented yet)
+   * @return a YAML emitter
+   */
+   std::unique_ptr<YAML::Emitter> EmitStructGridDirect(std::string const& FitDirectory,
+                                                       int         const& repnumber,
+                                                       std::string const& pf,
+                                                       FourDGrid   const& fdg,
+                                                       int         const& qToQcut);
+
+  /**
    * @brief Function that produces the info file of the TMD set. This
    * is suppose to resamble an LHAPDF info file for the TMDs. We use
    * plain YAML format.
@@ -133,18 +150,23 @@ namespace NangaParbat
    * @param pf: whether PDFs ("pdf") of FFs ("ff")
    * @return a YAML emitter
    */
-  std::unique_ptr<YAML::Emitter> EmitStructInfo(YAML::Node       const& config,
+  std::unique_ptr<YAML::Emitter> EmitStructInfo(std::string      const& GridsDirectory,
+                                                std::string      const& GridTMDPDFfolder,
+                                                std::string      const& GridTMDFFfolder,
+                                                YAML::Node       const& config,
                                                 int              const& NumMembers,
                                                 std::string      const& pf,
                                                 FourDGrid        const& fdg,
                                                 std::vector<int> const& Flavors = {-5, -4, -3, -2, -1, 1, 2, 3, 4, 5},
-                                                std::string      const& SetDesc = "Set produced with NangaParbat + APFEL++",
+                                                std::string      const& SetDesc = "Set produced with NangaParbat + APFEL++ (please cite arXiv:1912.07550 and arXiv:1708.00911)",
+                                                std::string      const& Target = "proton",
+                                                std::string      const& Hadron = "Pip",
                                                 std::string      const& Authors = "A. Bacchetta, F. Delcarro, C. Pisano, M. Radici, A. Signori",
                                                 std::string      const& Reference = "arXiv:1703.10157",
                                                 // std::string      const& Authors = "A. Bacchetta, V. Bertone, C. Bissolotti, G. Bozzi, F. Delcarro, F. Piacenza, M. Radici",
                                                 // std::string      const& Reference = "arXiv:1912.07550",
                                                 std::string      const& SetIndex = "000000",
-                                                std::string      const& Format = "TMDlib1",
+                                                std::string      const& Format = "TMDlib2",
                                                 std::string      const& DataVersion = "1",
                                                 std::string      const& ErrorType = "Monte Carlo");
 }

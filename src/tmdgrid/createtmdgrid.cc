@@ -249,6 +249,7 @@ namespace NangaParbat
                                              std::string      const& Authors,
                                              std::string      const& Reference,
                                              std::string      const& SetIndex,
+                                             std::string      const& SetName,
                                              std::string      const& Format,
                                              std::string      const& DataVersion,
                                              std::string      const& ErrorType,
@@ -261,28 +262,31 @@ namespace NangaParbat
     out->SetFloatPrecision(8);
     out->SetDoublePrecision(8);
     *out << YAML::BeginMap;
-    *out << YAML::Key << "SetDesc"        << YAML::Value << SetDesc;
-    *out << YAML::Key << "Authors"        << YAML::Value << Authors;
-    *out << YAML::Key << "Reference"      << YAML::Value << Reference;
-    *out << YAML::Key << "SetIndex"       << YAML::Value << SetIndex;
-    *out << YAML::Key << "TMDType"        << YAML::Value << pf;
-    *out << YAML::Key << "CollDist"       << YAML::Value << config[pf + "set"]["name"].as<std::string>();
-    *out << YAML::Key << "CollDistMember" << YAML::Value << config[pf + "set"]["member"].as<std::string>();
-    *out << YAML::Key << "Format"         << YAML::Value << Format;
-    *out << YAML::Key << "DataVersion"    << YAML::Value << DataVersion;
-    *out << YAML::Key << "OrderQCD"       << YAML::Value << PtOrderMap.at(config["PerturbativeOrder"].as<int>());
-    *out << YAML::Key << "Regularisation" << YAML::Value << config["bstar"].as<std::string>();
-    *out << YAML::Key << "NumMembers"     << YAML::Value << NumMembers;
-    *out << YAML::Key << "ErrorType"      << YAML::Value << ErrorType;
-    *out << YAML::Key << "FlavorScheme"   << YAML::Value << FlavorScheme;
-    *out << YAML::Key << "Flavors"        << YAML::Value << YAML::Flow << Flavors;
-    *out << YAML::Key << "NumFlavors"     << YAML::Value << std::round(Flavors.size() / 2);
-    *out << YAML::Key << "XMin"           << YAML::Value << tdg.xg[0];
-    *out << YAML::Key << "XMax"           << YAML::Value << tdg.xg.back();
-    *out << YAML::Key << "QMin"           << YAML::Value << tdg.Qg[0];
-    *out << YAML::Key << "QMax"           << YAML::Value << tdg.Qg.back();
-    *out << YAML::Key << "KtoQMin"        << YAML::Value << tdg.qToQg[0];
-    *out << YAML::Key << "KtoQMax"        << YAML::Value << tdg.qToQg.back();
+    *out << YAML::Key << "SetDesc"          << YAML::Value << SetDesc;
+    *out << YAML::Key << "Authors"          << YAML::Value << Authors;
+    *out << YAML::Key << "Reference"        << YAML::Value << Reference;
+    *out << YAML::Key << "SetIndex"         << YAML::Value << SetIndex;
+    *out << YAML::Key << "SetName"          << YAML::Value << SetName;
+    *out << YAML::Key << "TMDScheme"        << YAML::Value << "Pavia TMDs";
+    *out << YAML::Key << "TMDType"          << YAML::Value << pf;
+    *out << YAML::Key << "CollDist"         << YAML::Value << config[pf + "set"]["name"].as<std::string>();
+    *out << YAML::Key << "CollDistMember"   << YAML::Value << config[pf + "set"]["member"].as<std::string>();
+    *out << YAML::Key << "Format"           << YAML::Value << Format;
+    *out << YAML::Key << "DataVersion"      << YAML::Value << DataVersion;
+    *out << YAML::Key << "OrderQCD"         << YAML::Value << PtOrderMap.at(config["PerturbativeOrder"].as<int>());
+    *out << YAML::Key << "AlphaS_OrderQCD"  << YAML::Value << config["PerturbativeOrder"];
+    *out << YAML::Key << "Regularisation"   << YAML::Value << config["bstar"].as<std::string>();
+    *out << YAML::Key << "NumMembers"       << YAML::Value << NumMembers;
+    *out << YAML::Key << "ErrorType"        << YAML::Value << ErrorType;
+    *out << YAML::Key << "FlavorScheme"     << YAML::Value << FlavorScheme;
+    *out << YAML::Key << "Flavors"          << YAML::Value << YAML::Flow << Flavors;
+    *out << YAML::Key << "NumFlavors"       << YAML::Value << std::round(Flavors.size() / 2);
+    *out << YAML::Key << "XMin"             << YAML::Value << tdg.xg[0];
+    *out << YAML::Key << "XMax"             << YAML::Value << tdg.xg.back();
+    *out << YAML::Key << "QMin"             << YAML::Value << tdg.Qg[0];
+    *out << YAML::Key << "QMax"             << YAML::Value << tdg.Qg.back();
+    *out << YAML::Key << "KtoQMin"          << YAML::Value << tdg.qToQg[0];
+    *out << YAML::Key << "KtoQMax"          << YAML::Value << tdg.qToQg.back();
     *out << YAML::EndMap;
 
     // Return the emitter
