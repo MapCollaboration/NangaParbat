@@ -29,6 +29,11 @@ namespace NangaParbat
     enum Process: int {UnknownProcess = -1, DY = 0, SIDIS = 1, SIA = 2};
 
     /**
+     * @brief The observable enumerator
+     */
+    enum Observable: int {UnknownObservable = -1, dsigma_dxdydz = 0, dsigma_dxdQdz = 1};
+
+    /**
      * @brief Structure containing the kinematic information of one
      * single data set.
      */
@@ -131,6 +136,11 @@ namespace NangaParbat
      * @brief Function that returns the process code
      */
     Process GetProcess() const { return _proc; };
+
+    /**
+     * @brief Function that returns the observable code
+     */
+    Observable GetObservable() const { return _obs; };
 
     /**
      * @brief Function that returns the target isoscalarity
@@ -237,6 +247,7 @@ namespace NangaParbat
 
     std::string                        _name;         //!< Name of the dataset
     Process                            _proc;         //!< The process
+    Observable                         _obs;          //!< The observable
     double                             _targetiso;    //!< Isoscalarity of the target
     std::string                        _hadron;       //!< Hadron species identified in the final state
     double                             _charge;       //!< Charge of the identified final state
