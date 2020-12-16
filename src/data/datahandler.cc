@@ -53,7 +53,7 @@ namespace NangaParbat
     _prefact(1),
     _kin(DataHandler::Kinematics{}),
     _labels({}),
-  _t0(t0)
+    _t0(t0)
   {
     // Retrieve kinematics
     for (auto const& dv : datafile["dependent_variables"])
@@ -282,7 +282,7 @@ namespace NangaParbat
                 for (int j = 0; j < (int) _corra[i].size(); j++)
                   Fadd += _corra[i][j] * radd[j];
 
-                // Mulplicative correlated uncertainty fluctuation
+                // Multiplicative correlated uncertainty fluctuation
                 double Fmult = 1;
                 for (int j = 0; j < (int) _corrm[i].size(); j++)
                   Fmult *= 1 + _corrm[i][j] * rmult[j];

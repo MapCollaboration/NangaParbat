@@ -1,15 +1,9 @@
 # GitHubWiP
 author: Chiara Bissolotti
-
-This is a test file to check if the following procedure was successful. Tha aim of the procedure is to obtain a private repository (to become NangaParbatPrivate) that can communicate with the public NangaParbat to ``push`` and ``pull`` changes.
-
-If this file arrives to the original NangaParbat repository through a pull request, then the procedure worked, at least for the ``push`` case.
-- If this file arrives to the original NangaParbat repository through a pull request, then the procedure worked, at least for the ``push`` case.
-The ``push`` procedure was successfully tested by doing what is reported in the previous line.
-- The ``pull`` procedure described in the following was also tested and it works.
-NangaParbatPrivate had fallen behind NangaParbat, as we worked on the public repository, and I brought NangaParbatPrivate up to speed with NangaParbat using the four lines of code under 'To pull new chages form the public repo' in the next section. There were few conflicts, highlighted by git during the pulling procedure, and I handled them as it is normally done in github repositories (``git checkout`` of the selected files).
-
 ## Procedure followed
+
+The aim of the procedure described here is to obtain a private repository (to become NangaParbatPrivate) that can communicate with the public NangaParbat to ``push`` and ``pull`` changes.
+
 From:  https://stackoverflow.com/questions/10065526/github-how-to-make-a-fork-of-public-repository-private or
 https://medium.com/@bilalbayasut/github-how-to-make-a-fork-of-public-repository-private-6ee8cacaf9d3
 
@@ -30,7 +24,8 @@ make some changes
 git commit
 git push origin master
 ```
-To pull new changes from the public repo:
+
+To __pull new changes from the public repo__:
 ```
 cd private-repo
 git remote add public https://github.com/exampleuser/public-repo.git
@@ -39,7 +34,7 @@ git push origin master
 ```
 Your private repo now has the latest code from the public repo plus your changes.
 
-Finally, to create a pull request private repo -> public repo:
+Finally, __to create a pull request private repo -> public repo__:
 
 The only way to create a pull request is to have push access to the public repo. This is because you need to push to a branch there.
 ```
@@ -54,7 +49,52 @@ Now simply create a pull request via the Github UI for public-repo, as described
 
 Once project owners review your pull request, they can merge it.
 
+__If the automatic merge does not complete successfully__, and you have to do it manually, try using:
+``git mergetool``
+It is an useful tool to help with the merge.
+Look also at https://stackoverflow.com/questions/161813/how-to-resolve-merge-conflicts-in-git.
 
+## Manage Repositories
+To see what the differences between two local git repositories are:
+```
+cd first_repo
+git --work-tree=path_to_second_repo diff
+```
+from https://stackoverflow.com/questions/30771920/how-to-diff-two-local-repositories .
+
+---
+As you probably know, Git is a distributed version control system. Most operations are done locally. To communicate with the outside world, git uses what are called remotes. These are repositories other than the one on your local disk which you can push your changes into (so that other people can see them) or pull from (so that you can get others changes).
+
+See https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes
+
+### add a remote
+from https://stackoverflow.com/questions/5617211/what-is-git-remote-add-and-git-push-origin-master
+The command
+```
+git remote add origin https://github.com/ChiaBis/NangaParbatPrivate.git
+```
+creates a new remote called ``origin`` located at ``https://github.com/ChiaBis/NangaParbatPrivate.git``. Once you do this, in your push commands, you can push to ``origin`` instead of typing out the whole URL.
+``git pull origin master``
+The name ``origin`` is just the name of the remote, any name can be chosen.
+
+To see __what are the remotes__ of a repository:
+```
+git remote -v
+```
+
+### pull from the remotes
+from https://stackoverflow.com/questions/5617211/what-is-git-remote-add-and-git-push-origin-master
+```
+git pull PalmTree-FruIT master
+```
+This is a command that says "pull the commits from the remote named PalmTree-FruIT, from the branch named master" (I think).
+
+### push to the remote
+[https://stackoverflow.com/questions/5617211/what-is-git-remote-add-and-git-push-origin-master]
+```
+git push origin master
+```
+This is a command that says "push the commits in the local branch named master to the remote named origin". Once this is executed, all the stuff that you last synchronised with origin will be sent to the remote repository and other people will be able to see them there.
 
 # Appendix: useful info on GitHub
 [https://stackoverflow.com/questions/3959924/whats-the-difference-between-git-clone-mirror-and-git-clone-bare]
@@ -69,26 +109,6 @@ __git clone --bare origin-url__: You will get all of the tags copied, local bran
 Copies tags of the repository and the info about it, but no folders and stuff.
 
 __git clone --mirror origin-url__: Every last one of those refs will be copied as-is. You'll get all the tags, local branches master (HEAD), next, pu, and maint, remote branches devA/master and devB/master, other refs refs/foo/bar and refs/foo/baz. Everything is exactly as it was in the cloned remote. Remote tracking is set up so that if you run git remote update all refs will be overwritten from origin, as if you'd just deleted the mirror and recloned it. As the docs originally said, it's a mirror. It's supposed to be a functionally identical copy, interchangeable with the original.
-
-### git remote add
-[https://stackoverflow.com/questions/5617211/what-is-git-remote-add-and-git-push-origin-master]
-```
-git remote add ...
-```
-As you probably know, git is a distributed version control system. Most operations are done locally. To communicate with the outside world, git uses what are called remotes. These are repositories other than the one on your local disk which you can push your changes into (so that other people can see them) or pull from (so that you can get others changes). The command git remote add origin git@github.com:peter/first_app.gitcreates a new remote called origin located at git@github.com:peter/first_app.git. Once you do this, in your push commands, you can push to origin instead of typing out the whole URL.
-
-### git pull origin master
-```
-git pull PalmTree-FruIT_bissolotti master
-```
-This is a command that says "pull the commits from the remote named PalmTree-FruIT_bissolotti, from the branch named master" (I think).
-### git push origin master
-[https://stackoverflow.com/questions/5617211/what-is-git-remote-add-and-git-push-origin-master]
-```
-git push origin master
-```
-
-This is a command that says "push the commits in the local branch named master to the remote named origin". Once this is executed, all the stuff that you last synchronised with origin will be sent to the remote repository and other people will be able to see them there.
 
 ### git checkout -b
 ```
@@ -124,3 +144,9 @@ Any user or organization on GitHub can fork a repository. Forking a repository i
 
 1. You can use a pull request to suggest changes from your fork to the original repository, also known as the upstream repository.
 2. You can bring changes from the upstream repository to your local fork by synchronizing your fork with the upstream repository.
+
+## Reset
+To eset to a particular point in time:
+```
+git reset --hard master@{"10 minutes ago"}
+```
