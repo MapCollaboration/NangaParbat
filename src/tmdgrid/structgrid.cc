@@ -14,7 +14,7 @@ namespace NangaParbat
   {
     grid["xg"].as<std::vector<double>>(), 3
   })),
-    _zg(std::unique_ptr<apfel::QGrid<double>>(new apfel::QGrid<double>
+  _zg(std::unique_ptr<apfel::QGrid<double>>(new apfel::QGrid<double>
   {
     grid["zg"].as<std::vector<double>>(), 3
   })),

@@ -175,9 +175,9 @@ int main(int argc, char* argv[])
           std::vector<double> gridinterp;
           std::vector<double> direct;
           for (double kT = kTmin; kT <= kTmax * ( 1 + 1e-5 ); kT += kTstp) // interpolation
-          // for (double ik = 0; ik < (int) kToQg.size(); ik ++) // grid
+            // for (double ik = 0; ik < (int) kToQg.size(); ik ++) // grid
             {
-              gridinterp.push_back(TMDs->Evaluate(x , kT , Q).at(ifl));
+              gridinterp.push_back(TMDs->Evaluate(x, kT, Q).at(ifl));
               direct.push_back(DEObj.transform(txFb, kT)/ 2 / M_PI);
 
               /*

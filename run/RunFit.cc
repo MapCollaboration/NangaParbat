@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
   mkdir((OutputFolder).c_str(), ACCESSPERMS);
 
   // Define "ChiSquare" object with a given qT / Q cut
-  NangaParbat::ChiSquare chi2{*NPFunc};
+  NangaParbat::ChiSquare chi2{NPFunc};
 
   // Set parameters for the t0 predictions using "t0parameters" in the
   // configuration card only if the the t0 has been enabled and the
@@ -64,16 +64,16 @@ int main(int argc, char* argv[])
 
         // Convolution table
         const std::string table = std::string(argv[4]) + "/" + ds["name"].as<std::string>() + ".yaml";
-        const NangaParbat::ConvolutionTable ct{YAML::LoadFile(table), fitconfig["qToQmax"].as<double>()};
+        NangaParbat::ConvolutionTable ct{YAML::LoadFile(table), fitconfig["qToQmax"].as<double>()};
         //ct.NumericalAccuracy(NPFunc->Function());
 
         // Datafile
         const std::string datafile = std::string(argv[3]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
-        const NangaParbat::DataHandler dh{ds["name"].as<std::string>(), YAML::LoadFile(datafile), rng, ReplicaID,
-                                          (fitconfig["t0prescription"].as<bool>() ? ct.GetPredictions(NPFunc->Function()) : std::vector<double>{})};
+        NangaParbat::DataHandler dh{ds["name"].as<std::string>(), YAML::LoadFile(datafile), rng, ReplicaID,
+                                    (fitconfig["t0prescription"].as<bool>() ? ct.GetPredictions(NPFunc->Function()) : std::vector<double>{})};
 
         // Add chi2 block
-        chi2.AddBlock(std::make_pair(dh, ct));
+        chi2.AddBlock(std::make_pair(&dh, &ct));
       }
   // Report time elapsed
   t.stop();
@@ -107,7 +107,6 @@ int main(int argc, char* argv[])
   // folder. Do it only for replica 0.
   if (ReplicaID == 0)
     {
-      chi2.MakePlots(OutputFolder);
       const std::vector<double> pars = chi2.GetParameters();
       int i = 0;
       for (auto p : fitconfig["Parameters"])

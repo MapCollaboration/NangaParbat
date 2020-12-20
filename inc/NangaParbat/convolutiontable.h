@@ -8,7 +8,11 @@
 #include <functional>
 #include <map>
 #include <vector>
+#include <valarray>
 #include <yaml-cpp/yaml.h>
+
+#include <NangaParbat/parameterisation.h>
+#include <NangaParbat/cut.h>
 
 namespace NangaParbat
 {
@@ -31,24 +35,26 @@ namespace NangaParbat
     /**
      * @brief The "ConvolutionTable" constructor.
      * @param table: the YAML:Node with the interpolation table
-     * @param acc: the Ogata-quadrature required accuracy (default: 10<SUP>-7</SUP>)
      * @param qToQmax: maximum value allowed for the ratio qT /Q (default: 100)
+     * @param cuts: vector of cut objects (default: empty)
+     * @param acc: the Ogata-quadrature required accuracy (default: 10<SUP>-7</SUP>)
      * @note The accuracy has to be intended as the best accuracy over
      * the tabulated Ogata-quadrature points. This accuracy may not be
      * met within the tabulated points.
      */
-    ConvolutionTable(YAML::Node const& table, double const& qToQmax = 100, double const& acc = 1e-7);
+    ConvolutionTable(YAML::Node const& table, double const& qToQmax = 100, std::vector<std::shared_ptr<Cut>> const& cuts = {}, double const& acc = 1e-7);
 
     /**
      * @brief The "ConvolutionTable" constructor.
      * @param infile: the name of interpolation table in YAML format
-     * @param acc: the Ogata-quadrature required accuracy (default: 10<SUP>-7</SUP>)
      * @param qToQmax: maximum value allowed for the ratio qT /Q (default: 100)
+     * @param cuts: vector of cut objects (default: empty)
+     * @param acc: the Ogata-quadrature required accuracy (default: 10<SUP>-7</SUP>)
      * @note The accuracy has to be intended as the best accuracy over
      * the tabulated Ogata-quadrature points. This accuracy may not be
      * met within the tabulated points.
      */
-    ConvolutionTable(std::string const& infile, double const& qToQmax = 100, double const& acc = 1e-7);
+    ConvolutionTable(std::string const& infile, double const& qToQmax = 100, std::vector<std::shared_ptr<Cut>> const& cuts = {}, double const& acc = 1e-7);
 
     /**
      * @brief This function convolutes the input convolution table with
@@ -129,13 +135,6 @@ namespace NangaParbat
     ///@}
 
     /**
-     * @brief function that makes a 3D histogram of the weights as a
-     * function of b<SUB>T</SUB> and x<SUB>1,2</SUB>. See:
-     * https://root.cern/doc/v610/classTHistPainter.html for details.
-     */
-    void PlotWeights() const;
-
-    /**
      * @brief This function prints the numerical accuracy of the
      * Hankel tranform for each single prediction. The estimate is
      * computed by comparing the last term of the quadrature summation
@@ -144,7 +143,13 @@ namespace NangaParbat
      */
     void NumericalAccuracy(std::function<double(double const&, double const&, double const&, int const&)> const& fNP) const;
 
-  private:
+    /**
+     * @brief This function returns the mask of points that pass all
+     * the cuts.
+     */
+    std::valarray<bool> GetCutMask() const { return _cutmask; };
+
+  protected:
     std::string                                              const _name;    //!< Name of the table
     int                                                      const _proc;    //!< Index of the process (0: DY, 1: SIDIS)
     double                                                   const _Vs;      //!< Center of mass energy
@@ -161,5 +166,17 @@ namespace NangaParbat
     std::map<double,std::vector<std::vector<std::vector<double>>>> _W;       //!< The weights
     double                                                         _qToQmax; //!< Maximum value allowed for the ratio qT / Q
     double                                                         _acc;     //!< The Ogata-quadrature accuracy
+    std::vector<std::shared_ptr<Cut>>                              _cuts;    //!< Cut objects
+    std::valarray<bool>                                            _cutmask; //!< Mask of points that pass the cuts
+
+    /**
+     * @name FF_SIDIS
+     * Virtual functions required by FF_SIDIS
+     */
+    ///@{
+  public:
+    virtual void SetInputFFs(std::function<std::map<int, double>(double const &, double const &)> const &InDistFunc) {};
+    virtual void SetInputFFs(std::function<apfel::Set<apfel::Distribution>(double const&)> const& InDistFunc) {};
+    ///@}
   };
 }

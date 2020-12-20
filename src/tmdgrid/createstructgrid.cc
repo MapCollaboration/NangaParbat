@@ -126,15 +126,15 @@ namespace NangaParbat
     apfel::Timer t;
 
     // Get TMDs distributions from grids
-  	std::cout << "Read TMD grids " << std::endl;
+    std::cout << "Read TMD grids " << std::endl;
     NangaParbat::TMDGrid* TMDPDFs = NangaParbat::mkTMD(GridTMDPDFfolder, GridsDirectory, repnumber);
     NangaParbat::TMDGrid* TMDFFs  = NangaParbat::mkTMD(GridTMDFFfolder, GridsDirectory, repnumber);
 
     // Allocate structure function on the four dimensional grid
     std::vector<std::vector<std::vector<std::vector<double>>>> SFs(fdg.Qg.size(),
-                                                                  std::vector<std::vector<std::vector<double>>>(fdg.xg.size(),
-                                                                                                                std::vector<std::vector<double>>(fdg.zg.size(),
-                                                                                                                                               std::vector<double>(fdg.qToQg.size()))));
+                                                                   std::vector<std::vector<std::vector<double>>>(fdg.xg.size(),
+                                                                                                                 std::vector<std::vector<double>>(fdg.zg.size(),
+                                                                                                                     std::vector<double>(fdg.qToQg.size()))));
 
     // Compute structure function to put in grids, fully differential calculation.
     // At the moment the only SF implemented is FUUT.
@@ -147,7 +147,7 @@ namespace NangaParbat
                 for (int iqT = 0; iqT < (int) fdg.qToQg.size(); iqT++)
                   {
                     const auto conv = Convolution(TMDPDFs, TMDFFs, [] (double const&) -> std::vector<double> { return apfel::QCh2;}, qToQcut);
-                    SFs[iQ][ix][iz][iqT] = conv(fdg.xg[ix], fdg.zg[iz], fdg.Qg[iQ] , fdg.Qg[iQ] * fdg.qToQg[iqT]) / fdg.zg[iz] / (2 * M_PI);
+                    SFs[iQ][ix][iz][iqT] = conv(fdg.xg[ix], fdg.zg[iz], fdg.Qg[iQ], fdg.Qg[iQ] * fdg.qToQg[iqT]) / fdg.zg[iz] / (2 * M_PI);
                   }
               }
           }
@@ -285,9 +285,9 @@ namespace NangaParbat
 
     // Allocate structure function on the four dimensional grid
     std::vector<std::vector<std::vector<std::vector<double>>>> SFs(fdg.Qg.size(),
-                                                                  std::vector<std::vector<std::vector<double>>>(fdg.xg.size(),
-                                                                                                                std::vector<std::vector<double>>(fdg.zg.size(),
-                                                                                                                                               std::vector<double>(fdg.qToQg.size()))));
+                                                                   std::vector<std::vector<std::vector<double>>>(fdg.xg.size(),
+                                                                                                                 std::vector<std::vector<double>>(fdg.zg.size(),
+                                                                                                                     std::vector<double>(fdg.qToQg.size()))));
 
     // Compute structure function to put in grids, fully differential calculation.
     // At the moment the only SF implemented is FUUT.
@@ -307,20 +307,20 @@ namespace NangaParbat
 
         // Define kT-distribution function for direct calculation
         const std::function<apfel::DoubleObject<apfel::Distribution>(double const&)> Lumib = [=] (double const& bs) -> apfel::DoubleObject<apfel::Distribution>
-          {
-            // Get Evolved TMD PDFs and FFs and rotate them into the physical basis.
-            const std::map<int, apfel::Distribution> xF = QCDEvToPhys(EvTMDPDFs(bs, mu, zeta).GetObjects());
-            const std::map<int, apfel::Distribution> xD = QCDEvToPhys(EvTMDFFs(bs, mu, zeta).GetObjects());
+        {
+          // Get Evolved TMD PDFs and FFs and rotate them into the physical basis.
+          const std::map<int, apfel::Distribution> xF = QCDEvToPhys(EvTMDPDFs(bs, mu, zeta).GetObjects());
+          const std::map<int, apfel::Distribution> xD = QCDEvToPhys(EvTMDFFs(bs, mu, zeta).GetObjects());
 
-            // Luminosity
-            apfel::DoubleObject<apfel::Distribution> L{};
-            for (int i = 1; i <= nf; i++)
-              {
-                L.AddTerm({Bq[i-1], xF.at(+i), xD.at(+i)});
-                L.AddTerm({Bq[i-1], xF.at(-i), xD.at(-i)});
-              }
-            return L;
-          };
+          // Luminosity
+          apfel::DoubleObject<apfel::Distribution> L{};
+          for (int i = 1; i <= nf; i++)
+            {
+              L.AddTerm({Bq[i-1], xF.at(+i), xD.at(+i)});
+              L.AddTerm({Bq[i-1], xF.at(-i), xD.at(-i)});
+            }
+          return L;
+        };
 
         // Perturbative contribution in b-space. We know a priori that
         // this is enclosed bewteen bmin and bmax. Include an overflow
@@ -341,10 +341,10 @@ namespace NangaParbat
 
                 // Function in bT space
                 const std::function<double(double const&)> bInt = [=] (double const& b) -> double
-                  {
-                    double bTintegrand = b * fNP->Evaluate(x, b, zeta, 0) * fNP->Evaluate(z, b, zeta, 1) / z / z * tLumib.EvaluatexzQ(x, z, NangaParbat::bstarmin(b, Q));
-                    return bTintegrand;
-                  };
+                {
+                  double bTintegrand = b * fNP->Evaluate(x, b, zeta, 0) * fNP->Evaluate(z, b, zeta, 1) / z / z * tLumib.EvaluatexzQ(x, z, NangaParbat::bstarmin(b, Q));
+                  return bTintegrand;
+                };
 
                 // Transform in qT space and fill grid
                 for (int iqT = 0; iqT < (int) fdg.qToQg.size(); iqT++)

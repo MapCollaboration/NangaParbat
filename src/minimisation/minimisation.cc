@@ -51,7 +51,7 @@ namespace NangaParbat
           upar.Fix(p["name"].as<std::string>());
       }
 
-    if (chi2.GetNonPerturbativeFunction().HasGradient())
+    if (chi2.GetNonPerturbativeFunction()->HasGradient())
       {
         // Define "Minuit" fcn
         NangaParbat::FcnMinuitGrad fcn{chi2};

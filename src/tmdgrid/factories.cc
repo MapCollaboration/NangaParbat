@@ -31,8 +31,8 @@ namespace NangaParbat
     std::vector<TMDGrid*> tmds(nmem);
     for (int mem = 0; mem < nmem; mem++)
       {
-	std::cout << "[NangaParbat]: loading " << name + "/" + name + "_" + num_to_string(mem) + ".yaml" << std::endl;
-	tmds[mem] = new NangaParbat::TMDGrid{info, YAML::LoadFile(name + "/" + name + "_" + num_to_string(mem) + ".yaml")};
+        std::cout << "[NangaParbat]: loading " << name + "/" + name + "_" + num_to_string(mem) + ".yaml" << std::endl;
+        tmds[mem] = new NangaParbat::TMDGrid{info, YAML::LoadFile(name + "/" + name + "_" + num_to_string(mem) + ".yaml")};
       }
     return tmds;
   }
@@ -61,8 +61,8 @@ namespace NangaParbat
     std::vector<StructGrid*> sfs(nmem);
     for (int mem = 0; mem < nmem; mem++)
       {
-	std::cout << "[NangaParbat]: loading " << name + "/" + name + "_" + num_to_string(mem) + ".yaml" << std::endl;
-	sfs[mem] = new NangaParbat::StructGrid{info, YAML::LoadFile(name + "/" + name + "_" + num_to_string(mem) + ".yaml")};
+        std::cout << "[NangaParbat]: loading " << name + "/" + name + "_" + num_to_string(mem) + ".yaml" << std::endl;
+        sfs[mem] = new NangaParbat::StructGrid{info, YAML::LoadFile(name + "/" + name + "_" + num_to_string(mem) + ".yaml")};
       }
 
     return sfs;

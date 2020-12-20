@@ -1,16 +1,10 @@
-if (ROOT_CONFIG)
+if (GSL_CONFIG)
   add_subdirectory(fastinterface)
   set(TOBJ ${TOBJ} $<TARGET_OBJECTS:fastinterface>)
-endif ()
-
-if (GSL_CONFIG)
   add_subdirectory(data)
   set(TOBJ ${TOBJ} $<TARGET_OBJECTS:data>)
   add_subdirectory(preprocessing)
   set(TOBJ ${TOBJ} $<TARGET_OBJECTS:preprocessing>)
-endif ()
-
-if (GSL_CONFIG AND ROOT_CONFIG)
   add_subdirectory(chi2)
   set(TOBJ ${TOBJ} $<TARGET_OBJECTS:chi2>)
 endif ()

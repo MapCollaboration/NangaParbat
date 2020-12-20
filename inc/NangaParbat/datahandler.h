@@ -8,7 +8,7 @@
 #include <vector>
 #include <utility>
 
-#include <apfel/matrix.h>
+#include <apfel/apfelxx.h>
 #include <yaml-cpp/yaml.h>
 #include <gsl/gsl_rng.h>
 
@@ -22,10 +22,16 @@ namespace NangaParbat
   class DataHandler
   {
   public:
+
     /**
      * @brief The process enumerator
      */
-    enum Process: int {UnknownProcess = -1, DY = 0, SIDIS = 1};
+    enum Process: int {UnknownProcess = -1, DY = 0, SIDIS = 1, SIA = 2};
+
+    /**
+     * @brief The observable enumerator
+     */
+    enum Observable: int {UnknownObservable = -1, dsigma_dxdydz = 0, dsigma_dxdQdz = 1};
 
     /**
      * @brief Structure containing the kinematic information of one
@@ -53,6 +59,42 @@ namespace NangaParbat
     };
 
     /**
+     * @brief Structure containing the single bin information. This is
+     * currently used only for the FF_SIDIS project.
+     * @todo Integrate it better in the rest of the class.
+     */
+    struct Binning
+    {
+      Binning();
+      double zmin;
+      double zmax;
+      double zav;
+      bool Intz;
+      double xmin;
+      double xmax;
+      double xav;
+      bool Intx;
+      double Qmin;
+      double Qmax;
+      double Qav;
+      bool IntQ;
+      double ymin;
+      double ymax;
+      double yav;
+      bool Inty;
+    };
+
+    /**
+     * @brief The "DataHandler" default constructor.
+     */
+    DataHandler() {};
+
+    /**
+     * @brief The "DataHandler" copy constructor.
+     */
+    DataHandler(DataHandler const &DH);
+
+    /**
      * @brief The "DataHandler" constructor.
      * @param name: the name associated to the data set
      * @param datafile: the YAML:Node with the interpolation table
@@ -60,7 +102,16 @@ namespace NangaParbat
      * @param fluctuation: ID of the fluctuation (i.e. Monte-Carlo replica ID) (default: 0, i.e. no fluctuations)
      * @param t0: vector of predictions to be used for the t0-prescription
      */
-    DataHandler(std::string const& name, YAML::Node const& datafile, gsl_rng* rng = NULL, int const& fluctuation = 0, std::vector<double> const& t0 = {});
+    DataHandler(std::string const& name, YAML::Node const& datafile, gsl_rng* rng = nullptr, int const& fluctuation = 0, std::vector<double> const& t0 = {});
+
+    virtual ~DataHandler() {};
+
+    /**
+     * @brief Function that fluctuates data
+     * @param rng: GSL random number object
+     * @param fluctuation: ID of the fluctuation (i.e. Monte-Carlo replica ID) (default: 0, i.e. no fluctuations)
+     */
+    void FluctuateData(gsl_rng *rng, int const &fluctuation);
 
     /**
      * @brief Function that sets the covariance matrix replacing that
@@ -87,12 +138,35 @@ namespace NangaParbat
     Process GetProcess() const { return _proc; };
 
     /**
+     * @brief Function that returns the observable code
+     */
+    Observable GetObservable() const { return _obs; };
+
+    /**
      * @brief Function that returns the target isoscalarity
      * @note The code always assumes that one of the hadrons has
      * isoscalarity 1, meaning that it's a single hadron whose
      * distributions don't need to be manipulated.
      */
     double GetTargetIsoscalarity() const { return _targetiso; };
+
+    /**
+     * @brief Function that returns the possible identified hadron
+     * species in the final state.
+     */
+    std::string GetHadron() const { return _hadron; };
+
+    /**
+     * @brief Function that returns the charge of the identified final
+     * state.
+     */
+    int GetCharge() const { return _charge; };
+
+    /**
+     * @brief Function that returns the quark-tagged compoments. Zero
+     * corresponds to total.
+     */
+    std::vector<apfel::QuarkFlavour> GetTagging() const { return _tagging; };
 
     /**
      * @brief Function that returns any possible constant prefactor to
@@ -161,10 +235,23 @@ namespace NangaParbat
      */
     std::map<std::string, std::string> GetLabels() const { return _labels; };
 
+    /**
+     * @brief Get vector of bins. This is currently used only for the
+     * FF_SIDIS project.
+     * @todo Integrate it better in the rest of the
+     * class.
+     */
+    std::vector<Binning> GetBinning() const { return _bins; }
+
   protected:
+
     std::string                        _name;         //!< Name of the dataset
     Process                            _proc;         //!< The process
+    Observable                         _obs;          //!< The observable
     double                             _targetiso;    //!< Isoscalarity of the target
+    std::string                        _hadron;       //!< Hadron species identified in the final state
+    double                             _charge;       //!< Charge of the identified final state
+    std::vector<apfel::QuarkFlavour>   _tagging;      //!< Possible quark-tagged components
     double                             _prefact;      //!< Possible overall prefactor to multiply the theoretical predictions
     Kinematics                         _kin;          //!< Kinematics block
     std::vector<double>                _means;        //!< Vector of central values
@@ -177,6 +264,7 @@ namespace NangaParbat
     std::map<std::string, std::string> _labels;       //!< Labels used for plotting
     std::vector<double>                _fluctuations; //!< Vector of fluctuated data
     std::vector<double>                _t0;           //!< Vector of t0-predictions
+    std::vector<Binning>               _bins;         //!< Vector of bins (currently used only for the FF_SIDIS project)
 
     friend std::ostream& operator << (std::ostream& os, DataHandler const& DH);
   };

@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 3.5)
 # Set a default build type if none was specified
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Setting build type to 'Release' as none was specified.")
@@ -133,7 +133,7 @@ if(BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)
   add_subdirectory(tools)
-endif ()
+endif(BUILD_TESTS)
 
 install(FILES ${PROJECT_SOURCE_DIR}/bin/NangaParbat-config
 	   DESTINATION bin

@@ -12,7 +12,7 @@
 #include "NangaParbat/QGG6.h"
 #include "NangaParbat/QGG13.h"
 
-#include<map>
+#include <map>
 #include <memory>
 
 namespace NangaParbat

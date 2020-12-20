@@ -34,6 +34,27 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________
+  DataHandler::Binning::Binning():
+    zmin(-1),
+    zmax(-1),
+    zav(-1),
+    Intz(true),
+    xmin(-1),
+    xmax(-1),
+    xav(-1),
+    Intx(true),
+    Qmin(-1),
+    Qmax(-1),
+    Qav(-1),
+    IntQ(true),
+    ymin(-1),
+    ymax(-1),
+    yav(-1),
+    Inty(true)
+  {
+  }
+
+  //_________________________________________________________________________
   bool DataHandler::Kinematics::empty() const
   {
     if (ndata == 0 || Vs == 0 || qTv.empty() || qTmap.empty() || qTfact.empty() ||
@@ -46,14 +67,43 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
+  DataHandler::DataHandler(DataHandler const& DH)
+  {
+    _name         = DH._name;
+    _proc         = DH._proc;
+    _obs          = DH._obs;
+    _targetiso    = DH._targetiso;
+    _hadron       = DH._hadron;
+    _charge       = DH._charge;
+    _tagging      = DH._tagging;
+    _prefact      = DH._prefact;
+    _kin          = DH._kin;
+    _means        = DH._means;
+    _uncor        = DH._uncor;
+    _corra        = DH._corra;
+    _corrm        = DH._corrm;
+    _corr         = DH._corr;
+    _covmat       = DH._covmat;
+    _CholL        = DH._CholL;
+    _labels       = DH._labels;
+    _fluctuations = DH._fluctuations;
+    _t0           = DH._t0;
+    _bins         = DH._bins;
+  }
+
+  //_________________________________________________________________________________
   DataHandler::DataHandler(std::string const& name, YAML::Node const& datafile, gsl_rng* rng, int const& fluctuation, std::vector<double> const& t0):
     _name(name),
     _proc(UnknownProcess),
+    _obs(UnknownObservable),
     _targetiso(1),
-    _prefact(1),
-    _kin(DataHandler::Kinematics{}),
-    _labels({}),
-    _t0(t0)
+    _hadron("NONE"),
+    _charge(0),
+    _tagging({apfel::QuarkFlavour::TOTAL}),
+  _prefact(1),
+  _kin(DataHandler::Kinematics{}),
+  _labels({}),
+  _t0(t0)
   {
     // Retrieve kinematics
     for (auto const& dv : datafile["dependent_variables"])
@@ -72,6 +122,19 @@ namespace NangaParbat
                   _proc = DY;
                 else if (ql["value"].as<std::string>() == "SIDIS")
                   _proc = SIDIS;
+                else if (ql["value"].as<std::string>() == "SIA")
+                  _proc = SIA;
+                else
+                  throw std::runtime_error("[DataHandler::DataHandler]: Unknown process.");
+              }
+
+            // Observable
+            if (ql["name"].as<std::string>() == "observable")
+              {
+                if (ql["value"].as<std::string>() == "dsigma/dxdydz")
+                  _obs = dsigma_dxdydz;
+                else if (ql["value"].as<std::string>() == "dsigma/dxdQdz")
+                  _obs = dsigma_dxdQdz;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown process.");
               }
@@ -79,6 +142,35 @@ namespace NangaParbat
             // Isoscalarity
             if (ql["name"].as<std::string>() == "target_isoscalarity")
               _targetiso = ql["value"].as<double>();
+
+            // Hadron species
+            if (ql["name"].as<std::string>() == "hadron")
+              _hadron = ql["value"].as<std::string>();
+
+            // Final state charge
+            if (ql["name"].as<std::string>() == "charge")
+              _charge = ql["value"].as<double>();
+
+            // Quark-tagging
+            if (ql["name"].as<std::string>() == "tagging")
+              {
+                _tagging.clear();
+                for (std::string t : ql["value"].as<std::vector<std::string>>())
+                  if (t == "d")
+                    _tagging.push_back(apfel::QuarkFlavour::DOWN);
+                  else if (t == "u")
+                    _tagging.push_back(apfel::QuarkFlavour::UP);
+                  else if (t == "s")
+                    _tagging.push_back(apfel::QuarkFlavour::STRANGE);
+                  else if (t == "c")
+                    _tagging.push_back(apfel::QuarkFlavour::CHARM);
+                  else if (t == "b")
+                    _tagging.push_back(apfel::QuarkFlavour::BOTTOM);
+                  else if (t == "t")
+                    _tagging.push_back(apfel::QuarkFlavour::TOP);
+                  else
+                    throw std::runtime_error("[DataHandler::DataHandler]: Unknown quark-flavour tag");
+              }
 
             // Possible prefactor
             if (ql["name"].as<std::string>() == "prefactor")
@@ -102,7 +194,7 @@ namespace NangaParbat
                 _kin.Intv2 = ql["integrate"].as<bool>();
               }
 
-            // z interval (SIDIS only)
+            // z interval (SIDIS and SIA)
             if (ql["name"].as<std::string>() == "z")
               {
                 _kin.var3b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
@@ -246,11 +338,82 @@ namespace NangaParbat
     _CholL = CholeskyDecomposition(_covmat);
 
     // Fluctuate data given the replica ID and the random-number
-    // generator. See Eqs. (13) and (14) of
-    // https://arxiv.org/pdf/0808.1231.pdf for details.
-    if (fluctuation <= 0 || rng == NULL)
-      _fluctuations = _means;
-    else
+    FluctuateData(rng, fluctuation);
+
+    // Resize vector of bins according to the number of data
+    // point. The following code is currently used only by the
+    // FF_SIDIS project and need to be better integrated.
+    _bins.resize(_kin.ndata);
+
+    // Fill in binning
+    for (auto const& iv : datafile["independent_variables"])
+      {
+        int i = 0;
+
+        // z
+        if (iv["header"]["name"].as<std::string>() == "z")
+          for (auto const& vl : iv["values"])
+            {
+              if (vl["low"])
+                _bins[i].zmin = vl["low"].as<double>();
+              if (vl["high"])
+                _bins[i].zmax = vl["high"].as<double>();
+              if (vl["value"])
+                _bins[i].zav = vl["value"].as<double>();
+              _bins[i].Intz = _kin.Intv3;
+              i++;
+            }
+
+        // x
+        if (iv["header"]["name"].as<std::string>() == "x")
+          for (auto const& vl : iv["values"])
+            {
+              if (vl["low"])
+                _bins[i].xmin = vl["low"].as<double>();
+              if (vl["high"])
+                _bins[i].xmax = vl["high"].as<double>();
+              if (vl["value"])
+                _bins[i].xav = vl["value"].as<double>();
+              i++;
+            }
+
+        // y
+        if (iv["header"]["name"].as<std::string>() == "y")
+          for (auto const& vl : iv["values"])
+            {
+              if (vl["low"])
+                _bins[i].ymin = vl["low"].as<double>();
+              if (vl["high"])
+                _bins[i].ymax = vl["high"].as<double>();
+              if (vl["value"])
+                _bins[i].yav = vl["value"].as<double>();
+              i++;
+            }
+
+        // Q
+        if (iv["header"]["name"].as<std::string>() == "Q2")
+          for (auto const& vl : iv["values"])
+            {
+              if (vl["low"])
+                _bins[i].Qmin = sqrt(vl["low"].as<double>());
+              if (vl["high"])
+                _bins[i].Qmax = sqrt(vl["high"].as<double>());
+              if (vl["value"])
+                _bins[i].Qav = sqrt(vl["value"].as<double>());
+              i++;
+            }
+      }
+  }
+  /*
+    //_________________________________________________________________________
+    void DataHandler::FluctuateData(gsl_rng *rng, int const &fluctuation)
+    {
+      // Fluctuate data given the replica ID and the random-number
+      // generator. See Eqs. (13) and (14) of
+      // https://arxiv.org/pdf/0808.1231.pdf for details.
+      if (fluctuation <= 0 || rng == NULL)
+        _fluctuations = _means;
+      else
       {
         // The size of the fluctuated-data vector has to be the same
         // as the vector of mean values.
@@ -259,37 +422,121 @@ namespace NangaParbat
         // Fluctuate the full data-set "fluctuation" times and keep
         // only the last fluctuation. This is non efficient but allows
         // one to identify a given random replica by its ID and the
-        // random seed.
+        // random seed. This is useful when running fits on different
+        // computation nodes.
+        for (int irep = 0; irep < fluctuation; irep++)
+        {
+          // Additive correlation random numbers
+          std::vector<double> radd(_corra[0].size());
+          for (int j = 0; j < (int)_corra[0].size(); j++)
+            radd[j] = gsl_ran_gaussian(rng, 1);
+
+          // Multiplicative correlation random numbers
+          std::vector<double> rmult(_corrm[0].size());
+          for (int j = 0; j < (int)_corrm[0].size(); j++)
+            rmult[j] = gsl_ran_gaussian(rng, 1);
+
+          for (int i = 0; i < (int)_means.size(); i++)
+          {
+            // Uncorrelated uncertainty fluctuation
+            const double Func = _uncor[i] * gsl_ran_gaussian(rng, 1) / _means[i];
+
+            // Additive correlated uncertainty fluctuation
+            double Fadd = 0;
+            for (int j = 0; j < (int)_corra[i].size(); j++)
+              Fadd += _corra[i][j] * radd[j];
+
+            // Mulplicative correlated uncertainty fluctuation
+            double Fmult = 1;
+            for (int j = 0; j < (int)_corrm[i].size(); j++)
+              Fmult *= sqrt(1 + _corrm[i][j] * rmult[j]);
+              //Fmult *= 1 + _corrm[i][j] * rmult[j];
+
+            // Generate fluctuation
+            _fluctuations[i] = _means[i] * Fmult * (1 + Func + Fadd);
+          }
+        }
+      }
+    }
+
+    //_________________________________________________________________________
+    void DataHandler::FluctuateData(gsl_rng *rng, int const &fluctuation)
+    {
+      // Now construct the covariance matrix with only uncorrelated and
+      // additive correlated uncertainties.
+      apfel::matrix<double> covmatuc(_kin.ndata, _kin.ndata);
+      for (int i = 0; i < _kin.ndata; i++)
+        for (int j = 0; j < _kin.ndata; j++)
+          covmatuc(i, j) =
+            + (i == j ? pow(_uncor[i], 2) : 0)                                                                         // Uncorrelated component (diagonal)
+            + std::inner_product(_corra[i].begin(), _corra[i].end(), _corra[j].begin(), 0.) * _means[i] * _means[j];   // Additive component
+
+      // Get Cholesky decomposition
+      const apfel::matrix<double> cholLuc = CholeskyDecomposition(covmatuc);
+
+      // Fluctuate data given the replica ID and the random-number
+      // generator.
+      _fluctuations = _means;
+      if (fluctuation > 0 && rng != NULL)
+        {
+          // Multiplicative correlation random numbers
+          std::vector<double> rmult(_corrm[0].size());
+          for (int j = 0; j < (int)_corrm[0].size(); j++)
+            rmult[j] = gsl_ran_gaussian(rng, 1);
+
+          for (int irep = 0; irep < fluctuation; irep++)
+            {
+              // Collect random numbers
+              std::vector<double> z(_means.size());
+              for (int i = 0; i < (int) _means.size(); i++)
+                z[i] = gsl_ran_gaussian(rng, 1);
+
+              // Include fluctuations on top of the mean values only
+              // using uncorrelated and correlated uncertainties.
+              _fluctuations = _means;
+              for (int i = 0; i < (int) _means.size(); i++)
+                for (int j = 0; j < (int) _means.size(); j++)
+                  _fluctuations[i] += cholLuc(i, j) * z[j];
+
+  	    for (int i = 0; i < (int)_means.size(); i++)
+  	      {
+  		// Mulplicative correlated uncertainty fluctuations
+  		double Fmult = 1;
+  		for (int j = 0; j < (int) _corrm[i].size(); j++)
+  		  Fmult *= 1 + _corrm[i][j] * rmult[j];
+
+  		// Include multiplicative uncertainties
+  		_fluctuations[i] *= Fmult;
+  	      }
+            }
+        }
+    }
+  */
+  //_________________________________________________________________________
+  void DataHandler::FluctuateData(gsl_rng *rng, int const &fluctuation)
+  {
+    // Fluctuate data given the replica ID and the random-number
+    // generator.
+    _fluctuations = _means;
+    if (fluctuation > 0 && rng != NULL)
+      {
+        // Fluctuate the full data-set "fluctuation" times and keep
+        // only the last fluctuation. This is non efficient but allows
+        // one to identify a given random replica by its ID and the
+        // random seed. This is useful when running fits on different
+        // computation nodes.
         for (int irep = 0; irep < fluctuation; irep++)
           {
-            // Additive correlation random numbers
-            std::vector<double> radd(_corra[0].size());
-            for (int j = 0; j < (int) _corra[0].size(); j++)
-              radd[j] = gsl_ran_gaussian(rng, 1);
-
-            // Multiplicative correlation random numbers
-            std::vector<double> rmult(_corrm[0].size());
-            for (int j = 0; j < (int) _corrm[0].size(); j++)
-              rmult[j] = gsl_ran_gaussian(rng, 1);
-
+            // Collect random numbers
+            std::vector<double> z(_means.size());
             for (int i = 0; i < (int) _means.size(); i++)
-              {
-                // Uncorrelated uncertainty fluctuation
-                const double Func = _uncor[i] * gsl_ran_gaussian(rng, 1) / _means[i];
+              z[i] = gsl_ran_gaussian(rng, 1);
 
-                // Additive correlated uncertainty fluctuation
-                double Fadd = 0;
-                for (int j = 0; j < (int) _corra[i].size(); j++)
-                  Fadd += _corra[i][j] * radd[j];
-
-                // Multiplicative correlated uncertainty fluctuation
-                double Fmult = 1;
-                for (int j = 0; j < (int) _corrm[i].size(); j++)
-                  Fmult *= 1 + _corrm[i][j] * rmult[j];
-
-                // Generate fluctuation
-                _fluctuations[i] = _means[i] * Fmult * ( 1 + Func + Fadd );
-              }
+            // Include fluctuations on top of the mean values
+            _fluctuations = _means;
+            for (int i = 0; i < (int) _means.size(); i++)
+              for (int j = 0; j < (int) _means.size(); j++)
+                _fluctuations[i] -= _CholL(i, j) * z[j];
           }
       }
   }

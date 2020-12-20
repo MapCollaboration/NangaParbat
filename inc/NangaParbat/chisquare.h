@@ -28,7 +28,7 @@ namespace NangaParbat
      * @param NPFunc: "Parameterisation" object containing the
      * non-perturbative function(s)
      */
-    ChiSquare(std::vector<std::pair<DataHandler, ConvolutionTable>> const& DSVect, Parameterisation& NPFunc);
+    ChiSquare(std::vector<std::pair<DataHandler*, ConvolutionTable*>> DSVect, Parameterisation* NPFunc);
 
     /**
      * @brief The default "ChiSquare" constructor.
@@ -36,7 +36,7 @@ namespace NangaParbat
      * @param NPFunc: "Parameterisation" object containing the
      * non-perturbative function(s)
      */
-    ChiSquare(Parameterisation& NPFunc);
+    ChiSquare(Parameterisation* NPFunc);
 
     /**
      * @brief Add ("DataHandler","ConvolutionTable") pair block to the
@@ -44,7 +44,7 @@ namespace NangaParbat
      * @param DSBlock: the ("DataHandler","ConvolutionTable")-pair
      * block to be appended
      */
-    void AddBlock(std::pair<DataHandler, ConvolutionTable> const& DSBlock);
+    virtual void AddBlock(std::pair<DataHandler*, ConvolutionTable*> DSBlock);
 
     /**
      * @brief Function that returns the residuals of the
@@ -111,7 +111,7 @@ namespace NangaParbat
      * parameterisation.
      * @param pars: the vector of parameters
      */
-    void SetParameters(std::vector<double> const& pars) { _NPFunc.SetParameters(pars); };
+    virtual void SetParameters(std::vector<double> const& pars) { _NPFunc->SetParameters(pars); };
 
     /**
      * @brief Function that returns the vector of ("DataHandler",
@@ -119,14 +119,14 @@ namespace NangaParbat
      * @return The vector of ("DataHandler", "ConvolutionTable")
      * object-pairs
      */
-    std::vector<std::pair<DataHandler, ConvolutionTable>> GetBlocks() const { return _DSVect; };
+    std::vector<std::pair<DataHandler*, ConvolutionTable*>> GetBlocks() const { return _DSVect; };
 
     /**
      * @brief Function that returns the "Parameterisation" object
      * associated to this chisquare object.
      * @return The "Parameterisation" object
      */
-    Parameterisation& GetNonPerturbativeFunction() const { return _NPFunc; };
+    Parameterisation* GetNonPerturbativeFunction() const { return _NPFunc; };
 
     /**
      * @brief Function that gets the number of data points that pass
@@ -139,11 +139,28 @@ namespace NangaParbat
 
     /**
      * @brief Function that gets the number of data points that pass
+     * all the cuts for each data set in the form of a vector of
+     * integers.
+     * @return The number of data points that pass the qT / Q cut for
+     * each data set
+     */
+    std::vector<int> GetDataPointNumbersAfterCuts() const { return _ndatac; };
+
+    /**
+     * @brief Function that gets the number of data points that pass
      * the qT / Q cut for the whole dataset.
      * @return The number of data points that pass the qT / Q cut for
      * the whole dataset
      */
     int GetDataPointNumber() const { return std::accumulate(_ndata.begin(), _ndata.end(), 0); };
+
+    /**
+     * @brief Function that gets the number of data points that pass
+     * all the cuts for the whole dataset.
+     * @return The number of data points that pass the qT / Q cut for
+     * the whole dataset
+     */
+    int GetDataPointNumberAfterCuts() const { return std::accumulate(_ndatac.begin(), _ndatac.end(), 0); };
 
     /**
      * @brief Function that returns the number of experiments.
@@ -156,29 +173,20 @@ namespace NangaParbat
      * parameterisation objects.
      * @return The number of parameters.
      */
-    int GetNumberOfParameters() const { return (int) _NPFunc.GetParameters().size(); };
+    int GetNumberOfParameters() const { return (int) _NPFunc->GetParameters().size(); };
 
     /**
      * @brief Function that returns the parameters of the
      * parameterisation objects.
      * @return The vector containing the parameters.
      */
-    std::vector<double> GetParameters() const { return _NPFunc.GetParameters(); };
-
-    /**
-     * @brief Function that produces data-theory comparison plots
-     * using ROOT.
-     * @param path: path to where the "plots" folder will be placed
-     * @note This function is parlticularly lengthy and relies on ROOT
-     * and is not particularly useful. It may be convenient to remove
-     * it.
-     */
-    void MakePlots(std::string const& path) const;
+    std::vector<double> GetParameters() const { return _NPFunc->GetParameters(); };
 
   protected:
-    std::vector<std::pair<DataHandler, ConvolutionTable>> _DSVect;  //!< Vector of "DataHandler-ConvolutionTable" pairs
-    Parameterisation&                                     _NPFunc;  //!< Parameterisation of the non-perturbative component
-    std::vector<int>                                      _ndata;   //!< Vector constaining the number of data points per dataset that pass the qT/Q cut
+    std::vector<std::pair<DataHandler*, ConvolutionTable*>> _DSVect;  //!< Vector of "DataHandler-ConvolutionTable" pairs
+    Parameterisation*                                       _NPFunc;  //!< Parameterisation of the non-perturbative component
+    std::vector<int>                                        _ndata;   //!< Vector constaining the number of data points per dataset that pass the qT/Q cut
+    std::vector<int>                                        _ndatac;  //!< Vector constaining the number of data points per dataset that pass all the cuts
 
     friend YAML::Emitter& operator << (YAML::Emitter& os, ChiSquare const& chi2);
   };

@@ -95,14 +95,27 @@ The reports above have been generated using the CLI ``cli/report.py``.
 
 ## TMD grids
 
-Below you can find a list of TMD and structure functions grids that are compatible with NangaParbat specifications and can be used with the Nanga Parbat interpolation routines. The grids will be made available also through the TMDlib library.
+Below you can find a list of TMD and structure functions grids that
+are compatible with NangaParbat specifications and can be used with
+the Nanga Parbat interpolation routines. The grids will be made
+available also through the TMDlib library.
 
 - PV17 fit [Reference: [arXiv:1703.10157](https://arxiv.org/pdf/1703.10157.pdf)]: here https://drive.google.com/drive/folders/1cXHZKS0OmY7woUBR2zw_Nf6RmAQYimjl?usp=sharing you can find the grids of the TMD PDFs and FFs, and the SIDIS F_UUT structure functions
 
 ## Use of TMD grids
-In ``tools/`` there are some test codes that can be run by the user in order to interpolate the TMD and structure function grids provided at the link above. This part of NangaParbat is compiled also in the lite version.
 
-The interpolation of the grids can be done with ``TMDGridInterpolation.cc`` for TMDs and with ``StructGridInterpolation.cc`` for structure functions, while ``GridsConvolution.cc`` does the convolution between a TMD PDF grid and a TMD FF grid. The input files, where the user can choose the kinematical points for the interpolation and the convolution, are in ``tools/inputs/``.
+In ``tools/`` there are some test codes that can be run by the user in
+order to interpolate the TMD and structure function grids provided at
+the link above. This part of NangaParbat is compiled also in the lite
+version.
+
+The interpolation of the grids can be done with
+``TMDGridInterpolation.cc`` for TMDs and with
+``StructGridInterpolation.cc`` for structure functions, while
+``GridsConvolution.cc`` does the convolution between a TMD PDF grid
+and a TMD FF grid. The input files, where the user can choose the
+kinematical points for the interpolation and the convolution, are in
+``tools/inputs/``.
 
 ## References
 

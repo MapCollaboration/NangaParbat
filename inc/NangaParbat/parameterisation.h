@@ -7,6 +7,8 @@
 #include <vector>
 #include <iostream>
 #include <functional>
+#include <map>
+#include <apfel/apfelxx.h>
 
 namespace NangaParbat
 {
@@ -19,12 +21,12 @@ namespace NangaParbat
   public:
     /**
      * @brief The "Parameterisation" constructor
-     * @param name: name of the parameterisation object
-     * @param nfuncs: number of parametric functions
+     * @param name: name of the parameterisation object (default: empty string)
+     * @param nfuncs: number of parametric functions (default: 0)
      * @param pars: vector of parameters (default: empty vector)
      * @param anders: whether analytic derivatives are provided
      */
-    Parameterisation(std::string const& name, int const& nfuncs = 0, std::vector<double> pars = {}, bool const& anders = false);
+    Parameterisation(std::string const& name = "", int const& nfuncs = 0, std::vector<double> pars = {}, bool const& anders = false);
 
     /**
      * @brief The "Parameterisation" destructor
@@ -36,7 +38,7 @@ namespace NangaParbat
      * parameterisation.
      * @param pars: the vector of parameters
      */
-    void SetParameters(std::vector<double> const& pars) { _pars = pars; };
+    virtual void SetParameters(std::vector<double> const& pars) { _pars = pars; };
 
     /**
      * @brief Virtual function that returns the value of one of the functions.
@@ -48,7 +50,7 @@ namespace NangaParbat
      * &zeta;)
      */
     virtual double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const { return 0; };
-
+    virtual void EvaluateOnGrid() {};
     /**
      * @brief Function that returns the parametrisation in the form of
      * a std::function.
@@ -64,9 +66,10 @@ namespace NangaParbat
      * @param ifunc: index of the function;
      * @param ipar: index of the parameter
      * @return it returns the value of the derivative w.r.t. the
-     * ipar-th parameter of the ifunc-th function at (x, b, &zeta;)
+     * ipar-th parameter of the ifunc-th function at (x, b, zeta;)
      */
     virtual double Derive(double const& x, double const& b, double const& zeta, int const& ifunc, int const& ipar) const { return 0; };
+    virtual void DeriveOnGrid() {};
 
     /**
      * @brief Function that returns the derivative of the
@@ -97,11 +100,18 @@ namespace NangaParbat
      * Functions to retrieve the feauture of the parameterisation
      */
     ///@{
-    std::string         GetName()              const { return _name; }
-    int                 GetNumberOfFunctions() const { return _nfuncs; }
-    std::vector<double> GetParameters()        const { return _pars; }
-    bool                HasGradient()          const { return _anders; }
+    std::string                 GetName()              const { return _name; }
+    int                         GetNumberOfFunctions() const { return _nfuncs; }
+    virtual std::vector<double> GetParameters()        const { return _pars; }
+    virtual int                 GetParameterNumber()   const { return _pars.size(); }
+    bool                        HasGradient()          const { return _anders; }
     ///@}
+
+    // FF_SIDIS
+    virtual std::function<std::map<int, double>(double const&, double const&)> LHAPDF_Function()           const { return nullptr; }
+    virtual std::function<std::map<int, double>(double const&, double const&)> LHAPDF_Derivative(int)      const { return nullptr; }
+    virtual std::function<apfel::Set<apfel::Distribution>(double const&)>      DistributionFunction()      const { return nullptr; }
+    virtual std::function<apfel::Set<apfel::Distribution>(double const&)>      DistributionDerivative(int) const { return nullptr; }
 
   protected:
     std::string         _name;   //!< Name of the parameterisation

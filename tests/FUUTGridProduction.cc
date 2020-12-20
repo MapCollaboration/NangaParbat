@@ -188,31 +188,31 @@ int main(int argc, char* argv[])
               apfel::OgataQuadrature DEObj{0, 1e-9, 0.00001};
 
               // Renormalisation and rapidity scales
-        		  const double mu   = Cf * Q;
-        		  const double zeta = Q * Q;
+              const double mu   = Cf * Q;
+              const double zeta = Q * Q;
 
               // EW charges
-        		  const std::vector<double> Bq = apfel::QCh2;
+              const std::vector<double> Bq = apfel::QCh2;
 
               // Number of active flavours at mu
               const int nf = apfel::NF(mu, ThresholdsPDF);
 
               // Define kT-distribution function for direct calculation
               const std::function<apfel::DoubleObject<apfel::Distribution>(double const&)> Lumib = [=] (double const& bs) -> apfel::DoubleObject<apfel::Distribution>
-                {
-                  // Get Evolved TMD PDFs and FFs and rotate them into the physical basis.
-                  const std::map<int, apfel::Distribution> xF = QCDEvToPhys(EvTMDPDFs(bs, mu, zeta).GetObjects());
-                  const std::map<int, apfel::Distribution> xD = QCDEvToPhys(EvTMDFFs(bs, mu, zeta).GetObjects());
+              {
+                // Get Evolved TMD PDFs and FFs and rotate them into the physical basis.
+                const std::map<int, apfel::Distribution> xF = QCDEvToPhys(EvTMDPDFs(bs, mu, zeta).GetObjects());
+                const std::map<int, apfel::Distribution> xD = QCDEvToPhys(EvTMDFFs(bs, mu, zeta).GetObjects());
 
-                  // Luminosity
-                  apfel::DoubleObject<apfel::Distribution> L{};
-                  for (int i = 1; i <= nf; i++)
-                    {
-                      L.AddTerm({Bq[i-1], xF.at(+i), xD.at(+i)});
-                      L.AddTerm({Bq[i-1], xF.at(-i), xD.at(-i)});
-                    }
-                  return L;
-                };
+                // Luminosity
+                apfel::DoubleObject<apfel::Distribution> L{};
+                for (int i = 1; i <= nf; i++)
+                  {
+                    L.AddTerm({Bq[i-1], xF.at(+i), xD.at(+i)});
+                    L.AddTerm({Bq[i-1], xF.at(-i), xD.at(-i)});
+                  }
+                return L;
+              };
 
               // Perturbative contribution in b-space. We know a priori that
               // this is enclosed bewteen bmin and bmax. Include an overflow
@@ -225,11 +225,11 @@ int main(int argc, char* argv[])
 
               // Function in bT space
               const std::function<double(double const&)> bInt = [=] (double const& b) -> double
-                {
-                  double bTintegrand = b * fNP->Evaluate(x, b, zeta, 0) * fNP->Evaluate(z, b, zeta, 1) / z / z * tLumib.EvaluatexzQ(x, z, NangaParbat::bstarmin(b, Q));
+              {
+                double bTintegrand = b * fNP->Evaluate(x, b, zeta, 0) * fNP->Evaluate(z, b, zeta, 1) / z / z * tLumib.EvaluatexzQ(x, z, NangaParbat::bstarmin(b, Q));
 
-                  return bTintegrand;
-                };
+                return bTintegrand;
+              };
 
               // Initialize vectors
               std::vector<double> gridinterp;
@@ -237,13 +237,13 @@ int main(int argc, char* argv[])
 
               // Fill vectors with grid interpolation and direct computation
               for (double qT = qTmin; qT <= qTmax * ( 1 + 1e-5 ); qT += qTstp)
-              {
-                // Grid interpolation
-                gridinterp.push_back(SFs->Evaluate(x ,z, qT, Q));
+                {
+                  // Grid interpolation
+                  gridinterp.push_back(SFs->Evaluate(x,z, qT, Q));
 
-                // Direct calculation
-                direct.push_back(DEObj.transform(bInt, qT)/ z / (2 * M_PI));
-              }
+                  // Direct calculation
+                  direct.push_back(DEObj.transform(bInt, qT)/ z / (2 * M_PI));
+                }
 
               // **************
               // YAML Emitter
