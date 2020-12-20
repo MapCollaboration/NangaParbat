@@ -21,10 +21,16 @@ double fNP(double const&, double const& b, double const& zetaf)
 }
 
 // Main program
-int main()
+int main(int argc, char *argv[])
 {
+  if (argc != 2)
+    {
+      std::cerr << "Usage: " << argv[0] << " <configuration card>" << std::endl;
+      exit(-1);
+    }
+
   // Read configuration file
-  const YAML::Node config = YAML::LoadFile("configDrellYan.yaml");
+  const YAML::Node config = YAML::LoadFile(argv[1]);
 
   // Open LHAPDF set
   LHAPDF::PDF* distpdf = LHAPDF::mkPDF(config["pdfset"]["name"].as<std::string>(), config["pdfset"]["member"].as<int>());

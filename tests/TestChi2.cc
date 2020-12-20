@@ -11,16 +11,22 @@
 
 //_________________________________________________________________________________
 // Main program
-int main()
+int main(int argc, char *argv[])
 {
+  if (argc != 3)
+    {
+      std::cerr << "Usage: " << argv[0] << " <data file> <table>" << std::endl;
+      exit(-1);
+    }
+
   // Allocate "Parameterisation" derived object
   NangaParbat::DWS NPFunc{};
 
   // Datafile
-  NangaParbat::DataHandler DHand{"CDF_Run_I", YAML::LoadFile("../data/TestData/Table1.yaml")};
+  NangaParbat::DataHandler DHand{"TestData", YAML::LoadFile(argv[1])};
 
   // Convolution table
-  NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/Test_data.yaml"), 0.1};
+  NangaParbat::ConvolutionTable CTable{YAML::LoadFile(argv[2]), 0.1};
 
   // Define "ChiSquare" object
   NangaParbat::ChiSquare chi2{&NPFunc};
@@ -30,14 +36,6 @@ int main()
 
   // Compute chi2
   std::cout << "chi2 = " << chi2() << std::endl;
-  /*
-    // Performance test
-    apfel::Timer t;
-    const int n = 1000;
-    for (int i = 0; i < n; i++)
-        chi2();
-    std::cout << "Evaluating chi2 " << n << " times... ";
-    t.stop(true);
-  */
+
   return 0;
 }

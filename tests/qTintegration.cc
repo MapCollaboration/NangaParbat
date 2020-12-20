@@ -21,13 +21,19 @@ double fNP(double const&, double const& b, double const& zetaf)
 }
 
 // Main program
-int main()
+int main(int argc, char *argv[])
 {
+  if (argc != 4)
+    {
+      std::cerr << "Usage: " << argv[0] << " <configuration card> <data file> <table to be tested>" << std::endl;
+      exit(-1);
+    }
+
   // Allocate "FastInterface" object
-  const YAML::Node config = YAML::LoadFile("../tables/N3LL/config.yaml");
+  const YAML::Node config = YAML::LoadFile(argv[1]);
 
   // Datafiles
-  const NangaParbat::DataHandler DHObj{"qTintegration_test", YAML::LoadFile("../data/CDF/CDF_RunII.yaml")};
+  const NangaParbat::DataHandler DHObj{"qTintegration_test", YAML::LoadFile(argv[2])};
 
   // Now start direct computation
   // Open LHAPDF set
@@ -206,7 +212,7 @@ int main()
   fout.close();
   const NangaParbat::ConvolutionTable CTable{YAML::Load(tab[0].c_str())};
   */
-  const NangaParbat::ConvolutionTable CTable{YAML::LoadFile("../tables/N3LL/CDF_RunII.yaml")};
+  const NangaParbat::ConvolutionTable CTable{YAML::LoadFile(argv[3])};
   const std::vector<double> Conv = CTable.GetPredictions(fNP);
   t.start();
   std::cout << "\nGrid computation of the integral in qT" << std::endl;
