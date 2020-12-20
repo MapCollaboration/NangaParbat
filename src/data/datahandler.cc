@@ -71,7 +71,6 @@ namespace NangaParbat
   {
     _name         = DH._name;
     _proc         = DH._proc;
-    _obs          = DH._obs;
     _targetiso    = DH._targetiso;
     _hadron       = DH._hadron;
     _charge       = DH._charge;
@@ -95,7 +94,6 @@ namespace NangaParbat
   DataHandler::DataHandler(std::string const& name, YAML::Node const& datafile, gsl_rng* rng, int const& fluctuation, std::vector<double> const& t0):
     _name(name),
     _proc(UnknownProcess),
-    _obs(UnknownObservable),
     _targetiso(1),
     _prefact(1),
     _kin(DataHandler::Kinematics{}),
@@ -121,17 +119,6 @@ namespace NangaParbat
                   _proc = SIDIS;
                 else if (ql["value"].as<std::string>() == "SIA")
                   _proc = SIA;
-                else
-                  throw std::runtime_error("[DataHandler::DataHandler]: Unknown process.");
-              }
-
-            // Observable
-            if (ql["name"].as<std::string>() == "observable")
-              {
-                if (ql["value"].as<std::string>() == "dsigma/dxdydz")
-                  _obs = dsigma_dxdydz;
-                else if (ql["value"].as<std::string>() == "dsigma/dxdQdz")
-                  _obs = dsigma_dxdQdz;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown process.");
               }
