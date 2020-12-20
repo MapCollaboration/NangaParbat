@@ -100,7 +100,7 @@ namespace NangaParbat
     _prefact(1),
     _kin(DataHandler::Kinematics{}),
     _labels({}),
-  _t0(t0)
+    _t0(t0)
   {
     // Retrieve kinematics
     for (auto const& dv : datafile["dependent_variables"])
@@ -529,7 +529,7 @@ namespace NangaParbat
             for (int i = 0; i < (int) _means.size(); i++)
               z[i] = gsl_ran_gaussian(rng, 1);
 
-                // Mulplicative correlated uncertainty fluctuation
+                // Multiplicative correlated uncertainty fluctuation
                 double Fmult = 1;
                 for (int j = 0; j < (int) _corrm[i].size(); j++)
                   Fmult *= 1 + _corrm[i][j] * rmult[j];
