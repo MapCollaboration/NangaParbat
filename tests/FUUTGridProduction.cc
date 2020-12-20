@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
 
   // Collect parameters in vector
   std::vector<double> vpars;
-  for (auto const p : fNP->GetParameterNames())
+  for (auto const& p : fNP->GetParameterNames())
     vpars.push_back(pars.at(p));
 
   // Set vector of parameters

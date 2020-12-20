@@ -43,7 +43,7 @@ namespace NangaParbat
     // for every TMD PDF grid present in the TMDPDF folder. TMD PDF and TMD FF are matched by replica ID.
     if (repID == "none")
       {
-        for (auto const f : list_dir(GridsDirectory + "/" + GridTMDPDFfolder))
+        for (auto const& f : list_dir(GridsDirectory + "/" + GridTMDPDFfolder))
           {
             // TMDPDF grid file
             const std::string gridfile = GridsDirectory + "/" + GridTMDPDFfolder + "/" + f;
