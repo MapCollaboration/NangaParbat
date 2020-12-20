@@ -30,6 +30,3 @@ endif()
 
 add_executable(CreateGrids CreateGrids.cc)
 target_link_libraries(CreateGrids NangaParbat)
-
-add_executable(CreateStructGrids CreateStructGrids.cc)
-target_link_libraries(CreateStructGrids NangaParbat)

@@ -1,4 +1,4 @@
-
+//
 // Author: Valerio Bertone: valerio.bertone@cern.ch
 //
 
@@ -24,11 +24,8 @@ namespace NangaParbat
     // Read configuration file
     const YAML::Node config = YAML::LoadFile(ReportFolder + "/tables/config.yaml");
 
-    // Read fit configuration file
+    // Read fir configuration file
     const YAML::Node fitconfig = YAML::LoadFile(ReportFolder + "/fitconfig.yaml");
-
-    // Define vector for grid names
-    std::vector<std::string> fnames;
 
     // Collect reports of valid replicas
     std::vector<std::unique_ptr<YAML::Emitter>> grids;
@@ -68,15 +65,9 @@ namespace NangaParbat
                 // replica_0 push it in the front to make sure it's
                 // the first replica.
                 if (f == "replica_0")
-                  {
-                    grids.insert(grids.begin(), EmitTMDGrid(config, pms, vpars, pf, Inter3DGrid(pf)));
-                    fnames.insert(fnames.begin(), f);
-                  }
+                  grids.insert(grids.begin(), EmitTMDGrid(config, pms, vpars, pf, InterGrid(pf)));
                 else
-                  {
-                    grids.push_back(EmitTMDGrid(config, pms, vpars, pf, Inter3DGrid(pf)));
-                    fnames.push_back(f);
-                  }
+                  grids.push_back(EmitTMDGrid(config, pms, vpars, pf, InterGrid(pf)));
 
                 // Delete Parameterisation object
                 //delete NPFunc;
@@ -93,17 +84,13 @@ namespace NangaParbat
 
     // Write info file
     std::ofstream iout(outdir + "/" + Output + ".info");
-    iout << NangaParbat::EmitTMDInfo(config, grids.size(), pf, Inter3DGrid(pf))->c_str() << std::endl;
+    iout << NangaParbat::EmitTMDInfo(config, grids.size(), pf)->c_str() << std::endl;
     iout.close();
 
     // Dump grids to file
     for (int i = 0; i < (int) grids.size(); i++)
       {
-        // Grids numbered sequentially
-        // std::ofstream fpout(outdir + "/" + Output + "_" + num_to_string(i) + ".yaml");
-
-        // Grid number = replica number
-        std::ofstream fpout(outdir + "/" + Output + "_" + num_to_string(std::stoi(fnames[i].erase(0,8))) + ".yaml");
+        std::ofstream fpout(outdir + "/" + Output + "_" + num_to_string(i) + ".yaml");
         fpout << grids[i]->c_str() << std::endl;
         fpout.close();
       }
@@ -240,20 +227,16 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  std::unique_ptr<YAML::Emitter> EmitTMDInfo(YAML::Node       const& config,
-                                             int              const& NumMembers,
-                                             std::string      const& pf,
-                                             ThreeDGrid       const& tdg,
-                                             std::vector<int> const& Flavors,
-                                             std::string      const& SetDesc,
-                                             std::string      const& Authors,
-                                             std::string      const& Reference,
-                                             std::string      const& SetIndex,
-                                             std::string      const& SetName,
-                                             std::string      const& Format,
-                                             std::string      const& DataVersion,
-                                             std::string      const& ErrorType,
-                                             std::string      const& FlavorScheme)
+  std::unique_ptr<YAML::Emitter> EmitTMDInfo(YAML::Node  const& config,
+                                             int         const& NumMembers,
+                                             std::string const& pf,
+                                             std::string const& SetDesc,
+                                             std::string const& Authors,
+                                             std::string const& Reference,
+                                             std::string const& SetIndex,
+                                             std::string const& Format,
+                                             std::string const& DataVersion,
+                                             std::string const& ErrorType)
   {
     // Allocate YAML emitter
     std::unique_ptr<YAML::Emitter> out = std::unique_ptr<YAML::Emitter>(new YAML::Emitter);
@@ -262,31 +245,19 @@ namespace NangaParbat
     out->SetFloatPrecision(8);
     out->SetDoublePrecision(8);
     *out << YAML::BeginMap;
-    *out << YAML::Key << "SetDesc"          << YAML::Value << SetDesc;
-    *out << YAML::Key << "Authors"          << YAML::Value << Authors;
-    *out << YAML::Key << "Reference"        << YAML::Value << Reference;
-    *out << YAML::Key << "SetIndex"         << YAML::Value << SetIndex;
-    *out << YAML::Key << "SetName"          << YAML::Value << SetName;
-    *out << YAML::Key << "TMDScheme"        << YAML::Value << "Pavia TMDs";
-    *out << YAML::Key << "TMDType"          << YAML::Value << pf;
-    *out << YAML::Key << "CollDist"         << YAML::Value << config[pf + "set"]["name"].as<std::string>();
-    *out << YAML::Key << "CollDistMember"   << YAML::Value << config[pf + "set"]["member"].as<std::string>();
-    *out << YAML::Key << "Format"           << YAML::Value << Format;
-    *out << YAML::Key << "DataVersion"      << YAML::Value << DataVersion;
-    *out << YAML::Key << "OrderQCD"         << YAML::Value << PtOrderMap.at(config["PerturbativeOrder"].as<int>());
-    *out << YAML::Key << "AlphaS_OrderQCD"  << YAML::Value << (config["PerturbativeOrder"].as<int>() > 0 ? config["PerturbativeOrder"].as<int>() - 1 : abs(config["PerturbativeOrder"].as<int>()));
-    *out << YAML::Key << "Regularisation"   << YAML::Value << config["bstar"].as<std::string>();
-    *out << YAML::Key << "NumMembers"       << YAML::Value << NumMembers;
-    *out << YAML::Key << "ErrorType"        << YAML::Value << ErrorType;
-    *out << YAML::Key << "FlavorScheme"     << YAML::Value << FlavorScheme;
-    *out << YAML::Key << "Flavors"          << YAML::Value << YAML::Flow << Flavors;
-    *out << YAML::Key << "NumFlavors"       << YAML::Value << std::round(Flavors.size() / 2);
-    *out << YAML::Key << "XMin"             << YAML::Value << tdg.xg[0];
-    *out << YAML::Key << "XMax"             << YAML::Value << tdg.xg.back();
-    *out << YAML::Key << "QMin"             << YAML::Value << tdg.Qg[0];
-    *out << YAML::Key << "QMax"             << YAML::Value << tdg.Qg.back();
-    *out << YAML::Key << "KtoQMin"          << YAML::Value << tdg.qToQg[0];
-    *out << YAML::Key << "KtoQMax"          << YAML::Value << tdg.qToQg.back();
+    *out << YAML::Key << "SetDesc"        << YAML::Value << SetDesc;
+    *out << YAML::Key << "Authors"        << YAML::Value << Authors;
+    *out << YAML::Key << "Reference"      << YAML::Value << Reference;
+    *out << YAML::Key << "SetIndex"       << YAML::Value << SetIndex;
+    *out << YAML::Key << "TMDType"        << YAML::Value << pf;
+    *out << YAML::Key << "CollDist"       << YAML::Value << config[pf + "set"]["name"].as<std::string>();
+    *out << YAML::Key << "CollDistMember" << YAML::Value << config[pf + "set"]["member"].as<std::string>();
+    *out << YAML::Key << "Format"         << YAML::Value << Format;
+    *out << YAML::Key << "DataVersion"    << YAML::Value << DataVersion;
+    *out << YAML::Key << "OrderQCD"       << YAML::Value << PtOrderMap.at(config["PerturbativeOrder"].as<int>());
+    *out << YAML::Key << "Regularisation" << YAML::Value << config["bstar"].as<std::string>();
+    *out << YAML::Key << "NumMembers"     << YAML::Value << NumMembers;
+    *out << YAML::Key << "ErrorType"      << YAML::Value << ErrorType;
     *out << YAML::EndMap;
 
     // Return the emitter

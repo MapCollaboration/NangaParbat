@@ -20,7 +20,7 @@ namespace NangaParbat
     // The default parameters correspond to those of replica 105 of
     // the PV17 fit. See Tabs. X and XI of
     // https://arxiv.org/pdf/1703.10157.pdf.
-    PV17(): Parameterisation{"PV17", 2, std::vector<double>{0.12840E+00, 0.28516E+00, 0.29755E+01, 0.17293E+00, 0.39432E+00, 2.12062E-01, 0.21012E+01, 0.93554E-01, 0.25246E+01, 0.52915E+01, 3.37975E-02}} { };
+    PV17(): Parameterisation{"PV17", 2, std::vector<double>{0.128, 0.285, 2.98, 0.173, 0.39, 0.212, 2.10, 0.094, 2.52, 5.29, 0.033}} { };
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {

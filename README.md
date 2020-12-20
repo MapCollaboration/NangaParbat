@@ -37,11 +37,6 @@ In order to install the code a number of external but relatively standard librar
 
 Most of these libraries can be installed through standard package managers such as [``Homebrew``](https://brew.sh) on MacOS and ``apt-get`` on Linux.
 
-NangaParbat also has a __lite version__, that does not require all the dependencies listed above. The mandatory dependencies are ``yaml-cpp``, ``eigen3``, ``LHAPDF6``, ``APFEL++``. 
-
-During the installation, NangaParbat detects if one or more libraries among ``GSL``, ``ROOT`` or ``ceres-solver`` are missing and installs and compiles only the part of the code that is possible to run.
-
-
 ## Installation 
 
 The code can be compiled using the following procedure:
@@ -93,17 +88,6 @@ The results obtained with NangaParbat for the fit of TMD PDFs to Drell-Yan data 
 
 The reports above have been generated using the CLI ``cli/report.py``.
 
-## TMD grids
-
-Below you can find a list of TMD and structure functions grids that are compatible with NangaParbat specifications and can be used with the Nanga Parbat interpolation routines. The grids will be made available also through the TMDlib library.
-
-- PV17 fit [Reference: [arXiv:1703.10157](https://arxiv.org/pdf/1703.10157.pdf)]: here https://drive.google.com/drive/folders/1cXHZKS0OmY7woUBR2zw_Nf6RmAQYimjl?usp=sharing you can find the grids of the TMD PDFs and FFs, and the SIDIS F_UUT structure functions
-
-## Use of TMD grids
-In ``tools/`` there are some test codes that can be run by the user in order to interpolate the TMD and structure function grids provided at the link above. This part of NangaParbat is compiled also in the lite version.
-
-The interpolation of the grids can be done with ``TMDGridInterpolation.cc`` for TMDs and with ``StructGridInterpolation.cc`` for structure functions, while ``GridsConvolution.cc`` does the convolution between a TMD PDF grid and a TMD FF grid. The input files, where the user can choose the kinematical points for the interpolation and the convolution, are in ``tools/inputs/``.
-
 ## References
 
 - *Transverse-momentum-dependent parton distributions up to N3LL from Drell-Yan data*; Alessandro Bacchetta, Valerio Bertone, Chiara Bissolotti, Giuseppe Bozzi, Filippo Delcarro, Fulvio Piacenza, Marco Radici [[arXiv:1912.07550](https://arxiv.org/pdf/1912.07550.pdf)]
@@ -111,7 +95,6 @@ The interpolation of the grids can be done with ``TMDGridInterpolation.cc`` for 
 ## Contacts
 
 - Valerio Bertone: valerio.bertone@cern.ch
-- Alessandro Bacchetta: alessandro.bacchetta@unipv.it
 - Chiara Bissolotti: chiara.bissolotti01@universitadipavia.it
 
 ## Credits
@@ -120,4 +103,4 @@ NangaParbat has been developed with the support of the European
 Research Council (ERC) under the European Union's Horizon 2020
 research and innovation program (grant agreement No. 647981, 3DSPIN).
 
-<img src="resources/3DSPIN_ERC_logo.png" alt="3DSPIN log" height="200"/>
+<img src="resources/3DSPIN-col.png" alt="3DSPIN log" width="200"/> <img src="resources/ERC.jpg" alt="ERC logo" width="200"/>

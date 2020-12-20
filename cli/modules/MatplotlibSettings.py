@@ -8,7 +8,7 @@ mpl.style.use("seaborn-talk")
 # Text and font
 mpl.rc("font", **{"family": "serif", "serif": ["Computer Modern"], "size": 20})
 mpl.rc("text", usetex = True)
-mpl.rcParams["text.latex.preamble"] = r"\boldmath"
+mpl.rcParams["text.latex.preamble"] = [r"\boldmath"]
 mpl.rcParams["font.weight"] = "bold"
 
 # Axes
