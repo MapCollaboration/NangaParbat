@@ -132,7 +132,8 @@ option(BUILD_TESTS "Build tests code" ON)
 if(BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)
-endif(BUILD_TESTS)
+  add_subdirectory(tools)
+endif ()
 
 install(FILES ${PROJECT_SOURCE_DIR}/bin/NangaParbat-config
 	   DESTINATION bin

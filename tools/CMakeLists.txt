@@ -1,0 +1,13 @@
+# build tools
+
+add_executable(GridsConvolution GridsConvolution.cc)
+target_link_libraries(GridsConvolution NangaParbat)
+add_test(GridsConvolution GridsConvolution)
+
+add_executable(TMDGridInterpolation TMDGridInterpolation.cc)
+target_link_libraries(TMDGridInterpolation NangaParbat)
+add_test(TMDGridInterpolation TMDGridInterpolation)
+
+add_executable(StructGridInterpolation StructGridInterpolation.cc)
+target_link_libraries(StructGridInterpolation NangaParbat)
+add_test(StructGridInterpolation StructGridInterpolation)

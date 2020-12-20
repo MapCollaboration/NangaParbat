@@ -97,13 +97,10 @@ namespace NangaParbat
     _proc(UnknownProcess),
     _obs(UnknownObservable),
     _targetiso(1),
-    _hadron("NONE"),
-    _charge(0),
-    _tagging({apfel::QuarkFlavour::TOTAL}),
-  _prefact(1),
-  _kin(DataHandler::Kinematics{}),
-  _labels({}),
-  _t0(t0)
+    _prefact(1),
+    _kin(DataHandler::Kinematics{}),
+    _labels({}),
+    _t0(t0)
   {
     // Retrieve kinematics
     for (auto const& dv : datafile["dependent_variables"])
@@ -532,11 +529,14 @@ namespace NangaParbat
             for (int i = 0; i < (int) _means.size(); i++)
               z[i] = gsl_ran_gaussian(rng, 1);
 
-            // Include fluctuations on top of the mean values
-            _fluctuations = _means;
-            for (int i = 0; i < (int) _means.size(); i++)
-              for (int j = 0; j < (int) _means.size(); j++)
-                _fluctuations[i] -= _CholL(i, j) * z[j];
+                // Multiplicative correlated uncertainty fluctuation
+                double Fmult = 1;
+                for (int j = 0; j < (int) _corrm[i].size(); j++)
+                  Fmult *= 1 + _corrm[i][j] * rmult[j];
+
+                // Generate fluctuation
+                _fluctuations[i] = _means[i] * Fmult * ( 1 + Func + Fadd );
+              }
           }
       }
   }
