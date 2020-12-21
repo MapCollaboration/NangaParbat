@@ -63,17 +63,18 @@ int main(int argc, char* argv[])
         std::cout << "Reading table for " << ds["name"].as<std::string>() << "..." << std::endl;
 
         // Convolution table
-        const std::string table = std::string(argv[4]) + "/" + ds["name"].as<std::string>() + ".yaml";
-        NangaParbat::ConvolutionTable ct{YAML::LoadFile(table), fitconfig["qToQmax"].as<double>()};
+        NangaParbat::ConvolutionTable* ct = new NangaParbat::ConvolutionTable{YAML::LoadFile(std::string(argv[4]) + "/" + ds["name"].as<std::string>() + ".yaml"),
+									      fitconfig["qToQmax"].as<double>()};
         //ct.NumericalAccuracy(NPFunc->Function());
 
         // Datafile
-        const std::string datafile = std::string(argv[3]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
-        NangaParbat::DataHandler dh{ds["name"].as<std::string>(), YAML::LoadFile(datafile), rng, ReplicaID,
-                                    (fitconfig["t0prescription"].as<bool>() ? ct.GetPredictions(NPFunc->Function()) : std::vector<double>{})};
+        NangaParbat::DataHandler* dh = new NangaParbat::DataHandler{ds["name"].as<std::string>(),
+								    YAML::LoadFile(std::string(argv[3]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>()),
+								    rng, ReplicaID,
+								    (fitconfig["t0prescription"].as<bool>() ? ct->GetPredictions(NPFunc->Function()) : std::vector<double>{})};
 
         // Add chi2 block
-        chi2.AddBlock(std::make_pair(&dh, &ct));
+        chi2.AddBlock(std::make_pair(dh, ct));
       }
   // Report time elapsed
   t.stop();

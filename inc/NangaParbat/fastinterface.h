@@ -15,8 +15,7 @@ namespace NangaParbat
 {
   /**
    * @brief Class that implements the methods of the computation of
-   * the interpolation tables. This also provides method for the
-   * direct calculation of the observables.
+   * the interpolation tables.
    */
   class FastInterface
   {
@@ -53,25 +52,6 @@ namespace NangaParbat
      * tables as elements of "DHVect".
      */
     std::vector<YAML::Emitter> ComputeTables(std::vector<DataHandler> const& DHVect) const;
-
-    /**
-     * @brief Function that computes the predictions corresponding to
-     * a set of "DataHandler" objects as direct integration.
-     * @param DHVect: vector of "DataHandler" objects.
-     * @param fNP1: the first non-perturbative input function
-     * @param fNP2: the second non-perturbative input function
-     * @param epsQ: the integration accuracy in Q
-     * @param epsxi: the integration accuracy in xi
-     * @param sameOgata: whether to use the same number of Ogata points or reach the required accuracy
-     * @return a vector of vectors, each containing the predictions
-     * associated to the corresponding "DataHandler" object
-     */
-    std::vector<std::vector<double>> DirectComputation(std::vector<DataHandler>                                           const& DHVect,
-                                                       std::function<double(double const&, double const&, double const&)> const& fNP1,
-                                                       std::function<double(double const&, double const&, double const&)> const& fNP2,
-                                                       double                                                             const& epsQ = 1e-7,
-                                                       double                                                             const& epsxi = 1e-7,
-                                                       bool                                                               const& sameOgata = true) const;
 
   private:
     YAML::Node                                                                                  _config;          //!< Configuration YAML::Node

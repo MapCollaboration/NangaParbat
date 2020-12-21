@@ -23,15 +23,9 @@ and displays the available b* presciptions available that can be used for the pr
 
 - **CreateTables**: this code produces interpolation tables and is run as follows:
 ```Shell
-./CreateTables <configuration file> <path to data folder> <output folder> <test tables? [y/n]> [optional selected datasets]
+./CreateTables <configuration file> <path to data folder> <output folder> [optional selected datasets]
 ```
-where ```<configuration file>``` has to point a file that contains the necessary information to do the calculation (*e.g.* see [config.yaml](../cards/config.yaml)), ```<path to data folder>``` is the path to the processed data files, ```<output folder>``` points to the forlder where the interpolation tables will be placed, and ```<test tables? [y/n]>``` tells the code whether, at the end of the compuation, the interpolation tables have to be tested against the direct computation. Finally, it is possibile to select one or more data sets through ```[optional selected datasets]``` for which interpolation tables will be produced. If left empty, interpolation tables for all the data files in the target data folder will be produced.
-
-- **DirectPredictions**: this code computes direct prediction (without using interpolation tables) and is run as follows:
-```Shell
-./DirectPredictions <configuration file> <path to data folder> <parametrisation [DWS, PV17, PV19x, ...]>
-```
-where ```<configuration file>``` has to point a file that contains the necessary information to do the calculation (*e.g.* see [config.yaml](../cards/config.yaml)), ```<path to data folder>``` is the path to the processed data files, and ```<parametrisation [DWS, PV17, PV19]>``` is the particular parameterisation to be used for the computation.
+where ```<configuration file>``` has to point a file that contains the necessary information to do the calculation (*e.g.* see [config.yaml](../cards/config.yaml)), ```<path to data folder>``` is the path to the processed data files, and ```<output folder>``` points to the forlder where the interpolation tables will be placed. Finally, it is possibile to select one or more data sets through ```[optional selected datasets]``` for which interpolation tables will be produced. If left empty, interpolation tables for all the data files in the target data folder will be produced.
 
 - **Filter**: this codes formats the raw data files in a way suitable for the code and is run as follows:
 ```Shell
