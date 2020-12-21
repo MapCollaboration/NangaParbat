@@ -7,6 +7,8 @@ if (GSL_CONFIG)
   set(TOBJ ${TOBJ} $<TARGET_OBJECTS:preprocessing>)
   add_subdirectory(chi2)
   set(TOBJ ${TOBJ} $<TARGET_OBJECTS:chi2>)
+  add_subdirectory(cuts)
+  set(TOBJ ${TOBJ} $<TARGET_OBJECTS:cuts>)
 endif ()
 
 if (GSL_CONFIG AND ROOT_CONFIG AND Ceres_FOUND)

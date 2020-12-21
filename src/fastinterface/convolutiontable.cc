@@ -193,7 +193,6 @@ namespace NangaParbat
   std::vector<double> ConvolutionTable::GetPredictions(std::function<double(double const&, double const&, double const&, int const&)> const& fNP,
                                                        std::function<double(double const&, double const&, double const&, int const&)> const& dNP) const
   {
-
     // Drell-Yan (two PDFs)
     if (_proc == 0)
       {

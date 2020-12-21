@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
   if (argc < 5 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./ComputeMeanReplica <output dir> <fit configuration file> <path to data folder> <path to tables folder> [replicas to be discarded]\n" << std::endl;
+      std::cout << "Syntax: ./ComputeMeanReplica <fit dir> <fit configuration file> <path to data folder> <path to tables folder> [replicas to be discarded]\n" << std::endl;
       exit(-10);
     }
 
@@ -37,6 +37,7 @@ int main(int argc, char* argv[])
 
   // Allocate "Parameterisation" derived object
   NangaParbat::Parameterisation *NPFunc = new NangaParbat::MeanReplica{std::string(argv[1]), std::string(argv[2]), discard};
+  //NangaParbat::Parameterisation *NPFunc = new NangaParbat::DWS{};
 
   // Create replica folder
   const std::string OutputFolder = std::string(argv[1]) + "/mean_replica";
@@ -55,15 +56,13 @@ int main(int argc, char* argv[])
         std::cout << "Reading table for " << ds["name"].as<std::string>() << "..." << std::endl;
 
         // Convolution table
-        const std::string table = std::string(argv[4]) + "/" + ds["name"].as<std::string>() + ".yaml";
-        NangaParbat::ConvolutionTable ct{YAML::LoadFile(table), fitconfig["qToQmax"].as<double>()};
+        NangaParbat::ConvolutionTable* ct =  new NangaParbat::ConvolutionTable{YAML::LoadFile(std::string(argv[4]) + "/" + ds["name"].as<std::string>() + ".yaml"), fitconfig["qToQmax"].as<double>()};
 
         // Datafile
-        const std::string datafile = std::string(argv[3]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>();
-        NangaParbat::DataHandler dh{ds["name"].as<std::string>(), YAML::LoadFile(datafile)};
+        NangaParbat::DataHandler* dh = new NangaParbat::DataHandler{ds["name"].as<std::string>(), YAML::LoadFile(std::string(argv[3]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>())};
 
         // Add chi2 block
-        chi2.AddBlock(std::make_pair(&dh, &ct));
+        chi2.AddBlock(std::make_pair(dh, ct));
       }
   // Report time elapsed
   t.stop();
@@ -89,5 +88,5 @@ int main(int argc, char* argv[])
   // Report time elapsed
   t.stop();
 
-  return status;
+  return 0;
 }

@@ -78,8 +78,7 @@ namespace NangaParbat
       mean = dh->GetFluctutatedData();
 
     // Get predictions
-    //const std::vector<double> pred = ct->GetPredictions(_NPFunc->Function());
-    const std::vector<double> pred = ct->GetPredictions([](double const &, double const &, double const &) -> double { return 0; });
+    const std::vector<double> pred = ct->GetPredictions(_NPFunc->Function());
 
     // Check that the number of points in the DataHandler and
     // Convolution table objects is the same.
