@@ -64,14 +64,14 @@ int main(int argc, char* argv[])
 
         // Convolution table
         NangaParbat::ConvolutionTable* ct = new NangaParbat::ConvolutionTable{YAML::LoadFile(std::string(argv[4]) + "/" + ds["name"].as<std::string>() + ".yaml"),
-									      fitconfig["qToQmax"].as<double>()};
+                                                                              fitconfig["qToQmax"].as<double>()};
         //ct.NumericalAccuracy(NPFunc->Function());
 
         // Datafile
         NangaParbat::DataHandler* dh = new NangaParbat::DataHandler{ds["name"].as<std::string>(),
-								    YAML::LoadFile(std::string(argv[3]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>()),
-								    rng, ReplicaID,
-								    (fitconfig["t0prescription"].as<bool>() ? ct->GetPredictions(NPFunc->Function()) : std::vector<double>{})};
+                                                                    YAML::LoadFile(std::string(argv[3]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>()),
+                                                                    rng, ReplicaID,
+                                                                    (fitconfig["t0prescription"].as<bool>() ? ct->GetPredictions(NPFunc->Function()) : std::vector<double>{})};
 
         // Add chi2 block
         chi2.AddBlock(std::make_pair(dh, ct));

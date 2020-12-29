@@ -117,9 +117,7 @@ namespace NangaParbat
     const double zetaf = Q * Q;
 
     // Whether the target is a particle or an antiparticle
-    int sign = 1;
-    if (targetiso < 0)
-      sign = -1;
+    int sign = (targetiso >= 0 ? 1 : -1);
 
     // Fractions of protons and neutrons in the target
     const double frp = std::abs(targetiso);
@@ -134,17 +132,13 @@ namespace NangaParbat
     // Electromagnetic coupling squared
     const double aem2 = pow((arun ? _TabAlphaem->Evaluate(Q) : aref), 2);
 
-    // Compute the hard factor
-    const double hcs = _HardFactorDY(muf);
-
     // Global factor
-    const double factor = apfel::ConvFact * 8 * M_PI * aem2 * hcs / 9 / pow(Q, 3);
-
+    const double factor = apfel::ConvFact * 8 * M_PI * aem2 * _HardFactorDY(muf) / 9 / pow(Q, 3);
     const std::map<int,apfel::Distribution> xF = QCDEvToPhys(_EvTMDPDFs(bT, muf, zetaf).GetObjects());
     apfel::DoubleObject<apfel::Distribution> Lumi;
 
     // Treat down and up separately to take isoscalarity of the target
-    // into account
+    // into account.
     Lumi.AddTerm({factor * Bq[0], frp * xF.at(sign)    + frn * xF.at(sign*2),  xF.at(-1)});
     Lumi.AddTerm({factor * Bq[0], frp * xF.at(-sign)   + frn * xF.at(-sign*2), xF.at(1)});
     Lumi.AddTerm({factor * Bq[1], frp * xF.at(sign*2)  + frn * xF.at(sign),    xF.at(-2)});
@@ -171,7 +165,7 @@ namespace NangaParbat
     const double zetaf = Q * Q;
 
     // Whether the target is a particle or an antiparticle
-    const int sign = (targetiso < 0 ? -1 : 1);
+    const int sign = (targetiso >= 0 ? 1 : -1);
 
     // Fractions of protons and neutrons in the target
     const double frp = std::abs(targetiso);
@@ -186,19 +180,15 @@ namespace NangaParbat
     // Electromagnetic coupling squared
     const double aem2 = pow((arun ? _TabAlphaem->Evaluate(Q) : aref), 2);
 
-    // Compute the hard factor
-    const double hcs = _HardFactorSIDIS(muf);
-
-    // Global factor (TO BE ADJUSTED!)
-    const double factor = apfel::ConvFact * 2 * M_PI * aem2 * hcs;
-    //const double factor = apfel::ConvFact * 8 * M_PI * aem2 * hcs / 9 / pow(Q, 3);
+    // Global factor
+    const double factor = apfel::ConvFact * 4 * M_PI * aem2 * _HardFactorSIDIS(muf) / pow(Q, 3);
 
     const std::map<int,apfel::Distribution> xF = QCDEvToPhys(_EvTMDPDFs(bT, muf, zetaf).GetObjects());
     const std::map<int,apfel::Distribution> xD = QCDEvToPhys(_EvTMDFFs(bT, muf, zetaf).GetObjects());
     apfel::DoubleObject<apfel::Distribution> Lumi;
 
     // Treat down and up separately to take isoscalarity of the target
-    // into account
+    // into account.
     Lumi.AddTerm({factor * Bq[0], frp * xF.at(sign)    + frn * xF.at(sign*2),  xD.at(-1)});
     Lumi.AddTerm({factor * Bq[0], frp * xF.at(-sign)   + frn * xF.at(-sign*2), xD.at(1)});
     Lumi.AddTerm({factor * Bq[1], frp * xF.at(sign*2)  + frn * xF.at(sign),    xD.at(-2)});
@@ -272,9 +262,9 @@ namespace NangaParbat
         apfel::TwoBodyPhaseSpace ps{pTMin, etaRange.first, etaRange.second};
 
         // Ogata-quadrature object of degree one or zero according to
-        // weather the cross sections have to be integrated over the
+        // whether the cross sections have to be integrated over the
         // bins in qT or not.
-        apfel::OgataQuadrature OgataObj{(IntqT ? 1 : 0)};
+        apfel::OgataQuadrature OgataObj{IntqT ? 1 : 0};
 
         // Unscaled coordinates and weights of the Ogata quadrature.
         std::vector<double> zo = OgataObj.GetCoordinates();
@@ -330,9 +320,7 @@ namespace NangaParbat
             std::vector<std::vector<double>> PS(nQe, std::vector<double>(nxie, 1.));
             std::vector<std::vector<double>> dPS(nQe, std::vector<double>(nxie, 0.));
             if (PSRed)
-              // Loop over the grids in Q
               for (int tau = 0; tau < nQe; tau++)
-                // Loop over the grid in xi
                 for (int alpha = 0; alpha < nxie; alpha++)
                   {
                     const double Q   = Qg[tau];
@@ -347,21 +335,17 @@ namespace NangaParbat
           }
 
         // Output phase-space reduction factor and its
-        // derivative. Write the derivative only if the table is
-        // integrated of qT.
+        // derivative.
         Tabs[i] << YAML::Newline << YAML::Newline;
         Tabs[i] << YAML::Comment("Phase-space cuts");
-        Tabs[i] << YAML::Key << "PS_reduction_factor";
-        Tabs[i] << YAML::Value << YAML::Flow << mPS;
+        Tabs[i] << YAML::Key << "PS_reduction_factor" << YAML::Value << YAML::Flow << mPS;
         Tabs[i] << YAML::Newline << YAML::Newline;
-        Tabs[i] << YAML::Key << "PS_reduction_factor_derivative";
-        Tabs[i] << YAML::Value << YAML::Flow << mdPS;
+        Tabs[i] << YAML::Key << "PS_reduction_factor_derivative" << YAML::Value << YAML::Flow << mdPS;
 
         // Compute and write the actual weights
         Tabs[i] << YAML::Newline << YAML::Newline;
         Tabs[i] << YAML::Comment("Weights");
-        Tabs[i] << YAML::Key << "weights";
-        Tabs[i] << YAML::Value << YAML::BeginMap;
+        Tabs[i] << YAML::Key << "weights" << YAML::Value << YAML::BeginMap;
 
         // Total number of steps for this particular table. Used to
         // report the percent progress of the computation.
@@ -384,34 +368,27 @@ namespace NangaParbat
             // all zero's and continue with the next value of qT
             if (qT / Qb.first > qToQ)
               {
-                Tabs[i] << YAML::Key << qT;
-                Tabs[i] << YAML::Value << YAML::Flow << W;
+                Tabs[i] << YAML::Key << qT << YAML::Value << YAML::Flow << W;
                 continue;
               }
 
             // Loop over the Ogata-quadrature points
             for (int n = 0; n < nO; n++)
               {
-                // Get impact parameters 'b'
-                const double b  = zo[n] / qT;
+                // Get impact parameters 'b' as the ratio beween the
+                // Ogata coordinate and the qT.
+                const double b = zo[n] / qT;
 
                 // Tabulate luminosity function using b* as an impact
                 // parameter. If no integration in Q is requested
                 // compute the luminosity at "Qav" even when
                 // tabulating.
-                std::function<apfel::DoubleObject<apfel::Distribution>(double const&)> Lumi;
-                if (proc == DataHandler::DY)
-                  Lumi = [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
-                  {
-                    const double Qt = (IntQ ? Q : Qav);
-                    return LuminosityDY(_bstar(b, Qt), Qt, targetiso);
-                  };
-                else //if (proc == DataHandler::SIDIS)
-                  Lumi = [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
-                  {
-                    const double Qt = (IntQ ? Q : Qav);
-                    return LuminositySIDIS(_bstar(b, Qt), Qt, targetiso);
-                  };
+                std::function<apfel::DoubleObject<apfel::Distribution>(double const&)> Lumi =
+                  [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
+                {
+                  const double Qt = (IntQ ? Q : Qav);
+                  return LuminosityDY(_bstar(b, Qt), Qt, targetiso);
+                };
                 const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabLumi{Lumi, (IntQ ? 200 : 2), Qb.first, Qb.second, 1, {}};
 
                 // Initialise vector of fixed points for the integration in Q
@@ -426,10 +403,6 @@ namespace NangaParbat
                     if ((int) FixPtsQ.size() > idQ || tau >= nQ)
                       FixPtsQ.erase(FixPtsQ.begin());
 
-                    // Get integration bounds for the integration in Q
-                    const double Qmin = Qg[std::max(tau - idQ, 0)];
-                    const double Qmax = Qg[std::min(tau + 1, nQ)];
-
                     // Initialise vector of fixed points for the integration in xi
                     std::vector<double> FixPtsxi;
 
@@ -442,72 +415,49 @@ namespace NangaParbat
                         if ((int) FixPtsxi.size() > idxi || alpha >= nxi)
                           FixPtsxi.erase(FixPtsxi.begin());
 
-                        // Get integration bounds for the integration in xi
-                        const double ximin = xig[std::max(alpha - idxi, 0)];
-                        const double ximax = xig[std::min(alpha + 1, nxi)];
-
                         // Function to be integrated in Q
-                        const auto Qintegrand = [&] (double const& Q) -> double
+                        const apfel::Integrator QIntObj
                         {
-                          // Function to be integrated in xi
-                          const auto xiintegrand = [&] (double const& xi) -> double
+                          [&] (double const& Q) -> double
                           {
-                            // Compute 'x1' and 'x2' according to the
-                            // proper observable.
-                            const double x1 = Q * xi / Vs;
-                            const double x2 = Q / xi / Vs;
+                            // Function to be integrated in xi
+                            const apfel::Integrator xiIntObj{
+                              [&] (double const& xi) -> double
+                              {
+                                // Return xi integrand
+                                return xigrid.Interpolant(0, alpha, xi) / xi * TabLumi.EvaluatexzQ(Q * xi / Vs, Q / xi / Vs, Q);
+                              }
+                            };
 
-                            // Get interpolating function in xi but
-                            // return 1 if no integration over xi is
-                            // required. This should not be strictly
-                            // needed because, if no integration over
-                            // Q is required, this function should be
-                            // called in xig[alpha] where the
-                            // interpolating function is already one.
-                            const double Ixi = (Inty ? xigrid.Interpolant(0, alpha, xi) / xi : 1);
+                            // Perform the integral in xi
+                            const double xiintegral = (Inty ?
+                                                       xiIntObj.integrate(xig[std::max(alpha - idxi, 0)], xig[std::min(alpha + 1, nxi)], FixPtsxi, epsxi) :
+                                                       xig[alpha] * xiIntObj.integrand(xig[alpha]));
 
-                            // Return xi integrand
-                            return Ixi * TabLumi.EvaluatexzQ(x1, x2, Q);
-                          };
-
-                          // Perform the integral in xi
-                          const apfel::Integrator xiIntObj{xiintegrand};
-                          const double xiintegral = (Inty ? xiIntObj.integrate(ximin, ximax, FixPtsxi, epsxi) : xiintegrand(xig[alpha]));
-
-                          // Get interpolating function in Q but
-                          // return 1 if no integration over Q is
-                          // required. This should not be strictly
-                          // needed because, if no integration over Q
-                          // is required, this function should be
-                          // called in Qg[tau] where the interpolating
-                          // function is already one.
-                          const double IQ = (IntQ ? Qgrid.Interpolant(0, tau, Q) : 1);
-
-                          // Return Q integrand
-                          return IQ * xiintegral;
+                            //Return Q integrand
+                            return Qgrid.Interpolant(0, tau, Q) * xiintegral;
+                          }
                         };
 
                         // Perform the integral in Q
-                        const apfel::Integrator QIntObj{Qintegrand};
-                        const double Qintegral = (IntQ ? QIntObj.integrate(Qmin, Qmax, FixPtsQ, epsQ) : Qintegrand(Qg[tau]));
+                        const double Qintegral = (IntQ ?
+                                                  QIntObj.integrate(Qg[std::max(tau - idQ, 0)], Qg[std::min(tau + 1, nQ)], FixPtsQ, epsQ) :
+                                                  QIntObj.integrand(Qg[tau]));
 
-                        // Compute the weight
-                        W[n][tau][alpha] = wo[n] * Qintegral;
-
-                        // If not intergrating over qT, multiply by b
-                        if (!IntqT)
-                          W[n][tau][alpha] *= b;
+                        // Compute the weight by multiplying the
+                        // integral by the Ogata weight. If not
+                        // intergrating over qT, multiply by b.
+                        W[n][tau][alpha] = (IntqT ? 1 : b) * wo[n] * Qintegral;
 
                         // Report progress
                         istep++;
                         const double perc = 100. * istep / nsteps;
                         std::cout << "Status report for table '" << name << "': "<< std::setw(6) << std::setprecision(4) << perc << "\% completed...\r";
                         std::cout.flush();
-                      }  // End loop over alpha
-                  }  // End loop over tau
-              } // End loop over n
-            Tabs[i] << YAML::Key << qT;
-            Tabs[i] << YAML::Value << YAML::Flow << W;
+                      }
+                  }
+              }
+            Tabs[i] << YAML::Key << qT << YAML::Value << YAML::Flow << W;
           }
         Tabs[i] << YAML::EndMap;
         Tabs[i] << YAML::EndMap;
