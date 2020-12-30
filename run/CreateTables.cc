@@ -48,13 +48,13 @@ int main(int argc, char* argv[])
         }
 
   // Compute tables
-  const std::vector<YAML::Emitter> Tabs = FIObj.ComputeTables(DHVect);
+  const std::vector<std::string> Tabs = FIObj.ComputeTables(DHVect);
 
   // Dump table to file
   for (auto const& tab : Tabs)
     {
-      std::ofstream fout(std::string(argv[3]) + "/" + YAML::Load(tab.c_str())["name"].as<std::string>() + ".yaml");
-      fout << tab.c_str() << std::endl;
+      std::ofstream fout(std::string(argv[3]) + "/" + YAML::Load(tab)["name"].as<std::string>() + ".yaml");
+      fout << tab << std::endl;
       fout.close();
     }
 

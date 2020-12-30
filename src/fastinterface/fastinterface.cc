@@ -205,7 +205,28 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  std::vector<YAML::Emitter> FastInterface::ComputeTables(std::vector<DataHandler> const& DHVect) const
+  std::vector<std::string> FastInterface::ComputeTables(std::vector<DataHandler> const& DHVect) const
+  {
+    std::vector<std::string> Tabs;
+    for (auto const& dh : DHVect)
+      {
+	switch (dh.GetProcess())
+	  {
+	  case DataHandler::Process::DY:
+	    Tabs.push_back(ComputeTablesDY({dh})[0].c_str());
+	    break;
+	  case DataHandler::Process::SIDIS:
+	    Tabs.push_back(ComputeTablesSIDIS({dh})[0].c_str());
+	    break;
+	  default:
+	    throw std::runtime_error("[FastInterface::ComputeTables]: Unsupported process.");
+	  }
+      }
+   return Tabs;
+  }
+
+  //_________________________________________________________________________________
+  std::vector<YAML::Emitter> FastInterface::ComputeTablesDY(std::vector<DataHandler> const& DHVect) const
   {
     // Retrieve relevant parameters for the numerical integration from
     // the configuration file
@@ -236,6 +257,10 @@ namespace NangaParbat
 
         // Process
         const DataHandler::Process proc = DHVect[i].GetProcess();
+
+	// Stop the code if the process is not Drell-Yan
+	if (proc != DataHandler::Process::DY)
+	  throw std::runtime_error("[FastInterface::ComputeTablesDY]: Only Drell-Yan data sets can be treated here.");
 
         // Target isoscalarity
         const double targetiso = DHVect[i].GetTargetIsoscalarity();
@@ -467,6 +492,16 @@ namespace NangaParbat
         t.stop(true);
       }
     std::cout << std::endl;
+
+    return Tabs;
+  }
+
+  //_________________________________________________________________________________
+  std::vector<YAML::Emitter> FastInterface::ComputeTablesSIDIS(std::vector<DataHandler> const& DHVect) const
+  {
+    // Initialise container of YAML:Emitter objects.
+    std::vector<YAML::Emitter> Tabs(DHVect.size());
+
 
     return Tabs;
   }

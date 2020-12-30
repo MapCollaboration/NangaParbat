@@ -48,10 +48,29 @@ namespace NangaParbat
      * @brief Function that computes the interpolation tables given as
      * an input vector of "DataHandler" objects.
      * @param DHVect: vector of "DataHandler" objects.
+     * @return a vector of strings containing as many tables as
+     * elements of "DHVect".
+     */
+    std::vector<std::string> ComputeTables(std::vector<DataHandler> const& DHVect) const;
+
+    /**
+     * @brief Function that computes the interpolation tables given as
+     * an input vector of "DataHandler" objects for Drell-Yan data
+     * sets.
+     * @param DHVect: vector of "DataHandler" objects.
      * @return a vector of "YAML::Emitter" objects containing as many
      * tables as elements of "DHVect".
      */
-    std::vector<YAML::Emitter> ComputeTables(std::vector<DataHandler> const& DHVect) const;
+    std::vector<YAML::Emitter> ComputeTablesDY(std::vector<DataHandler> const& DHVect) const;
+
+    /**
+     * @brief Function that computes the interpolation tables given as
+     * an input vector of "DataHandler" objects for SIDIS data sets.
+     * @param DHVect: vector of "DataHandler" objects.
+     * @return a vector of "YAML::Emitter" objects containing as many
+     * tables as elements of "DHVect".
+     */
+    std::vector<YAML::Emitter> ComputeTablesSIDIS(std::vector<DataHandler> const& DHVect) const;
 
   private:
     YAML::Node                                                                                  _config;          //!< Configuration YAML::Node

@@ -6,6 +6,9 @@ if (GSL_CONFIG AND ROOT_CONFIG AND Ceres_FOUND)
   add_executable(RunFit RunFit.cc)
   target_link_libraries(RunFit NangaParbat)
 
+  add_executable(ComputePredictions ComputePredictions.cc)
+  target_link_libraries(ComputePredictions NangaParbat)
+
   add_executable(ComputeMeanReplica ComputeMeanReplica.cc)
   target_link_libraries(ComputeMeanReplica NangaParbat)
 
