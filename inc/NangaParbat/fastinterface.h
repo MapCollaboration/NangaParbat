@@ -31,6 +31,7 @@ namespace NangaParbat
      * process as a "DoubleObject" for a fixed values of "b" and "Q".
      * @param b: value of the impact parameter
      * @param Q: value of the hard scale
+     * @param targetiso: the isoscalarity of the target
      * @return the luminosity for Drell-Yan
      */
     apfel::DoubleObject<apfel::Distribution> LuminosityDY(double const& bT, double const& Q, double const& targetiso) const;
@@ -40,6 +41,7 @@ namespace NangaParbat
      * a "DoubleObject" for a fixed values of "b" and "Q".
      * @param b: value of the impact parameter
      * @param Q: value of the hard scale
+     * @param targetiso: the isoscalarity of the target
      * @return the luminosity for SIDIS
      */
     apfel::DoubleObject<apfel::Distribution> LuminositySIDIS(double const& b, double const& Q, double const& targetiso) const;

@@ -134,7 +134,7 @@ namespace NangaParbat
 
     // Global factor
     const double factor = apfel::ConvFact * 8 * M_PI * aem2 * _HardFactorDY(muf) / 9 / pow(Q, 3);
-    const std::map<int,apfel::Distribution> xF = QCDEvToPhys(_EvTMDPDFs(bT, muf, zetaf).GetObjects());
+    const std::map<int, apfel::Distribution> xF = QCDEvToPhys(_EvTMDPDFs(bT, muf, zetaf).GetObjects());
     apfel::DoubleObject<apfel::Distribution> Lumi;
 
     // Treat down and up separately to take isoscalarity of the target
@@ -210,19 +210,19 @@ namespace NangaParbat
     std::vector<std::string> Tabs;
     for (auto const& dh : DHVect)
       {
-	switch (dh.GetProcess())
-	  {
-	  case DataHandler::Process::DY:
-	    Tabs.push_back(ComputeTablesDY({dh})[0].c_str());
-	    break;
-	  case DataHandler::Process::SIDIS:
-	    Tabs.push_back(ComputeTablesSIDIS({dh})[0].c_str());
-	    break;
-	  default:
-	    throw std::runtime_error("[FastInterface::ComputeTables]: Unsupported process.");
-	  }
+        switch (dh.GetProcess())
+          {
+          case DataHandler::Process::DY:
+            Tabs.push_back(ComputeTablesDY({dh})[0].c_str());
+            break;
+          case DataHandler::Process::SIDIS:
+            Tabs.push_back(ComputeTablesSIDIS({dh})[0].c_str());
+            break;
+          default:
+            throw std::runtime_error("[FastInterface::ComputeTables]: Unsupported process.");
+          }
       }
-   return Tabs;
+    return Tabs;
   }
 
   //_________________________________________________________________________________
@@ -258,9 +258,9 @@ namespace NangaParbat
         // Process
         const DataHandler::Process proc = DHVect[i].GetProcess();
 
-	// Stop the code if the process is not Drell-Yan
-	if (proc != DataHandler::Process::DY)
-	  throw std::runtime_error("[FastInterface::ComputeTablesDY]: Only Drell-Yan data sets can be treated here.");
+        // Stop the code if the process is not Drell-Yan
+        if (proc != DataHandler::Process::DY)
+          throw std::runtime_error("[FastInterface::ComputeTablesDY]: Only Drell-Yan data sets can be treated here.");
 
         // Target isoscalarity
         const double targetiso = DHVect[i].GetTargetIsoscalarity();
@@ -269,19 +269,19 @@ namespace NangaParbat
         const double prefactor = DHVect[i].GetPrefactor();
 
         // Retrieve kinematics
-        const DataHandler::Kinematics               kin      = DHVect[i].GetKinematics();
-        const double                                Vs       = kin.Vs;       // C.M.E.
-        const std::vector<double>                   qTv      = kin.qTv;      // Transverse momentum bin bounds
-        const std::vector<std::pair<double,double>> qTmap    = kin.qTmap;    // Map of qT bounds to associate to the single bins
-        const std::vector<double>                   qTfact   = kin.qTfact;   // Possible bin-by-bin prefactors to multiply the theoretical predictions
-        const std::pair<double,double>              Qb       = kin.var1b;    // Invariant mass interval
-        const std::pair<double,double>              yb       = kin.var2b;    // Rapidity/xF interval
-        const bool                                  IntqT    = kin.IntqT;    // Whether the bins in qTv are to be integrated over
-        const bool                                  IntQ     = kin.Intv1;    // Whether the bin in Q is to be integrated over
-        const bool                                  Inty     = kin.Intv2;    // Whether the bin in y is to be integrated over
-        const bool                                  PSRed    = kin.PSRed;    // Whether there is a final-state PS reduction
-        const double                                pTMin    = kin.pTMin;    // Minimum pT of the final-state leptons
-        const std::pair<double,double>              etaRange = kin.etaRange; // Allowed range in eta of the final-state leptons
+        const DataHandler::Kinematics                kin      = DHVect[i].GetKinematics();
+        const double                                 Vs       = kin.Vs;       // C.M.E.
+        const std::vector<double>                    qTv      = kin.qTv;      // Transverse momentum bin bounds
+        const std::vector<std::pair<double, double>> qTmap    = kin.qTmap;    // Map of qT bounds to associate to the single bins
+        const std::vector<double>                    qTfact   = kin.qTfact;   // Possible bin-by-bin prefactors to multiply the theoretical predictions
+        const std::pair<double, double>              Qb       = kin.var1b;    // Invariant mass interval
+        const std::pair<double, double>              yb       = kin.var2b;    // Rapidity interval
+        const bool                                   IntqT    = kin.IntqT;    // Whether the bins in qTv are to be integrated over
+        const bool                                   IntQ     = kin.Intv1;    // Whether the bin in Q is to be integrated over
+        const bool                                   Inty     = kin.Intv2;    // Whether the bin in y is to be integrated over
+        const bool                                   PSRed    = kin.PSRed;    // Whether there is a final-state PS reduction
+        const double                                 pTMin    = kin.pTMin;    // Minimum pT of the final-state leptons
+        const std::pair<double, double>              etaRange = kin.etaRange; // Allowed range in eta of the final-state leptons
 
         // Initialise two-particle phase-space object
         apfel::TwoBodyPhaseSpace ps{pTMin, etaRange.first, etaRange.second};
@@ -300,7 +300,7 @@ namespace NangaParbat
         const std::vector<double> Qg = (IntQ ? GenerateGrid(nQ, Qb.first, Qb.second, idQ - 1) : std::vector<double> {Qav});
         const apfel::QGrid<double> Qgrid{Qg, idQ};
 
-        // Construct QGrid-like grids for the integration in y or xF
+        // Construct QGrid-like grids for the integration in y
         const double xil  = exp(yb.first);
         const double xiu  = exp(yb.second);
         const double xiav = exp( ( yb.first + yb.second ) / 2 );
@@ -367,7 +367,7 @@ namespace NangaParbat
         Tabs[i] << YAML::Newline << YAML::Newline;
         Tabs[i] << YAML::Key << "PS_reduction_factor_derivative" << YAML::Value << YAML::Flow << mdPS;
 
-        // Compute and write the actual weights
+        // Compute and write the weights
         Tabs[i] << YAML::Newline << YAML::Newline;
         Tabs[i] << YAML::Comment("Weights");
         Tabs[i] << YAML::Key << "weights" << YAML::Value << YAML::BeginMap;
@@ -416,30 +416,12 @@ namespace NangaParbat
                 };
                 const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabLumi{Lumi, (IntQ ? 200 : 2), Qb.first, Qb.second, 1, {}};
 
-                // Initialise vector of fixed points for the integration in Q
-                std::vector<double> FixPtsQ;
-
                 // Loop over the grids in Q
                 for (int tau = 0; tau < nQe; tau++)
                   {
-                    // Update vector of fixed points for the integration in Q
-                    if (tau > 0 && tau < nQ)
-                      FixPtsQ.push_back(Qg[tau]);
-                    if ((int) FixPtsQ.size() > idQ || tau >= nQ)
-                      FixPtsQ.erase(FixPtsQ.begin());
-
-                    // Initialise vector of fixed points for the integration in xi
-                    std::vector<double> FixPtsxi;
-
                     // Loop over the grid in xi
                     for (int alpha = 0; alpha < nxie; alpha++)
                       {
-                        // Update vector of fixed points for the integration in xi
-                        if (alpha > 0 && alpha < nxi)
-                          FixPtsxi.push_back(xig[alpha]);
-                        if ((int) FixPtsxi.size() > idxi || alpha >= nxi)
-                          FixPtsxi.erase(FixPtsxi.begin());
-
                         // Function to be integrated in Q
                         const apfel::Integrator QIntObj
                         {
@@ -453,21 +435,25 @@ namespace NangaParbat
                                 return xigrid.Interpolant(0, alpha, xi) / xi * TabLumi.EvaluatexzQ(Q * xi / Vs, Q / xi / Vs, Q);
                               }
                             };
-
                             // Perform the integral in xi
-                            const double xiintegral = (Inty ?
-                                                       xiIntObj.integrate(xig[std::max(alpha - idxi, 0)], xig[std::min(alpha + 1, nxi)], FixPtsxi, epsxi) :
-                                                       xig[alpha] * xiIntObj.integrand(xig[alpha]));
+                            double xiintegral = 0;
+                            if (Inty)
+                              for (int ixi = std::max(alpha - idxi, 0); ixi < std::min(alpha + 1, nxi); ixi++)
+                                xiintegral += xiIntObj.integrate(xig[ixi], xig[ixi+1], epsxi);
+                            else
+                              xiintegral = xig[alpha] * xiIntObj.integrand(xig[alpha]);
 
-                            //Return Q integrand
+                            // Return Q integrand
                             return Qgrid.Interpolant(0, tau, Q) * xiintegral;
                           }
                         };
-
                         // Perform the integral in Q
-                        const double Qintegral = (IntQ ?
-                                                  QIntObj.integrate(Qg[std::max(tau - idQ, 0)], Qg[std::min(tau + 1, nQ)], FixPtsQ, epsQ) :
-                                                  QIntObj.integrand(Qg[tau]));
+                        double Qintegral = 0;
+                        if (IntQ)
+                          for (int iQ = std::max(tau - idQ, 0); iQ < std::min(tau + 1, nQ); iQ++)
+                            Qintegral += QIntObj.integrate(Qg[iQ], Qg[iQ+1], epsQ);
+                        else
+                          Qintegral = QIntObj.integrand(Qg[tau]);
 
                         // Compute the weight by multiplying the
                         // integral by the Ogata weight. If not
@@ -499,9 +485,251 @@ namespace NangaParbat
   //_________________________________________________________________________________
   std::vector<YAML::Emitter> FastInterface::ComputeTablesSIDIS(std::vector<DataHandler> const& DHVect) const
   {
+    // Retrieve relevant parameters for the numerical integration from
+    // the configuration file
+    const int    nOgata = _config["nOgata"].as<int>();
+    const int    nQ     = _config["Qgrid"]["n"].as<int>();
+    const int    idQ    = _config["Qgrid"]["InterDegree"].as<int>();
+    const double epsQ   = _config["Qgrid"]["eps"].as<double>();
+    const int    nxb    = _config["xbgrid"]["n"].as<int>();
+    const int    idxb   = _config["xbgrid"]["InterDegree"].as<int>();
+    const double epsxb  = _config["xbgrid"]["eps"].as<double>();
+    const int    nz     = _config["zgrid"]["n"].as<int>();
+    const int    idz    = _config["zgrid"]["InterDegree"].as<int>();
+    const double epsz   = _config["zgrid"]["eps"].as<double>();
+    const double qToQ   = _config["qToverQmax"].as<double>();
+
     // Initialise container of YAML:Emitter objects.
     std::vector<YAML::Emitter> Tabs(DHVect.size());
 
+    // Loop over the vector of "Kinematics" objects
+    std::cout << std::endl;
+    for (int i = 0; i < (int) DHVect.size(); i++)
+      {
+        // Timer
+        apfel::Timer t;
+
+        // Report kinematic details of the dataset
+        std::cout << DHVect[i] << std::endl;
+
+        // Name of the dataset
+        const std::string name = DHVect[i].GetName();
+
+        // Process
+        const DataHandler::Process proc = DHVect[i].GetProcess();
+
+        // Stop the code if the process is not Drell-Yan
+        if (proc != DataHandler::Process::SIDIS)
+          throw std::runtime_error("[FastInterface::ComputeTablesSIDIS]: Only SIDIS data sets can be treated here.");
+
+        // Target isoscalarity
+        const double targetiso = DHVect[i].GetTargetIsoscalarity();
+
+        // Prefactor (HERE I NEED TO INCLUDE THE INVERSE OF THE INCLUSIVE CROSS SECTION!!!!)
+        const double prefactor = DHVect[i].GetPrefactor();
+
+        // Retrieve kinematics
+        const DataHandler::Kinematics                kin    = DHVect[i].GetKinematics();
+        const double                                 Vs     = kin.Vs;       // C.M.E.
+        const std::vector<double>                    qTv    = kin.qTv;      // Transverse momentum bin bounds
+        const std::vector<std::pair<double, double>> qTmap  = kin.qTmap;    // Map of qT bounds to associate to the single bins
+        const std::vector<double>                    qTfact = kin.qTfact;   // Possible bin-by-bin prefactors to multiply the theoretical predictions
+        const std::pair<double, double>              Qb     = kin.var1b;    // Invariant mass interval
+        const std::pair<double, double>              xbb    = kin.var2b;    // Bjorken x interval
+        const std::pair<double, double>              zb     = kin.var3b;    // z interval
+        const bool                                   IntqT  = kin.IntqT;    // Whether the bins in qTv are to be integrated over
+        const bool                                   IntQ   = kin.Intv1;    // Whether the bin in Q is to be integrated over
+        const bool                                   Intxb  = kin.Intv2;    // Whether the bin in Bjorken x is to be integrated over
+        const bool                                   Intz   = kin.Intv3;    // Whether the bin in z is to be integrated over
+        const bool                                   PSRed  = kin.PSRed;    // Whether there is a final-state PS reduction
+        const double                                 Wmin   = kin.pTMin;    // Minimum W of the final-state lepton
+        const std::pair<double, double>              yRange = kin.etaRange; // Allowed y of the final-state lepton
+
+        // Since keeting track whether the cross section is to be
+        // integrated over the final state kinematics is constly and
+        // so far only fully integrated SIDIS cross sections
+        // considered, it is useful to assume that IntQ, Intxb, Intz,
+        // and IntqT are all .true., if not stop the code.
+        if (!IntqT || !IntQ || !Intxb || !Intz)
+          throw std::runtime_error("[FastInterface::ComputeTablesSIDIS]: Only fully integrated cross sections can be treated here.");
+
+        // Ogata-quadrature object of degree one or zero according to
+        // whether the cross sections have to be integrated over the
+        // bins in qT or not.
+        apfel::OgataQuadrature OgataObj{};
+
+        // Unscaled coordinates and weights of the Ogata quadrature.
+        std::vector<double> zo = OgataObj.GetCoordinates();
+        std::vector<double> wo = OgataObj.GetWeights();
+
+        // Construct QGrid-like grids for the integration in Q
+        const std::vector<double> Qg = GenerateGrid(nQ, Qb.first, Qb.second, idQ - 1);
+        const apfel::QGrid<double> Qgrid{Qg, idQ};
+
+        // Construct QGrid-like grids for the integration in Bjorken x
+        const std::vector<double> xbg = GenerateGrid(nxb, xbb.first, xbb.second, idxb - 1, true);
+        const apfel::QGrid<double> xbgrid{xbg, idxb};
+
+        // Construct QGrid-like grids for the integration in z
+        const std::vector<double> zg = GenerateGrid(nz, zb.first, zb.second, idz - 1, true);
+        const apfel::QGrid<double> zgrid{zg, idz};
+
+        // Number of points of the grids
+        const int nO   = std::min(nOgata, (int) zo.size());
+        const int nQe  = Qg.size();
+        const int nxbe = xbg.size();
+        const int nze  = zg.size();
+
+        // Write kinematics on the YAML emitter
+        Tabs[i].SetFloatPrecision(8);
+        Tabs[i].SetDoublePrecision(8);
+        Tabs[i] << YAML::BeginMap;
+        Tabs[i] << YAML::Comment("Kinematics and grid information");
+        Tabs[i] << YAML::Key << "name"         << YAML::Value << name;
+        Tabs[i] << YAML::Key << "process"      << YAML::Value << proc;
+        Tabs[i] << YAML::Key << "CME"          << YAML::Value << Vs;
+        Tabs[i] << YAML::Key << "qTintegrated" << YAML::Value << IntqT;
+        Tabs[i] << YAML::Key << "qT_bounds"    << YAML::Value << YAML::Flow << qTv;
+        Tabs[i] << YAML::Key << "qT_map"       << YAML::Value << YAML::Flow << YAML::BeginSeq;
+        for (auto const& qTp : qTmap)
+          Tabs[i] << YAML::Flow << YAML::BeginSeq << qTp.first << qTp.second << YAML::EndSeq;
+        Tabs[i] << YAML::EndSeq;
+        Tabs[i] << YAML::Key << "bin_factors"       << YAML::Value << YAML::Flow << qTfact;
+        Tabs[i] << YAML::Key << "prefactor"         << YAML::Value << prefactor;
+        Tabs[i] << YAML::Key << "Ogata_coordinates" << YAML::Value << YAML::Flow << std::vector<double>(zo.begin(), zo.begin() + nO);
+        Tabs[i] << YAML::Key << "Qgrid"             << YAML::Value << YAML::Flow << Qg;
+        Tabs[i] << YAML::Key << "xbgrid"            << YAML::Value << YAML::Flow << xbg;
+        Tabs[i] << YAML::Key << "zgrid"             << YAML::Value << YAML::Flow << zg;
+
+        // Compute and write the weights
+        Tabs[i] << YAML::Newline << YAML::Newline;
+        Tabs[i] << YAML::Comment("Weights");
+        Tabs[i] << YAML::Key << "weights" << YAML::Value << YAML::BeginMap;
+
+        // Total number of steps for this particular table. Used to
+        // report the percent progress of the computation.
+        int nqT = 0;
+        for (auto const& qT : qTv)
+          if (qT / Qb.first / zb.first <= qToQ)
+            nqT++;
+        const int nsteps = nqT * nO * nQe * nxbe * nze;
+
+        // Counter for the status report
+        int istep = 0;
+
+        // Loop over the qT-bin bounds. IMPORTANT: In the SIDIS case,
+        // the vector "qTv" contains the values of of the hadronic pTh
+        // (= zqT).
+        for (auto const& qT : qTv)
+          {
+            // Allocate container of the weights
+            std::vector<std::vector<std::vector<std::vector<double>>>>
+            W(nO, std::vector<std::vector<std::vector<double>>>(nQe, std::vector<std::vector<double>>(nxbe, std::vector<double>(nze, 0.))));
+
+            // If the value of qT / Qmin is above that allowed print
+            // all zero's and continue with the next value of qT
+            if (qT / Qb.first / zb.first > qToQ)
+              {
+                Tabs[i] << YAML::Key << qT << YAML::Value << YAML::Flow << W;
+                continue;
+              }
+
+            // Loop over the Ogata-quadrature points
+            for (int n = 0; n < nO; n++)
+              {
+                // Loop over the grids in Q
+                for (int tau = 0; tau < nQe; tau++)
+                  {
+                    // Loop over the grid in xb
+                    for (int alpha = 0; alpha < nxbe; alpha++)
+                      {
+                        // Initialise vector of fixed points for the integration in z
+                        std::vector<double> FixPtsz;
+
+                        // Loop over the grid in z
+                        for (int beta = 0; beta < nze; beta++)
+                          {
+                            // Function to be integrated in Q
+                            const apfel::Integrator QIntObj
+                            {
+                              [&] (double const& Q) -> double
+                              {
+                                // Function to be integrated in xb
+                                const apfel::Integrator xbIntObj{
+                                  [&] (double const& xb) -> double
+                                  {
+                                    // Function to be integrated in xb
+                                    const apfel::Integrator zIntObj{
+                                      [&] (double const& z) -> double
+                                      {
+                                        //double Lumi = FastInterface::LuminositySIDIS(z * zo[n] / qT , Q, targetiso).Evaluate(xb, z);
+                                        double Lumi = 0;
+                                        return zgrid.Interpolant(0, beta, z) * Lumi;
+                                      }
+                                    };
+                                    // Perform the integral in z
+                                    double zintegral = 0;
+                                    for (int iz = std::max(beta - idz, 0); iz < std::min(beta + 1, nz); iz++)
+                                      zintegral += zIntObj.integrate(zg[iz], zg[iz+1], 0);
+
+                                    return xbgrid.Interpolant(0, alpha, xb) * zintegral;
+                                  }
+                                };
+                                // Reduce the x-space integral phase space if necessary.
+                                double xmin = 0;
+                                double xmax = 1;
+                                if (PSRed)
+                                  {
+                                    xmin = pow(Q / Vs, 2) / yRange.second;
+                                    xmax = std::min(pow(Q / Vs, 2) / yRange.first, 1 / ( 1 + pow(Wmin / Q, 2)));
+                                  }
+                                double xbintegral = 0;
+                                for (int ixb = std::max(alpha - idxb, 0); ixb < std::min(alpha + 1, nxb); ixb++)
+                                  if (xbg[ixb+1] < xmin || xbg[ixb] > xmax)
+                                    continue;
+                                  else if (xbg[ixb] < xmin && xbg[ixb+1] > xmin)
+                                    xbintegral += xbIntObj.integrate(xmin, xbg[ixb+1], 0);
+                                  else if (xbg[ixb] < xmax && xbg[ixb+1] > xmax)
+                                    xbintegral += xbIntObj.integrate(xbg[ixb], xmax, 0);
+                                  else if (xbg[ixb] < xmin && xbg[ixb+1] > xmax)
+                                    xbintegral += xbIntObj.integrate(xmin, xmax, 0);
+                                  else
+                                    xbintegral += xbIntObj.integrate(xbg[ixb], xbg[ixb+1], 0);
+
+                                // Return Q integrand
+                                return Qgrid.Interpolant(0, tau, Q) * xbintegral;
+                              }
+                            };
+
+                            // Perform the integral in Q
+                            double Qintegral = 0;
+                            for (int iQ = std::max(tau - idQ, 0); iQ < std::min(tau + 1, nQ); iQ++)
+                              Qintegral += QIntObj.integrate(Qg[iQ], Qg[iQ+1], 0);
+
+                            // Compute the weight by multiplying the
+                            // integral by the Ogata weight. If not
+                            // intergrating over qT, multiply by b.
+                            W[n][tau][alpha][beta] = wo[n] * Qintegral;
+
+                            // Report progress
+                            istep++;
+                            const double perc = 100. * istep / nsteps;
+                            std::cout << "Status report for table '" << name << "': "<< std::setw(6) << std::setprecision(4) << perc << "\% completed...\r";
+                            std::cout.flush();
+                          }
+                      }
+                  }
+              }
+            Tabs[i] << YAML::Key << qT << YAML::Value << YAML::Flow << W;
+          }
+        Tabs[i] << YAML::EndMap;
+        Tabs[i] << YAML::EndMap;
+
+        // Stop timer and force to display the time elapsed
+        std::cout << std::endl;
+        t.stop(true);
+      }
+    std::cout << std::endl;
 
     return Tabs;
   }

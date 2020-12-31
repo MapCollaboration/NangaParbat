@@ -11,7 +11,7 @@ namespace NangaParbat
   //_________________________________________________________________________________
   std::vector<double> GenerateGrid(int const& n, double const& min, double const& max, int const& ext, bool const& lgt)
   {
-    std::vector<double> grid(n+ext+1);
+    std::vector<double> grid(n + ext + 1);
     if (lgt)
       {
         const double step = log( max / min ) / n;
