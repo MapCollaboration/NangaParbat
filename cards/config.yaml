@@ -46,7 +46,7 @@ xgridff:
   - [50, 8e-1, 3]
 
 # Maximum number of Ogata-quadrature points (no more than 1000).
-nOgata: 200
+nOgata: 100
 
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in Q.
@@ -58,6 +58,20 @@ Qgrid:
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in xi = exp(y) (used for the Drell-Yan tables).
 xigrid:
+  n: 10
+  InterDegree: 3
+  eps: 1e-3
+
+# Number of points, interpolation degree, and integration accuracy of
+# the grid in Bjorken x (used for the SIDIS tables).
+xbgrid:
+  n: 10
+  InterDegree: 3
+  eps: 1e-3
+
+# Number of points, interpolation degree, and integration accuracy of
+# the grid in z Bjorken (used for the SIDIS tables).
+zgrid:
   n: 10
   InterDegree: 3
   eps: 1e-3

@@ -87,6 +87,9 @@ namespace NangaParbat
     std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>                     _TabFFs;          //!< Collinear FFs
     std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> _EvTMDPDFs;       //!< TMD PDFs
     std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> _EvTMDFFs;        //!< TMD FFs
+    std::function<apfel::Set<apfel::Distribution>(double const&)>                               _MatchTMDPDFs;    //!< TMD PDFs w/o/ Sudakov evolution
+    std::function<apfel::Set<apfel::Distribution>(double const&)>                               _MatchTMDFFs;     //!< TMD FFs w/o/ Sudakov evolution
+    std::function<double(double const&, double const&, double const&)>                          _QuarkSudakov;    //!< Quark evolution factor
     std::function<double(double const&)>                                                        _HardFactorDY;    //!< Hard factor for Drell-Yan
     std::function<double(double const&)>                                                        _HardFactorSIDIS; //!< Hard factor for SIDIS
     std::function<double(double const&, double const&)>                                         _bstar;           //!< b* prescription

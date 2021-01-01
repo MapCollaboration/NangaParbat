@@ -87,9 +87,13 @@ namespace NangaParbat
 
     const auto CollPDFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return _TabPDFs->Evaluate(mu); };
     _EvTMDPDFs = BuildTmdPDFs(_TmdPdfObjs, CollPDFs, Alphas, pto, Ci);
+    _MatchTMDPDFs = MatchTmdPDFs(_TmdPdfObjs, CollPDFs, Alphas, pto, Ci);
 
     const auto CollFFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return _TabFFs->Evaluate(mu); };
     _EvTMDFFs = BuildTmdFFs(_TmdFfObjs, CollFFs, Alphas, pto, Ci);
+    _MatchTMDFFs = MatchTmdFFs(_TmdFfObjs, CollFFs, Alphas, pto, Ci);
+
+    _QuarkSudakov = QuarkEvolutionFactor(_TmdPdfObjs, Alphas, pto, Ci, 1e5);
 
     _HardFactorDY    = apfel::HardFactor("DY",    _TmdPdfObjs, Alphas, pto, Cf);
     _HardFactorSIDIS = apfel::HardFactor("SIDIS", _TmdPdfObjs, Alphas, pto, Cf);
@@ -117,7 +121,7 @@ namespace NangaParbat
     const double zetaf = Q * Q;
 
     // Whether the target is a particle or an antiparticle
-    int sign = (targetiso >= 0 ? 1 : -1);
+    const int sign = (targetiso >= 0 ? 1 : -1);
 
     // Fractions of protons and neutrons in the target
     const double frp = std::abs(targetiso);
@@ -490,14 +494,17 @@ namespace NangaParbat
     const int    nOgata = _config["nOgata"].as<int>();
     const int    nQ     = _config["Qgrid"]["n"].as<int>();
     const int    idQ    = _config["Qgrid"]["InterDegree"].as<int>();
-    const double epsQ   = _config["Qgrid"]["eps"].as<double>();
+    //const double epsQ   = _config["Qgrid"]["eps"].as<double>();
     const int    nxb    = _config["xbgrid"]["n"].as<int>();
     const int    idxb   = _config["xbgrid"]["InterDegree"].as<int>();
-    const double epsxb  = _config["xbgrid"]["eps"].as<double>();
+    //const double epsxb  = _config["xbgrid"]["eps"].as<double>();
     const int    nz     = _config["zgrid"]["n"].as<int>();
     const int    idz    = _config["zgrid"]["InterDegree"].as<int>();
-    const double epsz   = _config["zgrid"]["eps"].as<double>();
+    //const double epsz   = _config["zgrid"]["eps"].as<double>();
     const double qToQ   = _config["qToverQmax"].as<double>();
+    const double Cf     = _config["TMDscales"]["Cf"].as<double>();
+    const double aref   = _config["alphaem"]["aref"].as<double>();
+    const bool   arun   = _config["alphaem"]["run"].as<bool>();
 
     // Initialise container of YAML:Emitter objects.
     std::vector<YAML::Emitter> Tabs(DHVect.size());
@@ -524,6 +531,46 @@ namespace NangaParbat
 
         // Target isoscalarity
         const double targetiso = DHVect[i].GetTargetIsoscalarity();
+
+        // Tabulate initial scale TMD FFs in b in the physical basis
+        std::function<apfel::Set<apfel::Distribution>(double const&)> isTMDFFs =
+          [&] (double const& b) -> apfel::Set<apfel::Distribution>
+        {
+          return apfel::Set<apfel::Distribution>{QCDEvToPhys(_MatchTMDFFs(b).GetObjects())};
+        };
+        const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabMatchTMDFFs{isTMDFFs, 50, 1e-2, 2, 3, {},
+                                                                                    [] (double const& x) -> double{ return log(x); },
+                                                                                    [] (double const& y) -> double{ return exp(y); }};
+
+        // Tabulate initial scale TMD PDFs in b in the physical basis
+        // taking into account the isoscalarity of the target
+        const int sign = (targetiso >= 0 ? 1 : -1);
+        const double frp = std::abs(targetiso);
+        const double frn = 1 - frp;
+        std::function<apfel::Set<apfel::Distribution>(double const&)> isTMDPDFs =
+          [&] (double const& b) -> apfel::Set<apfel::Distribution>
+        {
+          const apfel::Set<apfel::Distribution> xF = QCDEvToPhys(_MatchTMDPDFs(b).GetObjects());
+          std::map<int, apfel::Distribution> xFiso;
+
+          // Treat down and up separately to take isoscalarity of
+          // the target into account.
+          xFiso.insert({1,  frp * xF.at(sign) + frn * xF.at(sign*2)});
+          xFiso.insert({-1, frp * xF.at(-sign) + frn * xF.at(-sign*2)});
+          xFiso.insert({2,  frp * xF.at(sign*2) + frn * xF.at(sign)});
+          xFiso.insert({-2, frp * xF.at(-sign*2) + frn * xF.at(-sign)});
+          // Now run over the remaining flavours
+          for (int i = 3; i <= 6; i++)
+            {
+              const int ip = i * sign;
+              xFiso.insert({i, xF.at(ip)});
+              xFiso.insert({-i, xF.at(-ip)});
+            }
+          return apfel::Set<apfel::Distribution>{xFiso};
+        };
+        const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabMatchTMDPDFs{isTMDPDFs, 50, 1e-2, 2, 3, {},
+                                                                                     [] (double const& x) -> double{ return log(x); },
+                                                                                     [] (double const& y) -> double{ return exp(y); }};
 
         // Prefactor (HERE I NEED TO INCLUDE THE INVERSE OF THE INCLUSIVE CROSS SECTION!!!!)
         const double prefactor = DHVect[i].GetPrefactor();
@@ -617,6 +664,9 @@ namespace NangaParbat
         // Counter for the status report
         int istep = 0;
 
+        // Maximum number of active flavours
+        const int nf = apfel::NF(Qb.second, _Thresholds);
+
         // Loop over the qT-bin bounds. IMPORTANT: In the SIDIS case,
         // the vector "qTv" contains the values of of the hadronic pTh
         // (= zqT).
@@ -643,9 +693,6 @@ namespace NangaParbat
                     // Loop over the grid in xb
                     for (int alpha = 0; alpha < nxbe; alpha++)
                       {
-                        // Initialise vector of fixed points for the integration in z
-                        std::vector<double> FixPtsz;
-
                         // Loop over the grid in z
                         for (int beta = 0; beta < nze; beta++)
                           {
@@ -654,62 +701,83 @@ namespace NangaParbat
                             {
                               [&] (double const& Q) -> double
                               {
-                                // Function to be integrated in xb
-                                const apfel::Integrator xbIntObj{
-                                  [&] (double const& xb) -> double
-                                  {
-                                    // Function to be integrated in xb
-                                    const apfel::Integrator zIntObj{
-                                      [&] (double const& z) -> double
-                                      {
-                                        //double Lumi = FastInterface::LuminositySIDIS(z * zo[n] / qT , Q, targetiso).Evaluate(xb, z);
-                                        double Lumi = 0;
-                                        return zgrid.Interpolant(0, beta, z) * Lumi;
-                                      }
-                                    };
-                                    // Perform the integral in z
-                                    double zintegral = 0;
-                                    for (int iz = std::max(beta - idz, 0); iz < std::min(beta + 1, nz); iz++)
-                                      zintegral += zIntObj.integrate(zg[iz], zg[iz+1], 0);
+                                const double muf   = Cf * Q;
+                                const double zetaf = Q * Q;
 
-                                    return xbgrid.Interpolant(0, alpha, xb) * zintegral;
+                                // Partonic fractional energy
+                                const double TauH = pow(Q / Vs, 2);
+
+                                // Function to be integrated in xb
+                                const apfel::Integrator zIntObj
+                                {
+                                  [&] (double const& z) -> double
+                                  {
+                                    // bstar
+                                    const double bs = _bstar(z * zo[n] / qT, Q);
+
+                                    double xbintegralq = 0;
+                                    for (int q = -nf; q <= nf; q++)
+                                      {
+                                        // Skip the gluon
+                                        if (q == 0)
+                                          continue;
+
+                                        // Function to be integrated in xb
+                                        const apfel::Integrator xbIntObj
+                                        {
+                                          [&] (double const& xb) -> double
+                                          {
+                                            const double Yp = 1 + pow(1 - TauH / xb, 2);
+                                            return xbgrid.Interpolant(0, alpha, xb) * Yp / xb * TabMatchTMDPDFs.EvaluatexQ(q, xb, bs);
+                                          }
+                                        };
+                                        // Reduce the x-space integral phase space if necessary.
+                                        double xmin = 0;
+                                        double xmax = 1;
+                                        if (PSRed)
+                                          {
+                                            xmin = pow(Q / Vs, 2) / yRange.second;
+                                            xmax = std::min(pow(Q / Vs, 2) / yRange.first, 1 / ( 1 + pow(Wmin / Q, 2)));
+                                          }
+                                        // Perform the integral in x
+                                        double xbintegral = 0;
+                                        for (int ixb = std::max(alpha - idxb, 0); ixb < std::min(alpha + 1, nxb); ixb++)
+                                          if (xbg[ixb+1] < xmin || xbg[ixb] > xmax)
+                                            continue;
+                                          else if (xbg[ixb] < xmin && xbg[ixb+1] > xmin)
+                                            xbintegral += xbIntObj.integrate(xmin, xbg[ixb+1], 0);
+                                          else if (xbg[ixb] < xmax && xbg[ixb+1] > xmax)
+                                            xbintegral += xbIntObj.integrate(xbg[ixb], xmax, 0);
+                                          else if (xbg[ixb] < xmin && xbg[ixb+1] > xmax)
+                                            xbintegral += xbIntObj.integrate(xmin, xmax, 0);
+                                          else
+                                            xbintegral += xbIntObj.integrate(xbg[ixb], xbg[ixb+1], 0);
+
+                                        // Multiply by electric charge and FFs
+                                        xbintegral *= apfel::QCh2[std::abs(q)-1] * TabMatchTMDFFs.EvaluatexQ(q, z, bs);
+
+                                        xbintegralq += xbintegral;
+                                      }
+                                    return zgrid.Interpolant(0, beta, z) * pow(_QuarkSudakov(bs, muf, zetaf), 2) * xbintegralq / z;
                                   }
                                 };
-                                // Reduce the x-space integral phase space if necessary.
-                                double xmin = 0;
-                                double xmax = 1;
-                                if (PSRed)
-                                  {
-                                    xmin = pow(Q / Vs, 2) / yRange.second;
-                                    xmax = std::min(pow(Q / Vs, 2) / yRange.first, 1 / ( 1 + pow(Wmin / Q, 2)));
-                                  }
-                                double xbintegral = 0;
-                                for (int ixb = std::max(alpha - idxb, 0); ixb < std::min(alpha + 1, nxb); ixb++)
-                                  if (xbg[ixb+1] < xmin || xbg[ixb] > xmax)
-                                    continue;
-                                  else if (xbg[ixb] < xmin && xbg[ixb+1] > xmin)
-                                    xbintegral += xbIntObj.integrate(xmin, xbg[ixb+1], 0);
-                                  else if (xbg[ixb] < xmax && xbg[ixb+1] > xmax)
-                                    xbintegral += xbIntObj.integrate(xbg[ixb], xmax, 0);
-                                  else if (xbg[ixb] < xmin && xbg[ixb+1] > xmax)
-                                    xbintegral += xbIntObj.integrate(xmin, xmax, 0);
-                                  else
-                                    xbintegral += xbIntObj.integrate(xbg[ixb], xbg[ixb+1], 0);
+                                // Perform the integral in z
+                                double zintegral = 0;
+                                for (int iz = std::max(beta - idz, 0); iz < std::min(beta + 1, nz); iz++)
+                                  zintegral += zIntObj.integrate(zg[iz], zg[iz+1], 0);
 
                                 // Return Q integrand
-                                return Qgrid.Interpolant(0, tau, Q) * xbintegral;
+                                return Qgrid.Interpolant(0, tau, Q) * pow((arun ? _TabAlphaem->Evaluate(Q) : aref), 2) * _HardFactorSIDIS(muf) / pow(Q, 3) * zintegral;
                               }
                             };
-
                             // Perform the integral in Q
                             double Qintegral = 0;
                             for (int iQ = std::max(tau - idQ, 0); iQ < std::min(tau + 1, nQ); iQ++)
                               Qintegral += QIntObj.integrate(Qg[iQ], Qg[iQ+1], 0);
 
                             // Compute the weight by multiplying the
-                            // integral by the Ogata weight. If not
-                            // intergrating over qT, multiply by b.
-                            W[n][tau][alpha][beta] = wo[n] * Qintegral;
+                            // integral by the Ogata weight.
+                            W[n][tau][alpha][beta] = apfel::ConvFact * apfel::FourPi * wo[n] * Qintegral;
 
                             // Report progress
                             istep++;
