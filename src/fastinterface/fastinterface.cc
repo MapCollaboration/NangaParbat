@@ -159,56 +159,6 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  apfel::DoubleObject<apfel::Distribution> FastInterface::LuminositySIDIS(double const& bT, double const& Q, double const& targetiso) const
-  {
-    // TMD scales
-    const double Cf    = _config["TMDscales"]["Cf"].as<double>();
-    const double aref  = _config["alphaem"]["aref"].as<double>();
-    const bool   arun  = _config["alphaem"]["run"].as<bool>();
-    const double muf   = Cf * Q;
-    const double zetaf = Q * Q;
-
-    // Whether the target is a particle or an antiparticle
-    const int sign = (targetiso >= 0 ? 1 : -1);
-
-    // Fractions of protons and neutrons in the target
-    const double frp = std::abs(targetiso);
-    const double frn = 1 - frp;
-
-    // Number of active flavours at 'Q'
-    const int nf = apfel::NF(muf, _Thresholds);
-
-    // EW charges
-    const std::vector<double> Bq = apfel::ElectroWeakCharges(Q, false);
-
-    // Electromagnetic coupling squared
-    const double aem2 = pow((arun ? _TabAlphaem->Evaluate(Q) : aref), 2);
-
-    // Global factor
-    const double factor = apfel::ConvFact * 4 * M_PI * aem2 * _HardFactorSIDIS(muf) / pow(Q, 3);
-
-    const std::map<int,apfel::Distribution> xF = QCDEvToPhys(_EvTMDPDFs(bT, muf, zetaf).GetObjects());
-    const std::map<int,apfel::Distribution> xD = QCDEvToPhys(_EvTMDFFs(bT, muf, zetaf).GetObjects());
-    apfel::DoubleObject<apfel::Distribution> Lumi;
-
-    // Treat down and up separately to take isoscalarity of the target
-    // into account.
-    Lumi.AddTerm({factor * Bq[0], frp * xF.at(sign)    + frn * xF.at(sign*2),  xD.at(-1)});
-    Lumi.AddTerm({factor * Bq[0], frp * xF.at(-sign)   + frn * xF.at(-sign*2), xD.at(1)});
-    Lumi.AddTerm({factor * Bq[1], frp * xF.at(sign*2)  + frn * xF.at(sign),    xD.at(-2)});
-    Lumi.AddTerm({factor * Bq[1], frp * xF.at(-sign*2) + frn * xF.at(-sign),   xD.at(2)});
-
-    // Now run over the remaining flavours
-    for (int i = 3; i <= nf; i++)
-      {
-        const int ip = i * sign;
-        Lumi.AddTerm({factor * Bq[i-1], xF.at(ip), xD.at(-i)});
-        Lumi.AddTerm({factor * Bq[i-1], xF.at(-ip), xD.at(i)});
-      }
-    return Lumi;
-  }
-
-  //_________________________________________________________________________________
   std::vector<std::string> FastInterface::ComputeTables(std::vector<DataHandler> const& DHVect) const
   {
     std::vector<std::string> Tabs;
@@ -505,6 +455,7 @@ namespace NangaParbat
     const double Cf     = _config["TMDscales"]["Cf"].as<double>();
     const double aref   = _config["alphaem"]["aref"].as<double>();
     const bool   arun   = _config["alphaem"]["run"].as<bool>();
+    const int    pto    = _config["PerturbativeOrder"].as<int>();
 
     // Initialise container of YAML:Emitter objects.
     std::vector<YAML::Emitter> Tabs(DHVect.size());
@@ -529,8 +480,22 @@ namespace NangaParbat
         if (proc != DataHandler::Process::SIDIS)
           throw std::runtime_error("[FastInterface::ComputeTablesSIDIS]: Only SIDIS data sets can be treated here.");
 
-        // Target isoscalarity
-        const double targetiso = DHVect[i].GetTargetIsoscalarity();
+        // Retrieve kinematics
+        const DataHandler::Kinematics                kin    = DHVect[i].GetKinematics();
+        const double                                 Vs     = kin.Vs;       // C.M.E.
+        const std::vector<double>                    qTv    = kin.qTv;      // Transverse momentum bin bounds
+        const std::vector<std::pair<double, double>> qTmap  = kin.qTmap;    // Map of qT bounds to associate to the single bins
+        const std::vector<double>                    qTfact = kin.qTfact;   // Possible bin-by-bin prefactors to multiply the theoretical predictions
+        const std::pair<double, double>              Qb     = kin.var1b;    // Invariant mass interval
+        const std::pair<double, double>              xbb    = kin.var2b;    // Bjorken x interval
+        const std::pair<double, double>              zb     = kin.var3b;    // z interval
+        const bool                                   IntqT  = kin.IntqT;    // Whether the bins in qTv are to be integrated over
+        const bool                                   IntQ   = kin.Intv1;    // Whether the bin in Q is to be integrated over
+        const bool                                   Intxb  = kin.Intv2;    // Whether the bin in Bjorken x is to be integrated over
+        const bool                                   Intz   = kin.Intv3;    // Whether the bin in z is to be integrated over
+        const bool                                   PSRed  = kin.PSRed;    // Whether there is a final-state PS reduction
+        const double                                 Wmin   = kin.pTMin;    // Minimum W of the final-state lepton
+        const std::pair<double, double>              yRange = kin.etaRange; // Allowed y of the final-state lepton
 
         // Tabulate initial scale TMD FFs in b in the physical basis
         std::function<apfel::Set<apfel::Distribution>(double const&)> isTMDFFs =
@@ -538,9 +503,12 @@ namespace NangaParbat
         {
           return apfel::Set<apfel::Distribution>{QCDEvToPhys(_MatchTMDFFs(b).GetObjects())};
         };
-        const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabMatchTMDFFs{isTMDFFs, 50, 1e-2, 2, 3, {},
+        const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabMatchTMDFFs{isTMDFFs, 200, 1e-2, 2, 1, {},
                                                                                     [] (double const& x) -> double{ return log(x); },
                                                                                     [] (double const& y) -> double{ return exp(y); }};
+
+        // Target isoscalarity
+        const double targetiso = DHVect[i].GetTargetIsoscalarity();
 
         // Tabulate initial scale TMD PDFs in b in the physical basis
         // taking into account the isoscalarity of the target
@@ -568,29 +536,77 @@ namespace NangaParbat
             }
           return apfel::Set<apfel::Distribution>{xFiso};
         };
-        const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabMatchTMDPDFs{isTMDPDFs, 50, 1e-2, 2, 3, {},
+        const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabMatchTMDPDFs{isTMDPDFs, 200, 1e-2, 2, 1, {},
                                                                                      [] (double const& x) -> double{ return log(x); },
                                                                                      [] (double const& y) -> double{ return exp(y); }};
 
-        // Prefactor (HERE I NEED TO INCLUDE THE INVERSE OF THE INCLUSIVE CROSS SECTION!!!!)
-        const double prefactor = DHVect[i].GetPrefactor();
+        // Compute inclusive cross section. First adjust PDFs to
+        // account for the isoscalarity.
+        const std::function<std::map<int, double>(double const&, double const&)> tPDFs = [&] (double const& x, double const& Q) -> std::map<int, double>
+        {
+          // Get PDFs in the physical basis
+          const std::map<int, double> pr = apfel::QCDEvToPhys(_TabPDFs->EvaluateMapxQ(x, Q));
+          std::map<int, double> tg = pr;
+          // Apply isoscalarity
+          tg.at(1)  = frp * pr.at(1)  + frn * pr.at(2);
+          tg.at(2)  = frp * pr.at(2)  + frn * pr.at(1);
+          tg.at(-1) = frp * pr.at(-1) + frn * pr.at(-2);
+          tg.at(-2) = frp * pr.at(-2) + frn * pr.at(-1);
+          return tg;
+        };
 
-        // Retrieve kinematics
-        const DataHandler::Kinematics                kin    = DHVect[i].GetKinematics();
-        const double                                 Vs     = kin.Vs;       // C.M.E.
-        const std::vector<double>                    qTv    = kin.qTv;      // Transverse momentum bin bounds
-        const std::vector<std::pair<double, double>> qTmap  = kin.qTmap;    // Map of qT bounds to associate to the single bins
-        const std::vector<double>                    qTfact = kin.qTfact;   // Possible bin-by-bin prefactors to multiply the theoretical predictions
-        const std::pair<double, double>              Qb     = kin.var1b;    // Invariant mass interval
-        const std::pair<double, double>              xbb    = kin.var2b;    // Bjorken x interval
-        const std::pair<double, double>              zb     = kin.var3b;    // z interval
-        const bool                                   IntqT  = kin.IntqT;    // Whether the bins in qTv are to be integrated over
-        const bool                                   IntQ   = kin.Intv1;    // Whether the bin in Q is to be integrated over
-        const bool                                   Intxb  = kin.Intv2;    // Whether the bin in Bjorken x is to be integrated over
-        const bool                                   Intz   = kin.Intv3;    // Whether the bin in z is to be integrated over
-        const bool                                   PSRed  = kin.PSRed;    // Whether there is a final-state PS reduction
-        const double                                 Wmin   = kin.pTMin;    // Minimum W of the final-state lepton
-        const std::pair<double, double>              yRange = kin.etaRange; // Allowed y of the final-state lepton
+        // Rotate input PDF set back into the QCD evolution basis
+        const auto RotPDFs = [=] (double const& x, double const& mu) -> std::map<int, double> { return apfel::PhysToQCDEv(tPDFs(x, mu)); };
+
+        // EW charges (only photon contribution, i.e. only electric
+        // charges squared).
+        std::function<std::vector<double>(double const&)> fBq = [] (double const&) -> std::vector<double> { return apfel::QCh2; };
+
+        // Determine perturbative order according to the logarithmic
+        // accuracy
+        int PerturbativeOrder = 0;
+        if (pto > 1 || pto < 0)
+          PerturbativeOrder++;
+        if (pto > 2 || pto < -1)
+          PerturbativeOrder++;
+
+        // Initialise inclusive structure functions
+        const auto IF2 = BuildStructureFunctions(InitializeF2NCObjectsZM(*_gpdf, _Thresholds), RotPDFs, PerturbativeOrder,
+                                                 [=] (double const& Q) -> double{ return _TabAlphas->Evaluate(Q); }, fBq);
+        const auto IFL = BuildStructureFunctions(InitializeFLNCObjectsZM(*_gpdf, _Thresholds), RotPDFs, PerturbativeOrder,
+                                                 [=] (double const& Q) -> double{ return _TabAlphas->Evaluate(Q); }, fBq);
+
+        // Q integrand for the inclusive cross section
+        const apfel::Integrator IncQIntegrand{[=] (double const& Q) -> double
+          {
+            // Q-dependent factors of the cross section
+            const apfel::Distribution f2 = IF2.at(0).Evaluate(Q);
+            const apfel::Distribution fl = IFL.at(0).Evaluate(Q);
+
+            // x integrand for the inclusive cross section
+            const apfel::Integrator IncxIntegrand{
+              [=] (double const& x) -> double
+              {
+                // Cross section
+                return ( 1 + pow(1 - pow(Q / Vs, 2) / x, 2) ) * f2.Evaluate(x) / x - pow(Q / Vs, 4) * fl.Evaluate(x) / pow(x, 3);
+              }
+            };
+            // Integration bounds in x accounting for fiducial cuts
+            // if required.
+            double xbmin = xbb.first;
+            double xbmax = xbb.second;
+            if (PSRed)
+              {
+                xbmin = std::max(xbmin, pow(Q / Vs, 2) / yRange.second);
+                xbmax = std::min(std::min(xbmax, pow(Q / Vs, 2) / yRange.first), 1 / ( 1 + pow(Wmin / Q, 2) ));
+              }
+            return pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * IncxIntegrand.integrate(xbmin, xbmax, 1e-5);
+          }
+        };
+
+        // Prefactor that includes the inverse of the inclusive cross
+        // section.
+        const double prefactor = DHVect[i].GetPrefactor() / IncQIntegrand.integrate(Qb.first, Qb.second, 1e-5);
 
         // Since keeting track whether the cross section is to be
         // integrated over the final state kinematics is constly and
@@ -672,7 +688,7 @@ namespace NangaParbat
         // (= zqT).
         for (auto const& qT : qTv)
           {
-            // Allocate container of the weights
+            // Allocate container for the weights
             std::vector<std::vector<std::vector<std::vector<double>>>>
             W(nO, std::vector<std::vector<std::vector<double>>>(nQe, std::vector<std::vector<double>>(nxbe, std::vector<double>(nze, 0.))));
 
@@ -701,20 +717,23 @@ namespace NangaParbat
                             {
                               [&] (double const& Q) -> double
                               {
+                                // Renormalisation and rapidity scales
                                 const double muf   = Cf * Q;
                                 const double zetaf = Q * Q;
 
                                 // Partonic fractional energy
-                                const double TauH = pow(Q / Vs, 2);
+                                const double TauP = pow(Q / Vs, 2);
 
-                                // Function to be integrated in xb
+                                // Function to be integrated in z
                                 const apfel::Integrator zIntObj
                                 {
                                   [&] (double const& z) -> double
                                   {
-                                    // bstar
+                                    // bstar at the relevant point
                                     const double bs = _bstar(z * zo[n] / qT, Q);
 
+                                    // Sum up contribution from the
+                                    // active flavours.
                                     double xbintegralq = 0;
                                     for (int q = -nf; q <= nf; q++)
                                       {
@@ -727,11 +746,15 @@ namespace NangaParbat
                                         {
                                           [&] (double const& xb) -> double
                                           {
-                                            const double Yp = 1 + pow(1 - TauH / xb, 2);
-                                            return xbgrid.Interpolant(0, alpha, xb) * Yp / xb * TabMatchTMDPDFs.EvaluatexQ(q, xb, bs);
+                                            // Return x integrand
+                                            const double Yp = 1 + pow(1 - TauP / xb, 2);
+                                            return xbgrid.Interpolant(0, alpha, xb) * Yp * TabMatchTMDPDFs.EvaluatexQ(q, xb, bs) / xb;
                                           }
                                         };
-                                        // Reduce the x-space integral phase space if necessary.
+                                        // Reduce the x-space integral
+                                        // phase space according to
+                                        // the fiducal cuts if
+                                        // necessary.
                                         double xmin = 0;
                                         double xmax = 1;
                                         if (PSRed)
@@ -753,11 +776,14 @@ namespace NangaParbat
                                           else
                                             xbintegral += xbIntObj.integrate(xbg[ixb], xbg[ixb+1], 0);
 
-                                        // Multiply by electric charge and FFs
+                                        // Multiply by electric charge and the FF
                                         xbintegral *= apfel::QCh2[std::abs(q)-1] * TabMatchTMDFFs.EvaluatexQ(q, z, bs);
 
+                                        // Include current term
                                         xbintegralq += xbintegral;
                                       }
+
+                                    // Return z integrand
                                     return zgrid.Interpolant(0, beta, z) * pow(_QuarkSudakov(bs, muf, zetaf), 2) * xbintegralq / z;
                                   }
                                 };
@@ -776,8 +802,11 @@ namespace NangaParbat
                               Qintegral += QIntObj.integrate(Qg[iQ], Qg[iQ+1], 0);
 
                             // Compute the weight by multiplying the
-                            // integral by the Ogata weight.
-                            W[n][tau][alpha][beta] = apfel::ConvFact * apfel::FourPi * wo[n] * Qintegral;
+                            // integral by the Ogata weight (note that
+                            // a factor 4 * pi is missing because it
+                            // cancels against the inclusive cross
+                            // section in the denominator).
+                            W[n][tau][alpha][beta] = wo[n] * Qintegral;
 
                             // Report progress
                             istep++;

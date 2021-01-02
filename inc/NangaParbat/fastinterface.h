@@ -37,16 +37,6 @@ namespace NangaParbat
     apfel::DoubleObject<apfel::Distribution> LuminosityDY(double const& bT, double const& Q, double const& targetiso) const;
 
     /**
-     * @brief Function returns the luminosity for the SIDIS process as
-     * a "DoubleObject" for a fixed values of "b" and "Q".
-     * @param b: value of the impact parameter
-     * @param Q: value of the hard scale
-     * @param targetiso: the isoscalarity of the target
-     * @return the luminosity for SIDIS
-     */
-    apfel::DoubleObject<apfel::Distribution> LuminositySIDIS(double const& b, double const& Q, double const& targetiso) const;
-
-    /**
      * @brief Function that computes the interpolation tables given as
      * an input vector of "DataHandler" objects.
      * @param DHVect: vector of "DataHandler" objects.
