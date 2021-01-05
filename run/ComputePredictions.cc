@@ -6,6 +6,7 @@
 #include "NangaParbat/convolutiontable.h"
 
 #include <apfel/timer.h>
+#include <cstring>
 
 //_________________________________________________________________________________
 int main(int argc, char* argv[])
