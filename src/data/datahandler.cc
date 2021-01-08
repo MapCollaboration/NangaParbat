@@ -376,6 +376,7 @@ namespace NangaParbat
                 _bins[i].xmax = vl["high"].as<double>();
               if (vl["value"])
                 _bins[i].xav = vl["value"].as<double>();
+	      _bins[i].Intx = _kin.Intv2;
               i++;
             }
 
@@ -402,6 +403,7 @@ namespace NangaParbat
                 _bins[i].Qmax = sqrt(vl["high"].as<double>());
               if (vl["value"])
                 _bins[i].Qav = sqrt(vl["value"].as<double>());
+	      _bins[i].IntQ = _kin.Intv1;
               i++;
             }
       }
