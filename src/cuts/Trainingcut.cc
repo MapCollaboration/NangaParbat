@@ -38,7 +38,7 @@ namespace NangaParbat
   void TrainingCut::EnforceCut()
   {
     const int Ndat_aftercut = std::count(std::begin(_mask), std::end(_mask), true);
-    if (Ndat_aftercut <= _NMin)
+    if (Ndat_aftercut <= _NMin || _min == 1)
       return;
 
     std::vector<bool> random_mask(floor(Ndat_aftercut * ( 1 - _min )), false);

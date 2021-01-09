@@ -240,7 +240,7 @@ namespace NangaParbat
         chi2 += std::inner_product(x.begin(), x.end(), x.begin(), 0.);
 
         // Increment number of points
-        ntot += _ndatac[i];
+        ntot += _ndata[i];
       }
 
     return (ntot == 0 ? 0 : chi2 / ntot);
@@ -281,7 +281,7 @@ namespace NangaParbat
               dchi2 += 2 * vx[i][j] * dx[j];
 
             // Increment number of points
-            ntot += _ndatac[i];
+            ntot += _ndata[i];
           }
         ders[ipar] = dchi2 / ntot;
       }

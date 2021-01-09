@@ -28,7 +28,7 @@ namespace NangaParbat
                 std::vector<std::shared_ptr<NangaParbat::Cut>> const& kincuts,
                 double                                         const& TrainingFrac,
                 gsl_rng*                                              rng,
-                int                                            const& NMin = 5);
+                int                                            const& NMin = 10);
 
     /**
      * @brief The "TrainingCut" copy constructor
