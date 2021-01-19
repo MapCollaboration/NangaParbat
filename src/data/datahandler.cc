@@ -151,7 +151,7 @@ namespace NangaParbat
 
             // Final state charge
             if (ql["name"].as<std::string>() == "charge")
-              _charge = ql["value"].as<double>();
+              _charge = ql["value"].as<int>();
 
             // Quark-tagging
             if (ql["name"].as<std::string>() == "tagging")
