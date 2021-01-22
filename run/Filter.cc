@@ -72,6 +72,12 @@ int main(int argc, char* argv[])
   //fout << "EIC:\n";
   //fout << NangaParbat::PreprocessEICPseudodata(RawDataPath, ProcessedDataPath, pdferr);
 
+  fout << "HERMES:\n";
+  fout << NangaParbat::PreprocessHERMES(RawDataPath, ProcessedDataPath, pdferr);
+
+  fout << "COMPASS:\n";
+  fout << NangaParbat::PreprocessCOMPASS(RawDataPath, ProcessedDataPath, pdferr);
+  
   fout.close();
 
   return 0;
