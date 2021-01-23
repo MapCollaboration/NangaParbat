@@ -5,6 +5,7 @@ set(utilities_source
   bstar.cc
   direxists.cc
   numtostring.cc
+  tostringwprecision.cc
   )
 
 add_library(utilities OBJECT ${utilities_source})
