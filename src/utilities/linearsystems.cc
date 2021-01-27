@@ -5,7 +5,7 @@
 #include "NangaParbat/linearsystems.h"
 
 #include <gsl/gsl_linalg.h>
-#include <iostream>
+#include <cmath>
 
 namespace NangaParbat
 {
