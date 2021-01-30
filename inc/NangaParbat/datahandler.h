@@ -114,6 +114,16 @@ namespace NangaParbat
     void FluctuateData(gsl_rng *rng, int const &fluctuation);
 
     /**
+     * @brief Function that sets the data central values replacing that
+     * introduced in the constructor.
+     * @param means: the new means 
+     */
+    void SetMeans(std::vector<double> const & means)
+    {
+      _means=means;
+    }
+
+    /**
      * @brief Function that sets the covariance matrix replacing that
      * computed in the constructor. The Choleski is also recomputed.
      * @param covmat: the new covariance matrix
