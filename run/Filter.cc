@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
 
   fout << "COMPASS:\n";
   fout << NangaParbat::PreprocessCOMPASS(RawDataPath, ProcessedDataPath, pdferr);
-  
+
   fout.close();
 
   return 0;

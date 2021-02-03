@@ -85,11 +85,6 @@ namespace NangaParbat
     };
 
     /**
-     * @brief The "DataHandler" default constructor.
-     */
-    DataHandler() {};
-
-    /**
      * @brief The "DataHandler" copy constructor.
      */
     DataHandler(DataHandler const &DH);
@@ -104,8 +99,6 @@ namespace NangaParbat
      */
     DataHandler(std::string const& name, YAML::Node const& datafile, gsl_rng* rng = nullptr, int const& fluctuation = 0, std::vector<double> const& t0 = {});
 
-    virtual ~DataHandler() {};
-
     /**
      * @brief Function that fluctuates data
      * @param rng: GSL random number object
@@ -116,31 +109,19 @@ namespace NangaParbat
     /**
      * @brief Function that sets the data central values replacing that
      * introduced in the constructor.
-     * @param means: the new means 
+     * @param means: the new means
      */
-    void SetMeans(std::vector<double> const & means)
-    {
-      _means=means;
-    }
-
-    /**
-     * @brief Function that sets the covariance matrix replacing that
-     * computed in the constructor. The Choleski is also recomputed.
-     * @param covmat: the new covariance matrix
-     */
-    void SetCovarianceMatrix(apfel::matrix<double> const& covmat);
-
-    /**
-     * @brief Function that updates the covariance matrix computed in
-     * the constructor. The Choleski is also recomputed.
-     * @param covmat: the new covariance matrix
-     */
-    void UpdateCovarianceMatrix(apfel::matrix<double> const& covmat);
+    void SetMeans(std::vector<double> const& means, gsl_rng* rng = nullptr, int const& fluctuation = 0);
 
     /**
      * @brief Function that returns the name of the dataset
      */
     std::string GetName() const { return _name; };
+
+    /**
+     * @brief Function that returns the datafile in YAML format
+     */
+    YAML::Node GetDataFile() const { return _datafile; };
 
     /**
      * @brief Function that returns the process code
@@ -256,6 +237,7 @@ namespace NangaParbat
   protected:
 
     std::string                        _name;         //!< Name of the dataset
+    YAML::Node                         _datafile;     //!< Datafile in YAML
     Process                            _proc;         //!< The process
     Observable                         _obs;          //!< The observable
     double                             _targetiso;    //!< Isoscalarity of the target

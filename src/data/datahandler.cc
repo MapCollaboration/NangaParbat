@@ -70,6 +70,7 @@ namespace NangaParbat
   DataHandler::DataHandler(DataHandler const& DH)
   {
     _name         = DH._name;
+    _datafile     = DH._datafile;
     _proc         = DH._proc;
     _obs          = DH._obs;
     _targetiso    = DH._targetiso;
@@ -94,6 +95,7 @@ namespace NangaParbat
   //_________________________________________________________________________________
   DataHandler::DataHandler(std::string const& name, YAML::Node const& datafile, gsl_rng* rng, int const& fluctuation, std::vector<double> const& t0):
     _name(name),
+    _datafile(datafile),
     _proc(UnknownProcess),
     _obs(UnknownObservable),
     _targetiso(1),
@@ -376,7 +378,7 @@ namespace NangaParbat
                 _bins[i].xmax = vl["high"].as<double>();
               if (vl["value"])
                 _bins[i].xav = vl["value"].as<double>();
-	      _bins[i].Intx = _kin.Intv2;
+              _bins[i].Intx = _kin.Intv2;
               i++;
             }
 
@@ -403,7 +405,7 @@ namespace NangaParbat
                 _bins[i].Qmax = sqrt(vl["high"].as<double>());
               if (vl["value"])
                 _bins[i].Qav = sqrt(vl["value"].as<double>());
-	      _bins[i].IntQ = _kin.Intv1;
+              _bins[i].IntQ = _kin.Intv1;
               i++;
             }
       }
@@ -546,43 +548,22 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________
-  void DataHandler::SetCovarianceMatrix(apfel::matrix<double> const& covmat)
+  void DataHandler::SetMeans(std::vector<double> const& means, gsl_rng* rng, int const& fluctuation)
   {
-    // Check if the input matrix is square
-    if (covmat.size(0) != covmat.size(1))
-      throw std::runtime_error("[DataHandler::SetCovarianceMatrix]: The input covariance matrix is not square.");
+    // Reset mean values
+    _means = means;
 
-    // Check that the size of the covariance matrix matches the number
-    // of data.
-    if ((int) covmat.size(0) != _kin.ndata)
-      throw std::runtime_error("[DataHandler::SetCovarianceMatrix]: The input covariance matrix does not match the data.");
+    // Fluctuate data as required
+    FluctuateData(rng, fluctuation);
 
-    // Set covariance matrix
-    _covmat = covmat;
+    // Now set means equal to fluctuations
+    _means = _fluctuations;
 
-    // Cholesky decomposition of the covariance matrix
-    _CholL = CholeskyDecomposition(_covmat);
-  }
-
-  //_________________________________________________________________________
-  void DataHandler::UpdateCovarianceMatrix(apfel::matrix<double> const& covmat)
-  {
-    // Check if the input matrix is square
-    if (covmat.size(0) != covmat.size(1))
-      throw std::runtime_error("[DataHandler::UpdateCovarianceMatrix]: The input covariance matrix is not square.");
-
-    // Check that the size of the covariance matrix matches the number
-    // of data.
-    if ((int) covmat.size(0) != _kin.ndata)
-      throw std::runtime_error("[DataHandler::UpdateCovarianceMatrix]: The input covariance matrix does not match the data.");
-
-    // Update covariance matrix
-    for (int i = 0; i < (int) _covmat.size(0); i++)
-      for (int j = 0; j < (int) _covmat.size(1); j++)
-        _covmat(i, j) += covmat(i, j);
-
-    // Cholesky decomposition of the covariance matrix
-    _CholL = CholeskyDecomposition(_covmat);
+    // Change also the central values in the datafile
+    int i = 0;
+    for (auto dv : _datafile["dependent_variables"])
+      for (auto vl : dv["values"])
+        vl["value"] = _means[i++];
   }
 
   //_________________________________________________________________________

@@ -139,172 +139,172 @@ namespace NangaParbat
 
             // Select x bin
             for (auto const& ix : data["x"])
-                // data["x"] is a map <index, x value> of all the values in the original table,
-                // so ix.first is the index (int) and ix.second the value (double).
-                if (ix.second > xb.second.first && ix.second < xb.second.second)
-                  {
-                    // Store indexes
-                    indexesX.push_back(ix.first);
+              // data["x"] is a map <index, x value> of all the values in the original table,
+              // so ix.first is the index (int) and ix.second the value (double).
+              if (ix.second > xb.second.first && ix.second < xb.second.second)
+                {
+                  // Store indexes
+                  indexesX.push_back(ix.first);
 
-                    // Get x value
-                    xvalue = ix.second;
-                  }
+                  // Get x value
+                  xvalue = ix.second;
+                }
 
             // Loop on z bin boundaries
             for (auto const& zb : zrangelims)
-            {
-              // Prepare (outer) map for each output data file
-              std::map<std::string, std::map<int, double>> filedata;
-
-              // File name picks up the z boundaries
-              std::string ofileXZ = ofileX + zb.first;
-
-              // Initialize indexes vector for future selection and z inner map
-              std::vector<int> indexesZ;
-              std::map<int, double> fdz;
-
-              // Select data
-              for (int i : indexesX)
-                {
-                  if (data["z"][i] > zb.second.first && data["z"][i] < zb.second.second)
-                    {
-                      // Fill inner map with selected values (bin)
-                      fdz[i] = data["z"][i];
-                      // Store indexes
-                      indexesZ.push_back(i);
-                    }
-
-                  // z bin outer map
-                  filedata["z"] = fdz;
-                }
-
-              // z values
-              std::vector<double> zvalues;
-              for (auto const& z : filedata["z"])
-                zvalues.push_back(z.second);
-
-              // Initialize result maps
-              std::map<int, double> fdmult, fdstat, fdsyst;
-
-              // Finally select multiplicities and their uncertainties associated with this bin in (x,z).
-              for (int n : indexesZ)
-                {
-                  // Check on terminal
-                  // std::cout << zb.first << "  index = " << n << std::endl;
-
-                  fdmult[n] = data["mult"][n];
-                  fdstat[n] = data["stat"][n];
-                  fdsyst[n] = data["syst"][n];
-                }
-
-              filedata["mult"] = fdmult;
-              filedata["stat"] = fdstat;
-              filedata["syst"] = fdsyst;
-
-              // Create Php vector of pairs for <bin min, bin max> and <index, exact value>.
-              // It can not be a map because there may be two points within the same Php bin
-              // and in that case there would be two equal keys (the bin boundaries)
-              std::vector<std::pair<std::pair<double, double>, std::pair<int,double>>> Phpbinval;
-              for (int n : indexesZ)
-                for (auto const& bin : Phplims)
-                  if (data["Php"][n] > bin.first && data["Php"][n] < bin.second)
-                     Phpbinval.push_back(std::make_pair(bin, std::make_pair(n, data["Php"][n])));
-
-              // Open PDF-error file
-              std::ifstream pdferr(PDFErrorFolder + ofileXZ + ".out");
-              std::string line;
-              getline(pdferr, line);
-              getline(pdferr, line);
-
-              // Plot labels
-              std::map<std::string, std::string> labels
               {
-                {"xlabel", "#it{P}_{h}_{#perp} [GeV]"},
-                {"ylabel", "M^{h}_{n}#left(x, z, |{P}_{h}_{#perp}|, Q^2 #right)"},
-                {"title", "HERMES, " + targets[tab.substr(7,6)].substr(1) + "  -  " + hadrons[tab.substr(pos + 6)].substr(1) + "   " + std::to_string(xb.second.first) + " < x < " + std::to_string(xb.second.second) + " , " + std::to_string(zb.second.first) + " < |#it{z}| < " + std::to_string(zb.second.second)},
-                {"xlabelpy", "$P_{h}_{\\perp} \\rm{ [GeV]}$"},
-                {"ylabelpy", "$M^{h}_{n}\\left(x, z, |{P}_{h}_{\\perp}|, Q^2 \\right)$"},
-                {"titlepy", "HERMES, " + targets[tab.substr(7,6)].substr(1) + "  -  " + hadrons[tab.substr(pos + 6)].substr(1) + " \\n " + std::to_string(xb.second.first) + " < x < " + std::to_string(xb.second.second) + " , " + std::to_string(zb.second.first) + " < z < " + std::to_string(zb.second.second)}
-              };
+                // Prepare (outer) map for each output data file
+                std::map<std::string, std::map<int, double>> filedata;
 
-              // Allocate emitter
-              YAML::Emitter emit;
+                // File name picks up the z boundaries
+                std::string ofileXZ = ofileX + zb.first;
 
-              // Write kinematics on the YAML emitter
-              emit.SetFloatPrecision(8);
-              emit.SetDoublePrecision(8);
-              emit << YAML::BeginMap;
-              emit << YAML::Key << "dependent_variables";
-              emit << YAML::BeginSeq;
-              emit << YAML::BeginMap;
-              emit << YAML::Key << "header" << YAML::Value << YAML::Flow << labels;
-              emit << YAML::Key << "qualifiers" << YAML::Value;
-              emit << YAML::BeginSeq;
-              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "SIDIS" << YAML::EndMap;
-              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << (targets[tab.substr(7,6)] == "_Pro" ? 1 : 0.5) << YAML::EndMap;
-              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "hadron" << YAML::Key << "value" << YAML::Value << hadrons[tab.substr(pos + 6)].substr(1) << YAML::EndMap;
-              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
-              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << "### = sqrt(2*M*Ee-) = sqrt(2*0.938*27.6 GeV) = 7.195" << YAML::EndMap;
-              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "x" << YAML::Key
-                   << "low" << YAML::Value << xb.second.first << YAML::Key << "high" << YAML::Value << xb.second.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::Key << "value" << YAML::Value << xvalue << YAML::EndMap;
-              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
-                  << "low" << YAML::Value << 0.1 << YAML::Key << "high" << YAML::Value << 0.85 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
-              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "z" << YAML::Key
-                   << "low" << YAML::Value << zb.second.first << YAML::Key << "high" << YAML::Value << zb.second.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::Key << "values" << YAML::Value << YAML::Flow << zvalues << YAML::EndMap;
-              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
-                   << "pTcutmin" << YAML::Value << "###" << YAML::Key << "pTcutmax" << YAML::Value << "###" << YAML::EndMap;
-              emit << YAML::EndSeq;
-              emit << YAML::Key << "values" << YAML::Value;
-              emit << YAML::BeginSeq;
-              for (auto const& m : filedata["mult"])
+                // Initialize indexes vector for future selection and z inner map
+                std::vector<int> indexesZ;
+                std::map<int, double> fdz;
+
+                // Select data
+                for (int i : indexesX)
+                  {
+                    if (data["z"][i] > zb.second.first && data["z"][i] < zb.second.second)
+                      {
+                        // Fill inner map with selected values (bin)
+                        fdz[i] = data["z"][i];
+                        // Store indexes
+                        indexesZ.push_back(i);
+                      }
+
+                    // z bin outer map
+                    filedata["z"] = fdz;
+                  }
+
+                // z values
+                std::vector<double> zvalues;
+                for (auto const& z : filedata["z"])
+                  zvalues.push_back(z.second);
+
+                // Initialize result maps
+                std::map<int, double> fdmult, fdstat, fdsyst;
+
+                // Finally select multiplicities and their uncertainties associated with this bin in (x,z).
+                for (int n : indexesZ)
+                  {
+                    // Check on terminal
+                    // std::cout << zb.first << "  index = " << n << std::endl;
+
+                    fdmult[n] = data["mult"][n];
+                    fdstat[n] = data["stat"][n];
+                    fdsyst[n] = data["syst"][n];
+                  }
+
+                filedata["mult"] = fdmult;
+                filedata["stat"] = fdstat;
+                filedata["syst"] = fdsyst;
+
+                // Create Php vector of pairs for <bin min, bin max> and <index, exact value>.
+                // It can not be a map because there may be two points within the same Php bin
+                // and in that case there would be two equal keys (the bin boundaries)
+                std::vector<std::pair<std::pair<double, double>, std::pair<int,double>>> Phpbinval;
+                for (int n : indexesZ)
+                  for (auto const& bin : Phplims)
+                    if (data["Php"][n] > bin.first && data["Php"][n] < bin.second)
+                      Phpbinval.push_back(std::make_pair(bin, std::make_pair(n, data["Php"][n])));
+
+                // Open PDF-error file
+                std::ifstream pdferr(PDFErrorFolder + ofileXZ + ".out");
+                std::string line;
+                getline(pdferr, line);
+                getline(pdferr, line);
+
+                // Plot labels
+                std::map<std::string, std::string> labels
                 {
-                  emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << filedata["stat"][m.first] << YAML::EndMap;
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << filedata["syst"][m.first] << YAML::EndMap;
-                  if (PDFError)
-                    {
-                      // Now read PDF errors
-                      getline(pdferr, line);
-                      std::stringstream stream(line);
-                      double dum, pe;
-                      stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
+                  {"xlabel", "#it{P}_{h}_{#perp} [GeV]"},
+                  {"ylabel", "M^{h}_{n}#left(x, z, |{P}_{h}_{#perp}|, Q^2 #right)"},
+                  {"title", "HERMES, " + targets[tab.substr(7,6)].substr(1) + "  -  " + hadrons[tab.substr(pos + 6)].substr(1) + "   " + std::to_string(xb.second.first) + " < x < " + std::to_string(xb.second.second) + " , " + std::to_string(zb.second.first) + " < |#it{z}| < " + std::to_string(zb.second.second)},
+                  {"xlabelpy", "$P_{h}_{\\perp} \\rm{ [GeV]}$"},
+                  {"ylabelpy", "$M^{h}_{n}\\left(x, z, |{P}_{h}_{\\perp}|, Q^2 \\right)$"},
+                  {"titlepy", "HERMES, " + targets[tab.substr(7,6)].substr(1) + "  -  " + hadrons[tab.substr(pos + 6)].substr(1) + " \\n " + std::to_string(xb.second.first) + " < x < " + std::to_string(xb.second.second) + " , " + std::to_string(zb.second.first) + " < z < " + std::to_string(zb.second.second)}
+                };
 
-                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.000 << YAML::EndMap;
-                      // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
-                    }
-                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
-                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
-                  emit << YAML::EndSeq;
-                  emit << YAML::Key << "value" << YAML::Value << m.second;
-                  emit << YAML::Key << "id"    << YAML::Value << m.first;
-                  emit << YAML::EndMap;
-                }
-              emit << YAML::EndSeq;
-              emit << YAML::EndMap;
-              emit << YAML::EndSeq;
-              emit << YAML::Key << "independent_variables";
-              emit << YAML::BeginSeq;
-              emit << YAML::BeginMap;
-              emit << YAML::Key << "header" << YAML::Value << "{name: 'Php', units: GEV}";
-              emit << YAML::Key << "values" << YAML::Value;
-              emit << YAML::BeginSeq;
-              for (auto const& pT : Phpbinval)
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << pT.first.second << YAML::Key << "low" << YAML::Value << std::max(pT.first.first, 1e-5) << YAML::Key << "value" << YAML::Value << pT.second.second << YAML::Key << "id" << YAML::Value << pT.second.first<< YAML::EndMap;
-              emit << YAML::EndSeq;
-              emit << YAML::EndMap;
-              emit << YAML::EndSeq;
-              emit << YAML::EndMap;
+                // Allocate emitter
+                YAML::Emitter emit;
 
-              // Close PDF-error file
-              pdferr.close();
+                // Write kinematics on the YAML emitter
+                emit.SetFloatPrecision(8);
+                emit.SetDoublePrecision(8);
+                emit << YAML::BeginMap;
+                emit << YAML::Key << "dependent_variables";
+                emit << YAML::BeginSeq;
+                emit << YAML::BeginMap;
+                emit << YAML::Key << "header" << YAML::Value << YAML::Flow << labels;
+                emit << YAML::Key << "qualifiers" << YAML::Value;
+                emit << YAML::BeginSeq;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "SIDIS" << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << (targets[tab.substr(7,6)] == "_Pro" ? 1 : 0.5) << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "hadron" << YAML::Key << "value" << YAML::Value << hadrons[tab.substr(pos + 6)].substr(1) << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << "### = sqrt(2*M*Ee-) = sqrt(2*0.938*27.6 GeV) = 7.195" << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "x" << YAML::Key
+                     << "low" << YAML::Value << xb.second.first << YAML::Key << "high" << YAML::Value << xb.second.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::Key << "value" << YAML::Value << xvalue << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
+                     << "low" << YAML::Value << 0.1 << YAML::Key << "high" << YAML::Value << 0.85 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "z" << YAML::Key
+                     << "low" << YAML::Value << zb.second.first << YAML::Key << "high" << YAML::Value << zb.second.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::Key << "values" << YAML::Value << YAML::Flow << zvalues << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
+                     << "pTcutmin" << YAML::Value << "###" << YAML::Key << "pTcutmax" << YAML::Value << "###" << YAML::EndMap;
+                emit << YAML::EndSeq;
+                emit << YAML::Key << "values" << YAML::Value;
+                emit << YAML::BeginSeq;
+                for (auto const& m : filedata["mult"])
+                  {
+                    emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << filedata["stat"][m.first] << YAML::EndMap;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << filedata["syst"][m.first] << YAML::EndMap;
+                    if (PDFError)
+                      {
+                        // Now read PDF errors
+                        getline(pdferr, line);
+                        std::stringstream stream(line);
+                        double dum, pe;
+                        stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
 
-              // Dump table to file
-              std::ofstream fout(opath + "/" + ofileXZ + ".yaml");
-              fout << emit.c_str() << std::endl;
-              fout.close();
+                        emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.000 << YAML::EndMap;
+                        // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                      }
+                    // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
+                    // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
+                    emit << YAML::EndSeq;
+                    emit << YAML::Key << "value" << YAML::Value << m.second;
+                    emit << YAML::Key << "id"    << YAML::Value << m.first;
+                    emit << YAML::EndMap;
+                  }
+                emit << YAML::EndSeq;
+                emit << YAML::EndMap;
+                emit << YAML::EndSeq;
+                emit << YAML::Key << "independent_variables";
+                emit << YAML::BeginSeq;
+                emit << YAML::BeginMap;
+                emit << YAML::Key << "header" << YAML::Value << "{name: 'Php', units: GEV}";
+                emit << YAML::Key << "values" << YAML::Value;
+                emit << YAML::BeginSeq;
+                for (auto const& pT : Phpbinval)
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << pT.first.second << YAML::Key << "low" << YAML::Value << std::max(pT.first.first, 1e-5) << YAML::Key << "value" << YAML::Value << pT.second.second << YAML::Key << "id" << YAML::Value << pT.second.first<< YAML::EndMap;
+                emit << YAML::EndSeq;
+                emit << YAML::EndMap;
+                emit << YAML::EndSeq;
+                emit << YAML::EndMap;
 
-              filenames.push_back(ofileXZ);
-            }
+                // Close PDF-error file
+                pdferr.close();
+
+                // Dump table to file
+                std::ofstream fout(opath + "/" + ofileXZ + ".yaml");
+                fout << emit.c_str() << std::endl;
+                fout.close();
+
+                filenames.push_back(ofileXZ);
+              }
 
           }
 
