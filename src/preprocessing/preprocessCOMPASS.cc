@@ -51,9 +51,10 @@ namespace NangaParbat
     // Loop over tables
     for (auto const& tab : tables)
       {
+	if (tab == "." || tab == "..")
+	  continue;
         // Reading table with YAML
         const YAML::Node exp = YAML::LoadFile(RawDataFolder + tab);
-
         for (auto const& str : exp["dependent_variables"])
           if (str["header"]["name"].as<std::string>() == "$M^{h^{-}}$" ||
               str["header"]["name"].as<std::string>() == "$M^{h^{+}}$")
