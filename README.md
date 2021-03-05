@@ -48,7 +48,8 @@ The code can be compiled using the following procedure:
 
 ```Shell
 cd NangaParbat
-cmake -DCMAKE_INSTALL_PREFIX=/your/installation/path/ .
+mkdir build && cd build
+cmake -DCMAKE_INSTALL_PREFIX=/your/installation/path/ ..
 make && make install
 ```
 By the default, if no prefix specification is given, the program will
