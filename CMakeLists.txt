@@ -17,7 +17,7 @@ project(NangaParbat)
 
 # activating some global properties for the project
 set(NangaParbat_VERSION 1.5.0)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -121,8 +121,8 @@ else(ROOT_CONFIG)
   message ("ROOT not found. Some parts of the code will not be compiled.")
 endif(ROOT_CONFIG)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LHAPDF_CXX_FLAGS} ${APFELXX_CXX_FLAGS} ${GSL_CXX_FLAGS} ${YAML_CFLAGS} ${ROOT_CXX_FLAGS} ${EIGEN3_CFLAGS} ${Ceres_CFLAGS} ${GLOG_CFLAGS} ${GFLAGS_CFLAGS} -std=c++11 -Wall -fPIC -Wunused")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LHAPDF_CXX_FLAGS} ${APFELXX_CXX_FLAGS} ${GSL_CXX_FLAGS} ${YAML_CFLAGS} ${ROOT_CXX_FLAGS} ${EIGEN3_CFLAGS} ${Ceres_CFLAGS} ${GLOG_CFLAGS} ${GFLAGS_CFLAGS} -Wall -fPIC -Wunused")
 
 # build target library
 add_subdirectory(src)

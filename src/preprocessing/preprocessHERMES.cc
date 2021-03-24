@@ -121,6 +121,11 @@ namespace NangaParbat
         // Maps for target and hadron names
         std::map<std::string, std::string> targets = {{"deuter", "_Deu"}, {"proton", "_Pro"}};
         std::map<std::string, std::string> hadrons = {{"kminus.list", "_Km"}, {"kplus.list", "_Kp"}, {"piminus.list", "_Pim"}, {"piplus.list", "_Pip"}};
+        std::string hadtype;
+        if (tab.find("piplus") != std::string::npos ||  tab.find("piminus") != std::string::npos)
+          hadtype = "PI";
+        else
+          hadtype = "K";
 
         // Start composing output file name
         std::size_t pos = tab.find("mults_");
@@ -241,18 +246,27 @@ namespace NangaParbat
                 emit << YAML::Key << "qualifiers" << YAML::Value;
                 emit << YAML::BeginSeq;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "SIDIS" << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "observable" << YAML::Key << "value" << YAML::Value << "multiplicity" << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << (targets[tab.substr(7,6)] == "_Pro" ? 1 : 0.5) << YAML::EndMap;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "hadron" << YAML::Key << "value" << YAML::Value << hadrons[tab.substr(pos + 6)].substr(1) << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "hadron" << YAML::Key << "value" << YAML::Value << hadtype << YAML::EndMap;
+                // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "hadron" << YAML::Key << "value" << YAML::Value << hadrons[tab.substr(pos + 6)].substr(1) << YAML::EndMap;
+                // !!!!!!! CHARGE
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "charge" << YAML::Key << "value" << YAML::Value << (tab.find("minus") != std::string::npos ? -1 : 1 ) << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << "### = sqrt(2*M*Ee-) = sqrt(2*0.938*27.6 GeV) = 7.195" << YAML::EndMap;
+                // Square root of s, calculated as Vs = sqrt(2*M*Ee-) = sqrt(2*0.938*27.6 GeV)
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 7.195 << YAML::EndMap;
+                // !!!!!!!!! Compute Q
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
+                     << "low" << YAML::Value << "###" << YAML::Key << "high" << YAML::Value << "###" << YAML::Key << "integrate" << YAML::Value << "true" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "x" << YAML::Key
                      << "low" << YAML::Value << xb.second.first << YAML::Key << "high" << YAML::Value << xb.second.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::Key << "value" << YAML::Value << xvalue << YAML::EndMap;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
-                     << "low" << YAML::Value << 0.1 << YAML::Key << "high" << YAML::Value << 0.85 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+                // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
+                //      << "low" << YAML::Value << 0.1 << YAML::Key << "high" << YAML::Value << 0.85 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "z" << YAML::Key
                      << "low" << YAML::Value << zb.second.first << YAML::Key << "high" << YAML::Value << zb.second.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::Key << "values" << YAML::Value << YAML::Flow << zvalues << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
-                     << "pTcutmin" << YAML::Value << "###" << YAML::Key << "pTcutmax" << YAML::Value << "###" << YAML::EndMap;
+                     << "pTmin"  << YAML::Value << "###"   << YAML::Key << "pTmax"  << YAML::Value << "###" << YAML::Key
+                     << "etamin" << YAML::Value << 0.1 << YAML::Key << "etamax" << YAML::Value << 0.85 << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::Key << "values" << YAML::Value;
                 emit << YAML::BeginSeq;
