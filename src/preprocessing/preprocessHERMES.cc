@@ -125,7 +125,7 @@ namespace NangaParbat
         if (tab.find("piplus") != std::string::npos ||  tab.find("piminus") != std::string::npos)
           hadtype = "PI";
         else
-          hadtype = "K";
+          hadtype = "KA";
 
         // Start composing output file name
         std::size_t pos = tab.find("mults_");
@@ -257,7 +257,7 @@ namespace NangaParbat
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 7.195 << YAML::EndMap;
                 // !!!!!!!!! Compute Q
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
-                     << "low" << YAML::Value << "###" << YAML::Key << "high" << YAML::Value << "###" << YAML::Key << "integrate" << YAML::Value << "true" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
+                     << "low" << YAML::Value << 1 << YAML::Key << "high" << YAML::Value << 3.872983346  << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "x" << YAML::Key
                      << "low" << YAML::Value << xb.second.first << YAML::Key << "high" << YAML::Value << xb.second.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::Key << "value" << YAML::Value << xvalue << YAML::EndMap;
                 // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
@@ -265,7 +265,7 @@ namespace NangaParbat
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "z" << YAML::Key
                      << "low" << YAML::Value << zb.second.first << YAML::Key << "high" << YAML::Value << zb.second.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::Key << "values" << YAML::Value << YAML::Flow << zvalues << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
-                     << "pTmin"  << YAML::Value << "###"   << YAML::Key << "pTmax"  << YAML::Value << "###" << YAML::Key
+                     << "pTmin"  << YAML::Value << 3.162277660168379   << YAML::Key << YAML::Key
                      << "etamin" << YAML::Value << 0.1 << YAML::Key << "etamax" << YAML::Value << 0.85 << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::Key << "values" << YAML::Value;
