@@ -254,7 +254,8 @@ namespace NangaParbat
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "charge" << YAML::Key << "value" << YAML::Value << (tab.find("minus") != std::string::npos ? -1 : 1 ) << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
                 // Square root of s, calculated as Vs = sqrt(2*M*Ee-) = sqrt(2*0.938*27.6 GeV)
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 7.195 << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 7.256544907874546 << YAML::EndMap;
+                //emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 7.195 << YAML::EndMap;
                 // !!!!!!!!! Compute Q
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
                      << "low" << YAML::Value << 1 << YAML::Key << "high" << YAML::Value << 3.872983346  << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
@@ -299,11 +300,46 @@ namespace NangaParbat
                 emit << YAML::Key << "independent_variables";
                 emit << YAML::BeginSeq;
                 emit << YAML::BeginMap;
-                emit << YAML::Key << "header" << YAML::Value << "{name: 'Php', units: GEV}";
+                emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Php" << YAML::Key << "units" << YAML::Value << "GEV" << YAML::EndMap;
+                //emit << YAML::Key << "header" << YAML::Value << "{name: 'Php', units: GEV}";
                 emit << YAML::Key << "values" << YAML::Value;
                 emit << YAML::BeginSeq;
                 for (auto const& pT : Phpbinval)
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << pT.first.second << YAML::Key << "low" << YAML::Value << std::max(pT.first.first, 1e-5) << YAML::Key << "value" << YAML::Value << pT.second.second << YAML::Key << "id" << YAML::Value << pT.second.first<< YAML::EndMap;
+                emit << YAML::EndSeq;
+                emit << YAML::EndMap;
+                emit << YAML::BeginMap;
+                emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "x" << YAML::EndMap;
+                //emit << YAML::Key << "header" << YAML::Value << "{name: 'x'}";
+                emit << YAML::Key << "values" << YAML::Value;
+                emit << YAML::BeginSeq;
+                for (int i = 0; i < data.size(); ++i )
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << xb.second.second << YAML::Key << "low" << YAML::Value << xb.second.first << YAML::Key << "value" << YAML::Value << xvalue << YAML::EndMap;
+                emit << YAML::EndSeq;
+                emit << YAML::EndMap;
+                emit << YAML::BeginMap;
+                emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "z" << YAML::EndMap;
+                //emit << YAML::Key << "header" << YAML::Value << "{name: 'z'}";
+                emit << YAML::Key << "values" << YAML::Value;
+                emit << YAML::BeginSeq;
+                for (auto const& z : filedata["z"])
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << zb.second.second << YAML::Key << "low" << YAML::Value << zb.second.first << YAML::Key << "value" << YAML::Value << z.second << YAML::EndMap;
+                emit << YAML::EndSeq;
+                emit << YAML::EndMap;
+                emit << YAML::BeginMap;
+                emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q2" << YAML::EndMap;
+                emit << YAML::Key << "values" << YAML::Value;
+                emit << YAML::BeginSeq;
+                for (int n : indexesZ)
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << 15 << YAML::Key << "low" << YAML::Value << 1 << YAML::Key << "value" << YAML::Value << data["Q2"][n] << YAML::EndMap;
+                emit << YAML::EndSeq;
+                emit << YAML::EndMap;
+                emit << YAML::BeginMap;
+                emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::EndMap;
+                emit << YAML::Key << "values" << YAML::Value;
+                emit << YAML::BeginSeq;
+                for (int n : indexesZ)
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << data["Q2"][n] / (data["x"][n] * pow(7.256544907874546,2) ) << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::EndMap;
                 emit << YAML::EndSeq;
