@@ -208,25 +208,27 @@ namespace NangaParbat
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "SIDIS" << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "observable" << YAML::Key << "value" << YAML::Value << "multiplicity" << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << 0.5 << YAML::EndMap;
-              // !!!!!!!! CHANGE
-              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "hadron" << YAML::Key << "value" << YAML::Value << (hcharge == "M^{h^{+}}" ? "Pp + Kp" : "Pm + Km") << YAML::EndMap;
-              // !!!!!!!!!!!!!!!
+              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "hadron" << YAML::Key << "value" << YAML::Value <<
+              "HD" << YAML::EndMap;
+              // (hcharge == "M^{h^{+}}" ? "Pp + Kp" : "Pm + Km") << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "charge" << YAML::Key << "value" << YAML::Value << (hcharge == "M^{h^{+}}" ? 1 : -1) << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
-              // Square root of s, calculated as Vs = sqrt(2*M*Ee-) = sqrt(2*0.938*160 GeV)  [OR = sqrt(Q2/x/y)]
+              // ### Square root of s, calculated as Vs = sqrt(2*M*Ee-) = sqrt(2*0.938*160 GeV)  [OR = sqrt(Q2/x/y)]
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 17.325 << YAML::EndMap;
               // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q2" << YAML::Key
               //      << "low" << YAML::Value << Q2bin.first << YAML::Key << "high" << YAML::Value << Q2bin.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::Key << "value" << YAML::Value << Q2cvalue << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
-                   << "low" << YAML::Value << sqrt(Q2bin.first) << YAML::Key << "high" << YAML::Value << sqrt(Q2bin.second) << YAML::Key << "integrate" << YAML::Value << "true" << YAML::Key << "value" << YAML::Value << sqrt(Q2cvalue) << YAML::EndMap;
+                   << "low" << YAML::Value << 1 << YAML::Key << "high" << YAML::Value << 9 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "x" << YAML::Key
                    << "low" << YAML::Value << xbin.first << YAML::Key << "high" << YAML::Value << xbin.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::Key << "value" << YAML::Value << xcvalue << YAML::EndMap;
-              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "iy" << YAML::Key
-                   << "low" << YAML::Value << 0.1 << YAML::Key << "high" << YAML::Value << 0.9 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::Key << "value" << YAML::Value << y << YAML::EndMap;
+                   //###
+              // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "iy" << YAML::Key
+              //      << "low" << YAML::Value << 0.1 << YAML::Key << "high" << YAML::Value << 0.9 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::Key << "value" << YAML::Value << y << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "z" << YAML::Key
                    << "low" << YAML::Value << zbin.first << YAML::Key << "high" << YAML::Value << zbin.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::Key << "value" << YAML::Value << zcvalue << YAML::EndMap;
+              // ### pTmin in SIDIS is the W cut, etamin and etamax are ymin and ymax. Consider changing such labels.
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
-                   << "pTmin" << YAML::Value << "###" << YAML::Key << "pTmax" << YAML::Value << "###"
+                   << "pTmin"  << YAML::Value << 5
                    << "etamin" << YAML::Value << 0.1 << YAML::Key << "etamax" << YAML::Value << 0.9
                    << YAML::EndMap;
               emit << YAML::EndSeq;
@@ -268,7 +270,8 @@ namespace NangaParbat
                 for (auto const& vl : iv["values"])
                   emit << YAML::Flow << vl;
               */
-              emit << YAML::Key << "header" << YAML::Value << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "$P_{hT}$" << YAML::Key << "units" << YAML::Value << "$(GeV/c)$" << YAML::EndMap;
+              emit << YAML::Key << "header" << YAML::Value << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PhT" << YAML::Key
+              << "units" << YAML::Value << "GeV" << YAML::EndMap;
               emit << YAML::Key << "values" << YAML::Value;
               emit << YAML::BeginSeq;
               for (auto const& iv : exp["independent_variables"])
@@ -276,6 +279,43 @@ namespace NangaParbat
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << sqrt(vl["high"].as<double>()) << YAML::Key << "low" << YAML::Value << std::max(sqrt(vl["low"].as<double>()), 1e-5) << YAML::Key << "value" << YAML::Value << sqrt(vl["value"].as<double>()) << YAML::EndMap;
               emit << YAML::EndSeq;
               emit << YAML::EndMap;
+
+              emit << YAML::BeginMap;
+              emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "x" << YAML::EndMap;
+              emit << YAML::Key << "values" << YAML::Value;
+              emit << YAML::BeginSeq;
+              for (int i = 0; i < str["values"].size(); ++i )
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << xbin.second << YAML::Key << "low" << YAML::Value << xbin.first << YAML::Key << "value" << YAML::Value << xcvalue << YAML::EndMap;
+              emit << YAML::EndSeq;
+              emit << YAML::EndMap;
+
+              emit << YAML::BeginMap;
+              emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "z" << YAML::EndMap;
+              emit << YAML::Key << "values" << YAML::Value;
+              emit << YAML::BeginSeq;
+              for (int i = 0; i < str["values"].size(); ++i )
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << zbin.second << YAML::Key << "low" << YAML::Value << zbin.first << YAML::Key << "value" << YAML::Value << zcvalue << YAML::EndMap;
+              emit << YAML::EndSeq;
+              emit << YAML::EndMap;
+
+              emit << YAML::BeginMap;
+              emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::EndMap;
+              emit << YAML::Key << "values" << YAML::Value;
+              emit << YAML::BeginSeq;
+              for (int i = 0; i < str["values"].size(); ++i )
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << 0.9 << YAML::Key << "low" << YAML::Value << 0.1 << YAML::Key << "value" << YAML::Value << y << YAML::EndMap;
+              emit << YAML::EndSeq;
+              emit << YAML::EndMap;
+
+              emit << YAML::BeginMap;
+              emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q2" << YAML::EndMap;
+              emit << YAML::Key << "values" << YAML::Value;
+              emit << YAML::BeginSeq;
+              for (int i = 0; i < str["values"].size(); ++i )
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << Q2bin.second << YAML::Key << "low" << YAML::Value << Q2bin.first << YAML::Key << "value" << YAML::Value << Q2cvalue << YAML::EndMap;
+              emit << YAML::EndSeq;
+              emit << YAML::EndMap;
+
               emit << YAML::EndSeq;
               emit << YAML::EndMap;
 

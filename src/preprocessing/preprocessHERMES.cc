@@ -260,7 +260,7 @@ namespace NangaParbat
                      << "low" << YAML::Value << xb.second.first << YAML::Key << "high" << YAML::Value << xb.second.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "z" << YAML::Key
                      << "low" << YAML::Value << zb.second.first << YAML::Key << "high" << YAML::Value << zb.second.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
-                // ### pTmin in SIDIS it is the W cut, consider changing the label pTmin in W.
+                // ### pTmin in SIDIS is the W cut, etamin and etamax are ymin and ymax. Consider changing such labels.
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
                      << "pTmin"  << YAML::Value << 3.162277660168379   << YAML::Key << YAML::Key
                      << "etamin" << YAML::Value << 0.1 << YAML::Key << "etamax" << YAML::Value << 0.85 << YAML::EndMap;
@@ -296,7 +296,7 @@ namespace NangaParbat
                 emit << YAML::Key << "independent_variables";
                 emit << YAML::BeginSeq;
                 emit << YAML::BeginMap;
-                emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Php" << YAML::Key << "units" << YAML::Value << "GEV" << YAML::EndMap;
+                emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PhT" << YAML::Key << "units" << YAML::Value << "GeV" << YAML::EndMap;
                 emit << YAML::Key << "values" << YAML::Value;
                 emit << YAML::BeginSeq;
                 for (auto const& pT : Phpbinval)
