@@ -1,5 +1,6 @@
 //
-// Author: Valerio Bertone: valerio.bertone@cern.ch
+// Authors: Valerio Bertone: valerio.bertone@cern.ch
+//          Chiara Bissolotti: chiara.bissolotti01@universitadipavia.it
 //
 
 #include "NangaParbat/datahandler.h"
@@ -102,10 +103,10 @@ namespace NangaParbat
     _hadron("NONE"),
     _charge(0),
     _tagging({apfel::QuarkFlavour::TOTAL}),
-  _prefact(1),
-  _kin(DataHandler::Kinematics{}),
-  _labels({}),
-  _t0(t0)
+    _prefact(1),
+    _kin(DataHandler::Kinematics{}),
+    _labels({}),
+    _t0(t0)
   {
     // Retrieve kinematics
     for (auto const& dv : datafile["dependent_variables"])
@@ -205,12 +206,22 @@ namespace NangaParbat
                 _kin.Intv3 = ql["integrate"].as<bool>();
               }
 
-            // Lepton cuts (DY only)
+            // Phase-space reductions
             if (ql["name"].as<std::string>() == "PS_reduction")
               {
-                _kin.PSRed    = true;
-                _kin.pTMin    = ql["pTmin"].as<double>();
-                _kin.etaRange = std::make_pair(ql["etamin"].as<double>(), ql["etamax"].as<double>());
+                if (_proc == DY)
+                  {
+                    // Lepton cuts (DY only)
+                    _kin.PSRed    = true;
+                    _kin.pTMin    = ql["pTmin"].as<double>();
+                    _kin.etaRange = std::make_pair(ql["etamin"].as<double>(), ql["etamax"].as<double>());
+                  }
+                else if (_proc == SIDIS)
+                  {
+                    _kin.PSRed    = true;
+                    _kin.pTMin    = ql["W"].as<double>();
+                    _kin.etaRange = std::make_pair(ql["ymin"].as<double>(), ql["ymax"].as<double>());
+                  }
               }
           }
 
@@ -620,8 +631,17 @@ namespace NangaParbat
 
     if (DH._kin.PSRed)
       {
-        os << "- Lepton minimun pT: " << DH._kin.pTMin << " GeV \n";
-        os << "- Lepton range in eta: [" << DH._kin.etaRange.first << ": " << DH._kin.etaRange.second << "]\n";
+        if (DH._proc == DataHandler::Process::DY)
+          {
+            os << "- Lepton minimum pT: " << DH._kin.pTMin << " GeV \n";
+            os << "- Lepton range in eta: [" << DH._kin.etaRange.first << ": " << DH._kin.etaRange.second << "]\n";
+          }
+        else if (DH._proc == DataHandler::Process::SIDIS)
+          {
+            os << "- Minimum W: " << DH._kin.pTMin << " GeV \n";
+            os << "- Range in y: [" << DH._kin.etaRange.first << ": " << DH._kin.etaRange.second << "]\n";
+          }
+
       }
     os << "\n";
 

@@ -253,6 +253,7 @@ namespace NangaParbat
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
                 // ### Square root of s, calculated as Vs = sqrt(2*M*Ee-) = sqrt(2*0.938*27.6 GeV) = 7.195665.
                 // ### Check the number 7.256544907874546
+                // ### in PV17 Vs = 7.3
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 7.256544907874546 << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
                      << "low" << YAML::Value << 1 << YAML::Key << "high" << YAML::Value << 3.872983346  << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
@@ -260,10 +261,9 @@ namespace NangaParbat
                      << "low" << YAML::Value << xb.second.first << YAML::Key << "high" << YAML::Value << xb.second.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "z" << YAML::Key
                      << "low" << YAML::Value << zb.second.first << YAML::Key << "high" << YAML::Value << zb.second.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
-                // ### pTmin in SIDIS is the W cut, etamin and etamax are ymin and ymax. Consider changing such labels.
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
-                     << "pTmin"  << YAML::Value << 3.162277660168379   << YAML::Key << YAML::Key
-                     << "etamin" << YAML::Value << 0.1 << YAML::Key << "etamax" << YAML::Value << 0.85 << YAML::EndMap;
+                     << "W"  << YAML::Value << 3.162277660168379   << YAML::Key << YAML::Key
+                     << "ymin" << YAML::Value << 0.1 << YAML::Key << "ymax" << YAML::Value << 0.85 << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::Key << "values" << YAML::Value;
                 emit << YAML::BeginSeq;
