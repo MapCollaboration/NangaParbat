@@ -23,15 +23,21 @@ class bcolours:
     REPORT     = LPINK
     ACTREPORT  = LORANGE
 
-######### Plot's colors
-### from https://www.colorhexa.com
-
+# Plot's colors, from https://www.colorhexa.com
     borgogna        = "#660033"
     tangerineyellow = "#ffcc00"
     celestial       = "#00b3ff"
     meadow          = "#669900"
     seablue         = "#00c4b4"
     answerblue      = "#2196f3"
+
+# Color blind palette,
+# from https://davidmathlogic.com/colorblind/#%23648FFF-%23785EF0-%23DC267F-%23FE6100-%23FFB000
+    pal_blue    = "#648FFF"
+    pal_teal    = "#785EF0"
+    pal_red     = "#DC267F"
+    pal_orange  = "#FE6100"
+    pal_yellow  = "#FFB000"
 
 ########## To change the question's style and colors:
 # from: https://codeburst.io/building-beautiful-command-line-interfaces-with-python-26c7e1bb54df
