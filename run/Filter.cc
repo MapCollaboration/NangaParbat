@@ -78,6 +78,9 @@ int main(int argc, char* argv[])
   fout << "COMPASS:\n";
   fout << NangaParbat::PreprocessCOMPASS(RawDataPath, ProcessedDataPath, pdferr);
 
+  fout << "E537:\n";
+  fout << NangaParbat::PreprocessE537(RawDataPath, ProcessedDataPath, pdferr);
+
   fout.close();
 
   return 0;

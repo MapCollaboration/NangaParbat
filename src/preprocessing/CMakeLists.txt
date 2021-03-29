@@ -19,6 +19,7 @@ set(preprocessing_source
   preprocessEICPseudodata.cc
   preprocessCOMPASS.cc
   preprocessHERMES.cc
+  preprocessE537.cc
   )
 
 add_library(preprocessing OBJECT ${preprocessing_source})
