@@ -217,7 +217,8 @@ namespace NangaParbat
               // ### in PV17 Vs = 17.3
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 17.325 << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
-                   << "low" << YAML::Value << 1 << YAML::Key << "high" << YAML::Value << 9 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+                   << "low" << YAML::Value << sqrt(Q2bin.first) << YAML::Key << "high" << YAML::Value << sqrt(Q2bin.second) << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+                   // << "low" << YAML::Value << 1 << YAML::Key << "high" << YAML::Value << 9 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "x" << YAML::Key
                    << "low" << YAML::Value << xbin.first << YAML::Key << "high" << YAML::Value << xbin.second << YAML::Key << "integrate" << YAML::Value << "true" // << YAML::Key << "value" << YAML::Value << xcvalue
                    << YAML::EndMap;
