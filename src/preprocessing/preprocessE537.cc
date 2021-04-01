@@ -1,5 +1,5 @@
 /*
- * Author: Chiara Bissolotti
+ * Author: Simone Venturini
  */
 
 #include "NangaParbat/preprocessing.h"
@@ -20,22 +20,22 @@ namespace NangaParbat
     std::cout << "Processing E537 data ..." << std::endl;
 
     // Path to the raw-data folder
-    const std::string RawDataFolder = RawDataPath + "/HEPData-ins1300647-v1-yaml/";
+    const std::string RawDataFolder = RawDataPath + "/HEPData-ins253413-v1-yaml/";
 
     // Path to the PDF-error folder
     const std::string PDFErrorFolder = RawDataPath + "/PDFErrors/";
 
     // Vector of tables to process
-    const std::vector<std::string> tables = {"Table3.yaml"};
+    const std::vector<std::string> tables = {"Table5.yaml"};
 
-    // Vector of tables to process
-    const std::string ofolder = "ATLAS";
+    // specify a folder where the preprocessed data will be inserted
+    const std::string ofolder = "E537";
 
     // Initialize naming map for the Q-integration ranges
-    std::map<std::string, std::string> yranges = {{"0.0-1.0", "_y_0_1"}, {"1.0-2.0", "_y_1_2"}, {"2.0-2.4", "_y_2_2.4"}};
-    std::map<std::string, std::pair<std::string, std::string>> yrangelims = {{"0.0-1.0", {"0", "1"}}, {"1.0-2.0", {"1", "2"}}, {"2.0-2.4", {"2", "2.4"}}};
+    std::map<std::string, std::string> Qranges = {{"4.0TO4.5", "_Q_4.0_4.5"}, {"4.5TO5.0", "_Q_4.5_5.0"}, {"5.0TO5.5", "_Q_5.0_5.5"}, {"5.5TO6.0","_Q_5.5_6.0"}, {"6.0TO6.5","_Q_6.0_6.5"}, {"6.5TO7.0","_Q_6.5_7.0"}, {"7.0TO7.5","_Q_7.0_7.5"}, {"7.5TO8.0","_Q_7.5_8.0"}, {"8.0TO8.5","_Q_8.0_8.5"}, {"8.5TO9.0","_Q_8.5_9.0"}};
+    std::map<std::string, std::pair<std::string, std::string>> Qrangelims = {{"4.0TO4.5", {"4", "5"}}, {"4.5TO5.0", {"4.5", "5.0"}}, {"5.0TO5.5", {"5", "5.5"}}, {"5.5TO6.0",{"5.5","6"}}, {"6.0TO6.5",{"6","6.5"}}, {"6.5TO7.0",{"6.5","7"}}, {"7.0TO7.5",{"7","7.5"}}, {"7.5TO8.0",{"7.5","8"}}, {"8.0TO8.5",{"8","8.5"}}, {"8.5TO9.0",{"8.5","9"}}};
 
-    // Create directory
+    // Create directory on the basis of "ofolder" specified previously
     std::string opath = ProcessedDataPath + "/" + ofolder;
     mkdir(opath.c_str(), ACCESSPERMS);
 
@@ -45,7 +45,7 @@ namespace NangaParbat
         // Reading table with YAML
         const YAML::Node exp = YAML::LoadFile(RawDataFolder + tab);
 
-        // Get qT bin bounds
+        // Get qT bin bounds (transverse momentum)
         std::vector<std::pair<double,double>> qTb;
         for (auto const& iv : exp["independent_variables"])
           for (auto const& vl : iv["values"])
@@ -55,20 +55,25 @@ namespace NangaParbat
         for (auto const& dv : exp["dependent_variables"])
           {
             std::string ofile;
-            std::pair<std::string, std::string> ylims;
+            std::pair<std::string, std::string> Qlims;
             std::string level;
             for (auto const& q : dv["qualifiers"])
-              if (q["name"].as<std::string>() == "ABS(YRAP(Z))")
+              if (q["name"].as<std::string>() == "M(P=3 4)")
                 {
-                  ofile  = ofolder + "_7TeV" + yranges[q["value"].as<std::string>()];
-                  ylims = yrangelims[q["value"].as<std::string>()];
+                  ofile  = ofolder + Qranges[q["value"].as<std::string>()];
+                  Qlims = Qrangelims[q["value"].as<std::string>()];
                 }
-              else if (q["name"].as<std::string>() == "Level")
+
+
+          /*
+                else if (q["name"].as<std::string>() == "Level")
                 level = q["value"].as<std::string>();
 
             // If the level is "Dressed" continue with the next block
             if (level == "Dressed")
               continue;
+          */
+
 
             // Open PDF-error file
             std::ifstream pdferr(PDFErrorFolder + ofile + ".out");
@@ -78,15 +83,15 @@ namespace NangaParbat
 
             ofile += ".yaml";
 
-            // Plot labels
+            // Plot labels, check the range of Q
             std::map<std::string, std::string> labels
             {
               {"xlabel", "#it{q}_{T} [GeV]"},
               {"ylabel", "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"},
-              {"title", "ATLAS at 7 TeV, 66 GeV < Q < 116 GeV, " + ylims.first + " < |#it{y}| < " + ylims.second},
+              {"title", "E537 at 125 GeV, " + Qlims.first + " GeV < Q < " + Qlims.second + " GeV, ### < |#it{y}| < ### "},
               {"xlabelpy", "$q_T \\rm{ [GeV]}$"},
               {"ylabelpy", "$\\frac{1}{\\sigma}\\frac{d\\sigma}{dq_{T}}[\\rm{GeV}^{-1}]$"},
-              {"titlepy", "ATLAS at 7 TeV, 66 GeV < Q < 116 GeV, " + ylims.first + " < $|y|$ < " + ylims.second}
+              {"titlepy", "E537 at 125 GeV, " + Qlims.first + " GeV < Q <" + Qlims.second + "GeV, ### < $|y|$ < ### "}
             };
 
             // Allocate emitter
@@ -103,30 +108,32 @@ namespace NangaParbat
             emit << YAML::Key << "qualifiers" << YAML::Value;
             emit << YAML::BeginSeq;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "DY" << YAML::EndMap;
-            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
-            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
-            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 7000 << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 125 << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
-                 << "low" << YAML::Value << 66 << YAML::Key << "high" << YAML::Value << 116 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+                 << "low" << YAML::Value << Qlims.first << YAML::Key << "high" << YAML::Value << Qlims.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
-                 << "low" << YAML::Value << ylims.first << YAML::Key << "high" << YAML::Value << ylims.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+                 << "low" << YAML::Value << "###" << YAML::Key << "high" << YAML::Value << "###" << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
-                 << "pTmin" << YAML::Value << 20 << YAML::Key << "etamin" << YAML::Value << -2.4 << YAML::Key << "etamax" << YAML::Value << 2.4 << YAML::EndMap;
+                 << "pTmin" << YAML::Value << "###" << YAML::Key << "etamin" << YAML::Value << "###" << YAML::Key << "etamax" << YAML::Value << "###" << YAML::EndMap;
             emit << YAML::EndSeq;
             emit << YAML::Key << "values" << YAML::Value;
             emit << YAML::BeginSeq;
             for (auto const& v : dv["values"])
               {
                 std::string stat = v["errors"][0]["symerror"].as<std::string>();
-                std::string sysu = v["errors"][1]["symerror"].as<std::string>();
-                std::string sysc = v["errors"][2]["symerror"].as<std::string>();
+
+                // std::string sysu = v["errors"][1]["symerror"].as<std::string>();
+                // std::string sysc = v["errors"][2]["symerror"].as<std::string>();
+                //
                 stat.erase(std::remove(stat.begin(), stat.end(), '%'), stat.end());
-                sysu.erase(std::remove(sysu.begin(), sysu.end(), '%'), sysu.end());
-                sysc.erase(std::remove(sysc.begin(), sysc.end(), '%'), sysc.end());
+                // sysu.erase(std::remove(sysu.begin(), sysu.end(), '%'), sysu.end());
+                // sysc.erase(std::remove(sysc.begin(), sysc.end(), '%'), sysc.end());
 
                 const double val = v["value"].as<double>();
-                const double unc = sqrt( pow(val * std::stod(stat) / 100, 2) + pow(val * std::stod(sysu) / 100, 2));
-                const double cor = std::stod(sysc) / 100;
+                const double unc = std::stod(stat);
+                // const double unc = sqrt( pow(val * std::stod(stat) / 100, 2) + pow(val * std::stod(sysu) / 100, 2));
 
                 // Now read PDF errors
                 getline(pdferr, line);
@@ -138,7 +145,7 @@ namespace NangaParbat
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << unc << YAML::EndMap;
                 if (PDFError)
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << cor << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.16 << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::Key << "value" << YAML::Value << val;
                 emit << YAML::EndMap;
@@ -171,8 +178,15 @@ namespace NangaParbat
           }
       }
     return
-      "  - {name: ATLAS_7TeV_y_0_1,     file: ATLAS_7TeV_y_0_1.yaml}\n"
-      "  - {name: ATLAS_7TeV_y_1_2,     file: ATLAS_7TeV_y_1_2.yaml}\n"
-      "  - {name: ATLAS_7TeV_y_2_2.4,   file: ATLAS_7TeV_y_2_2.4.yaml}\n";
+      "  - {name: E537_Q_4.0_4.5,     file: E537_Q_4.0_4.5.yaml}\n"
+      "  - {name: E537_Q_4.5_5.0,     file: E537_Q_4.5_5.0.yaml}\n"
+      "  - {name: E537_Q_5.0_5.5,     file: E537_Q_5.0_5.5.yaml}\n"
+      "  - {name: E537_Q_5.5_6.0,     file: E537_Q_5.5_6.0.yaml}\n"
+      "  - {name: E537_Q_6.0_6.5,     file: E537_Q_6.0_6.5.yaml}\n"
+      "  - {name: E537_Q_6.5_7.0,     file: E537_Q_6.5_7.0.yaml}\n"
+      "  - {name: E537_Q_7.0_7.5,     file: E537_Q_7.0_7.5.yaml}\n"
+      "  - {name: E537_Q_7.5_8.0,     file: E537_Q_7.5_8.0.yaml}\n"
+      "  - {name: E537_Q_8.0_8.5,     file: E537_Q_8.0_8.5.yaml}\n"
+      "  - {name: E537_Q_8.5_9.0,     file: E537_Q_8.5_9.0.yaml}\n";
   }
 }
