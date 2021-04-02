@@ -69,6 +69,9 @@ int main(int argc, char* argv[])
   fout << NangaParbat::PreprocessATLAS7TeV(RawDataPath, ProcessedDataPath, pdferr);
   fout << NangaParbat::PreprocessATLAS8TeV(RawDataPath, ProcessedDataPath, pdferr);
 
+  fout << "ATLASLowMass:\n";
+  fout << NangaParbat::PreprocessATLASLowMass(RawDataPath, ProcessedDataPath, pdferr);
+
   //fout << "EIC:\n";
   //fout << NangaParbat::PreprocessEICPseudodata(RawDataPath, ProcessedDataPath, pdferr);
 
@@ -78,8 +81,8 @@ int main(int argc, char* argv[])
   fout << "COMPASS:\n";
   fout << NangaParbat::PreprocessCOMPASS(RawDataPath, ProcessedDataPath, pdferr);
 
-  fout << "E537:\n";
-  fout << NangaParbat::PreprocessE537(RawDataPath, ProcessedDataPath, pdferr);
+  // fout << "E537:\n";
+  // fout << NangaParbat::PreprocessE537(RawDataPath, ProcessedDataPath, pdferr);
 
   fout.close();
 

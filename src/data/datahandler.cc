@@ -19,18 +19,18 @@ namespace NangaParbat
     ndata(0),
     Vs(0),
     qTv({}),
-      qTmap({}),
-      qTfact({}),
-      var1b({0, 0}),
-      var2b({0, 0}),
-      var3b({0, 0}),
-      IntqT(false),
-      Intv1(false),
-      Intv2(false),
-      Intv3(false),
-      PSRed(false),
-      pTMin(0),
-      etaRange({-10, 10})
+    qTmap({}),
+    qTfact({}),
+    var1b({0, 0}),
+    var2b({0, 0}),
+    var3b({0, 0}),
+    IntqT(false),
+    Intv1(false),
+    Intv2(false),
+    Intv3(false),
+    PSRed(false),
+    pTMin(0),
+    etaRange({-10, 10})
   {
   }
 
@@ -206,23 +206,14 @@ namespace NangaParbat
                 _kin.Intv3 = ql["integrate"].as<bool>();
               }
 
-            // Phase-space reductions
+            // Phase-space reductions (lepton cuts for DY and W, y cuts for SIDIS)
             if (ql["name"].as<std::string>() == "PS_reduction")
               {
-                if (_proc == DY)
-                  {
-                    // Lepton cuts (DY only)
-                    _kin.PSRed    = true;
-                    _kin.pTMin    = ql["pTmin"].as<double>();
-                    _kin.etaRange = std::make_pair(ql["etamin"].as<double>(), ql["etamax"].as<double>());
-                  }
-                else if (_proc == SIDIS)
-                  {
-                    _kin.PSRed    = true;
-                    _kin.pTMin    = ql["W"].as<double>();
-                    _kin.etaRange = std::make_pair(ql["ymin"].as<double>(), ql["ymax"].as<double>());
-                  }
+                _kin.PSRed    = true;
+                _kin.pTMin    = (_proc == DY ? ql["pTmin"].as<double>(): ql["W"].as<double>()) ;
+                _kin.etaRange = std::make_pair((_proc == DY ? ql["etamin"].as<double>(): ql["ymin"].as<double>()), (_proc == DY ? ql["etamax"].as<double>(): ql["ymax"].as<double>()));
               }
+
           }
 
         // Run over the data-point values and uncertainties

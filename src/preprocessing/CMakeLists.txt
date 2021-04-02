@@ -20,6 +20,7 @@ set(preprocessing_source
   preprocessCOMPASS.cc
   preprocessHERMES.cc
   preprocessE537.cc
+  preprocessATLASLowMass.cc
   )
 
 add_library(preprocessing OBJECT ${preprocessing_source})

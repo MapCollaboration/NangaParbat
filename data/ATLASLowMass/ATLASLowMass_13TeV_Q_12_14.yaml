@@ -1,0 +1,54 @@
+dependent_variables:
+  - header: {title: "ATLAS at 13 TeV, 12 GeV < Q < 14 GeV, |#it{y}| < 6.987490", titlepy: "ATLAS at 13 TeV, 12 GeV < Q < 14 GeV, $|y|$ < 6.987490", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q_T \\rm{ [GeV]}$", ylabel: "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]", ylabelpy: "$\\frac{1}{\\sigma}\\frac{d\\sigma}{dq_{T}}[\\rm{GeV}^{-1}]$"}
+    qualifiers:
+      - {name: process, value: DY}
+      - {name: target_isoscalarity, value: 1}
+      - {name: prefactor, value: 1}
+      - {name: Vs, value: 13000}
+      - {name: Q, low: 12, high: 14, integrate: true}
+      - {name: y, low: 0, high: 6.9874902, integrate: true}
+      - {name: PS_reduction, pTmin: 4.5, etamin: -2.4, etamax: 2.4}
+    values:
+      - errors:
+          - {label: unc, value: 0}
+        value: 0
+      - errors:
+          - {label: unc, value: 0}
+        value: 0
+      - errors:
+          - {label: unc, value: 0}
+        value: 0
+      - errors:
+          - {label: unc, value: 0}
+        value: 0
+      - errors:
+          - {label: unc, value: 0}
+        value: 0
+      - errors:
+          - {label: unc, value: 0}
+        value: 0
+      - errors:
+          - {label: unc, value: 0}
+        value: 0
+      - errors:
+          - {label: unc, value: 0}
+        value: 0
+      - errors:
+          - {label: unc, value: 0}
+        value: 0
+      - errors:
+          - {label: unc, value: 0}
+        value: 0
+independent_variables:
+  - header: {name: PT, units: GEV}
+    values:
+      - {high: 1.5, low: 1e-05}
+      - {high: 3, low: 1.5}
+      - {high: 5, low: 3}
+      - {high: 10, low: 5}
+      - {high: 16, low: 10}
+      - {high: 22, low: 16}
+      - {high: 30, low: 22}
+      - {high: 40, low: 30}
+      - {high: 55, low: 40}
+      - {high: 85, low: 55}
