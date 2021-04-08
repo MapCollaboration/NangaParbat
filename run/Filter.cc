@@ -72,17 +72,18 @@ int main(int argc, char* argv[])
   fout << "ATLASLowMass:\n";
   fout << NangaParbat::PreprocessATLASLowMass(RawDataPath, ProcessedDataPath, pdferr);
 
-  //fout << "EIC:\n";
-  //fout << NangaParbat::PreprocessEICPseudodata(RawDataPath, ProcessedDataPath, pdferr);
-
   fout << "HERMES:\n";
   fout << NangaParbat::PreprocessHERMES(RawDataPath, ProcessedDataPath, pdferr);
 
   fout << "COMPASS:\n";
   fout << NangaParbat::PreprocessCOMPASS(RawDataPath, ProcessedDataPath, pdferr);
 
-  // fout << "E537:\n";
-  // fout << NangaParbat::PreprocessE537(RawDataPath, ProcessedDataPath, pdferr);
+  fout << "E537:\n";
+  fout << NangaParbat::PreprocessE537(RawDataPath, ProcessedDataPath, pdferr);
+
+  fout << "E615:\n";
+  fout << NangaParbat::PreprocessE615(RawDataPath, ProcessedDataPath, pdferr);
+
 
   fout.close();
 

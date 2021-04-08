@@ -1,0 +1,123 @@
+dependent_variables:
+  - header: {title: "E615, 4.500000 < Q < 4.950000", titlepy: "E615, \\n 4.500000 < Q < 4.950000", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q_T \\rm{[GeV]$", ylabel: "#frac{d2#it{#sigma}}{d#it{p}_{T}#d#it{q}_{T}} [cm^{2}*GeV^{-2}", ylabelpy: "$\\frac{d^2\\sigma}{dp_{T} dq_{T}}[\\rm{cm}^2*{GeV}^{-2}]$"}
+    qualifiers:
+      - {name: process, value: Drell Yan}
+      - {name: observable, value: cross section}
+      - {name: target_isoscalarity, value: "###"}
+      - {name: prefactor, value: "###"}
+      - {name: Vs, value: 252}
+      - {name: Q, low: 4.5, high: 4.95, integrate: true}
+      - {name: y, low: "###", high: "###", integrate: true}
+      - {name: PS_reduction, pTmin: "###", etamin: "###", etamax: "###"}
+    values:
+      - errors:
+          - {label: unc, value: 7.3e-37}
+          - {label: unc, value: 2.4624e-36}
+          - {label: mult, value: 0}
+        value: 1.539e-35
+      - errors:
+          - {label: unc, value: 1.22e-36}
+          - {label: unc, value: 6.4128e-36}
+          - {label: mult, value: 0}
+        value: 4.008e-35
+      - errors:
+          - {label: unc, value: 1.4e-36}
+          - {label: unc, value: 8.0016e-36}
+          - {label: mult, value: 0}
+        value: 5.001e-35
+      - errors:
+          - {label: unc, value: 1.46e-36}
+          - {label: unc, value: 8.1504e-36}
+          - {label: mult, value: 0}
+        value: 5.094e-35
+      - errors:
+          - {label: unc, value: 1.41e-36}
+          - {label: unc, value: 7.2976e-36}
+          - {label: mult, value: 0}
+        value: 4.561e-35
+      - errors:
+          - {label: unc, value: 1.41e-36}
+          - {label: unc, value: 6.4096e-36}
+          - {label: mult, value: 0}
+        value: 4.006e-35
+      - errors:
+          - {label: unc, value: 1.2e-36}
+          - {label: unc, value: 4.3632e-36}
+          - {label: mult, value: 0}
+        value: 2.727e-35
+      - errors:
+          - {label: unc, value: 1.07e-36}
+          - {label: unc, value: 3.024e-36}
+          - {label: mult, value: 0}
+        value: 1.89e-35
+      - errors:
+          - {label: unc, value: 9e-37}
+          - {label: unc, value: 1.992e-36}
+          - {label: mult, value: 0}
+        value: 1.245e-35
+      - errors:
+          - {label: unc, value: 7e-37}
+          - {label: unc, value: 1.15312e-36}
+          - {label: mult, value: 0}
+        value: 7.207e-36
+      - errors:
+          - {label: unc, value: 6.29e-37}
+          - {label: unc, value: 7.8016e-37}
+          - {label: mult, value: 0}
+        value: 4.876e-36
+      - errors:
+          - {label: unc, value: 5.16e-37}
+          - {label: unc, value: 4.7472e-37}
+          - {label: mult, value: 0}
+        value: 2.967e-36
+      - errors:
+          - {label: unc, value: 3.48e-37}
+          - {label: unc, value: 2.0816e-37}
+          - {label: mult, value: 0}
+        value: 1.301e-36
+      - errors:
+          - {label: unc, value: 2.832e-37}
+          - {label: unc, value: 1.50288e-37}
+          - {label: mult, value: 0}
+        value: 9.393e-37
+      - errors:
+          - {label: unc, value: 1.581e-37}
+          - {label: unc, value: 3.5776e-38}
+          - {label: mult, value: 0}
+        value: 2.236e-37
+      - errors:
+          - {label: unc, value: 1.962e-37}
+          - {label: unc, value: 6.28e-38}
+          - {label: mult, value: 0}
+        value: 3.925e-37
+      - errors:
+          - {label: unc, value: 1.889e-37}
+          - {label: unc, value: 3.0224e-38}
+          - {label: mult, value: 0}
+        value: 1.889e-37
+      - errors:
+          - {label: unc, value: 1.424e-37}
+          - {label: unc, value: 3.9472e-38}
+          - {label: mult, value: 0}
+        value: 2.467e-37
+independent_variables:
+  - header: {name: PT, units: GEV}
+    values:
+      - {value: 0.125, high: 0, low: 0.25}
+      - {value: 0.375, high: 0.25, low: 0.5}
+      - {value: 0.625, high: 0.5, low: 0.75}
+      - {value: 0.875, high: 0.75, low: 1}
+      - {value: 1.125, high: 1, low: 1.25}
+      - {value: 1.375, high: 1.25, low: 1.5}
+      - {value: 1.625, high: 1.5, low: 1.75}
+      - {value: 1.875, high: 1.75, low: 2}
+      - {value: 2.125, high: 2, low: 2.25}
+      - {value: 2.375, high: 2.25, low: 2.5}
+      - {value: 2.625, high: 2.5, low: 2.75}
+      - {value: 2.875, high: 2.75, low: 3}
+      - {value: 3.125, high: 3, low: 3.25}
+      - {value: 3.375, high: 3.25, low: 3.5}
+      - {value: 3.625, high: 3.5, low: 3.75}
+      - {value: 3.875, high: 3.75, low: 4}
+      - {value: 4.125, high: 4, low: 4.25}
+      - {value: 4.375, high: 4.25, low: 4.5}

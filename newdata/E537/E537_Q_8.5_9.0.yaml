@@ -1,0 +1,104 @@
+dependent_variables:
+  - header: {title: "E537 at 125 GeV, 8.5 GeV < Q < 9 GeV, ### < |#it{y}| < ### ", titlepy: "E537 at 125 GeV, 8.5 GeV < Q <9GeV, ### < $|y|$ < ### ", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q_T \\rm{ [GeV]}$", ylabel: "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]", ylabelpy: "$\\frac{1}{\\sigma}\\frac{d\\sigma}{dq_{T}}[\\rm{GeV}^{-1}]$"}
+    qualifiers:
+      - {name: process, value: DY}
+      - {name: target_isoscalarity, value: "###"}
+      - {name: prefactor, value: "###"}
+      - {name: Vs, value: 125}
+      - {name: Q, low: 8.5, high: 9, integrate: true}
+      - {name: y, low: "###", high: "###", integrate: true}
+      - {name: PS_reduction, pTmin: "###", etamin: "###", etamax: "###"}
+    values:
+      - errors:
+          - {label: unc, value: 0.000496}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0.000486
+      - errors:
+          - {label: unc, value: 0.000785}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.000527}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0.000508
+      - errors:
+          - {label: unc, value: 0.000202}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.000384}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0.000362
+      - errors:
+          - {label: unc, value: 0.00104}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.000432}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.00174}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.000377}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.000126}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.000539}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.000252}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0
+      - errors:
+          - {label: unc, value: 0}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0
+      - errors:
+          - {label: unc, value: 0}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.000126}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0
+independent_variables:
+  - header: {name: PT, units: GEV}
+    values:
+      - {high: 0.5, low: 1e-05}
+      - {high: 1, low: 0.5}
+      - {high: 1.5, low: 1}
+      - {high: 2, low: 1.5}
+      - {high: 2.5, low: 2}
+      - {high: 3, low: 2.5}
+      - {high: 3.5, low: 3}
+      - {high: 4, low: 3.5}
+      - {high: 4.5, low: 4}
+      - {high: 5, low: 4.5}
+      - {high: 5.5, low: 5}
+      - {high: 6, low: 5.5}
+      - {high: 6.5, low: 6}
+      - {high: 7, low: 6.5}
+      - {high: 7.5, low: 7}

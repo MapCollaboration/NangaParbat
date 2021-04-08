@@ -20,6 +20,7 @@ set(preprocessing_source
   preprocessCOMPASS.cc
   preprocessHERMES.cc
   preprocessE537.cc
+  preprocessE615.cc
   preprocessATLASLowMass.cc
   )
 
