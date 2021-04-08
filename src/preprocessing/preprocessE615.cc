@@ -95,7 +95,6 @@ namespace NangaParbat
                 ipT[vindex]    = vpT;
                 icross[vindex] = vcross;
                 istat[vindex]  = vstat;
-                isyst[vindex]  = 0.16 * icross[vindex];
               }
           }
 
@@ -106,7 +105,6 @@ namespace NangaParbat
         data["pT"]    = ipT;
         data["cross"] = icross;
         data["stat"]  = istat;
-        data["syst"]  = isyst;
 
         /*
         // Maps for target and hadron names
@@ -149,7 +147,7 @@ namespace NangaParbat
 
 
                 // Initialize result maps
-                std::map<int, double> fdcross, fdstat, fdsyst, fdpT;
+                std::map<int, double> fdcross, fdstat, fdpT;
 
                 // Prepare (outer) map for each output data file
                 std::map<std::string, std::map<int, double>> filedata;
@@ -159,13 +157,11 @@ namespace NangaParbat
                   {
                     fdcross[i] = data["cross"][i];
                     fdstat[i]  = data["stat"][i];
-                    fdsyst[i]  = data["syst"][i];
                     fdpT[i]    = data["pT"][i];
                   }
 
                 filedata["cross"] = fdcross;
                 filedata["stat"]  = fdstat;
-                filedata["syst"]  = fdsyst;
                 filedata["pT"]    = fdpT;
 
 
@@ -217,7 +213,6 @@ namespace NangaParbat
                   {
                     emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
                     emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << filedata["stat"][m.first] << YAML::EndMap;
-                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << filedata["syst"][m.first] << YAML::EndMap;
                     if (PDFError)
                       {
                         // Now read PDF errors
@@ -226,7 +221,7 @@ namespace NangaParbat
                         double dum, pe;
                         stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
 
-                        emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.000 << YAML::EndMap;
+                        emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.16 << YAML::EndMap;
                         // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
                       }
                     // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
