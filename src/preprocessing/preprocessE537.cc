@@ -11,6 +11,7 @@
 #include <fstream>
 #include <sys/stat.h>
 #include <algorithm>
+#include <string>
 
 namespace NangaParbat
 {
@@ -34,7 +35,7 @@ namespace NangaParbat
     // Initialize naming map for the Q-integration ranges
     std::map<std::string, std::string> Qranges = {{"4.0TO4.5", "_Q_4.0_4.5"}, {"4.5TO5.0", "_Q_4.5_5.0"}, {"5.0TO5.5", "_Q_5.0_5.5"}, {"5.5TO6.0","_Q_5.5_6.0"}, {"6.0TO6.5","_Q_6.0_6.5"}, {"6.5TO7.0","_Q_6.5_7.0"}, {"7.0TO7.5","_Q_7.0_7.5"}, {"7.5TO8.0","_Q_7.5_8.0"}, {"8.0TO8.5","_Q_8.0_8.5"}, {"8.5TO9.0","_Q_8.5_9.0"}};
     std::map<std::string, std::pair<std::string, std::string>> Qrangelims = {{"4.0TO4.5", {"4", "5"}}, {"4.5TO5.0", {"4.5", "5.0"}}, {"5.0TO5.5", {"5", "5.5"}}, {"5.5TO6.0",{"5.5","6"}}, {"6.0TO6.5",{"6","6.5"}}, {"6.5TO7.0",{"6.5","7"}}, {"7.0TO7.5",{"7","7.5"}}, {"7.5TO8.0",{"7.5","8"}}, {"8.0TO8.5",{"8","8.5"}}, {"8.5TO9.0",{"8.5","9"}}};
-
+    std::map<std::string, std::pair<double,double>> Qextremes= {{"4.0TO4.5", {4,4.5}}, {"4.5TO5.0", {4.5,5.0}}, {"5.0TO5.5", {5.0,5.5}}, {"5.5TO6.0",{5.5,6.0}}, {"6.0TO6.5",{6.0,6.5}}, {"6.5TO7.0", {6.5,7.0}}, {"7.0TO7.5",{7.0,7.5}}, {"7.5TO8.0", {7.5,8.0}}, {"8.0TO8.5", {8.0,8.5}}, {"8.5TO9.0", {8.5,9.0}}};
     // Create directory on the basis of "ofolder" specified previously
     std::string opath = ProcessedDataPath + "/" + ofolder;
     mkdir(opath.c_str(), ACCESSPERMS);
@@ -54,26 +55,29 @@ namespace NangaParbat
         // Run over the energy ranges
         for (auto const& dv : exp["dependent_variables"])
           {
+            //  Define the minimum and the maximum value of y
+            // NOTE on the calculation of y_min and y_max: y=arcsinh(sqrt{s}*xF/(2Q)).
+            //                                             The value of x_min = -0.1, then y_min= arcsinh(-0.1*sqrt(s)/(2 Q_max)) for a specific Qmin<Q<Qmax bin
+            //                                                          x_max = 1, then y_max = arcsinh(sqrt(s)/(2 Q_min)) for a specific Qmin<Q<Qmax bin
+            double Qexmin, Qexmax;
+            double y_min, y_max;
+
             std::string ofile;
             std::pair<std::string, std::string> Qlims;
+            std::pair<double, double> Qestremi;
             std::string level;
+
             for (auto const& q : dv["qualifiers"])
               if (q["name"].as<std::string>() == "M(P=3 4)")
                 {
                   ofile  = ofolder + Qranges[q["value"].as<std::string>()];
                   Qlims = Qrangelims[q["value"].as<std::string>()];
+                  Qestremi = Qextremes[q["value"].as<std::string>()];
+                  Qexmin = Qestremi.first;
+                  Qexmax = Qestremi.second;
+                  y_min = asinh((-0.1*125)/(2*Qexmax));
+                  y_max = asinh(125/(2*Qexmin));
                 }
-
-
-          /*
-                else if (q["name"].as<std::string>() == "Level")
-                level = q["value"].as<std::string>();
-
-            // If the level is "Dressed" continue with the next block
-            if (level == "Dressed")
-              continue;
-          */
-
 
             // Open PDF-error file
             std::ifstream pdferr(PDFErrorFolder + ofile + ".out");
@@ -83,12 +87,13 @@ namespace NangaParbat
 
             ofile += ".yaml";
 
+
             // Plot labels, check the range of Q
             std::map<std::string, std::string> labels
             {
               {"xlabel", "#it{q}_{T} [GeV]"},
               {"ylabel", "#frac{1}{#it{#sigma}} #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]"},
-              {"title", "E537 at 125 GeV, " + Qlims.first + " GeV < Q < " + Qlims.second + " GeV, ### < |#it{y}| < ### "},
+              {"title", "E537 at 125 GeV, " + Qlims.first + " GeV < Q < " + Qlims.second + " GeV," + std::to_string(y_min) + "< |#it{y}| < " +std::to_string(y_max)},
               {"xlabelpy", "$q_T \\rm{ [GeV]}$"},
               {"ylabelpy", "$\\frac{1}{\\sigma}\\frac{d\\sigma}{dq_{T}}[\\rm{GeV}^{-1}]$"},
               {"titlepy", "E537 at 125 GeV, " + Qlims.first + " GeV < Q <" + Qlims.second + "GeV, ### < $|y|$ < ### "}
@@ -108,15 +113,15 @@ namespace NangaParbat
             emit << YAML::Key << "qualifiers" << YAML::Value;
             emit << YAML::BeginSeq;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "DY" << YAML::EndMap;
-            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
-            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << 0.4025 << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 125 << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
                  << "low" << YAML::Value << Qlims.first << YAML::Key << "high" << YAML::Value << Qlims.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
-                 << "low" << YAML::Value << "###" << YAML::Key << "high" << YAML::Value << "###" << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
-            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
-                 << "pTmin" << YAML::Value << "###" << YAML::Key << "etamin" << YAML::Value << "###" << YAML::Key << "etamax" << YAML::Value << "###" << YAML::EndMap;
+                 << "low" << YAML::Value << y_min << YAML::Key << "high" << YAML::Value << y_max << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+          /*  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
+                 << "pTmin" << YAML::Value << "###" << YAML::Key << "etamin" << YAML::Value << "###" << YAML::Key << "etamax" << YAML::Value << "###" << YAML::EndMap; */
             emit << YAML::EndSeq;
             emit << YAML::Key << "values" << YAML::Value;
             emit << YAML::BeginSeq;

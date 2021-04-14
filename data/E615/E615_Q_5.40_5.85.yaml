@@ -3,103 +3,70 @@ dependent_variables:
     qualifiers:
       - {name: process, value: Drell Yan}
       - {name: observable, value: cross section}
-      - {name: target_isoscalarity, value: "###"}
-      - {name: prefactor, value: "###"}
+      - {name: target_isoscalarity, value: 0.4025}
+      - {name: prefactor, value: 1}
       - {name: Vs, value: 252}
       - {name: Q, low: 5.4, high: 5.85, integrate: true}
-      - {name: y, low: "###", high: "###", integrate: true}
-      - {name: PS_reduction, pTmin: "###", etamin: "###", etamax: "###"}
-    values:
-      - errors:
-          - {label: unc, value: 4.76e-37}
-          - {label: unc, value: 8.9696e-37}
-          - {label: mult, value: 0}
-        value: 5.606e-36
-      - errors:
-          - {label: unc, value: 7.5e-37}
-          - {label: unc, value: 2.232e-36}
-          - {label: mult, value: 0}
-        value: 1.395e-35
-      - errors:
-          - {label: unc, value: 9.9e-37}
-          - {label: unc, value: 3.536e-36}
-          - {label: mult, value: 0}
-        value: 2.21e-35
-      - errors:
-          - {label: unc, value: 1.08e-36}
-          - {label: unc, value: 3.9968e-36}
-          - {label: mult, value: 0}
-        value: 2.498e-35
-      - errors:
-          - {label: unc, value: 1.06e-36}
-          - {label: unc, value: 3.5376e-36}
-          - {label: mult, value: 0}
-        value: 2.211e-35
-      - errors:
-          - {label: unc, value: 9.9e-37}
-          - {label: unc, value: 2.8112e-36}
-          - {label: mult, value: 0}
-        value: 1.757e-35
-      - errors:
-          - {label: unc, value: 8.7e-37}
-          - {label: unc, value: 2.1536e-36}
-          - {label: mult, value: 0}
-        value: 1.346e-35
-      - errors:
-          - {label: unc, value: 7.41e-37}
-          - {label: unc, value: 1.42336e-36}
-          - {label: mult, value: 0}
-        value: 8.896e-36
-      - errors:
-          - {label: unc, value: 6.51e-37}
-          - {label: unc, value: 9.5456e-37}
-          - {label: mult, value: 0}
-        value: 5.966e-36
-      - errors:
-          - {label: unc, value: 5.63e-37}
-          - {label: unc, value: 7.2624e-37}
-          - {label: mult, value: 0}
-        value: 4.539e-36
-      - errors:
-          - {label: unc, value: 4.8e-37}
-          - {label: unc, value: 3.68e-37}
-          - {label: mult, value: 0}
-        value: 2.3e-36
-      - errors:
-          - {label: unc, value: 3.58e-37}
-          - {label: unc, value: 2.624e-37}
-          - {label: mult, value: 0}
-        value: 1.64e-36
-      - errors:
-          - {label: unc, value: 1.624e-37}
-          - {label: unc, value: 4.5008e-38}
-          - {label: mult, value: 0}
-        value: 2.813e-37
-      - errors:
-          - {label: unc, value: 2.46e-37}
-          - {label: unc, value: 6.8176e-38}
-          - {label: mult, value: 0}
-        value: 4.261e-37
-      - errors:
-          - {label: unc, value: 2.155e-37}
-          - {label: unc, value: 5.9728e-38}
-          - {label: mult, value: 0}
-        value: 3.733e-37
-independent_variables:
-  - header: {name: PT, units: GEV}
-    values:
-      - {value: 0.125, high: 0, low: 0.25}
-      - {value: 0.375, high: 0.25, low: 0.5}
-      - {value: 0.625, high: 0.5, low: 0.75}
-      - {value: 0.875, high: 0.75, low: 1}
-      - {value: 1.125, high: 1, low: 1.25}
-      - {value: 1.375, high: 1.25, low: 1.5}
-      - {value: 1.625, high: 1.5, low: 1.75}
-      - {value: 1.875, high: 1.75, low: 2}
-      - {value: 2.125, high: 2, low: 2.25}
-      - {value: 2.375, high: 2.25, low: 2.5}
-      - {value: 2.625, high: 2.5, low: 2.75}
-      - {value: 2.875, high: 2.75, low: 3}
-      - {value: 3.125, high: 3, low: 3.25}
-      - {value: 3.375, high: 3.25, low: 3.5}
-      - {value: 3.625, high: 3.5, low: 3.75}
+      - {name: y, low: 0, high: 3.843489, integrate: true}
+      - values
+      -
+        - errors:
+            - {label: unc, value: 4.76e-37}
+            - {label: mult, value: 0.16}
+          value: 5.606e-36
+        - errors:
+            - {label: unc, value: 7.5e-37}
+            - {label: mult, value: 0.16}
+          value: 1.395e-35
+        - errors:
+            - {label: unc, value: 9.9e-37}
+            - {label: mult, value: 0.16}
+          value: 2.21e-35
+        - errors:
+            - {label: unc, value: 1.08e-36}
+            - {label: mult, value: 0.16}
+          value: 2.498e-35
+        - errors:
+            - {label: unc, value: 1.06e-36}
+            - {label: mult, value: 0.16}
+          value: 2.211e-35
+        - errors:
+            - {label: unc, value: 9.9e-37}
+            - {label: mult, value: 0.16}
+          value: 1.757e-35
+        - errors:
+            - {label: unc, value: 8.7e-37}
+            - {label: mult, value: 0.16}
+          value: 1.346e-35
+        - errors:
+            - {label: unc, value: 7.41e-37}
+            - {label: mult, value: 0.16}
+          value: 8.896e-36
+        - errors:
+            - {label: unc, value: 6.51e-37}
+            - {label: mult, value: 0.16}
+          value: 5.966e-36
+        - errors:
+            - {label: unc, value: 5.63e-37}
+            - {label: mult, value: 0.16}
+          value: 4.539e-36
+        - errors:
+            - {label: unc, value: 4.8e-37}
+            - {label: mult, value: 0.16}
+          value: 2.3e-36
+        - errors:
+            - {label: unc, value: 3.58e-37}
+            - {label: mult, value: 0.16}
+          value: 1.64e-36
+        - errors:
+            - {label: unc, value: 1.624e-37}
+            - {label: mult, value: 0.16}
+          value: 2.813e-37
+        - errors:
+            - {label: unc, value: 2.46e-37}
+            - {label: mult, value: 0.16}
+          value: 4.261e-37
+        - errors:
+            - {label: unc, value: 2.155e-37}
+            - {label: mult, value: 0.16}
+          value: 3.733e-37

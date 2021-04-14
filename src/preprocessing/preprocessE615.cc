@@ -185,6 +185,12 @@ namespace NangaParbat
                 // Allocate emitter
                 YAML::Emitter emit;
 
+
+                // NOTE on the calculation of y_min and y_max: y=arcsinh(sqrt{s}*xF/(2Q)).
+                //                                             The value of x_min = 0, then y_min=0 for all bin in Q
+                //                                             x_max = 1, then y_max = arcsinh(sqrt(s)/(2 Q_min)) for a specific Qmin<Q<Qmax bin
+
+
                 // Write kinematics on the YAML emitter
                 emit.SetFloatPrecision(8);
                 emit.SetDoublePrecision(8);
@@ -197,16 +203,16 @@ namespace NangaParbat
                 emit << YAML::BeginSeq;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "Drell Yan" << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "observable" << YAML::Key << "value" << YAML::Value << "cross section" << YAML::EndMap;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << 0.4025 << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 252 << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
                      << "low" << YAML::Value << Qb.second.first << YAML::Key << "high" << YAML::Value << Qb.second.second  << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
-                     << "low" << YAML::Value << "###" << YAML::Key << "high" << YAML::Value << "###" << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
+                     << "low" << YAML::Value << asinh(0) << YAML::Key << "high" << YAML::Value << asinh(252/(2* Qb.second.first)) << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+                /*emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
                      << "pTmin" << YAML::Value << "###" << YAML::Key << "etamin" << YAML::Value << "###" << YAML::Key << "etamax" << YAML::Value << "###" << YAML::EndMap;
-                emit << YAML::EndSeq;
+                emit << YAML::EndSeq;*/
                 emit << YAML::Key << "values" << YAML::Value;
                 emit << YAML::BeginSeq;
                 for (auto const& m : filedata["cross"])
@@ -234,19 +240,6 @@ namespace NangaParbat
                 emit << YAML::EndSeq;
                 emit << YAML::EndMap;
                 emit << YAML::EndSeq;
-
-                /*emit << YAML::Key << "independent_variables";
-                emit << YAML::BeginMap;
-                emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "pT" << YAML::EndMap;
-                emit << YAML::Key << "values" << YAML::Value;
-                emit << YAML::BeginSeq;
-                for (int i = 0; i < data.size(); ++i )
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << pTb.second.second << YAML::Key << "low" << YAML::Value << pTb.second.first << YAML::Key << "value" << YAML::Value << pTvalue << YAML::EndMap;
-                emit << YAML::EndSeq;
-                emit << YAML::EndMap;
-                emit << YAML::EndSeq;
-                emit << YAML::EndMap;
-                */
 
                 // Close PDF-error file
 
