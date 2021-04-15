@@ -12,7 +12,7 @@ set(preprocessing_source
   preprocessLHCb8TeV.cc
   preprocessLHCb13TeV.cc
   preprocessCMS7TeV.cc
-  preprocessCMS8TeV.cc
+  preprocessCMS8TeV.cc 
   preprocessCMS13TeV.cc
   preprocessATLAS7TeV.cc
   preprocessATLAS8TeV.cc
@@ -20,7 +20,9 @@ set(preprocessing_source
   preprocessCOMPASS.cc
   preprocessHERMES.cc
   preprocessE537.cc
+  preprocessE537_xF.cc
   preprocessE615.cc
+  preprocessE615_xF.cc
   preprocessATLASLowMass.cc
   )
 

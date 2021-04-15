@@ -20,9 +20,9 @@ namespace NangaParbat
 {
 
   //_________________________________________________________________________________
-  std::string PreprocessE615(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError)
+  std::string PreprocessE615_xF(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError)
   {
-    std::cout << "Processing E615 data ..." << std::endl;
+    std::cout << "Processing E615 data binned in xF ..." << std::endl;
 
     // Path to the raw-data folder
     const std::string RawDataFolder = RawDataPath + "/E615/";
@@ -31,7 +31,7 @@ namespace NangaParbat
     const std::string PDFErrorFolder = RawDataPath + "/PDFErrors/";
 
     // Vector of tables to process
-    const std::vector<std::string> tables = {"dataE615.txt"};
+    const std::vector<std::string> tables = {"dataE615_xF.txt"};
 
     // Output folder
     const std::string ofolder = "E615";
@@ -39,8 +39,8 @@ namespace NangaParbat
     // Vector for output names
     std::vector<std::string> filenames;
 
-    // Initialize naming map for the Q-integration ranges (the first element is for the name of the output data file)
-    const std::map<std::string, std::pair<double, double>> Qrangelims = {{"_Q_4.05_4.50", {4.05,4.50}}, {"_Q_4.50_4.95", {4.50, 4.95}}, {"_Q_4.95_5.40", {4.95,5.40}}, {"_Q_5.40_5.85", {5.40, 5.85}}, {"_Q_5.85_6.75", {5.85, 6.75}}, {"_Q_6.75_7.65", {6.75, 7.65}}, {"_Q_7.65_9.00", {7.65, 9.00}}, {"_Q_9.00_10.35", {9.00, 10.35}}, {"_Q_10.35_11.70", {10.35, 11.70}}, {"_Q_11.70_13.05", {11.70, 13.05}}};
+    // Initialize naming map for the xF-integration ranges (the first element is for the name of the output data file)
+    const std::map<std::string, std::pair<double, double>> xFrangelims = {{"_xF_0.00_0.10", {0.00,0.10}}, {"_xF_0.10_0.20", {0.10, 0.20}}, {"_xF_0.20_0.30", {0.20, 0.30}}, {"_xF_0.30_0.40", {0.30, 0.40}}, {"_xF_0.40_0.50", {0.40, 0.50}}, {"_xF_0.50_0.60", {0.50, 0.60}}, {"_xF_0.60_0.70", {0.60, 0.70}}, {"_xF_0.70_0.80", {0.70, 0.80}}, {"_xF_0.80_0.90", {0.80, 0.90}}, {"_xF_0.90_1.00", {0.90, 1.00}}};
 
     // Create directory
     std::string opath = ProcessedDataPath + "/" + ofolder;
@@ -61,14 +61,14 @@ namespace NangaParbat
         // Dummy variables to read columns
         std::string line;
         int vindex;
-        double vmmin, vmmax, vpT, vcross, vstat, vsyst;
+        double vxFmin, vxFmax, vpT, vcross, vstat, vsyst;
         vsyst = 0.16;
 
         // Create map to store the data
         std::map<std::string, std::map<int, double>> data;
 
         //  Create inner maps, one for each column of interest in the rawdatafile
-        std::map<int, double> immin, immax, ipT, icross, istat, isyst;
+        std::map<int, double> ixFmin, ixFmax, ipT, icross, istat, isyst;
 
         // The first 14 lines of the raw data files are headers, (11 + 3 for column names).
         // Skip those lines and start reading data.
@@ -86,12 +86,12 @@ namespace NangaParbat
                 std::stringstream ss(line);
 
                 // Extract each value in the line
-                ss >> vindex >> vmmin >> vmmax >> vpT >> vcross >> vstat;
+                ss >> vindex >> vxFmin >> vxFmax >> vpT >> vcross >> vstat;
 
                 // Construct maps of index and values.
                 // This is done so that the separation between values in bins can be done by index.
-                immin[vindex]  = vmmin;
-                immax[vindex]  = vmmax;
+                ixFmin[vindex]  = vxFmin;
+                ixFmax[vindex]  = vxFmax;
                 ipT[vindex]    = vpT;
                 icross[vindex] = vcross;
                 istat[vindex]  = vstat;
@@ -100,8 +100,8 @@ namespace NangaParbat
 
         // Now that all lines have been read and the inner maps are filled,
         // put them in the correct column of the data outer map.
-        data["m_min"] = immin;
-        data["m_max"] = immax;
+        data["xF_min"] = ixFmin;
+        data["xF_max"] = ixFmax;
         data["pT"]    = ipT;
         data["cross"] = icross;
         data["stat"]  = istat;
@@ -122,27 +122,27 @@ namespace NangaParbat
         */
 
         // Conditions to separate the values in the columns into different files.
-        // Loop on Q(i.e. m) bin boundaries.
-        for (auto const& Qb : Qrangelims)
+        // Loop on xF bin boundaries.
+        for (auto const& xFb : xFrangelims)
           {
-            // File name picks up the m (i.e. Q) boundaries
-            std::string ofileQ = "E615" + Qb.first;
+            // File name picks up the xF boundaries
+            std::string ofilexF = "E615" + xFb.first;
 
             // Initialize indexes vector for future selection
-            std::vector<int> indexesQ;
-            double Qvalue;
+            std::vector<int> indexesxF;
+            double xFvalue;
 
-            // Select Q bin
-            for (auto const& iQ : data["m_min"])
-              // data["m_min"] is a map <index, m_min value> of all the values in the original table,
-              // so iQ.first is the index (int) and iQ.second the value (double).
-              if (iQ.second >= Qb.second.first && iQ.second < Qb.second.second)
+            // Select xF bin
+            for (auto const& ixF : data["xF_min"])
+              // data["xF_min"] is a map <index, xF_min value> of all the values in the original table,
+              // so ixF.first is the index (int) and ixF.second the value (double).
+              if (ixF.second >= xFb.second.first && ixF.second < xFb.second.second)
                 {
                   // Store indexes
-                  indexesQ.push_back(iQ.first);
+                  indexesxF.push_back(ixF.first);
 
-                  // Get Q value
-                  Qvalue = iQ.second;
+                  // Get xF value
+                  xFvalue = ixF.second;
                 }
 
 
@@ -153,7 +153,7 @@ namespace NangaParbat
                 std::map<std::string, std::map<int, double>> filedata;
 
                 // Finally select cross sections and their uncertainties.
-                for (int i : indexesQ)
+                for (int i : indexesxF)
                   {
                     fdcross[i] = data["cross"][i];
                     fdstat[i]  = data["stat"][i];
@@ -166,7 +166,7 @@ namespace NangaParbat
 
 
                 // Open PDF-error file
-                std::ifstream pdferr(PDFErrorFolder + ofileQ + ".out");
+                std::ifstream pdferr(PDFErrorFolder + ofilexF + ".out");
                 std::string line;
                 getline(pdferr, line);
                 getline(pdferr, line);
@@ -174,12 +174,12 @@ namespace NangaParbat
                 // Plot labels
                 std::map<std::string, std::string> labels
                 {
-                  {"xlabel", "#it{q}_{T} [GeV]"},
-                  {"ylabel", "#frac{d2#it{#sigma}}{d#it{p}_{T}#d#it{q}_{T}} [cm^{2}*GeV^{-2}"},
-                  {"title", "E615, " + std::to_string(Qb.second.first) + " < Q < " + std::to_string(Qb.second.second)},
-                  {"xlabelpy", "$q_T \\rm{[GeV]$"},
+                  {"xlabel", "#it{x}_{F}"},
+                  {"ylabel", "#frac{d2#it{#sigma}}{d#it{x}_{F}#d#it{q}_{T}} [cm^{2}*GeV^{-2}"},
+                  {"title", "E615, " + std::to_string(xFb.second.first) + " < xF < " + std::to_string(xFb.second.second)},
+                  {"xlabelpy", "$x_F$"},
                   {"ylabelpy", "$\\frac{d^2\\sigma}{dp_{T} dq_{T}}[\\rm{cm}^2*{GeV}^{-2}]$"},
-                  {"titlepy", "E615, \\n " + std::to_string(Qb.second.first) + " < Q < " + std::to_string(Qb.second.second)}
+                  {"titlepy", "E615, \\n " + std::to_string(xFb.second.first) + " < xF < " + std::to_string(xFb.second.second)}
                 };
 
                 // Allocate emitter
@@ -206,18 +206,18 @@ namespace NangaParbat
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << 0.4025 << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 252 << YAML::EndMap;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
-                     << "low" << YAML::Value << Qb.second.first << YAML::Key << "high" << YAML::Value << Qb.second.second  << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "xF" << YAML::Key
+                     << "low" << YAML::Value << xFb.second.first << YAML::Key << "high" << YAML::Value << xFb.second.second  << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
-                     << "low" << YAML::Value << asinh(0) << YAML::Key << "high" << YAML::Value << asinh(252/(2* Qb.second.first)) << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+                     << "low" << YAML::Value << asinh((252*xFb.second.first)/(2*13.05)) << YAML::Key << "high" << YAML::Value << asinh((252*xFb.second.second)/(2* 4.05)) << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
                 /*emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
                      << "pTmin" << YAML::Value << "###" << YAML::Key << "etamin" << YAML::Value << "###" << YAML::Key << "etamax" << YAML::Value << "###" << YAML::EndMap;
                 emit << YAML::EndSeq;*/
                 emit << YAML::Key << "values" << YAML::Value;
-                for (auto const& m : filedata["cross"])
+                for (auto const& f : filedata["cross"])
                   {
                     emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
-                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << filedata["stat"][m.first] << YAML::EndMap;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << filedata["stat"][f.first] << YAML::EndMap;
                     if (PDFError)
                       {
                         // Now read PDF errors
@@ -232,7 +232,7 @@ namespace NangaParbat
                     // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
                     // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
                     emit << YAML::EndSeq;
-                    emit << YAML::Key << "value" << YAML::Value << m.second;
+                    emit << YAML::Key << "value" << YAML::Value << f.second;
                     // emit << YAML::Key << "id"    << YAML::Value << m.first;
                     emit << YAML::EndMap;
                   }
@@ -256,14 +256,17 @@ namespace NangaParbat
                 emit << YAML::EndMap;
 
 
+
+
+
                 pdferr.close();
 
                 // Dump table to file
-                std::ofstream fout(opath + "/" + ofileQ + ".yaml");
+                std::ofstream fout(opath + "/" + ofilexF + ".yaml");
                 fout << emit.c_str() << std::endl;
                 fout.close();
 
-                filenames.push_back(ofileQ);
+                filenames.push_back(ofilexF);
 
           }
 

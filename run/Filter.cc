@@ -80,10 +80,11 @@ int main(int argc, char* argv[])
 
   fout << "E537:\n";
   fout << NangaParbat::PreprocessE537(RawDataPath, ProcessedDataPath, pdferr);
+  fout << NangaParbat::PreprocessE537_xF(RawDataPath, ProcessedDataPath, pdferr);
 
   fout << "E615:\n";
   fout << NangaParbat::PreprocessE615(RawDataPath, ProcessedDataPath, pdferr);
-
+  fout << NangaParbat::PreprocessE615_xF(RawDataPath, ProcessedDataPath, pdferr);
 
   fout.close();
 
