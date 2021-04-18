@@ -23,7 +23,6 @@ set(preprocessing_source
   preprocessE537_xF.cc
   preprocessE615.cc
   preprocessE615_xF.cc
-  preprocessATLASLowMass.cc
   )
 
 add_library(preprocessing OBJECT ${preprocessing_source})

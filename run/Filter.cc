@@ -69,9 +69,6 @@ int main(int argc, char* argv[])
   fout << NangaParbat::PreprocessATLAS7TeV(RawDataPath, ProcessedDataPath, pdferr);
   fout << NangaParbat::PreprocessATLAS8TeV(RawDataPath, ProcessedDataPath, pdferr);
 
-  fout << "ATLASLowMass:\n";
-  fout << NangaParbat::PreprocessATLASLowMass(RawDataPath, ProcessedDataPath, pdferr);
-
   fout << "HERMES:\n";
   fout << NangaParbat::PreprocessHERMES(RawDataPath, ProcessedDataPath, pdferr);
 
