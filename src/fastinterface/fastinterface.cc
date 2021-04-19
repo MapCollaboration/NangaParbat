@@ -484,7 +484,7 @@ namespace NangaParbat
         const DataHandler::Kinematics                kin    = DHVect[i].GetKinematics();
         const double                                 Vs     = kin.Vs;       // C.M.E.
         const std::vector<double>                    qTv    = kin.qTv;      // Transverse momentum bin bounds
-        const std::vector<std::pair<double, double>> qTmap  = kin.qTmap;    // Map of qT bounds to associate to the single bins
+        const std::vector<std::pair<double, double>> qTmap  = kin.qTmap;    // Map of PhT bounds to associate to the single bins
         const std::vector<double>                    qTfact = kin.qTfact;   // Possible bin-by-bin prefactors to multiply the theoretical predictions
         const std::pair<double, double>              Qb     = kin.var1b;    // Invariant mass interval
         const std::pair<double, double>              xbb    = kin.var2b;    // Bjorken x interval
@@ -608,8 +608,8 @@ namespace NangaParbat
         // section.
         const double prefactor = DHVect[i].GetPrefactor() / IncQIntegrand.integrate(Qb.first, Qb.second, 1e-5);
 
-        // Since keeting track whether the cross section is to be
-        // integrated over the final state kinematics is constly and
+        // Since keeping track whether the cross section is to be
+        // integrated over the final state kinematics is costly and
         // so far only fully integrated SIDIS cross sections
         // considered, it is useful to assume that IntQ, Intxb, Intz,
         // and IntqT are all .true., if not stop the code.
@@ -676,6 +676,10 @@ namespace NangaParbat
           if (qT / Qb.first / zb.first <= qToQ)
             nqT++;
         const int nsteps = nqT * nO * nQe * nxbe * nze;
+
+        std::cout << "ComputeTables report:" << std::endl;
+        std::cout << "- Cut qT/Q: " << qToQ << std::endl;
+        std::cout << "- Number of points that pass the cut: " << nqT << "\n" << std::endl;
 
         // Counter for the status report
         int istep = 0;

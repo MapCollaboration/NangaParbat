@@ -8,6 +8,10 @@ if (GSL_CONFIG AND ROOT_CONFIG AND Ceres_FOUND)
   target_link_libraries(DrellYanCrossSection NangaParbat)
   add_test(DrellYanCrossSection DrellYanCrossSection)
 
+  add_executable(SIDISMultiplicities SIDISMultiplicities.cc)
+  target_link_libraries(SIDISMultiplicities NangaParbat)
+  add_test(SIDISMultiplicities SIDISMultiplicities)
+
   add_executable(TestChi2 TestChi2.cc)
   target_link_libraries(TestChi2 NangaParbat)
   add_test(TestChi2 TestChi2)
