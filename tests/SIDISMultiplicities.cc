@@ -10,6 +10,8 @@
 #include <cstring>
 #include <functional> // std::divides
 #include <algorithm> // std::transform
+#include <sys/stat.h>
+#include <fstream>
 
 #include <NangaParbat/bstar.h>
 #include <NangaParbat/nonpertfunctions.h>
@@ -172,6 +174,8 @@ int main(int argc, char* argv[])
 
       // Experimental multiplicities for comparison
       const std::vector<double> multv = dh->GetMeanValues();
+      // Get uncorrelated uncertainties
+      const std::vector<double> uncv = dh->GetUncorrelatedUnc();
 
       // Set cut
       const double qToQcut = 3;
@@ -425,6 +429,10 @@ int main(int argc, char* argv[])
         em << YAML::Key << "Central values" << YAML::Value << YAML::Flow << YAML::BeginSeq;
         for (int i = 0; i < (int) multv.size(); i++)
           em << multv[i];
+        em << YAML::EndSeq;
+        em << YAML::Key << "Uncorrelated uncertainties" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+        for (int i = 0; i < (int) uncv.size(); i++)
+          em << uncv[i];
         em << YAML::EndSeq;
         em << YAML::EndMap;
 
