@@ -224,11 +224,11 @@ namespace NangaParbat
                 // Plot labels
                 std::map<std::string, std::string> labels
                 {
-                  {"xlabel", "#it{P}_{h}_{#perp} [GeV]"},
-                  {"ylabel", "M^{h}_{n}#left(x, z, |{P}_{h}_{#perp}|, Q^2 #right)"},
+                  {"xlabel", "#it{P}_{hT} [GeV]"},
+                  {"ylabel", "M^{h}_{n}#left(x, z, |{P}_{hT}|, Q^2 #right)"},
                   {"title", "HERMES, " + targets[tab.substr(7,6)].substr(1) + "  -  " + hadrons[tab.substr(pos + 6)].substr(1) + "   " + std::to_string(xb.second.first) + " < x < " + std::to_string(xb.second.second) + " , " + std::to_string(zb.second.first) + " < |#it{z}| < " + std::to_string(zb.second.second)},
-                  {"xlabelpy", "$P_{h}_{\\perp} \\rm{ [GeV]}$"},
-                  {"ylabelpy", "$M^{h}_{n}\\left(x, z, |{P}_{h}_{\\perp}|, Q^2 \\right)$"},
+                  {"xlabelpy", "$P_{hT} \\rm{ [GeV]}$"},
+                  {"ylabelpy", "$M^{h}_{n}\\left(x, z, |{P}_{hT}|, Q^2 \\right)$"},
                   {"titlepy", "HERMES, " + targets[tab.substr(7,6)].substr(1) + "  -  " + hadrons[tab.substr(pos + 6)].substr(1) + " \\n " + std::to_string(xb.second.first) + " < x < " + std::to_string(xb.second.second) + " , " + std::to_string(zb.second.first) + " < z < " + std::to_string(zb.second.second)}
                 };
 

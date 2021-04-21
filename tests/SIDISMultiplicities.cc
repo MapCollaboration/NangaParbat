@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
   // Alpha_s (from PDFs). Get it from the LHAPDF set and tabulate it.
   const auto Alphas = [&] (double const& mu) -> double{ return distpdf->alphasQ(mu); };
   const apfel::TabulateObject<double> TabAlphas {[&] (double const& mu) -> double{return distpdf->alphasQ(mu); },
-                                                 100, distpdf->qMin(), distpdf->qMax(), 3, Thresholds};
+                                                 100, distpdf->qMin() - 0.5, distpdf->qMax(), 3, Thresholds};
 
   // Setup APFEL++ x-space grid for PDFs
   std::vector<apfel::SubGrid> vsgp;
@@ -83,6 +83,9 @@ int main(int argc, char* argv[])
   // Get non-perturbative functions
   const NangaParbat::Parameterisation* fNP = NangaParbat::GetParametersation("PV17");
 
+  // Set cut
+  const double qToQcut = 3;
+
   // Electromagnetic coupling squared (provided by APFEL++)
   const double aref = config["alphaem"]["aref"].as<double>();
   apfel::AlphaQED alphaem{aref, config["alphaem"]["Qref"].as<double>(), Thresholds, {0, 0, 1.777}, 0};
@@ -101,10 +104,12 @@ int main(int argc, char* argv[])
 
   // Tabulate collinear PDFs
   const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 100, distpdf->qMin() - 0.5, distpdf->qMax(), 3, Thresholds}; // ATTENTION! In fastinterface.cc, l. 57 there is only distpdf->qMin(). THIS HAS AN IMPACT ON THE FINAL PREDICTIONS! Same for FFs.
+  // const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 200, distpdf->qMin(), distpdf->qMax(), 3, Thresholds}; // ATTENTION! In fastinterface.cc, l. 57 there is only distpdf->qMin(). THIS HAS AN IMPACT ON THE FINAL PREDICTIONS! Same for FFs.
   const auto CollPDFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabPDFs.Evaluate(mu); };
 
   // Tabulate collinear FFs
-  const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabFFs{EvolvedFFs, 100, distpdf->qMin() - 0.5, distff->qMax(), 3, Thresholds};
+  const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabFFs{EvolvedFFs, 100, distff->qMin() - 0.5, distff->qMax(), 3, Thresholds};
+  // const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabFFs{EvolvedFFs, 200, distff->qMin(), distff->qMax(), 3, Thresholds};
   const auto CollFFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabFFs.Evaluate(mu); };
 
   // Initialize TMD objects
@@ -128,7 +133,6 @@ int main(int argc, char* argv[])
   const auto TabFunc    = [] (double const& b) -> double{ return log(b); };
   const auto InvTabFunc = [] (double const& fb) -> double{ return exp(fb); };
 
-  // ---------------------------------------------------------------------------
   // Initialise GSL random-number generator, essential to initialize DataHandler object
   gsl_rng *rng = gsl_rng_alloc(gsl_rng_ranlxs2);
   gsl_rng_set(rng, 1234);
@@ -136,6 +140,26 @@ int main(int argc, char* argv[])
   // Fluctuations (0 = central replica, no fluctuations)
   const int ReplicaID = 0;
 
+  // YAML Emitter
+  YAML::Emitter em;
+
+  // Start YAML output file
+  em.SetFloatPrecision(8);
+  em.SetDoublePrecision(8);
+  em << YAML::BeginMap;
+  em << YAML::Key << "Parameterisation" << YAML::Value << "PV17";
+  em << YAML::Key << "Non-perturbative function" << YAML::Value << fNP ->LatexFormula();
+
+  em << YAML::Key << "Parameters" << YAML::Value << YAML::Flow;
+  em << YAML::BeginMap;
+  for (int i = 0; i < (int) fNP ->GetParameters().size(); i++)
+    em << YAML::Key << fNP ->GetParameterNames()[i] << YAML::Value << fNP ->GetParameters()[i];
+  em << YAML::EndMap;
+
+  // Loop over the datasets
+  em << YAML::Key << "Experiments" << YAML::Value << YAML::BeginSeq;
+
+  // Start reading datasets
   const YAML::Node datasets = YAML::LoadFile(std::string(argv[2]) + "/datasets.yaml");
   for (auto const& exper : datasets)
     for (auto const& ds : exper.second)
@@ -172,15 +196,15 @@ int main(int argc, char* argv[])
       std::vector<double> qTv(PhTv.size());
       std::transform(PhTv.begin(), PhTv.end(), zv.begin(), qTv.begin(), std::divides<double>());
 
-      // Experimental multiplicities for comparison
+      // Experimental multiplicities
       const std::vector<double> multv = dh->GetMeanValues();
+
       // Get uncorrelated uncertainties
       const std::vector<double> uncv = dh->GetUncorrelatedUnc();
 
-      // Set cut
-      const double qToQcut = 3;
+      // Get plotting labels
+      const std::map<std::string, std::string> labels = dh->GetLabels();
 
-      // -----------------------------------------------------------------------
 
       // Taking into account the isoscalarity of the target
       const int sign = (targetiso >= 0 ? 1 : -1);
@@ -237,6 +261,7 @@ int main(int argc, char* argv[])
           << "     expe. mult. "
           << std::endl;
 
+
       // Denominator of multiplicities: compute inclusive cross section.
       // First adjust PDFs to account for the isoscalarity.
       const std::function<std::map<int, double>(double const&, double const&)> tPDFs = [&] (double const& xm, double const& Qm) -> std::map<int, double>
@@ -282,9 +307,10 @@ int main(int argc, char* argv[])
     	  const double Yp = 1 + pow(1 - pow(Q / Vs, 2) / x, 2);
 
         // return pow(TabAlphaem.Evaluate(Q), 2) / pow(Q, 3) * (Yp * f2.Evaluate(x) / x - pow(Q / Vs, 4) * fl.Evaluate(x) / pow(x, 3));
-        // return pow(TabAlphaem.Evaluate(Q), 2) / pow(Q, 3) * (Yp * f2.Evaluate(x) / x - pow(Q / Vs, 4) * fl.Evaluate(x) / pow(x, 2)); // INVESTIGATE FL
         return pow(TabAlphaem.Evaluate(Q), 2) / pow(Q, 3) * (Yp * f2.Evaluate(x) / x);
       };
+
+
 
       // Vector to store theoretical multiplicities
       std::vector<double> theomult(PhTv.size(), 0);
@@ -368,7 +394,7 @@ int main(int argc, char* argv[])
           const apfel::TabulateObject<double> tf2NP{[=] (double const& tb) -> double { return fNP->Evaluate(zm, tb, zeta, 1); },
               100, 5e-5, 5, 3, {}, TabFunc, InvTabFunc};
 
-          // Try to implement ll.741 of fastinterface.cc for the differential case
+          // Implement ll.741 of fastinterface.cc for the differential case
           const std::function<double(double const&)> bIntProva = [=] (double const& b) -> double
     		    {
               // bstar min prescription
@@ -396,6 +422,7 @@ int main(int argc, char* argv[])
           // Denominator
           const double denom = apfel::ConvFact * apfel::FourPi * DiffInclusiveCS(Qm, xm);
 
+          // Multiplicity
           theomult[iqT] = differ / denom;
 
           // Write results on terminal
@@ -407,10 +434,11 @@ int main(int argc, char* argv[])
     			    << std::endl;
         }
 
-        // YAML Emitter
-        YAML::Emitter em;
-
         em << YAML::BeginMap;
+        em << YAML::Key << "Name" << YAML::Value << dh->GetName();
+        em << YAML::Key << "Plot title python" << YAML::Value << labels.at("titlepy");
+        em << YAML::Key << "xlabelpy" << YAML::Value << labels.at("xlabelpy");
+        em << YAML::Key << "ylabelpy" << YAML::Value << labels.at("ylabelpy");
         em << YAML::Key << "Q"   << YAML::Value << Qav;
         em << YAML::Key << "x"   << YAML::Value << xav;
         em << YAML::Key << "z"   << YAML::Value << zv[0];
@@ -436,15 +464,15 @@ int main(int argc, char* argv[])
         em << YAML::EndSeq;
         em << YAML::EndMap;
 
-        // Output file
-        std::ofstream fout(OutputFolder + "/" + ds["file"].as<std::string>());
-        fout << em.c_str() << std::endl;
-        fout.close();
-
         std::cout << "Total computation time, ";
         t.stop(true);
 
     }
+
+  // Output file
+  std::ofstream fout(OutputFolder + "/Report.yaml");
+  fout << em.c_str() << std::endl;
+  fout.close();
 
   delete distpdf;
   delete distff;
