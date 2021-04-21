@@ -229,7 +229,7 @@ namespace NangaParbat
                   {"title", "HERMES, " + targets[tab.substr(7,6)].substr(1) + "  -  " + hadrons[tab.substr(pos + 6)].substr(1) + "   " + std::to_string(xb.second.first) + " < x < " + std::to_string(xb.second.second) + " , " + std::to_string(zb.second.first) + " < |#it{z}| < " + std::to_string(zb.second.second)},
                   {"xlabelpy", "$P_{hT} \\rm{ [GeV]}$"},
                   {"ylabelpy", "$M^{h}_{n}\\left(x, z, |{P}_{hT}|, Q^2 \\right)$"},
-                  {"titlepy", "HERMES, " + targets[tab.substr(7,6)].substr(1) + "  -  " + hadrons[tab.substr(pos + 6)].substr(1) + " \\n " + std::to_string(xb.second.first) + " < x < " + std::to_string(xb.second.second) + " , " + std::to_string(zb.second.first) + " < z < " + std::to_string(zb.second.second)}
+                  {"titlepy", "HERMES, " + targets[tab.substr(7,6)].substr(1) + "  -  " + hadrons[tab.substr(pos + 6)].substr(1) + " \\\\ " + std::to_string(xb.second.first) + " < x < " + std::to_string(xb.second.second) + " , " + std::to_string(zb.second.first) + " < z < " + std::to_string(zb.second.second)}
                 };
 
                 // Allocate emitter

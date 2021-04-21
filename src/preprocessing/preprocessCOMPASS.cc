@@ -189,7 +189,7 @@ namespace NangaParbat
                 {"title", "COMPASS, Deu   -  " + hadrons[hcharge] + "   " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < |#it{z}| < " + std::to_string(zbin.second)},
                 {"xlabelpy", "$P_{hT} \\rm{ [GeV]}$"},
                 {"ylabelpy", "$" + hcharge + "\\left(x, z, |{P}_{hT}|^2, Q^2 \\right)$"},
-                {"titlepy", "COMPASS, Deu   -  " + hadrons[hcharge] + " \\n " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < z < " + std::to_string(zbin.second)}
+                {"titlepy", "COMPASS, Deu   -  " + hadrons[hcharge] + " \\\\ " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < z < " + std::to_string(zbin.second)}
               };
 
               // Allocate emitter
