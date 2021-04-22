@@ -588,7 +588,7 @@ namespace NangaParbat
               [=] (double const& x) -> double
               {
                 // Cross section
-                return ( 1 + pow(1 - pow(Q / Vs, 2) / x, 2) ) * f2.Evaluate(x) / x - pow(Q / Vs, 4) * fl.Evaluate(x) / pow(x, 3);
+                return (1 / 2 * Q) * ( 1 + pow(1 - pow(Q / Vs, 2) / x, 2) ) * f2.Evaluate(x) / x - pow(Q / Vs, 4) * fl.Evaluate(x) / pow(x, 3);
               }
             };
             // Integration bounds in x accounting for fiducial cuts
@@ -797,7 +797,7 @@ namespace NangaParbat
                                   zintegral += zIntObj.integrate(zg[iz], zg[iz+1], 0);
 
                                 // Return Q integrand
-                                return Qgrid.Interpolant(0, tau, Q) * pow((arun ? _TabAlphaem->Evaluate(Q) : aref), 2) * _HardFactorSIDIS(muf) / pow(Q, 3) * zintegral;
+                                return Qgrid.Interpolant(0, tau, Q) * pow((arun ? _TabAlphaem->Evaluate(Q) : aref), 2) * _HardFactorSIDIS(muf) / pow(Q, 3) * zintegral / (2 * Q);
                               }
                             };
                             // Perform the integral in Q
