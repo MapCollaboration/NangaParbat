@@ -41,12 +41,14 @@ int main(int argc, char* argv[])
   std::cout << "\033[1;33mComputation done at the average values, NOT INTEGRATED.\033[0m" << std::endl;
 
   // Perturbative order
+  // const int PerturbativeOrder = 3;
   const int PerturbativeOrder = config["PerturbativeOrder"].as<int>();
   std::cout << "\033[1;32mPerturbative order: " << NangaParbat::PtOrderMap.at(PerturbativeOrder) << "\n\033[0m" << std::endl;
 
   // Open LHAPDF sets
   // LHAPDF::PDF* distpdf = LHAPDF::mkPDF("GJR08FFnloE", config["pdfset"]["member"].as<int>());
-  LHAPDF::PDF* distpdf = LHAPDF::mkPDF("MMHT2014nlo68cl", config["pdfset"]["member"].as<int>());
+  // LHAPDF::PDF* distpdf = LHAPDF::mkPDF("MMHT2014nnlo68cl", config["pdfset"]["member"].as<int>());
+  LHAPDF::PDF* distpdf = LHAPDF::mkPDF(config["pdfset"]["name"].as<std::string>(), config["pdfset"]["member"].as<int>());
   LHAPDF::PDF* distff  = LHAPDF::mkPDF(config["ffset"]["name"].as<std::string>(), config["ffset"]["member"].as<int>());
 
   // Rotate PDF set into the QCD evolution basis
@@ -103,13 +105,11 @@ int main(int argc, char* argv[])
   };
 
   // Tabulate collinear PDFs
-  const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 100, distpdf->qMin() - 0.5, distpdf->qMax(), 3, Thresholds}; // ATTENTION! In fastinterface.cc, l. 57 there is only distpdf->qMin(). THIS HAS AN IMPACT ON THE FINAL PREDICTIONS! Same for FFs.
-  // const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 200, distpdf->qMin(), distpdf->qMax(), 3, Thresholds}; // ATTENTION! In fastinterface.cc, l. 57 there is only distpdf->qMin(). THIS HAS AN IMPACT ON THE FINAL PREDICTIONS! Same for FFs.
+  const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 200, distpdf->qMin() - 0.1, distpdf->qMax(), 3, Thresholds}; // ATTENTION! In fastinterface.cc, l. 57 there is only distpdf->qMin(). THIS HAS AN IMPACT ON THE FINAL PREDICTIONS! Same for FFs.
   const auto CollPDFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabPDFs.Evaluate(mu); };
 
   // Tabulate collinear FFs
-  const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabFFs{EvolvedFFs, 100, distff->qMin() - 0.5, distff->qMax(), 3, Thresholds};
-  // const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabFFs{EvolvedFFs, 200, distff->qMin(), distff->qMax(), 3, Thresholds};
+  const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabFFs{EvolvedFFs, 200, distff->qMin() - 0.1, distff->qMax(), 3, Thresholds};
   const auto CollFFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabFFs.Evaluate(mu); };
 
   // Initialize TMD objects
@@ -170,6 +170,10 @@ int main(int argc, char* argv[])
       NangaParbat::DataHandler* dh = new NangaParbat::DataHandler{ds["name"].as<std::string>(), datafile,
                                                                   rng, ReplicaID,
                                                                   std::vector<double>{}};
+
+      // Keep track is the multiplicities are from HERMES or COMPASS
+      bool COMPASS = (exper.first.as<std::string>() == "COMPASS" ? true : false);
+
       // Kinematics for the fully differential computation
       const double Vs = dh->GetKinematics().Vs;
 
@@ -250,6 +254,7 @@ int main(int argc, char* argv[])
 
       apfel::Timer t;
       apfel::SetVerbosityLevel(0);
+      /*
       std::cout << std::scientific;
       std::cout << "      Q       "
     	    << "        x        "
@@ -260,7 +265,7 @@ int main(int argc, char* argv[])
           << "     theo. mult. "
           << "     expe. mult. "
           << std::endl;
-
+      */
 
       // Denominator of multiplicities: compute inclusive cross section.
       // First adjust PDFs to account for the isoscalarity.
@@ -306,11 +311,9 @@ int main(int argc, char* argv[])
 
     	  const double Yp = 1 + pow(1 - pow(Q / Vs, 2) / x, 2);
 
-        // return pow(TabAlphaem.Evaluate(Q), 2) / pow(Q, 3) * (Yp * f2.Evaluate(x) / x - pow(Q / Vs, 4) * fl.Evaluate(x) / pow(x, 3));
-        return pow(TabAlphaem.Evaluate(Q), 2) / pow(Q, 3) * (Yp * f2.Evaluate(x) / x);
+        return pow(TabAlphaem.Evaluate(Q), 2) / pow(Q, 3) * (Yp * f2.Evaluate(x) / x - pow(Q / Vs, 4) * fl.Evaluate(x) / pow(x, 3));
+        // return pow(TabAlphaem.Evaluate(Q), 2) / pow(Q, 3) * (Yp * f2.Evaluate(x) / x);
       };
-
-
 
       // Vector to store theoretical multiplicities
       std::vector<double> theomult(PhTv.size(), 0);
@@ -382,13 +385,6 @@ int main(int argc, char* argv[])
     		  const double differ = apfel::ConvFact * apfel::FourPi * aem2 * qTm * Yp * Hf(mu) * DEObj.transform(bInt, qTm) / pow(Qm, 3) / xm / zm / zm ;
           */
 
-
-          // Integrand in bT space
-          // const double overflow = 1.2;
-          // const double bmin = NangaParbat::bstarmin(0.00001, Qm) / overflow;
-          // const double bmax = NangaParbat::bstarmin(10, Qm) * overflow;
-          // const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> tLumib{Lumib, 200, bmin, bmax, 3, {}, TabFunc, InvTabFunc};
-
           const apfel::TabulateObject<double> tf1NP{[=] (double const& tb) -> double { return fNP->Evaluate(xm, tb, zeta, 0); },
               100, 5e-5, 5, 3, {}, TabFunc, InvTabFunc};
           const apfel::TabulateObject<double> tf2NP{[=] (double const& tb) -> double { return fNP->Evaluate(zm, tb, zeta, 1); },
@@ -408,8 +404,8 @@ int main(int argc, char* argv[])
                   if (q == 0)
                     continue;
 
-                    const double lumibsq = Yp * TabMatchTMDPDFs.EvaluatexQ(q, xm, bs) / xm * apfel::QCh2[std::abs(q)-1] * TabMatchTMDFFs.EvaluatexQ(q, zm, bs);
-                    Lumiq += lumibsq;
+                  const double lumibsq = Yp * TabMatchTMDPDFs.EvaluatexQ(q, xm, bs) / xm * apfel::QCh2[std::abs(q)-1] * TabMatchTMDFFs.EvaluatexQ(q, zm, bs);
+                  Lumiq += lumibsq;
                 }
 
               return b * tf1NP.Evaluate(b) * tf2NP.Evaluate(b) * Lumiq * pow(QuarkSudakov(bs, mu, zeta), 2) / zm * pow(TabAlphaem.Evaluate(Qm), 2) * Hf(mu) / pow(Qm, 3);
@@ -417,14 +413,15 @@ int main(int argc, char* argv[])
     		    };
 
           // Differential cross section (numerator)
-          const double differ = apfel::ConvFact * apfel::FourPi * qTm * DEObj.transform(bIntProva, qTm) / zm;
+          const double differHERMES = apfel::ConvFact * apfel::FourPi * qTm * DEObj.transform(bIntProva, qTm) / (2 * Qm) / zm;
+          const double differCOMPASS = apfel::ConvFact * apfel::FourPi * qTm * DEObj.transform(bIntProva, qTm) / (2 * Qm) / (2 * pow(zm, 2) * qTm);
 
           // Denominator
-          const double denom = apfel::ConvFact * apfel::FourPi * DiffInclusiveCS(Qm, xm);
+          const double denom = apfel::ConvFact * apfel::FourPi * DiffInclusiveCS(Qm, xm) / (2 * Qm);
 
           // Multiplicity
-          theomult[iqT] = differ / denom;
-
+          theomult[iqT] = (COMPASS ? differCOMPASS : differHERMES) / denom;
+          /*
           // Write results on terminal
     		  std::cout << Qav << "\t" << xav << "\t" << zv[iqT] << "\t" << qTv[iqT] << "\t"
     			    << differ << "\t"
@@ -432,6 +429,7 @@ int main(int argc, char* argv[])
               << differ / denom << "\t"
               << multv[iqT]
     			    << std::endl;
+          */
         }
 
         em << YAML::BeginMap;

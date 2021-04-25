@@ -588,7 +588,7 @@ namespace NangaParbat
               [=] (double const& x) -> double
               {
                 // Cross section
-                return (1 / 2 * Q) * ( 1 + pow(1 - pow(Q / Vs, 2) / x, 2) ) * f2.Evaluate(x) / x - pow(Q / Vs, 4) * fl.Evaluate(x) / pow(x, 3);
+                return ( 1 + pow(1 - pow(Q / Vs, 2) / x, 2) ) * f2.Evaluate(x) / x - pow(Q / Vs, 4) * fl.Evaluate(x) / pow(x, 3);
               }
             };
             // Integration bounds in x accounting for fiducial cuts
@@ -600,7 +600,7 @@ namespace NangaParbat
                 xbmin = std::max(xbmin, pow(Q / Vs, 2) / yRange.second);
                 xbmax = std::min(std::min(xbmax, pow(Q / Vs, 2) / yRange.first), 1 / ( 1 + pow(Wmin / Q, 2) ));
               }
-            return pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * IncxIntegrand.integrate(xbmin, xbmax, 1e-5);
+            return pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * IncxIntegrand.integrate(xbmin, xbmax, 1e-5) / (2 * Q);
           }
         };
 
