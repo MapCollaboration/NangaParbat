@@ -171,14 +171,21 @@ namespace NangaParbat
                 getline(pdferr, line);
                 getline(pdferr, line);
 
+
+
+                // NOTE on the conversion factor for the cross section. We will insert it in the output file.
+                // The raw data have a cross section expressed in cm**2/GeV**2/nucleon, but we would like to have it in NB./NUCLEON/GEV**2,
+                // then we have to convert: 1barn = 10**{-28}m**2 = 10**{-24}cm**2. Therefore, 1 cm**2 = 10**{24}barn= 10**{33}nb.
+
+
                 // Plot labels
                 std::map<std::string, std::string> labels
                 {
                   {"xlabel", "#it{q}_{T} [GeV]"},
-                  {"ylabel", "#frac{d2#it{#sigma}}{d#it{p}_{T}#d#it{q}_{T}} [cm^{2}*GeV^{-2}"},
+                  {"ylabel", "#frac{d2#it{#sigma}}{d#it{p}_{T}#d#it{q}_{T}} [nb*GeV^{-2}"},
                   {"title", "E615, " + std::to_string(Qb.second.first) + " < Q < " + std::to_string(Qb.second.second)},
                   {"xlabelpy", "$q_T \\rm{[GeV]$"},
-                  {"ylabelpy", "$\\frac{d^2\\sigma}{dp_{T} dq_{T}}[\\rm{cm}^2*{GeV}^{-2}]$"},
+                  {"ylabelpy", "$\\frac{d^2\\sigma}{dp_{T} dq_{T}}[\\rm{nb}*{GeV}^{-2}]$"},
                   {"titlepy", "E615, \\n " + std::to_string(Qb.second.first) + " < Q < " + std::to_string(Qb.second.second)}
                 };
 
@@ -192,6 +199,8 @@ namespace NangaParbat
 
 
                 // Write kinematics on the YAML emitter
+
+
                 emit.SetFloatPrecision(8);
                 emit.SetDoublePrecision(8);
                 emit << YAML::BeginMap;
@@ -217,7 +226,9 @@ namespace NangaParbat
                 for (auto const& m : filedata["cross"])
                   {
                     emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
-                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << filedata["stat"][m.first] << YAML::EndMap;
+
+                    //REMEMBER the conversion factor for the cross section:
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << (filedata["stat"][m.first])*pow(10,33) << YAML::EndMap;
                     if (PDFError)
                       {
                         // Now read PDF errors
@@ -232,7 +243,8 @@ namespace NangaParbat
                     // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
                     // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
                     emit << YAML::EndSeq;
-                    emit << YAML::Key << "value" << YAML::Value << m.second;
+                    //REMEMBER the conversion factor for the cross section:
+                    emit << YAML::Key << "value" << YAML::Value << (m.second)*pow(10,33);
                     // emit << YAML::Key << "id"    << YAML::Value << m.first;
                     emit << YAML::EndMap;
                   }
