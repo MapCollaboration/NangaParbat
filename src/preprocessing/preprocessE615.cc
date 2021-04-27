@@ -260,7 +260,7 @@ namespace NangaParbat
                 emit << YAML::BeginSeq;
                 for (auto const& p : filedata["pT"])
                   {
-                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << p.second << YAML::Key << "high" << YAML::Value << (p.second - 0.125) << YAML::Key << "low" << YAML::Value << (p.second + 0.125) << YAML::EndMap;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << p.second << YAML::Key << "high" << YAML::Value << (p.second + 0.125) << YAML::Key << "low" << YAML::Value << (p.second - 0.125) << YAML::EndMap;
                   }
                 emit << YAML::EndSeq;
                 emit << YAML::EndMap;
