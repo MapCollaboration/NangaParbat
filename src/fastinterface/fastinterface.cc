@@ -619,7 +619,7 @@ namespace NangaParbat
         // Ogata-quadrature object of degree one or zero according to
         // whether the cross sections have to be integrated over the
         // bins in qT or not.
-        apfel::OgataQuadrature OgataObj{};
+        apfel::OgataQuadrature OgataObj{IntqT ? 1 : 0};
 
         // Unscaled coordinates and weights of the Ogata quadrature.
         std::vector<double> zo = OgataObj.GetCoordinates();
