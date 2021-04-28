@@ -214,7 +214,7 @@ namespace NangaParbat
         pred = ConvoluteSIDIS(fNP1, fNP2);
         if (_IntqT)
           for (int i = 0; i < npred; i++)
-              vpred[i] = _prefact * (pred.at(_qTmap[i][1]) - pred.at(_qTmap[i][0])) / ( _qTmap[i][1] - _qTmap[i][0]) / (_zg.end()[-3] - _zg.front()); // division for PhT and z bin widths
+              vpred[i] = _prefact * (pred.at(_qTmap[i][1]) - pred.at(_qTmap[i][0])) / ( _qTmap[i][1] - _qTmap[i][0]); 
         else
           for (int i = 0; i < npred; i++)
             vpred[i] = _prefact * _qTfact[i] * pred.at(_qTmap[i][1]);

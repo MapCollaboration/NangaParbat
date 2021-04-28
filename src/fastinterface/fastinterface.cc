@@ -619,7 +619,7 @@ namespace NangaParbat
         // Ogata-quadrature object of degree one or zero according to
         // whether the cross sections have to be integrated over the
         // bins in qT or not.
-        apfel::OgataQuadrature OgataObj{IntqT ? 1 : 0};
+        apfel::OgataQuadrature OgataObj{1};
 
         // Unscaled coordinates and weights of the Ogata quadrature.
         std::vector<double> zo = OgataObj.GetCoordinates();
@@ -788,7 +788,7 @@ namespace NangaParbat
                                       }
 
                                     // Return z integrand
-                                    return zgrid.Interpolant(0, beta, z) * pow(_QuarkSudakov(bs, muf, zetaf), 2) * xbintegralq / z;
+                                    return zgrid.Interpolant(0, beta, z) * pow(_QuarkSudakov(bs, muf, zetaf), 2) * xbintegralq / z / (zb.second - zb.first);
                                   }
                                 };
                                 // Perform the integral in z
