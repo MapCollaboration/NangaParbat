@@ -4,7 +4,7 @@ Description: "Test fit with the Pavia 17 parameterisation."
 
 # Minimiser to be used for the fit. Possible options so far are
 # 'minuit', 'ceres', and 'none'.
-Minimiser: minuit
+Minimiser: none
 
 # Seed used with the random-number generator for the generation of the
 # Monte Carlo replicas
@@ -12,7 +12,7 @@ Seed: '1234'
 
 # Cut on qT / Q. This has to be smaller than the production cut used
 # to produce the tables.
-qToQmax: '0.2'
+qToQmax: '4'
 
 # Percentile cut (in percent) on the distribution of chi2's, error
 # functions and parameters used to identify outliers.
