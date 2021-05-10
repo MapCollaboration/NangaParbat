@@ -153,9 +153,9 @@ int main(int argc, char* argv[])
         FFset = "DSS14_NLO_Pip";
       else if (ds["name"].as<std::string>().substr(0, 14) == "HERMES_Pro_Pim" || ds["name"].as<std::string>().substr(0, 14) == "HERMES_Deu_Pim")
         FFset = "DSS14_NLO_Pim";
-      else if (ds["name"].as<std::string>().substr(0, 13) == "HERMES_Pro_Kp" || ds["name"].as<std::string>().substr(0, 13) == "HERMES_Deu_Kp")
+      else if (ds["name"].as<std::string>().substr(0, 13) == "HERMES_Pro_Kp"  || ds["name"].as<std::string>().substr(0, 13) == "HERMES_Deu_Kp")
         FFset = "DSS17_NLO_KaonPlus";
-      else if (ds["name"].as<std::string>().substr(0, 13) == "HERMES_Pro_Km" || ds["name"].as<std::string>().substr(0, 13) == "HERMES_Deu_Km")
+      else if (ds["name"].as<std::string>().substr(0, 13) == "HERMES_Pro_Km"  || ds["name"].as<std::string>().substr(0, 13) == "HERMES_Deu_Km")
         FFset = "DSS17_NLO_KaonMinus";
       else
         std::cout << "\033[1;31m [SIDISMultiplicities] Unknown SIDIS Experiment - FFs not initialized\033[0m" << std::endl;
@@ -218,9 +218,9 @@ int main(int argc, char* argv[])
       // Get z (which for HERMES changes slightly in a bin)
       std::vector<double> zv(dh->GetKinematics().ndata);
       for (int j = 0; j < dh->GetKinematics().ndata; j++)
-        // zv[j] = dh->GetBinning()[j].zav;
+        zv[j] = dh->GetBinning()[j].zav;
         // zv[j] = dh->GetKinematics().var3b.first; // z min
-        zv[j] = dh->GetKinematics().var3b.second; // z max
+        // zv[j] = dh->GetKinematics().var3b.second; // z max
 
       // Get PhT values
       std::vector<double> PhTv;
