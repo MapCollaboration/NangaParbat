@@ -497,6 +497,9 @@ namespace NangaParbat
         const double                                 Wmin   = kin.pTMin;    // Minimum W of the final-state lepton
         const std::pair<double, double>              yRange = kin.etaRange; // Allowed y of the final-state lepton
 
+        const double                                 Qav    = DHVect[i].GetBinning()[0].Qav; // Get average Q from the first data point. Q is
+                                                                                             // assumed to be constant in each bin.
+
         // Tabulate initial scale TMD FFs in b in the physical basis
         std::function<apfel::Set<apfel::Distribution>(double const&)> isTMDFFs =
           [&] (double const& b) -> apfel::Set<apfel::Distribution>
@@ -605,16 +608,19 @@ namespace NangaParbat
         };
 
         // Prefactor that includes the inverse of the inclusive cross
-        // section.
-        const double prefactor = DHVect[i].GetPrefactor() / IncQIntegrand.integrate(Qb.first, Qb.second, 1e-5);
+        // section.  If no integration in Q is requested, compute the
+        // integrand at Q average.
+        const double prefactor = DHVect[i].GetPrefactor() / (IntQ ? IncQIntegrand.integrate(Qb.first, Qb.second, 1e-5) : IncQIntegrand.integrand(Qav));
 
         // Since keeping track whether the cross section is to be
         // integrated over the final state kinematics is costly and
         // so far only fully integrated SIDIS cross sections
         // considered, it is useful to assume that IntQ, Intxb, Intz,
         // and IntqT are all .true., if not stop the code.
-        if (!IntqT || !IntQ || !Intxb || !Intz)
-          throw std::runtime_error("[FastInterface::ComputeTablesSIDIS]: Only fully integrated cross sections can be treated here.");
+        // if (!IntqT || !IntQ || !Intxb || !Intz)
+        //   throw std::runtime_error("[FastInterface::ComputeTablesSIDIS]: Only fully integrated cross sections can be treated here.");
+        if (!IntqT || !Intxb || !Intz)
+          throw std::runtime_error("[FastInterface::ComputeTablesSIDIS]: Only fully integrated or differential in Q cross sections can be treated here.");
 
         // Ogata-quadrature object of degree one or zero according to
         // whether the cross sections have to be integrated over the
@@ -626,7 +632,7 @@ namespace NangaParbat
         std::vector<double> wo = OgataObj.GetWeights();
 
         // Construct QGrid-like grids for the integration in Q
-        const std::vector<double> Qg = GenerateGrid(nQ, Qb.first, Qb.second, idQ - 1);
+        const std::vector<double> Qg = (IntQ ? GenerateGrid(nQ, Qb.first, Qb.second, idQ - 1) : std::vector<double> {Qav});
         const apfel::QGrid<double> Qgrid{Qg, idQ};
 
         // Construct QGrid-like grids for the integration in Bjorken x
@@ -802,8 +808,11 @@ namespace NangaParbat
                             };
                             // Perform the integral in Q
                             double Qintegral = 0;
-                            for (int iQ = std::max(tau - idQ, 0); iQ < std::min(tau + 1, nQ); iQ++)
-                              Qintegral += QIntObj.integrate(Qg[iQ], Qg[iQ+1], 0);
+                            if (IntQ)
+                              for (int iQ = std::max(tau - idQ, 0); iQ < std::min(tau + 1, nQ); iQ++)
+                                Qintegral += QIntObj.integrate(Qg[iQ], Qg[iQ+1], 0);
+                              else
+                                Qintegral = QIntObj.integrand(Qg[tau]);
 
                             // Compute the weight by multiplying the
                             // integral by the Ogata weight (note that
