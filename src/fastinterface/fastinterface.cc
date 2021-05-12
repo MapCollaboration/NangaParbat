@@ -497,8 +497,9 @@ namespace NangaParbat
         const double                                 Wmin   = kin.pTMin;    // Minimum W of the final-state lepton
         const std::pair<double, double>              yRange = kin.etaRange; // Allowed y of the final-state lepton
 
-        const double                                 Qav    = DHVect[i].GetBinning()[0].Qav; // Get average Q from the first data point. Q is
-                                                                                             // assumed to be constant in each bin.
+        // Retrieve average variables. Q and x are assumed to be constant in each bin.
+        const double                                 Qav    = DHVect[i].GetBinning()[0].Qav; // Get average Q from the first data point.
+        const double                                 xav    = DHVect[i].GetBinning()[0].xav; // Get average x from the first data point.
 
         // Tabulate initial scale TMD FFs in b in the physical basis
         std::function<apfel::Set<apfel::Distribution>(double const&)> isTMDFFs =
@@ -603,7 +604,7 @@ namespace NangaParbat
                 xbmin = std::max(xbmin, pow(Q / Vs, 2) / yRange.second);
                 xbmax = std::min(std::min(xbmax, pow(Q / Vs, 2) / yRange.first), 1 / ( 1 + pow(Wmin / Q, 2) ));
               }
-            return pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * IncxIntegrand.integrate(xbmin, xbmax, 1e-5) / (2 * Q);
+            return pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * (Intxb ? IncxIntegrand.integrate(xbmin, xbmax, 1e-5) : IncxIntegrand.integrand(xav)) / (2 * Q);
           }
         };
 
@@ -612,14 +613,10 @@ namespace NangaParbat
         // integrand at Q average.
         const double prefactor = DHVect[i].GetPrefactor() / (IntQ ? IncQIntegrand.integrate(Qb.first, Qb.second, 1e-5) : IncQIntegrand.integrand(Qav));
 
-        // Since keeping track whether the cross section is to be
-        // integrated over the final state kinematics is costly and
-        // so far only fully integrated SIDIS cross sections
-        // considered, it is useful to assume that IntQ, Intxb, Intz,
-        // and IntqT are all .true., if not stop the code.
-        // if (!IntqT || !IntQ || !Intxb || !Intz)
-        //   throw std::runtime_error("[FastInterface::ComputeTablesSIDIS]: Only fully integrated cross sections can be treated here.");
-        if (!IntqT || !Intxb || !Intz)
+        // Assume that Intz and IntqT are .true., if not stop the code.
+        // There is the possibility to not to integrate in Q.
+        // There is the possibility to not to integrate in x.
+        if (!IntqT || !Intz)
           throw std::runtime_error("[FastInterface::ComputeTablesSIDIS]: Only fully integrated or differential in Q cross sections can be treated here.");
 
         // Ogata-quadrature object of degree one or zero according to
@@ -636,7 +633,7 @@ namespace NangaParbat
         const apfel::QGrid<double> Qgrid{Qg, idQ};
 
         // Construct QGrid-like grids for the integration in Bjorken x
-        const std::vector<double> xbg = GenerateGrid(nxb, xbb.first, xbb.second, idxb - 1, true);
+        const std::vector<double> xbg = (Intxb ? GenerateGrid(nxb, xbb.first, xbb.second, idxb - 1, true) : std::vector<double> {xav});
         const apfel::QGrid<double> xbgrid{xbg, idxb};
 
         // Construct QGrid-like grids for the integration in z
@@ -774,17 +771,22 @@ namespace NangaParbat
                                           }
                                         // Perform the integral in x
                                         double xbintegral = 0;
-                                        for (int ixb = std::max(alpha - idxb, 0); ixb < std::min(alpha + 1, nxb); ixb++)
-                                          if (xbg[ixb+1] < xmin || xbg[ixb] > xmax)
-                                            continue;
-                                          else if (xbg[ixb] < xmin && xbg[ixb+1] > xmin)
-                                            xbintegral += xbIntObj.integrate(xmin, xbg[ixb+1], 0);
-                                          else if (xbg[ixb] < xmax && xbg[ixb+1] > xmax)
-                                            xbintegral += xbIntObj.integrate(xbg[ixb], xmax, 0);
-                                          else if (xbg[ixb] < xmin && xbg[ixb+1] > xmax)
-                                            xbintegral += xbIntObj.integrate(xmin, xmax, 0);
-                                          else
-                                            xbintegral += xbIntObj.integrate(xbg[ixb], xbg[ixb+1], 0);
+                                        if (Intxb)
+                                          for (int ixb = std::max(alpha - idxb, 0); ixb < std::min(alpha + 1, nxb); ixb++)
+                                            {
+                                              if (xbg[ixb+1] < xmin || xbg[ixb] > xmax)
+                                                continue;
+                                              else if (xbg[ixb] < xmin && xbg[ixb+1] > xmin)
+                                                xbintegral += xbIntObj.integrate(xmin, xbg[ixb+1], 0);
+                                              else if (xbg[ixb] < xmax && xbg[ixb+1] > xmax)
+                                                xbintegral += xbIntObj.integrate(xbg[ixb], xmax, 0);
+                                              else if (xbg[ixb] < xmin && xbg[ixb+1] > xmax)
+                                                xbintegral += xbIntObj.integrate(xmin, xmax, 0);
+                                              else
+                                                xbintegral += xbIntObj.integrate(xbg[ixb], xbg[ixb+1], 0);
+                                            }
+                                        else
+                                          xbintegral = xbIntObj.integrand(xbg[alpha]);
 
                                         // Multiply by electric charge and the FF
                                         xbintegral *= apfel::QCh2[std::abs(q)-1] * TabMatchTMDFFs.EvaluatexQ(q, z, bs);
