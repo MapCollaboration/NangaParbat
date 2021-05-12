@@ -30,7 +30,7 @@ namespace NangaParbat
 
     // Alpha_s (from PDFs). Get it from the LHAPDF set and tabulate it.
     _TabAlphas = std::unique_ptr<apfel::TabulateObject<double>>(new apfel::TabulateObject<double> {[&] (double const& mu) -> double{return distpdf->alphasQ(mu); },
-                                                                                                   100, distpdf->qMin(), distpdf->qMax(), 3, _Thresholds
+                                                                                                   100, distpdf->qMin() - 0.1, distpdf->qMax(), 3, _Thresholds
                                                                                                   });
 
     // Open LHAPDF FF set
@@ -54,7 +54,7 @@ namespace NangaParbat
 
     // Tabulate collinear PDFs
     _TabPDFs = std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>
-               (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedPDFs, 100, distpdf->qMin(), distpdf->qMax(), 3, _Thresholds});
+               (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedPDFs, 100, distpdf->qMin() - 0.1, distpdf->qMax(), 3, _Thresholds});
 
     // Define x-space grid for FFs
     std::vector<apfel::SubGrid> vsgff;
@@ -71,7 +71,7 @@ namespace NangaParbat
 
     // Tabulate collinear FFs
     _TabFFs = std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>
-              (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedFFs, 100, distff->qMin(), distff->qMax(), 3, _Thresholds});
+              (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedFFs, 100, distff->qMin() - 0.1, distff->qMax(), 3, _Thresholds});
 
     // Initialise TMD objects for PDFs
     _TmdPdfObjs = apfel::InitializeTmdObjectsLite(*_gpdf, _Thresholds);
