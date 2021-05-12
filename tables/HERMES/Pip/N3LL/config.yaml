@@ -58,22 +58,22 @@ Qgrid:
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in xi = exp(y) or xF (depending on the observable).
 xigrid:
-  n: 4
+  n: 10
   InterDegree: 3
   eps: 1e-3
 
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in x (SIDIS).
 xbgrid:
-  n: 4
-  InterDegree: 3
+  n: 3
+  InterDegree: 2
   eps: 1e-3
 
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in z (for SIDIS).
 zgrid:
-  n: 4
-  InterDegree: 3
+  n: 3
+  InterDegree: 2
   eps: 1e-3
 
 # Maximum value allowed for the ratio qT / Q. This has to be intended
@@ -82,4 +82,4 @@ zgrid:
 # zero. However, a more restrictive cut can still be applied at the
 # fit level. This avoids computing predictions for points whose
 # kinematics is such that TMD factorisation is not valid.
-qToverQmax: 3.5
+qToverQmax: 4
