@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
   // Alpha_s (from PDFs). Get it from the LHAPDF set and tabulate it.
   const auto Alphas = [&] (double const& mu) -> double{ return distpdf->alphasQ(mu); };
   const apfel::TabulateObject<double> TabAlphas {[&] (double const& mu) -> double{return distpdf->alphasQ(mu); },
-                                                 100, distpdf->qMin(), distpdf->qMax(), 3, Thresholds};
+                                                 100, distpdf->qMin() - 0.1, distpdf->qMax(), 3, Thresholds};
 
    // Setup APFEL++ x-space grid for PDFs
    std::vector<apfel::SubGrid> vsgp;
@@ -89,9 +89,14 @@ int main(int argc, char* argv[])
    };
 
    // Tabulate collinear PDFs
-   // const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 200, distpdf->qMin(), distpdf->qMax(), 3, Thresholds}; // ATTENTION! In fastinterface.cc, l. 57 there is only distpdf->qMin(). THIS HAS AN IMPACT ON THE FINAL PREDICTIONS! Same for FFs.
    const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 200, distpdf->qMin() - 0.1, distpdf->qMax(), 3, Thresholds};
    const auto CollPDFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabPDFs.Evaluate(mu); };
+
+   /*
+   // Check to see which points in Q are tabulated
+   for (auto f : TabPDFs.GetQGrid())
+     std::cout << f << std::endl;
+  */
 
    // Initialize TMD PDF objects
    const auto TmdObjPDF = apfel::InitializeTmdObjectsLite(gpdf, Thresholds);
@@ -181,8 +186,7 @@ int main(int argc, char* argv[])
       };
 
       // Tabulate collinear FFs
-      const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabFFs{EvolvedFFs, 200, distff->qMin(), distff->qMax(), 3, Thresholds};
-      // const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabFFs{EvolvedFFs, 200, distff->qMin() - 0.1, distff->qMax(), 3, Thresholds};
+      const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabFFs{EvolvedFFs, 200, distff->qMin() - 0.1, distff->qMax(), 3, Thresholds};
       const auto CollFFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabFFs.Evaluate(mu); };
 
       // Initialize TMD FF objects
@@ -347,7 +351,7 @@ int main(int argc, char* argv[])
         std::cout << "F2: " << f2.Evaluate(x) << "   FL: " << fl.Evaluate(x) << std::endl;
         std::cout << "xIntegrand: " << Yp * f2.Evaluate(x) / x - pow(Q / Vs, 4) * fl.Evaluate(x) / pow(x, 3) << std::endl;
         */
-        
+
         return pow(TabAlphaem.Evaluate(Q), 2) / pow(Q, 3) * (Yp * f2.Evaluate(x) / x - pow(Q / Vs, 4) * fl.Evaluate(x) / pow(x, 3));
       };
 
