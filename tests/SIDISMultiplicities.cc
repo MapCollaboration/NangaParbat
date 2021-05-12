@@ -41,8 +41,8 @@ int main(int argc, char* argv[])
   std::cout << "\033[1;33mComputation done at the average values, NOT INTEGRATED.\033[0m" << std::endl;
 
   // Perturbative order
-  const int PerturbativeOrder = config["PerturbativeOrder"].as<int>();
-  std::cout << "\033[1;32mPerturbative order: " << NangaParbat::PtOrderMap.at(PerturbativeOrder) << "\n\033[0m" << std::endl;
+  const int pto = config["PerturbativeOrder"].as<int>();
+  std::cout << "\033[1;32mPerturbative order: " << NangaParbat::PtOrderMap.at(pto) << "\n\033[0m" << std::endl;
 
   // Open LHAPDF sets
   LHAPDF::PDF* distpdf = LHAPDF::mkPDF(config["pdfset"]["name"].as<std::string>(), config["pdfset"]["member"].as<int>());
@@ -89,21 +89,21 @@ int main(int argc, char* argv[])
    };
 
    // Tabulate collinear PDFs
-   const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 200, distpdf->qMin(), distpdf->qMax(), 3, Thresholds}; // ATTENTION! In fastinterface.cc, l. 57 there is only distpdf->qMin(). THIS HAS AN IMPACT ON THE FINAL PREDICTIONS! Same for FFs.
-   // const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 200, distpdf->qMin() - 0.1, distpdf->qMax(), 3, Thresholds};
+   // const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 200, distpdf->qMin(), distpdf->qMax(), 3, Thresholds}; // ATTENTION! In fastinterface.cc, l. 57 there is only distpdf->qMin(). THIS HAS AN IMPACT ON THE FINAL PREDICTIONS! Same for FFs.
+   const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 200, distpdf->qMin() - 0.1, distpdf->qMax(), 3, Thresholds};
    const auto CollPDFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabPDFs.Evaluate(mu); };
 
    // Initialize TMD PDF objects
    const auto TmdObjPDF = apfel::InitializeTmdObjectsLite(gpdf, Thresholds);
 
    // Build evolved TMD PDFs
-   const auto EvTMDPDFs    = BuildTmdPDFs(TmdObjPDF, CollPDFs, Alphas, PerturbativeOrder, Ci);
-   const auto MatchTMDPDFs = MatchTmdPDFs(TmdObjPDF, CollPDFs, Alphas, PerturbativeOrder, Ci);
+   const auto EvTMDPDFs    = BuildTmdPDFs(TmdObjPDF, CollPDFs, Alphas, pto, Ci);
+   const auto MatchTMDPDFs = MatchTmdPDFs(TmdObjPDF, CollPDFs, Alphas, pto, Ci);
 
-   auto QuarkSudakov = QuarkEvolutionFactor(TmdObjPDF, Alphas, PerturbativeOrder, Ci, 1e5);
+   auto QuarkSudakov = QuarkEvolutionFactor(TmdObjPDF, Alphas, pto, Ci, 1e5);
 
    // Get hard-factor
-   const std::function<double(double const&)> Hf = apfel::HardFactor("SIDIS", TmdObjPDF, Alphas, PerturbativeOrder, Cf);
+   const std::function<double(double const&)> Hf = apfel::HardFactor("SIDIS", TmdObjPDF, Alphas, pto, Cf);
 
   // Functions used for the tabulation
   const auto TabFunc    = [] (double const& b) -> double{ return log(b); };
@@ -189,8 +189,8 @@ int main(int argc, char* argv[])
       const auto TmdObjFF  = apfel::InitializeTmdObjectsLite(gff,  Thresholds);
 
       // Build evolved TMD FFs
-      const auto EvTMDFFs    = BuildTmdFFs(TmdObjFF, CollFFs, Alphas, PerturbativeOrder, Ci);
-      const auto MatchTMDFFs = MatchTmdFFs(TmdObjFF, CollFFs, Alphas, PerturbativeOrder, Ci);
+      const auto EvTMDFFs    = BuildTmdFFs(TmdObjFF, CollFFs, Alphas, pto, Ci);
+      const auto MatchTMDFFs = MatchTmdFFs(TmdObjFF, CollFFs, Alphas, pto, Ci);
 
       // Start reading datafiles
       const YAML::Node datafile = YAML::LoadFile(std::string(argv[2]) + "/" + exper.first.as<std::string>() + "/" + ds["file"].as<std::string>());
@@ -321,11 +321,11 @@ int main(int argc, char* argv[])
 
       // Determine perturbative order according to the logarithmic
       // accuracy
-      int PerturbativeOrderDen = 0;
-      if (PerturbativeOrder > 1 || PerturbativeOrder < 0)
-        PerturbativeOrderDen++;
-      if (PerturbativeOrder > 2 || PerturbativeOrder < -1)
-        PerturbativeOrderDen++;
+      int PerturbativeOrder = 0;
+      if (pto > 1 || pto < 0)
+        PerturbativeOrder++;
+      if (pto > 2 || pto < -1)
+        PerturbativeOrder++;
 
       // Initialize inclusive structure functions
       const auto IF2 = BuildStructureFunctions(InitializeF2NCObjectsZM(gpdf, Thresholds), tRotPDFs, PerturbativeOrder,
@@ -341,8 +341,14 @@ int main(int argc, char* argv[])
 
     	  const double Yp = 1 + pow(1 - pow(Q / Vs, 2) / x, 2);
 
+        /*
+        // Check
+        std::cout << "Q: " << Q << "   x: " << x << "Yp: " << Yp << std::endl;
+        std::cout << "F2: " << f2.Evaluate(x) << "   FL: " << fl.Evaluate(x) << std::endl;
+        std::cout << "xIntegrand: " << Yp * f2.Evaluate(x) / x - pow(Q / Vs, 4) * fl.Evaluate(x) / pow(x, 3) << std::endl;
+        */
+        
         return pow(TabAlphaem.Evaluate(Q), 2) / pow(Q, 3) * (Yp * f2.Evaluate(x) / x - pow(Q / Vs, 4) * fl.Evaluate(x) / pow(x, 3));
-        // return pow(TabAlphaem.Evaluate(Q), 2) / pow(Q, 3) * (Yp * f2.Evaluate(x) / x);
       };
 
       // Vector to store theoretical multiplicities
@@ -410,8 +416,14 @@ int main(int argc, char* argv[])
           // Denominator
           const double denom = apfel::ConvFact * apfel::FourPi * DiffInclusiveCS(Qm, xm) / (2 * Qm);
 
+          /*
+          // Check denominator
+          std::cout << DiffInclusiveCS(Qm, xm) / (2 * Qm) << std::endl;
+          */
+
           // Multiplicity
           theomult[iqT] = (COMPASS ? differCOMPASS : differHERMES) / denom;
+
           /*
           // Write results on terminal
     		  std::cout << Qav << "\t" << xav << "\t" << zv[iqT] << "\t" << qTv[iqT] << "\t"
