@@ -65,8 +65,8 @@ xigrid:
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in x (SIDIS).
 xbgrid:
-  n: 10
-  InterDegree: 3
+  n: 3
+  InterDegree: 2
   eps: 1e-3
 
 # Number of points, interpolation degree, and integration accuracy of
@@ -82,4 +82,4 @@ zgrid:
 # zero. However, a more restrictive cut can still be applied at the
 # fit level. This avoids computing predictions for points whose
 # kinematics is such that TMD factorisation is not valid.
-qToverQmax: 3.5
+qToverQmax: 4
