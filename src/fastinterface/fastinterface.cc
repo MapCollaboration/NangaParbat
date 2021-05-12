@@ -604,7 +604,8 @@ namespace NangaParbat
                 xbmin = std::max(xbmin, pow(Q / Vs, 2) / yRange.second);
                 xbmax = std::min(std::min(xbmax, pow(Q / Vs, 2) / yRange.first), 1 / ( 1 + pow(Wmin / Q, 2) ));
               }
-            return pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * (Intxb ? IncxIntegrand.integrate(xbmin, xbmax, 1e-5) : IncxIntegrand.integrand(xav)) / (2 * Q);
+            return pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * IncxIntegrand.integrate(xbmin, xbmax, 1e-5) / (2 * Q);
+            // return pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * (Intxb ? IncxIntegrand.integrate(xbmin, xbmax, 1e-5) : IncxIntegrand.integrand(xav)) / (2 * Q);
           }
         };
 
@@ -615,8 +616,7 @@ namespace NangaParbat
 
         // Assume that Intz and IntqT are .true., if not stop the code.
         // There is the possibility to not to integrate in Q.
-        // There is the possibility to not to integrate in x.
-        if (!IntqT || !Intz)
+        if (!IntqT || !Intxb || !Intz)
           throw std::runtime_error("[FastInterface::ComputeTablesSIDIS]: Only fully integrated or differential in Q cross sections can be treated here.");
 
         // Ogata-quadrature object of degree one or zero according to
@@ -633,7 +633,8 @@ namespace NangaParbat
         const apfel::QGrid<double> Qgrid{Qg, idQ};
 
         // Construct QGrid-like grids for the integration in Bjorken x
-        const std::vector<double> xbg = (Intxb ? GenerateGrid(nxb, xbb.first, xbb.second, idxb - 1, true) : std::vector<double> {xav});
+        const std::vector<double> xbg = GenerateGrid(nxb, xbb.first, xbb.second, idxb - 1, true);
+        // const std::vector<double> xbg = (Intxb ? GenerateGrid(nxb, xbb.first, xbb.second, idxb - 1, true) : std::vector<double> {xav});
         const apfel::QGrid<double> xbgrid{xbg, idxb};
 
         // Construct QGrid-like grids for the integration in z
@@ -771,9 +772,9 @@ namespace NangaParbat
                                           }
                                         // Perform the integral in x
                                         double xbintegral = 0;
-                                        if (Intxb)
+                                        // if (Intxb)
                                           for (int ixb = std::max(alpha - idxb, 0); ixb < std::min(alpha + 1, nxb); ixb++)
-                                            {
+                                            // {
                                               if (xbg[ixb+1] < xmin || xbg[ixb] > xmax)
                                                 continue;
                                               else if (xbg[ixb] < xmin && xbg[ixb+1] > xmin)
@@ -784,9 +785,9 @@ namespace NangaParbat
                                                 xbintegral += xbIntObj.integrate(xmin, xmax, 0);
                                               else
                                                 xbintegral += xbIntObj.integrate(xbg[ixb], xbg[ixb+1], 0);
-                                            }
-                                        else
-                                          xbintegral = xbIntObj.integrand(xbg[alpha]);
+                                            // }
+                                        // else
+                                        //   xbintegral = xbIntObj.integrand(xbg[alpha]);
 
                                         // Multiply by electric charge and the FF
                                         xbintegral *= apfel::QCh2[std::abs(q)-1] * TabMatchTMDFFs.EvaluatexQ(q, z, bs);
