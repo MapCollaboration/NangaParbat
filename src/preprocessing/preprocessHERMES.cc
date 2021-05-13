@@ -41,7 +41,7 @@ namespace NangaParbat
 
     // Initialize naming map for the z-integration ranges (the first element is for the name of the output data file)
     // (from http://hermesmults.appspot.com/, section Balanced Binning)
-    const std::map<std::string, std::pair<double, double>> zrangelims = {{"_z_0.1_0.2", {0.1, 0.2}}, {"_z_0.2_0.25", {0.2, 0.25}}, {"_z_0.25_0.3", {0.25, 0.3}}, {"_z_0.3_0.375", {0.3, 0.375}}, {"_z_0.375_0.475", {0.375, 0.475}}, {"_z_0.475_0.6", {0.475, 0.6}}, {"_z_0.6_0.8", {0.6, 0.8}}, {"_z_0.8_1.2", {0.8, 1.2}}};
+    const std::map<std::string, std::pair<double, double>> zrangelims = {{"_z_0.1_0.2", {0.1, 0.2}}, {"_z_0.2_0.25", {0.2, 0.25}}, {"_z_0.25_0.3", {0.25, 0.3}}, {"_z_0.3_0.375", {0.3, 0.375}}, {"_z_0.375_0.475", {0.375, 0.475}}, {"_z_0.475_0.6", {0.475, 0.6}}, {"_z_0.6_0.8", {0.6, 0.8}}, {"_z_0.8_1.1", {0.8, 1.1}}};
 
     // Initialize map for the x-integration ranges
     // (from http://hermesmults.appspot.com/, section Balanced Binning)
