@@ -3,7 +3,6 @@
 //
 
 #include "NangaParbat/convolutiontable.h"
-#include "NangaParbat/bstar.h"
 
 #include <cmath>
 #include <iostream>
@@ -21,23 +20,20 @@ namespace NangaParbat
   _qTmap({{}}),
   _qTfact({}),
   _prefact(1),
-  _prefact2(1),
   _zOgata({}),
   _Qg({}),
   _xig({}),
   _xbg({}),
   _zg({}),
-  _cutParam({}),
+  _qToQmax(1000),
   _acc(1e-7),
   _cuts({}),
-  _cutmask({}),
-  _Hbeam("PR")
+  _cutmask({})
   {
   }
 
   //_________________________________________________________________________________
-  //ConvolutionTable::ConvolutionTable(YAML::Node const& table, double const& qToQmax, std::vector<std::shared_ptr<Cut>> const& cuts, double const& acc):
-  ConvolutionTable::ConvolutionTable(YAML::Node const& table, std::vector<double> const& cutParam, std::vector<std::shared_ptr<Cut>> const& cuts, double const& acc):
+  ConvolutionTable::ConvolutionTable(YAML::Node const& table, double const& qToQmax, std::vector<std::shared_ptr<Cut>> const& cuts, double const& acc):
     _name(table["name"].as<std::string>()),
     _proc(table["process"].as<int>()),
     _Vs(table["CME"].as<double>()),
@@ -45,20 +41,18 @@ namespace NangaParbat
     _qTv(table["qT_bounds"].as<std::vector<double>>()),
     _qTmap(table["qT_map"].as<std::vector<std::vector<double>>>()),
     _qTfact(table["bin_factors"].as<std::vector<double>>()),
-    // _prefact(table["prefactor"].as<double>()),
-    _prefact(table["prefactor"] ? table["prefactor"].as<double>() : 1),
-    _prefact2(table["prefactor2"] ? table["prefactor2"].as<double>() : 1),
+    _prefact(table["prefactor"].as<double>()),
     _zOgata(table["Ogata_coordinates"].as<std::vector<double>>()),
     _Qg(table["Qgrid"].as<std::vector<double>>()),
-    _cutParam(cutParam),
+    _qToQmax(qToQmax),
     _acc(acc),
-    _cuts(cuts),
-    _Hbeam(table["hadron_beam"] ? table["hadron_beam"].as<std::string>() : "PR")
+    _cuts(cuts)
   {
     // Compute total cut mask as a product of single masks
     _cutmask.resize(_qTfact.size(), true);
     for (auto const& c : cuts)
       _cutmask *= c->GetMask();
+
     switch (_proc)
       {
       case DataHandler::Process::DY:
@@ -68,6 +62,7 @@ namespace NangaParbat
         // Read the phase-space reduction factors...
         for (auto const& qT : _qTv)
           _PSRed.insert({qT, table["PS_reduction_factor"][qT].as<std::vector<std::vector<double>>>()});
+
         // ... and their derivatives.
         for (auto const& qT : _qTv)
           _dPSRed.insert({qT, table["PS_reduction_factor_derivative"][qT].as<std::vector<std::vector<double>>>()});
@@ -76,6 +71,7 @@ namespace NangaParbat
         for (auto const& qT : _qTv)
           _WDY.insert({qT, table["weights"][qT].as<std::vector<std::vector<std::vector<double>>>>()});
         break;
+
       case DataHandler::Process::SIDIS:
         _xbg = table["xbgrid"].as<std::vector<double>>();
         _zg  = table["zgrid"].as<std::vector<double>>();
@@ -85,44 +81,25 @@ namespace NangaParbat
           _WSIDIS.insert({qT, table["weights"][qT].as<std::vector<std::vector<std::vector<std::vector<double>>>>>()});
         break;
 
-      case DataHandler::Process::JetSIDIS:
-        _xbg = table["xbgrid"].as<std::vector<double>>();
-
-        // Read weights
-        for (auto const& qT : _qTv)
-          _WJetSIDIS.insert({qT, table["weights"][qT].as<std::vector<std::vector<std::vector<double>>>>()});
-        break;
-
       default:
         throw std::runtime_error("[ConvolutionTable::ConvolutionTable]: Unsupported process.");
       }
   }
 
   //_________________________________________________________________________________
-  //ConvolutionTable::ConvolutionTable(std::string const& infile, double const& qToQmax, std::vector<std::shared_ptr<Cut>> const& cuts, double const& acc):
-  //ConvolutionTable(YAML::LoadFile(infile), qToQmax, cuts, acc)
-  ConvolutionTable::ConvolutionTable(std::string const& infile, std::vector<double> const& cutParam, std::vector<std::shared_ptr<Cut>> const& cuts, double const& acc):
-    ConvolutionTable(YAML::LoadFile(infile), cutParam, cuts, acc)
+  ConvolutionTable::ConvolutionTable(std::string const& infile, double const& qToQmax, std::vector<std::shared_ptr<Cut>> const& cuts, double const& acc):
+    ConvolutionTable(YAML::LoadFile(infile), qToQmax, cuts, acc)
   {
   }
 
   //_________________________________________________________________________________
-  std::map<double, double> ConvolutionTable::ConvoluteDY(std::function<double(double const&, double const&, double const&)> const& fNP1, std::function<double(double const&, double const&, double const&)> const& fNP2) const
+  std::map<double, double> ConvolutionTable::ConvoluteDY(std::function<double(double const&, double const&, double const&)> const& fNP) const
   {
-    double DYqToQmax = 0;
-
-    // Compute cut qT / Q as same as MAP22
-    if (_Hbeam == "PR")
-      DYqToQmax = std::min(_cutParam[0], _cutParam[1]);
-    // Compute cut qT / Q as same as MAP22Pion
-    if (_Hbeam == "PI")
-      DYqToQmax =_cutParam[0] + _cutParam[1] /  _Qg.front();
-
     // Compute predictions
     std::map<double, double> pred;
     for (int iqT = 0; iqT < (int) _qTv.size(); iqT++)
       {
-        if (_qTv[iqT] / _Qg.front() > DYqToQmax)   //_qToQmax
+        if (_qTv[iqT] / _Qg.front() > _qToQmax)
           {
             pred.insert({_qTv[iqT],  0});
             pred.insert({-_qTv[iqT], 0});
@@ -147,7 +124,7 @@ namespace NangaParbat
                   {
                     const double x1 = Vtau * _xig[alpha];
                     const double x2 = pow(Vtau, 2) / x1;
-                    const double wf = wgt[n][tau][alpha] * fNP1(x1, b, zeta) * fNP2(x2, b, zeta);
+                    const double wf = wgt[n][tau][alpha] * fNP(x1, b, zeta) * fNP(x2, b, zeta);
                     csn  += wf * psf[tau][alpha];
                     dcsn += wf * dpsf[tau][alpha];
                   }
@@ -172,15 +149,11 @@ namespace NangaParbat
   std::map<double, double> ConvolutionTable::ConvoluteSIDIS(std::function<double(double const&, double const&, double const&)> const& fNP,
                                                             std::function<double(double const&, double const&, double const&)> const& DNP) const
   {
-    // Compute cut qT / Q
-    double SIDISqToQmax = std::min(std::min(_cutParam[0] / _zg.front(), _cutParam[1]) + _cutParam[2] / _Qg.front() / _zg.front(), 1.0);
-    // double SIDISqToQmax = std::min(_cutParam[0] / _zg.front(), _cutParam[1]) + _cutParam[2] / _Qg.front() / _zg.front();
-
     // Compute predictions
     std::map<double, double> pred;
     for (int iqT = 0; iqT < (int) _qTv.size(); iqT++)
       {
-        if (_qTv[iqT] / _Qg.front() / _zg.front() > SIDISqToQmax)
+        if (_qTv[iqT] / _Qg.front() / _zg.front() > _qToQmax)
           {
             pred.insert({_qTv[iqT],  0});
             continue;
@@ -213,65 +186,17 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  std::map<double, double> ConvolutionTable::ConvoluteJetSIDIS(std::function<double(double const&, double const&, double const&)> const& fNP,
-                                                               std::function<double(double const&, double const&, double const&)> const& DNP) const
-  {
-    // Choice of the qT cut
-    double JetSIDISqToQmax = std::min(std::min(_cutParam[0], _cutParam[1]) + _cutParam[2] / _Qg.front(), 1.0);
-
-    // Compute predictions
-    std::map<double, double> pred;
-    for (int iqT = 0; iqT < (int) _qTv.size(); iqT++)
-      {
-        if (_qTv[iqT] / _Qg.front() > JetSIDISqToQmax)
-          {
-            pred.insert({_qTv[iqT],  0});
-            continue;
-          }
-        const auto wgt = _WJetSIDIS.at(_qTv[iqT]);
-        double cs  = 0;
-        for (int n = 0; n < (int) _zOgata.size(); n++)
-          {
-            double csn  = 0;
-            for (int tau = 0; tau < (int) _Qg.size(); tau++)
-              {
-                const double Q    = _Qg[tau];
-                const double zeta = Q * Q;
-                const double b =  _zOgata[n] / _qTv[iqT];
-                const double jetR = 1;
-                const double tR = tan(jetR/2);
-                for (int alpha = 0; alpha < (int) _xbg.size(); alpha++)
-                  {
-                    double zetaj = pow(tR * 2 * exp(- apfel::emc) / NangaParbat::bstarmin(b,Q), 2);
-                    csn += wgt[n][tau][alpha] * fNP(_xbg[alpha], b, zeta) * DNP(_xbg[alpha], b, zetaj);
-                    // csn += wgt[n][tau][alpha] * fNP(_xbg[alpha], b, zeta) * DNP(_xbg[alpha], b, zeta);
-                  }
-              }
-            cs += csn;
-            // Break the loop if the accuracy is satisfied (assuming
-            // convergence).
-            if (std::abs(csn/cs) < _acc)
-              break;
-          }
-        pred.insert({_qTv[iqT], cs});
-      }
-    return pred;
-  }
-
-
-  //_________________________________________________________________________________
   std::vector<double> ConvolutionTable::GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP1,
                                                        std::function<double(double const&, double const&, double const&)> const& fNP2) const
   {
     const int npred = _qTmap.size();
     std::vector<double> vpred(npred);
     std::map<double, double> pred;
-
     switch (_proc)
       {
       // Drell-Yan: two PDFs
       case DataHandler::Process::DY:
-        pred = ConvoluteDY(fNP1, fNP2);
+        pred = ConvoluteDY(fNP1);
         if (_IntqT)
           for (int i = 0; i < npred; i++)
             {
@@ -289,22 +214,10 @@ namespace NangaParbat
         pred = ConvoluteSIDIS(fNP1, fNP2);
         if (_IntqT)
           for (int i = 0; i < npred; i++)
-            vpred[i] = _prefact * _prefact2 * _qTfact[i] * (pred.at(_qTmap[i][1]) - pred.at(_qTmap[i][0])) / ( _qTmap[i][1] - _qTmap[i][0]);
+            vpred[i] = _prefact * _qTfact[i] * (pred.at(_qTmap[i][1]) - pred.at(_qTmap[i][0])) / ( _qTmap[i][1] - _qTmap[i][0]);
         else
           for (int i = 0; i < npred; i++)
-            vpred[i] = _prefact * _prefact2 * _qTfact[i] * pred.at(_qTmap[i][1]);
-        break;
-
-      // JetSIDIS: one PDF and one JetTMD
-      case DataHandler::Process::JetSIDIS:
-        pred = ConvoluteJetSIDIS(fNP1, fNP2);
-        if (_IntqT)
-          for (int i = 0; i < npred; i++)
-            vpred[i] = _prefact * _prefact2 * _qTfact[i] * (pred.at(_qTmap[i][1]) - pred.at(_qTmap[i][0])) / ( _qTmap[i][1] - _qTmap[i][0]);
-        else
-          for (int i = 0; i < npred; i++)
-            vpred[i] = _prefact * _prefact2 * _qTfact[i] * pred.at(_qTmap[i][1]);
-
+            vpred[i] = _prefact * _qTfact[i] * pred.at(_qTmap[i][1]);
         break;
 
       // e+e- annihilation into two hadrons: two FFs (Not present
@@ -318,78 +231,55 @@ namespace NangaParbat
   //_________________________________________________________________________________
   std::vector<double> ConvolutionTable::GetPredictions(std::function<double(double const&, double const&, double const&, int const&)> const& fNP) const
   {
-    std::function<double(double const& x, double const& b, double const& zeta)> fNP1;
-    std::function<double(double const& x, double const& b, double const& zeta)> fNP2;
+    const auto fNP1 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); };
+    const auto fNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 1); };
     switch (_proc)
       {
       // Drell-Yan: two PDFs
       case DataHandler::Process::DY:
-        fNP1 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); };
-        fNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 1); };
-        break;
+        return GetPredictions(fNP1, fNP1);
 
       // SIDIS: one PDF and one FF
       case DataHandler::Process::SIDIS:
-        fNP1 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); };
-        fNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 2); };
-        break;
-
-      // JetSIDIS: one PDF and one JetTMD
-      case DataHandler::Process::JetSIDIS:
         return GetPredictions(fNP1, fNP2);
 
       // e+e- annihilation into two hadrons: two FFs (Not present
       // yet)
       case DataHandler::Process::DIA:
-        fNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 2); };
-        fNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 3); };
-        break;
+        return {};
 
       default:
-        fNP1 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); };
-        fNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 2); };
-        break;
+        return {};
       }
-
-    return GetPredictions(fNP1, fNP2);
   }
 
   //_________________________________________________________________________________
   std::vector<double> ConvolutionTable::GetPredictions(std::function<double(double const&, double const&, double const&, int const&)> const& fNP,
                                                        std::function<double(double const&, double const&, double const&, int const&)> const& dNP) const
   {
+    const auto fNP1 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); };
+    const auto dNP1 = [=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 0); };
+    const auto fNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 1); };
+    const auto dNP2 = [=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 1); };
     std::vector<double> p1;
     std::vector<double> p2;
     switch (_proc)
       {
       // Drell-Yan: two PDFs
       case DataHandler::Process::DY:
-        p1 = GetPredictions([=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); }, [=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 1); });
-        p2 = GetPredictions([=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 0); }, [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 1); });
+        p1 = GetPredictions(fNP1, dNP1);
+        p2 = GetPredictions(dNP1, fNP1);
         break;
 
       // SIDIS: one PDF and one FF
       case DataHandler::Process::SIDIS:
-        p1 = GetPredictions([=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); }, [=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 2); });
-        p2 = GetPredictions([=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 0); }, [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 2); });
+        p1 = GetPredictions(fNP1, dNP2);
+        p2 = GetPredictions(dNP1, fNP2);
         break;
-      /*
-            // JetSIDIS: one PDF and one JetTMD
-            case DataHandler::Process::JetSIDIS:
-              p1 = GetPredictions(fNP1, dNP2);
-              p2 = GetPredictions(dNP1, fNP2);
-              break;
-      */
+
       // e+e- annihilation into two hadrons: two FFs (Not present
       // yet)
       case DataHandler::Process::DIA:
-        p1 = GetPredictions([=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 2); }, [=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 3); });
-        p2 = GetPredictions([=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 2); }, [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 3); });
-        break;
-
-      default:
-        p1 = GetPredictions([=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); }, [=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 2); });
-        p2 = GetPredictions([=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 0); }, [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 2); });
         break;
       }
     std::transform(p1.begin(), p1.end(), p2.begin(), p1.begin(), std::plus<double>());

@@ -19,18 +19,18 @@ namespace NangaParbat
     ndata(0),
     Vs(0),
     qTv({}),
-      qTmap({}),
-      qTfact({}),
-      var1b({0, 0}),
-      var2b({0, 0}),
-      var3b({0, 0}),
-      IntqT(false),
-      Intv1(false),
-      Intv2(false),
-      Intv3(false),
-      PSRed(false),
-      pTMin(0),
-      etaRange({-10, 10})
+    qTmap({}),
+    qTfact({}),
+    var1b({0, 0}),
+    var2b({0, 0}),
+    var3b({0, 0}),
+    IntqT(false),
+    Intv1(false),
+    Intv2(false),
+    Intv3(false),
+    PSRed(false),
+    pTMin(0),
+    etaRange({-10, 10})
   {
   }
 
@@ -76,11 +76,9 @@ namespace NangaParbat
     _obs          = DH._obs;
     _targetiso    = DH._targetiso;
     _hadron       = DH._hadron;
-    _beam         = DH._beam;
     _charge       = DH._charge;
     _tagging      = DH._tagging;
     _prefact      = DH._prefact;
-    _normalised   = DH._normalised;
     _kin          = DH._kin;
     _means        = DH._means;
     _uncor        = DH._uncor;
@@ -90,7 +88,6 @@ namespace NangaParbat
     _covmat       = DH._covmat;
     _CholL        = DH._CholL;
     _labels       = DH._labels;
-    _fluctuation  = DH._fluctuation;
     _fluctuations = DH._fluctuations;
     _t0           = DH._t0;
     _bins         = DH._bins;
@@ -104,15 +101,12 @@ namespace NangaParbat
     _obs(UnknownObservable),
     _targetiso(1),
     _hadron("NONE"),
-    _beam("PR"),
     _charge(0),
     _tagging({apfel::QuarkFlavour::TOTAL}),
-  _prefact(1),
-  _normalised(true),
-  _kin(DataHandler::Kinematics{}),
-  _labels({}),
-  _fluctuation(fluctuation),
-  _t0(t0)
+    _prefact(1),
+    _kin(DataHandler::Kinematics{}),
+    _labels({}),
+    _t0(t0)
   {
     // Retrieve kinematics
     for (auto const& dv : datafile["dependent_variables"])
@@ -133,12 +127,6 @@ namespace NangaParbat
                   _proc = SIDIS;
                 else if (ql["value"].as<std::string>() == "SIA")
                   _proc = SIA;
-                else if (ql["value"].as<std::string>() == "JetSIDIS")
-                  _proc = JetSIDIS;
-                else if (ql["value"].as<std::string>() == "DIA")
-                  _proc = DIA;
-                else if (ql["value"].as<std::string>() == "pDIS")
-                  _proc = pDIS;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown process.");
               }
@@ -151,13 +139,9 @@ namespace NangaParbat
                 else if (ql["value"].as<std::string>() == "dsigma/dxdQdz")
                   _obs = dsigma_dxdQdz;
                 else if (ql["value"].as<std::string>() == "multiplicity")
-                  _obs = multiplicity;
+                  _obs = dsigma_dxdQdz;
                 else if (ql["value"].as<std::string>() == "(dsigma/dxdzdQ2dPhT2)/dsigmaDIS")
-                  _obs = multiplicity;
-                else if (ql["value"].as<std::string>() == "FUUT")
-                  _obs = F_uut;
-                else if (ql["value"].as<std::string>() == "g1")
-                  _obs = g1;
+                  _obs = dsigma_dxdQdz;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown observable.");
               }
@@ -169,17 +153,6 @@ namespace NangaParbat
             // Hadron species
             if (ql["name"].as<std::string>() == "hadron")
               _hadron = ql["value"].as<std::string>();
-
-            // Beam hadron species. If beam not specified, assume protons (default)
-            if (ql["name"].as<std::string>() == "beam")
-              {
-                if (ql["value"].as<std::string>() == "PI")
-                  _beam = ql["value"].as<std::string>();
-                else if (ql["value"].as<std::string>() == "PR")
-                  _beam = ql["value"].as<std::string>();
-                else
-                  throw std::runtime_error("[DataHandler::DataHandler]: Unknown beam.");
-              }
 
             // Final state charge
             if (ql["name"].as<std::string>() == "charge")
@@ -210,22 +183,18 @@ namespace NangaParbat
             if (ql["name"].as<std::string>() == "prefactor")
               _prefact = ql["value"].as<double>();
 
-            // Whether the cross section is normalised
-            if (ql["name"].as<std::string>() == "normalised")
-              _normalised = ql["value"].as<bool>();
-
-            // Center-of-mass energy
+            // Center of mass energy
             if (ql["name"].as<std::string>() == "Vs")
               _kin.Vs = ql["value"].as<double>();
 
-            // Boson virtuality (absolute value)
+            // Invariant-mass (DY) or virtuality (SIDIS) interval
             if (ql["name"].as<std::string>() == "Q")
               {
                 _kin.var1b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
                 _kin.Intv1 = ql["integrate"].as<bool>();
               }
 
-            // Rapidity (DY) or Bjorken-x (SIDIS and DIS) interval
+            // Rapidity (DY) or Bjorken-x (SIDIS) interval
             if (ql["name"].as<std::string>() == "y" || ql["name"].as<std::string>() == "x")
               {
                 _kin.var2b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
@@ -265,11 +234,11 @@ namespace NangaParbat
                 if (err["label"].as<std::string>() == "unc")
                   u += pow(err["value"].as<double>(), 2);
 
-                // Additive correlated uncertainties
+                // Additive correlated uncertities
                 if (err["label"].as<std::string>() == "add")
                   a.push_back(err["value"].as<double>());
 
-                // Multiplicative correlated uncertainties
+                // Multiplicative correlated uncertities
                 if (err["label"].as<std::string>() == "mult")
                   m.push_back(err["value"].as<double>());
               }
@@ -611,21 +580,11 @@ namespace NangaParbat
     if (DH._proc == DataHandler::Process::DY)
       os << "- Process: Drell-Yan\n";
     else if (DH._proc == DataHandler::Process::SIDIS)
-      os << "- Process: semi-inclusive DIS\n";
-    else if (DH._proc == DataHandler::Process::JetSIDIS)
-      os << "- Process: JetSIDIS\n";
-    else if (DH._proc == DataHandler::Process::SIA)
-      os << "- Process: single-inclusive annihilation\n";
-    else if (DH._proc == DataHandler::Process::DIA)
-      os << "- Process: double-inclusive annihilation\n";
-    else if (DH._proc == DataHandler::Process::pDIS)
-      os << "- Process: polarised DIS\n";
+      os << "- Process: SIDIS\n";
     else
       os << "- Process: Unknown\n";
 
     os << "- Target isoscalarity: "   << DH._targetiso << "\n";
-    if (DH._proc == DataHandler::Process::DY)
-      os << "- Beam: " << DH.BeamMap.at(DH._beam) << "\n";
     os << "- Overall prefactor: "     << DH._prefact   << "\n";
     os << "- Number of points: "      << DH._kin.ndata << "\n";
     os << "- Center-of-mass energy: " << DH._kin.Vs    << " GeV\n";
@@ -660,14 +619,7 @@ namespace NangaParbat
         if (DH._kin.Intv3)
           os << "- Integration bounds of the third kinematic variable: [" << DH._kin.var3b.first << ": " << DH._kin.var3b.second << "]\n";
         else
-          os << "- Value of the third kinematic variable: " << ( DH._kin.var3b.first + DH._kin.var3b.second ) / 2 << "\n";
-      }
-    if (DH._proc == DataHandler::Process::JetSIDIS)
-      {
-        if (DH._kin.Intv3)
-          os << "- Integration bounds of the third kinematic variable: [" << DH._kin.var3b.first << ": " << DH._kin.var3b.second << "]\n";
-        else
-          os << "- Value of the third kinematic variable: " << ( DH._kin.var3b.first + DH._kin.var3b.second ) / 2 << "\n";
+          os << "- Value of the second kinematic variable: " << ( DH._kin.var3b.first + DH._kin.var3b.second ) / 2 << "\n";
       }
 
     if (DH._kin.PSRed)
@@ -682,11 +634,7 @@ namespace NangaParbat
             os << "- Minimum W: " << DH._kin.pTMin << " GeV \n";
             os << "- Range in y: [" << DH._kin.etaRange.first << ": " << DH._kin.etaRange.second << "]\n";
           }
-        else if (DH._proc == DataHandler::Process::JetSIDIS)
-          {
-            os << "- Minimum W: " << DH._kin.pTMin << " GeV \n";
-            os << "- Range in y: [" << DH._kin.etaRange.first << ": " << DH._kin.etaRange.second << "]\n";
-          }
+
       }
     os << "\n";
 
