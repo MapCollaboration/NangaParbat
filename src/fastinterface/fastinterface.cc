@@ -602,7 +602,7 @@ namespace NangaParbat
             if (PSRed)
               {
                 xbmin = std::max(xbmin, pow(Q / Vs, 2) / yRange.second);
-                xbmax = std::max(xbmin,std::min(std::min(xbmax, pow(Q / Vs, 2) / yRange.first), 1 / ( 1 + pow(Wmin / Q, 2) )));
+                xbmax = std::max(xbmin, std::min(std::min(xbmax, pow(Q / Vs, 2) / yRange.first), 1 / ( 1 + pow(Wmin / Q, 2) )));
               }
             return pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * (Intxb ? IncxIntegrand.integrate(xbmin, xbmax, 1e-5) : IncxIntegrand.integrand(xav)) / (2 * Q);
           }

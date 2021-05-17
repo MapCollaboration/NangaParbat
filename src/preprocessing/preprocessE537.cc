@@ -36,6 +36,7 @@ namespace NangaParbat
     std::map<std::string, std::string> Qranges = {{"4.0TO4.5", "_Q_4.0_4.5"}, {"4.5TO5.0", "_Q_4.5_5.0"}, {"5.0TO5.5", "_Q_5.0_5.5"}, {"5.5TO6.0","_Q_5.5_6.0"}, {"6.0TO6.5","_Q_6.0_6.5"}, {"6.5TO7.0","_Q_6.5_7.0"}, {"7.0TO7.5","_Q_7.0_7.5"}, {"7.5TO8.0","_Q_7.5_8.0"}, {"8.0TO8.5","_Q_8.0_8.5"}, {"8.5TO9.0","_Q_8.5_9.0"}};
     std::map<std::string, std::pair<std::string, std::string>> Qrangelims = {{"4.0TO4.5", {"4", "5"}}, {"4.5TO5.0", {"4.5", "5.0"}}, {"5.0TO5.5", {"5", "5.5"}}, {"5.5TO6.0",{"5.5","6"}}, {"6.0TO6.5",{"6","6.5"}}, {"6.5TO7.0",{"6.5","7"}}, {"7.0TO7.5",{"7","7.5"}}, {"7.5TO8.0",{"7.5","8"}}, {"8.0TO8.5",{"8","8.5"}}, {"8.5TO9.0",{"8.5","9"}}};
     std::map<std::string, std::pair<double,double>> Qextremes= {{"4.0TO4.5", {4,4.5}}, {"4.5TO5.0", {4.5,5.0}}, {"5.0TO5.5", {5.0,5.5}}, {"5.5TO6.0",{5.5,6.0}}, {"6.0TO6.5",{6.0,6.5}}, {"6.5TO7.0", {6.5,7.0}}, {"7.0TO7.5",{7.0,7.5}}, {"7.5TO8.0", {7.5,8.0}}, {"8.0TO8.5", {8.0,8.5}}, {"8.5TO9.0", {8.5,9.0}}};
+
     // Create directory on the basis of "ofolder" specified previously
     std::string opath = ProcessedDataPath + "/" + ofolder;
     mkdir(opath.c_str(), ACCESSPERMS);
@@ -55,10 +56,13 @@ namespace NangaParbat
         // Run over the energy ranges
         for (auto const& dv : exp["dependent_variables"])
           {
-            //  Define the minimum and the maximum value of y
-            // NOTE on the calculation of y_min and y_max: y=arcsinh(sqrt{s}*xF/(2Q)).
-            //                                             The value of x_min = -0.1, then y_min= arcsinh(-0.1*sqrt(s)/(2 Q_max)) for a specific Qmin<Q<Qmax bin
-            //                                                          x_max = 1, then y_max = arcsinh(sqrt(s)/(2 Q_min)) for a specific Qmin<Q<Qmax bin
+            /*
+            NOTE on the calculation of y_min and y_max: y=arcsinh(sqrt{s}*xF/(2Q)).
+            The value of x_min = -0.1, then y_min= arcsinh(-0.1*sqrt(s)/(2 Q_max)) for a specific Qmin<Q<Qmax bin
+            x_max = 1, then y_max = arcsinh(sqrt(s)/(2 Q_min)) for a specific Qmin<Q<Qmax bin
+            */
+
+            // Define the minimum and the maximum value of y
             double Qexmin, Qexmax;
             double y_min, y_max;
 
@@ -86,7 +90,6 @@ namespace NangaParbat
             getline(pdferr, line);
 
             ofile += ".yaml";
-
 
             // Plot labels, check the range of Q
             std::map<std::string, std::string> labels
@@ -128,17 +131,10 @@ namespace NangaParbat
             for (auto const& v : dv["values"])
               {
                 std::string stat = v["errors"][0]["symerror"].as<std::string>();
-
-                // std::string sysu = v["errors"][1]["symerror"].as<std::string>();
-                // std::string sysc = v["errors"][2]["symerror"].as<std::string>();
-                //
                 stat.erase(std::remove(stat.begin(), stat.end(), '%'), stat.end());
-                // sysu.erase(std::remove(sysu.begin(), sysu.end(), '%'), sysu.end());
-                // sysc.erase(std::remove(sysc.begin(), sysc.end(), '%'), sysc.end());
 
                 const double val = v["value"].as<double>();
                 const double unc = std::stod(stat);
-                // const double unc = sqrt( pow(val * std::stod(stat) / 100, 2) + pow(val * std::stod(sysu) / 100, 2));
 
                 // Now read PDF errors
                 getline(pdferr, line);
@@ -183,15 +179,15 @@ namespace NangaParbat
           }
       }
     return
-      "  - {name: E537_Q_4.0_4.5,     file: E537_Q_4.0_4.5.yaml}\n"
-      "  - {name: E537_Q_4.5_5.0,     file: E537_Q_4.5_5.0.yaml}\n"
-      "  - {name: E537_Q_5.0_5.5,     file: E537_Q_5.0_5.5.yaml}\n"
-      "  - {name: E537_Q_5.5_6.0,     file: E537_Q_5.5_6.0.yaml}\n"
-      "  - {name: E537_Q_6.0_6.5,     file: E537_Q_6.0_6.5.yaml}\n"
-      "  - {name: E537_Q_6.5_7.0,     file: E537_Q_6.5_7.0.yaml}\n"
-      "  - {name: E537_Q_7.0_7.5,     file: E537_Q_7.0_7.5.yaml}\n"
-      "  - {name: E537_Q_7.5_8.0,     file: E537_Q_7.5_8.0.yaml}\n"
-      "  - {name: E537_Q_8.0_8.5,     file: E537_Q_8.0_8.5.yaml}\n"
-      "  - {name: E537_Q_8.5_9.0,     file: E537_Q_8.5_9.0.yaml}\n";
+      "  - {name: E537_Q_4.0_4.5,      file: E537_Q_4.0_4.5.yaml}\n"
+      "  - {name: E537_Q_4.5_5.0,      file: E537_Q_4.5_5.0.yaml}\n"
+      "  - {name: E537_Q_5.0_5.5,      file: E537_Q_5.0_5.5.yaml}\n"
+      "  - {name: E537_Q_5.5_6.0,      file: E537_Q_5.5_6.0.yaml}\n"
+      "  - {name: E537_Q_6.0_6.5,      file: E537_Q_6.0_6.5.yaml}\n"
+      "  - {name: E537_Q_6.5_7.0,      file: E537_Q_6.5_7.0.yaml}\n"
+      "  - {name: E537_Q_7.0_7.5,      file: E537_Q_7.0_7.5.yaml}\n"
+      "  - {name: E537_Q_7.5_8.0,      file: E537_Q_7.5_8.0.yaml}\n"
+      "  - {name: E537_Q_8.0_8.5,      file: E537_Q_8.0_8.5.yaml}\n"
+      "  - {name: E537_Q_8.5_9.0,      file: E537_Q_8.5_9.0.yaml}\n";
   }
 }

@@ -2,7 +2,7 @@ dependent_variables:
   - header: {title: "COMPASS, Deu   -  Pp_Kp   0.032000 < x < 0.055000 , 0.300000 < |#it{z}| < 0.400000", titlepy: "COMPASS, Deu   -  Pp_Kp \\\\ 0.032000 < x < 0.055000 , 0.300000 < z < 0.400000", xlabel: "#it{P}_{hT} [GeV]", xlabelpy: "$P_{hT} \\rm{ [GeV]}$", ylabel: "M^{h^{+}}#left(x, z, |{P}_{hT}|^2, Q^2 #right)", ylabelpy: "$M^{h^{+}}\\left(x, z, |{P}_{hT}|^2, Q^2 \\right)$"}
     qualifiers:
       - {name: process, value: SIDIS}
-      - {name: observable, value: multiplicity}
+      - {name: observable, value: (dsigma/dxdzdQ2dPhT2)/dsigmaDIS}
       - {name: target_isoscalarity, value: 0.5}
       - {name: hadron, value: HD}
       - {name: charge, value: 1}
@@ -151,33 +151,33 @@ dependent_variables:
 independent_variables:
   - header: {name: PhT, units: GeV}
     values:
-      - {high: 0.31622777, low: 0.28284271, value: 0.29966648}
-      - {high: 0.34641016, low: 0.31622777, value: 0.33136083}
-      - {high: 0.37416574, low: 0.34641016, value: 0.36041643}
-      - {high: 0.41231056, low: 0.37416574, value: 0.39306488}
-      - {high: 0.4472136, low: 0.41231056, value: 0.42743421}
-      - {high: 0.47958315, low: 0.4472136, value: 0.4611941}
-      - {high: 0.51961524, low: 0.47958315, value: 0.49929951}
-      - {high: 0.54772256, low: 0.51961524, value: 0.53338541}
-      - {high: 0.59160798, low: 0.54772256, value: 0.56929781}
-      - {high: 0.63245553, low: 0.59160798, value: 0.61180062}
-      - {high: 0.678233, low: 0.63245553, value: 0.65475186}
-      - {high: 0.72111026, low: 0.678233, value: 0.69885621}
-      - {high: 0.77459667, low: 0.72111026, value: 0.74719475}
-      - {high: 0.82462113, low: 0.77459667, value: 0.79818544}
-      - {high: 0.87177979, low: 0.82462113, value: 0.84782074}
-      - {high: 0.93273791, low: 0.87177979, value: 0.90122139}
-      - {high: 1, low: 0.93273791, value: 0.96498705}
-      - {high: 1.0583005, low: 1, value: 1.0267911}
-      - {high: 1.1135529, low: 1.0583005, value: 1.0843892}
-      - {high: 1.174734, low: 1.1135529, value: 1.1419282}
-      - {high: 1.2328828, low: 1.174734, value: 1.2040349}
-      - {high: 1.2961481, low: 1.2328828, value: 1.2646343}
-      - {high: 1.3601471, low: 1.2961481, value: 1.3269514}
-      - {high: 1.4317821, low: 1.3601471, value: 1.3954927}
-      - {high: 1.532971, low: 1.4317821, value: 1.4807768}
-      - {high: 1.6278821, low: 1.532971, value: 1.5761028}
-      - {high: 1.7320508, low: 1.6278821, value: 1.668802}
+      - {high: 0.31622777, low: 0.28284271, value: 0.29966648, factor: 1.6692527}
+      - {high: 0.34641016, low: 0.31622777, value: 0.33136083, factor: 1.5091198}
+      - {high: 0.37416574, low: 0.34641016, value: 0.36041643, factor: 1.3877789}
+      - {high: 0.41231056, low: 0.37416574, value: 0.39306488, factor: 1.2714941}
+      - {high: 0.4472136, low: 0.41231056, value: 0.42743421, factor: 1.1634344}
+      - {high: 0.47958315, low: 0.4472136, value: 0.4611941, factor: 1.0789852}
+      - {high: 0.51961524, low: 0.47958315, value: 0.49929951, factor: 1.0008022}
+      - {high: 0.54772256, low: 0.51961524, value: 0.53338541, factor: 0.93691051}
+      - {high: 0.59160798, low: 0.54772256, value: 0.56929781, factor: 0.87770842}
+      - {high: 0.63245553, low: 0.59160798, value: 0.61180062, factor: 0.81695107}
+      - {high: 0.678233, low: 0.63245553, value: 0.65475186, factor: 0.76295777}
+      - {high: 0.72111026, low: 0.678233, value: 0.69885621, factor: 0.71462095}
+      - {high: 0.77459667, low: 0.72111026, value: 0.74719475, factor: 0.66858018}
+      - {high: 0.82462113, low: 0.77459667, value: 0.79818544, factor: 0.6253057}
+      - {high: 0.87177979, low: 0.82462113, value: 0.84782074, factor: 0.58948329}
+      - {high: 0.93273791, low: 0.87177979, value: 0.90122139, factor: 0.5541647}
+      - {high: 1, low: 0.93273791, value: 0.96498705, factor: 0.51740073}
+      - {high: 1.0583005, low: 1, value: 1.0267911, factor: 0.4858377}
+      - {high: 1.1135529, low: 1.0583005, value: 1.0843892, factor: 0.46043623}
+      - {high: 1.174734, low: 1.1135529, value: 1.1419282, factor: 0.43700814}
+      - {high: 1.2328828, low: 1.174734, value: 1.2040349, factor: 0.41534849}
+      - {high: 1.2961481, low: 1.2328828, value: 1.2646343, factor: 0.39540837}
+      - {high: 1.3601471, low: 1.2961481, value: 1.3269514, factor: 0.37646418}
+      - {high: 1.4317821, low: 1.3601471, value: 1.3954927, factor: 0.35817528}
+      - {high: 1.532971, low: 1.4317821, value: 1.4807768, factor: 0.33729622}
+      - {high: 1.6278821, low: 1.532971, value: 1.5761028, factor: 0.31637029}
+      - {high: 1.7320508, low: 1.6278821, value: 1.668802, factor: 0.29762499}
   - header: {name: x}
     values:
       - {high: 0.055, low: 0.032, value: 0.0423}

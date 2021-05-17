@@ -140,6 +140,8 @@ namespace NangaParbat
                   _obs = dsigma_dxdQdz;
                 else if (ql["value"].as<std::string>() == "multiplicity")
                   _obs = dsigma_dxdQdz;
+                else if (ql["value"].as<std::string>() == "(dsigma/dxdzdQ2dPhT2)/dsigmaDIS")
+                  _obs = dsigma_dxdQdz;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown observable.");
               }

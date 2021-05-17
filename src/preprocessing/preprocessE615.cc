@@ -61,8 +61,7 @@ namespace NangaParbat
         // Dummy variables to read columns
         std::string line;
         int vindex;
-        double vmmin, vmmax, vpT, vcross, vstat, vsyst;
-        vsyst = 0.16;
+        double vmmin, vmmax, vpT, vcross, vstat;
 
         // Create map to store the data
         std::map<std::string, std::map<int, double>> data;
@@ -106,21 +105,6 @@ namespace NangaParbat
         data["cross"] = icross;
         data["stat"]  = istat;
 
-        /*
-        // Maps for target and hadron names
-        std::map<std::string, std::string> targets = {{"tungsten", "_W"}};
-        std::map<std::string, std::string> hadrons = {{"pion pi-", "_pi-"}};
-        std::string hadtype;
-        if (tab.find("piplus") != std::string::npos ||  tab.find("piminus") != std::string::npos)
-          hadtype = "PI";
-        else
-          hadtype = "KA";
-
-        // Start composing output file name
-        std::size_t pos = tab.find("mults_");
-        std::string ofile = "HERMES" + targets[tab.substr(7,6)] + hadrons[tab.substr(pos + 6)];
-        */
-
         // Conditions to separate the values in the columns into different files.
         // Loop on Q(i.e. m) bin boundaries.
         for (auto const& Qb : Qrangelims)
@@ -130,7 +114,7 @@ namespace NangaParbat
 
             // Initialize indexes vector for future selection
             std::vector<int> indexesQ;
-            double Qvalue;
+            // double Qvalue;
 
             // Select Q bin
             for (auto const& iQ : data["m_min"])
@@ -142,9 +126,8 @@ namespace NangaParbat
                   indexesQ.push_back(iQ.first);
 
                   // Get Q value
-                  Qvalue = iQ.second;
+                  // Qvalue = iQ.second;
                 }
-
 
                 // Initialize result maps
                 std::map<int, double> fdcross, fdstat, fdpT;
@@ -164,19 +147,11 @@ namespace NangaParbat
                 filedata["stat"]  = fdstat;
                 filedata["pT"]    = fdpT;
 
-
                 // Open PDF-error file
                 std::ifstream pdferr(PDFErrorFolder + ofileQ + ".out");
                 std::string line;
                 getline(pdferr, line);
                 getline(pdferr, line);
-
-
-
-                // NOTE on the conversion factor for the cross section. We will insert it in the output file.
-                // The raw data have a cross section expressed in cm**2/GeV**2/nucleon, but we would like to have it in NB./NUCLEON/GEV**2,
-                // then we have to convert: 1barn = 10**{-28}m**2 = 10**{-24}cm**2. Therefore, 1 cm**2 = 10**{24}barn= 10**{33}nb.
-
 
                 // Plot labels
                 std::map<std::string, std::string> labels
@@ -189,18 +164,20 @@ namespace NangaParbat
                   {"titlepy", "E615, \\n " + std::to_string(Qb.second.first) + " < Q < " + std::to_string(Qb.second.second)}
                 };
 
+                /*
+                NOTE on the conversion factor for the cross section. We will insert it in the output file.
+                The raw data have a cross section expressed in cm**2/GeV**2/nucleon, but we would like to have it in NB./NUCLEON/GEV**2,
+                then we have to convert: 1barn = 10**{-28}m**2 = 10**{-24}cm**2. Therefore, 1 cm**2 = 10**{24}barn= 10**{33}nb.
+
+                NOTE on the calculation of y_min and y_max: y=arcsinh(sqrt{s}*xF/(2Q)).
+                The value of x_min = 0, then y_min=0 for all bin in Q
+                x_max = 1, then y_max = arcsinh(sqrt(s)/(2 Q_min)) for a specific Qmin<Q<Qmax bin
+                */
+
                 // Allocate emitter
                 YAML::Emitter emit;
 
-
-                // NOTE on the calculation of y_min and y_max: y=arcsinh(sqrt{s}*xF/(2Q)).
-                //                                             The value of x_min = 0, then y_min=0 for all bin in Q
-                //                                             x_max = 1, then y_max = arcsinh(sqrt(s)/(2 Q_min)) for a specific Qmin<Q<Qmax bin
-
-
                 // Write kinematics on the YAML emitter
-
-
                 emit.SetFloatPrecision(8);
                 emit.SetDoublePrecision(8);
                 emit << YAML::BeginMap;
@@ -267,7 +244,6 @@ namespace NangaParbat
                 emit << YAML::EndSeq;
                 emit << YAML::EndMap;
 
-
                 pdferr.close();
 
                 // Dump table to file
@@ -282,7 +258,7 @@ namespace NangaParbat
       }
 
     // Map to space properly the dataset names in datasets.yaml
-    std::map<int, std::string> spaces = {{34,"         "}, {35, "        "}, {36, "       "}, {37, "      "}, {38, "     "}, {39, "    "}, {40, "   "}, {41, "  "}, {42, " "}};
+    std::map<int, std::string> spaces = {{18," "}, {17, "  "}, {16, "   "}};
 
     // Produce outputnames to put in datasets.yaml
     std::string outputnames;

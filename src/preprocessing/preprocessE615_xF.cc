@@ -130,7 +130,7 @@ namespace NangaParbat
 
             // Initialize indexes vector for future selection
             std::vector<int> indexesxF;
-            double xFvalue;
+            // double xFvalue;
 
             // Select xF bin
             for (auto const& ixF : data["xF_min"])
@@ -142,7 +142,7 @@ namespace NangaParbat
                   indexesxF.push_back(ixF.first);
 
                   // Get xF value
-                  xFvalue = ixF.second;
+                  // xFvalue = ixF.second;
                 }
 
 
@@ -164,20 +164,11 @@ namespace NangaParbat
                 filedata["stat"]  = fdstat;
                 filedata["pT"]    = fdpT;
 
-
                 // Open PDF-error file
                 std::ifstream pdferr(PDFErrorFolder + ofilexF + ".out");
                 std::string line;
                 getline(pdferr, line);
                 getline(pdferr, line);
-
-
-
-                // NOTE on the conversion factor for the cross section. We will insert it in the output file.
-                // The raw data have a cross section expressed in cm**2/GeV**2/nucleon, but we would like to have it in NB./NUCLEON/GEV**2,
-                // then we have to convert: 1barn = 10**{-28}m**2 = 10**{-24}cm**2. Therefore, 1 cm**2 = 10**{24}barn= 10**{33}nb.
-
-
 
                 // Plot labels
                 std::map<std::string, std::string> labels
@@ -190,14 +181,18 @@ namespace NangaParbat
                   {"titlepy", "E615, \\n " + std::to_string(xFb.second.first) + " < xF < " + std::to_string(xFb.second.second)}
                 };
 
+                /*
+                NOTE on the conversion factor for the cross section. We will insert it in the output file.
+                The raw data have a cross section expressed in cm**2/GeV**2/nucleon, but we would like to have it in NB./NUCLEON/GEV**2,
+                then we have to convert: 1barn = 10**{-28}m**2 = 10**{-24}cm**2. Therefore, 1 cm**2 = 10**{24}barn= 10**{33}nb.
+
+                NOTE on the calculation of y_min and y_max: y=arcsinh(sqrt{s}*xF/(2Q)).
+                The value of x_min = 0, then y_min=0 for all bin in Q
+                x_max = 1, then y_max = arcsinh(sqrt(s)/(2 Q_min)) for a specific Qmin<Q<Qmax bin
+                */
+
                 // Allocate emitter
                 YAML::Emitter emit;
-
-
-                // NOTE on the calculation of y_min and y_max: y=arcsinh(sqrt{s}*xF/(2Q)).
-                //                                             The value of x_min = 0, then y_min=0 for all bin in Q
-                //                                             x_max = 1, then y_max = arcsinh(sqrt(s)/(2 Q_min)) for a specific Qmin<Q<Qmax bin
-
 
                 // Write kinematics on the YAML emitter
                 emit.SetFloatPrecision(8);
@@ -265,10 +260,6 @@ namespace NangaParbat
                 emit << YAML::EndSeq;
                 emit << YAML::EndMap;
 
-
-
-
-
                 pdferr.close();
 
                 // Dump table to file
@@ -283,7 +274,7 @@ namespace NangaParbat
       }
 
     // Map to space properly the dataset names in datasets.yaml
-    std::map<int, std::string> spaces = {{34,"         "}, {35, "        "}, {36, "       "}, {37, "      "}, {38, "     "}, {39, "    "}, {40, "   "}, {41, "  "}, {42, " "}};
+    std::map<int, std::string> spaces = {{17,"  "}};
 
     // Produce outputnames to put in datasets.yaml
     std::string outputnames;
