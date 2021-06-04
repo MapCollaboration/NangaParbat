@@ -457,7 +457,7 @@ namespace NangaParbat
     const bool   arun   = _config["alphaem"]["run"].as<bool>();
     const int    pto    = _config["PerturbativeOrder"].as<int>();
 
-    // Initialise container of YAML:Emitter objects.
+    // Initialise container of YAML::Emitter objects.
     std::vector<YAML::Emitter> Tabs(DHVect.size());
 
     // Loop over the vector of "Kinematics" objects
@@ -498,8 +498,8 @@ namespace NangaParbat
         const std::pair<double, double>              yRange = kin.etaRange; // Allowed y of the final-state lepton
 
         // Retrieve average variables. Q and x are assumed to be constant in each bin.
-        const double                                 Qav    = DHVect[i].GetBinning()[0].Qav; // Get average Q from the first data point.
-        const double                                 xav    = DHVect[i].GetBinning()[0].xav; // Get average x from the first data point.
+        const double                                 Qav    = DHVect[i].GetBinning()[0].Qav; // Get average Q from the first data point of the bin.
+        const double                                 xav    = DHVect[i].GetBinning()[0].xav; // Get average x from the first data point of the bin.
 
         // Tabulate initial scale TMD FFs in b in the physical basis
         std::function<apfel::Set<apfel::Distribution>(double const&)> isTMDFFs =
@@ -602,7 +602,7 @@ namespace NangaParbat
             if (PSRed)
               {
 		xbmin = std::min(xbmax, std::max(xbmin, pow(Q / Vs, 2) / yRange.second));
-                xbmax = std::max(xbmin, std::min(std::min(xbmax, pow(Q / Vs, 2) / yRange.first), 1 / ( 1 + pow(Wmin / Q, 2) ))); 
+                xbmax = std::max(xbmin, std::min(std::min(xbmax, pow(Q / Vs, 2) / yRange.first), 1 / ( 1 + pow(Wmin / Q, 2) )));
               }
             return pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * (Intxb ? IncxIntegrand.integrate(xbmin, xbmax, 1e-5) : IncxIntegrand.integrand(xav)) / (2 * Q);
           }
