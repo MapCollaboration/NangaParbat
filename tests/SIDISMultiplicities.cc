@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
   // Alpha_s (from PDFs). Get it from the LHAPDF set and tabulate it.
   const auto Alphas = [&] (double const& mu) -> double{ return distpdf->alphasQ(mu); };
   const apfel::TabulateObject<double> TabAlphas {[&] (double const& mu) -> double{return distpdf->alphasQ(mu); },
-                                                 100, distpdf->qMin() - 0.1, distpdf->qMax(), 3, Thresholds};
+                                                 100, distpdf->qMin() * 0.9, distpdf->qMax(), 3, Thresholds};
 
    // Setup APFEL++ x-space grid for PDFs
    std::vector<apfel::SubGrid> vsgp;
@@ -89,8 +89,10 @@ int main(int argc, char* argv[])
    };
 
    // Tabulate collinear PDFs
-   const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 200, distpdf->qMin() - 0.1, distpdf->qMax(), 3, Thresholds};
+   const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 200, distpdf->qMin() * 0.9, distpdf->qMax(), 3, Thresholds};
    const auto CollPDFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabPDFs.Evaluate(mu); };
+
+   std::cout << TabPDFs.EvaluatexQ(0, 0.1, 0.9) << std::endl;
 
    /*
    // Check to see which points in Q are tabulated
@@ -186,7 +188,7 @@ int main(int argc, char* argv[])
       };
 
       // Tabulate collinear FFs
-      const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabFFs{EvolvedFFs, 200, distff->qMin() - 0.1, distff->qMax(), 3, Thresholds};
+      const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabFFs{EvolvedFFs, 200, distff->qMin() * 0.9, distff->qMax(), 3, Thresholds};
       const auto CollFFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabFFs.Evaluate(mu); };
 
       // Initialize TMD FF objects

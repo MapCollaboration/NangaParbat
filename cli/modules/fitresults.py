@@ -243,7 +243,7 @@ class fitresults:
 
     def PlotTMDs(self, dist, ifl, Q, x):
         """
-        Function that creates plots of TMD distributions, replica bly replica using the code ./run/PlotsTMDs
+        Function that creates plots of TMD distributions, replica by replica using the code ./run/PlotsTMDs
         """
         # First of all the code creates the input file containg
         # parameterisation and sets of parameters
