@@ -600,7 +600,7 @@ namespace NangaParbat
                 xbmin = std::max(xbmin, pow(Q / Vs, 2) / yRange.second);
                 xbmax = std::min(std::min(xbmax, pow(Q / Vs, 2) / yRange.first), 1 / ( 1 + pow(Wmin / Q, 2) ));
               }
-            return pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * IncxIntegrand.integrate(xbmin, xbmax, 1e-5);
+            return pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * IncxIntegrand.integrate(xbmin, xbmax, 1e-5) / (2 * Q);
           }
         };
 
@@ -619,7 +619,7 @@ namespace NangaParbat
         // Ogata-quadrature object of degree one or zero according to
         // whether the cross sections have to be integrated over the
         // bins in qT or not.
-        apfel::OgataQuadrature OgataObj{};
+        apfel::OgataQuadrature OgataObj{1};
 
         // Unscaled coordinates and weights of the Ogata quadrature.
         std::vector<double> zo = OgataObj.GetCoordinates();
@@ -788,7 +788,7 @@ namespace NangaParbat
                                       }
 
                                     // Return z integrand
-                                    return zgrid.Interpolant(0, beta, z) * pow(_QuarkSudakov(bs, muf, zetaf), 2) * xbintegralq / z;
+                                    return zgrid.Interpolant(0, beta, z) * pow(_QuarkSudakov(bs, muf, zetaf), 2) * xbintegralq / z / (zb.second - zb.first);
                                   }
                                 };
                                 // Perform the integral in z
@@ -797,7 +797,7 @@ namespace NangaParbat
                                   zintegral += zIntObj.integrate(zg[iz], zg[iz+1], 0);
 
                                 // Return Q integrand
-                                return Qgrid.Interpolant(0, tau, Q) * pow((arun ? _TabAlphaem->Evaluate(Q) : aref), 2) * _HardFactorSIDIS(muf) / pow(Q, 3) * zintegral;
+                                return Qgrid.Interpolant(0, tau, Q) * pow((arun ? _TabAlphaem->Evaluate(Q) : aref), 2) * _HardFactorSIDIS(muf) / pow(Q, 3) * zintegral / (2 * Q);
                               }
                             };
                             // Perform the integral in Q

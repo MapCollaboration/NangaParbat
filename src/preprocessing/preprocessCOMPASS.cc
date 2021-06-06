@@ -184,12 +184,12 @@ namespace NangaParbat
               // Plot labels
               std::map<std::string, std::string> labels
               {
-                {"xlabel", "#it{P}_{h}_{#perp} [GeV]"},
-                {"ylabel", hcharge + "#left(x, z, |{P}_{h}_{#perp}|, Q^2 #right)"},
+                {"xlabel", "#it{P}_{hT} [GeV]"},
+                {"ylabel", hcharge + "#left(x, z, |{P}_{hT}|^2, Q^2 #right)"},
                 {"title", "COMPASS, Deu   -  " + hadrons[hcharge] + "   " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < |#it{z}| < " + std::to_string(zbin.second)},
-                {"xlabelpy", "$P_{h}_{\\perp} \\rm{ [GeV]}$"},
-                {"ylabelpy", "$" + hcharge + "\\left(x, z, |{P}_{h}_{\\perp}|, Q^2 \\right)$"},
-                {"titlepy", "COMPASS, Deu   -  " + hadrons[hcharge] + " \\n " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < z < " + std::to_string(zbin.second)}
+                {"xlabelpy", "$P_{hT} \\rm{ [GeV]}$"},
+                {"ylabelpy", "$" + hcharge + "\\left(x, z, |{P}_{hT}|^2, Q^2 \\right)$"},
+                {"titlepy", "COMPASS, Deu   -  " + hadrons[hcharge] + " \\\\ " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < z < " + std::to_string(zbin.second)}
               };
 
               // Allocate emitter

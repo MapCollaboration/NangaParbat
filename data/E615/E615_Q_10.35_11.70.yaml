@@ -1,5 +1,5 @@
 dependent_variables:
-  - header: {title: "E615, 10.350000 < Q < 11.700000", titlepy: "E615, \\n 10.350000 < Q < 11.700000", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q_T \\rm{[GeV]$", ylabel: "#frac{d2#it{#sigma}}{d#it{p}_{T}#d#it{q}_{T}} [cm^{2}*GeV^{-2}", ylabelpy: "$\\frac{d^2\\sigma}{dp_{T} dq_{T}}[\\rm{cm}^2*{GeV}^{-2}]$"}
+  - header: {title: "E615, 10.350000 < Q < 11.700000", titlepy: "E615, \\n 10.350000 < Q < 11.700000", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q_T \\rm{[GeV]$", ylabel: "#frac{d2#it{#sigma}}{d#it{p}_{T}#d#it{q}_{T}} [nb*GeV^{-2}", ylabelpy: "$\\frac{d^2\\sigma}{dp_{T} dq_{T}}[\\rm{nb}*{GeV}^{-2}]$"}
     qualifiers:
       - {name: process, value: Drell Yan}
       - {name: observable, value: cross section}
@@ -10,70 +10,70 @@ dependent_variables:
       - {name: y, low: 0, high: 3.1941252, integrate: true}
       - values
       - errors:
-          - {label: unc, value: 1.062e-37}
+          - {label: unc, value: 0.0001062}
           - {label: mult, value: 0.16}
-        value: 3.677e-37
+        value: 0.0003677
       - errors:
-          - {label: unc, value: 1.101e-37}
+          - {label: unc, value: 0.0001101}
           - {label: mult, value: 0.16}
-        value: 4.118e-37
+        value: 0.0004118
       - errors:
-          - {label: unc, value: 1.045e-37}
+          - {label: unc, value: 0.0001045}
           - {label: mult, value: 0.16}
-        value: 4.18e-37
+        value: 0.000418
       - errors:
-          - {label: unc, value: 1.419e-37}
+          - {label: unc, value: 0.0001419}
           - {label: mult, value: 0.16}
-        value: 6.804e-37
+        value: 0.0006804
       - errors:
-          - {label: unc, value: 1.61e-37}
+          - {label: unc, value: 0.000161}
           - {label: mult, value: 0.16}
-        value: 8.816e-37
+        value: 0.0008816
       - errors:
-          - {label: unc, value: 1.372e-37}
+          - {label: unc, value: 0.0001372}
           - {label: mult, value: 0.16}
-        value: 5.821e-37
+        value: 0.0005821
       - errors:
-          - {label: unc, value: 7.68e-38}
+          - {label: unc, value: 7.68e-05}
           - {label: mult, value: 0.16}
-        value: 2.305e-37
+        value: 0.0002305
       - errors:
-          - {label: unc, value: 1.023e-37}
+          - {label: unc, value: 0.0001023}
           - {label: mult, value: 0.16}
-        value: 3.069e-37
+        value: 0.0003069
       - errors:
-          - {label: unc, value: 6.19e-38}
+          - {label: unc, value: 6.19e-05}
           - {label: mult, value: 0.16}
-        value: 1.237e-37
+        value: 0.0001237
       - errors:
-          - {label: unc, value: 6.69e-38}
+          - {label: unc, value: 6.69e-05}
           - {label: mult, value: 0.16}
-        value: 1.339e-37
+        value: 0.0001339
       - errors:
-          - {label: unc, value: 9.56e-38}
+          - {label: unc, value: 9.56e-05}
           - {label: mult, value: 0.16}
-        value: 1.911e-37
+        value: 0.0001911
       - errors:
-          - {label: unc, value: 2.13e-38}
+          - {label: unc, value: 2.13e-05}
           - {label: mult, value: 0.16}
-        value: 2.13e-38
+        value: 2.13e-05
       - errors:
-          - {label: unc, value: 2.07e-38}
+          - {label: unc, value: 2.07e-05}
           - {label: mult, value: 0.16}
-        value: 2.07e-38
+        value: 2.07e-05
 independent_variables:
   - header: {name: PT, units: GEV}
     values:
-      - {value: 0.125, high: 0, low: 0.25}
-      - {value: 0.375, high: 0.25, low: 0.5}
-      - {value: 0.625, high: 0.5, low: 0.75}
-      - {value: 0.875, high: 0.75, low: 1}
-      - {value: 1.125, high: 1, low: 1.25}
-      - {value: 1.375, high: 1.25, low: 1.5}
-      - {value: 1.625, high: 1.5, low: 1.75}
-      - {value: 1.875, high: 1.75, low: 2}
-      - {value: 2.125, high: 2, low: 2.25}
-      - {value: 2.375, high: 2.25, low: 2.5}
-      - {value: 2.625, high: 2.5, low: 2.75}
-      - {value: 2.875, high: 2.75, low: 3}
-      - {value: 3.875, high: 3.75, low: 4}
+      - {value: 0.125, high: 0.25, low: 0}
+      - {value: 0.375, high: 0.5, low: 0.25}
+      - {value: 0.625, high: 0.75, low: 0.5}
+      - {value: 0.875, high: 1, low: 0.75}
+      - {value: 1.125, high: 1.25, low: 1}
+      - {value: 1.375, high: 1.5, low: 1.25}
+      - {value: 1.625, high: 1.75, low: 1.5}
+      - {value: 1.875, high: 2, low: 1.75}
+      - {value: 2.125, high: 2.25, low: 2}
+      - {value: 2.375, high: 2.5, low: 2.25}
+      - {value: 2.625, high: 2.75, low: 2.5}
+      - {value: 2.875, high: 3, low: 2.75}
+      - {value: 3.875, high: 4, low: 3.75}

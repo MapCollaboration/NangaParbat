@@ -1,0 +1,89 @@
+dependent_variables:
+  - header: {title: "E615, 0.800000 < xF < 0.900000", titlepy: "E615, \\n 0.800000 < xF < 0.900000", xlabel: "#it{x}_{F}", xlabelpy: $x_F$, ylabel: "#frac{d2#it{#sigma}}{d#it{x}_{F}#d#it{q}_{T}} [nb*GeV^{-2}", ylabelpy: "$\\frac{d^2\\sigma}{dp_{T} dq_{T}}[\\rm{nb}*{GeV}^{-2}]$"}
+    qualifiers:
+      - {name: process, value: Drell Yan}
+      - {name: observable, value: cross section}
+      - {name: target_isoscalarity, value: 0.4025}
+      - {name: prefactor, value: 1}
+      - {name: Vs, value: 252}
+      - {name: xF, low: 0.8, high: 0.9, integrate: true}
+      - {name: y, low: 2.7416616, high: 4.0256704, integrate: true}
+      - values
+      - errors:
+          - {label: unc, value: 0.00092}
+          - {label: mult, value: 0.16}
+        value: 0.01232
+      - errors:
+          - {label: unc, value: 0.00127}
+          - {label: mult, value: 0.16}
+        value: 0.02741
+      - errors:
+          - {label: unc, value: 0.00121}
+          - {label: mult, value: 0.16}
+        value: 0.02511
+      - errors:
+          - {label: unc, value: 0.00117}
+          - {label: mult, value: 0.16}
+        value: 0.02332
+      - errors:
+          - {label: unc, value: 0.00093}
+          - {label: mult, value: 0.16}
+        value: 0.01619
+      - errors:
+          - {label: unc, value: 0.000676}
+          - {label: mult, value: 0.16}
+        value: 0.008712
+      - errors:
+          - {label: unc, value: 0.000583}
+          - {label: mult, value: 0.16}
+        value: 0.006165
+      - errors:
+          - {label: unc, value: 0.000426}
+          - {label: mult, value: 0.16}
+        value: 0.00335
+      - errors:
+          - {label: unc, value: 0.000363}
+          - {label: mult, value: 0.16}
+        value: 0.002236
+      - errors:
+          - {label: unc, value: 0.000254}
+          - {label: mult, value: 0.16}
+        value: 0.001296
+      - errors:
+          - {label: unc, value: 0.0001767}
+          - {label: mult, value: 0.16}
+        value: 0.0004675
+      - errors:
+          - {label: unc, value: 6.06e-05}
+          - {label: mult, value: 0.16}
+        value: 6.06e-05
+      - errors:
+          - {label: unc, value: 9.11e-05}
+          - {label: mult, value: 0.16}
+        value: 0.0001289
+      - errors:
+          - {label: unc, value: 6.29e-05}
+          - {label: mult, value: 0.16}
+        value: 8.89e-05
+      - errors:
+          - {label: unc, value: 4.33e-05}
+          - {label: mult, value: 0.16}
+        value: 4.33e-05
+independent_variables:
+  - header: {name: PT, units: GEV}
+    values:
+      - {value: 0.125, high: 0.25, low: 0}
+      - {value: 0.375, high: 0.5, low: 0.25}
+      - {value: 0.625, high: 0.75, low: 0.5}
+      - {value: 0.875, high: 1, low: 0.75}
+      - {value: 1.125, high: 1.25, low: 1}
+      - {value: 1.375, high: 1.5, low: 1.25}
+      - {value: 1.625, high: 1.75, low: 1.5}
+      - {value: 1.875, high: 2, low: 1.75}
+      - {value: 2.125, high: 2.25, low: 2}
+      - {value: 2.375, high: 2.5, low: 2.25}
+      - {value: 2.625, high: 2.75, low: 2.5}
+      - {value: 2.875, high: 3, low: 2.75}
+      - {value: 3.125, high: 3.25, low: 3}
+      - {value: 3.375, high: 3.5, low: 3.25}
+      - {value: 3.875, high: 4, low: 3.75}

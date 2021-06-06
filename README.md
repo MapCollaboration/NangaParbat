@@ -10,12 +10,12 @@ non-perturbative component of TMD distributions.
 
 You can obtain NangaParbat directly from the github repository:
 
-https://github.com/vbertone/NangaParbat/releases
+https://github.com/MapCollaboration/NangaParbat
 
 For the last development branch you can clone the master code:
 
 ```Shell
-git clone git@github.com:vbertone/NangaParbat.git
+git clone git@github.com:MapCollaboration/NangaParbat.git
 ```
 
 If you instead want to download a specific tag:
