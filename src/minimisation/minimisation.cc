@@ -6,12 +6,22 @@
 #include "NangaParbat/fcnminuit.h"
 #include "NangaParbat/fcnceres.h"
 
+#if MINUIT2_NOT_BUNDLED_WITH_ROOT
+#include <Minuit2/MnUserParameters.h>
+#include <Minuit2/MnMigrad.h>
+#include <Minuit2/MnScan.h>
+#include <Minuit2/MnPlot.h>
+#include <Minuit2/FunctionMinimum.h>
+#include <Minuit2/MnPrint.h>
+#else
 #include <root/Minuit2/MnUserParameters.h>
 #include <root/Minuit2/MnMigrad.h>
 #include <root/Minuit2/MnScan.h>
 #include <root/Minuit2/MnPlot.h>
 #include <root/Minuit2/FunctionMinimum.h>
 #include <root/Minuit2/MnPrint.h>
+#endif
+
 #include <ceres/ceres.h>
 #include <gsl/gsl_randist.h>
 
