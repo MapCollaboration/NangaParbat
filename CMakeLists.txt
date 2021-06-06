@@ -121,6 +121,12 @@ else(ROOT_CONFIG)
   message ("ROOT not found. Some parts of the code will not be compiled.")
 endif(ROOT_CONFIG)
 
+find_path(MINUIT2 Minuit2)
+if (Minuit2)
+  add_definitions(-DMINUIT2_NOT_BUNDLED_WITH_ROOT=true)
+endif(Minuit2)
+
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LHAPDF_CXX_FLAGS} ${APFELXX_CXX_FLAGS} ${GSL_CXX_FLAGS} ${YAML_CFLAGS} ${ROOT_CXX_FLAGS} ${EIGEN3_CFLAGS} ${Ceres_CFLAGS} ${GLOG_CFLAGS} ${GFLAGS_CFLAGS} -Wall -fPIC -Wunused")
 
