@@ -33,6 +33,18 @@ namespace NangaParbat
                                                                                                    100, distpdf->qMin(), distpdf->qMax(), 3, _Thresholds
                                                                                                   });
 
+    // If in the config file a PDF set for the beam is specified, set
+    // the boolean variable 'beam' as 'true'. When the beam hadrons are
+    // not specified, a proton beam is assumed in the following.
+    const bool beam = (_config["pdfsetbeam"]? true : false);
+
+    // Open PDF set for hadrons in the beam (if present).
+    // When the beam hadrons are not specified, a proton beam is assumed.
+    LHAPDF::PDF* distpdfbeam = (_config["pdfsetbeam"] ? LHAPDF::mkPDF(_config["pdfsetbeam"]["name"].as<std::string>(), _config["pdfsetbeam"]["member"].as<int>()) : distpdf);
+
+    // Rotate beam PDF set into the QCD evolution basis
+    const auto RotBeamPDFs = [&] (double const& x, double const& mu) -> std::map<int,double> { return apfel::PhysToQCDEv(distpdfbeam->xfxQ(x, mu)); };
+
     // Open LHAPDF FF set
     LHAPDF::PDF* distff = LHAPDF::mkPDF(_config["ffset"]["name"].as<std::string>(), _config["ffset"]["member"].as<int>());
 
@@ -56,6 +68,25 @@ namespace NangaParbat
     _TabPDFs = std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>
                (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedPDFs, 100, distpdf->qMin(), distpdf->qMax(), 3, _Thresholds});
 
+    // Define x-space grid for beam PDFs.
+    // If x-space grid for the PDFs of the beam is not specified
+    // in the config file, use proton PDFs x-space grid.
+    std::vector<apfel::SubGrid> vsgpdfbeam;
+    for (auto const& sg : (_config["xgridpdfbeam"] ? _config["xgridpdfbeam"] : _config["xgridpdf"]))
+      vsgpdfbeam.push_back({sg[0].as<int>(), sg[1].as<double>(), sg[2].as<int>()});
+    _gpdfbeam = std::unique_ptr<const apfel::Grid>(new apfel::Grid({vsgpdfbeam}));
+
+    // Construct set of distributions as a function of the scale to be
+    // tabulated for beam PDFs
+    const auto EvolvedBeamPDFs = [=] (double const& mu) -> apfel::Set<apfel::Distribution>
+    {
+      return apfel::Set<apfel::Distribution>{apfel::EvolutionBasisQCD{apfel::NF(mu, _Thresholds)}, DistributionMap(*_gpdfbeam, RotBeamPDFs, mu)};
+    };
+
+    // Tabulate collinear beam PDFs
+    _TabBeamPDFs = std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>
+               (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedBeamPDFs, 100, distpdfbeam->qMin(), distpdfbeam->qMax(), 3, _Thresholds});
+
     // Define x-space grid for FFs
     std::vector<apfel::SubGrid> vsgff;
     for (auto const& sg : _config["xgridff"])
@@ -76,6 +107,9 @@ namespace NangaParbat
     // Initialise TMD objects for PDFs
     _TmdPdfObjs = apfel::InitializeTmdObjectsLite(*_gpdf, _Thresholds);
 
+    // Initialise TMD objects for beam PDFs
+    _BeamTmdPdfObjs = apfel::InitializeTmdObjectsLite(*_gpdfbeam, _Thresholds);
+
     // Initialise TMD objects for FFs
     _TmdFfObjs = apfel::InitializeTmdObjectsLite(*_gff, _Thresholds);
 
@@ -89,6 +123,10 @@ namespace NangaParbat
     _EvTMDPDFs = BuildTmdPDFs(_TmdPdfObjs, CollPDFs, Alphas, pto, Ci);
     _MatchTMDPDFs = MatchTmdPDFs(_TmdPdfObjs, CollPDFs, Alphas, pto, Ci);
 
+    const auto BeamCollPDFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return _TabBeamPDFs->Evaluate(mu); };
+    _EvBeamTMDPDFs = BuildTmdPDFs(_BeamTmdPdfObjs, BeamCollPDFs, Alphas, pto, Ci);
+    _MatchBeamTMDPDFs = MatchTmdPDFs(_BeamTmdPdfObjs, BeamCollPDFs, Alphas, pto, Ci);
+
     const auto CollFFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return _TabFFs->Evaluate(mu); };
     _EvTMDFFs = BuildTmdFFs(_TmdFfObjs, CollFFs, Alphas, pto, Ci);
     _MatchTMDFFs = MatchTmdFFs(_TmdFfObjs, CollFFs, Alphas, pto, Ci);
@@ -100,6 +138,8 @@ namespace NangaParbat
 
     // Delete LHAPDF sets
     delete distpdf;
+    if (_config["pdfsetbeam"])
+      delete distpdfbeam;
     delete distff;
 
     // b* presciption
@@ -138,22 +178,23 @@ namespace NangaParbat
 
     // Global factor
     const double factor = apfel::ConvFact * 8 * M_PI * aem2 * _HardFactorDY(muf) / 9 / pow(Q, 3);
-    const std::map<int, apfel::Distribution> xF = QCDEvToPhys(_EvTMDPDFs(bT, muf, zetaf).GetObjects());
+    const std::map<int, apfel::Distribution> xF     = QCDEvToPhys(_EvTMDPDFs(bT, muf, zetaf).GetObjects());
+    const std::map<int, apfel::Distribution> xFBeam = QCDEvToPhys(_EvBeamTMDPDFs(bT, muf, zetaf).GetObjects());
     apfel::DoubleObject<apfel::Distribution> Lumi;
 
     // Treat down and up separately to take isoscalarity of the target
     // into account.
-    Lumi.AddTerm({factor * Bq[0], frp * xF.at(sign)    + frn * xF.at(sign*2),  xF.at(-1)});
-    Lumi.AddTerm({factor * Bq[0], frp * xF.at(-sign)   + frn * xF.at(-sign*2), xF.at(1)});
-    Lumi.AddTerm({factor * Bq[1], frp * xF.at(sign*2)  + frn * xF.at(sign),    xF.at(-2)});
-    Lumi.AddTerm({factor * Bq[1], frp * xF.at(-sign*2) + frn * xF.at(-sign),   xF.at(2)});
+    Lumi.AddTerm({factor * Bq[0], frp * xF.at(sign)    + frn * xF.at(sign*2),  xFBeam.at(-1)});
+    Lumi.AddTerm({factor * Bq[0], frp * xF.at(-sign)   + frn * xF.at(-sign*2), xFBeam.at(1)});
+    Lumi.AddTerm({factor * Bq[1], frp * xF.at(sign*2)  + frn * xF.at(sign),    xFBeam.at(-2)});
+    Lumi.AddTerm({factor * Bq[1], frp * xF.at(-sign*2) + frn * xF.at(-sign),   xFBeam.at(2)});
 
     // Now run over the remaining flavours
     for (int i = 3; i <= nf; i++)
       {
         const int ip = i * sign;
-        Lumi.AddTerm({factor * Bq[i-1], xF.at(ip), xF.at(-i)});
-        Lumi.AddTerm({factor * Bq[i-1], xF.at(-ip), xF.at(i)});
+        Lumi.AddTerm({factor * Bq[i-1], xF.at(ip),  xFBeam.at(-i)});
+        Lumi.AddTerm({factor * Bq[i-1], xF.at(-ip), xFBeam.at(i)});
       }
     return Lumi;
   }
