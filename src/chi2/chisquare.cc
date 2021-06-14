@@ -40,23 +40,58 @@ namespace NangaParbat
     _DSVect.push_back(DSBlock);
 
     // Determine number of data points that pass the cut qT / Q.
-    const DataHandler::Kinematics kin     = DSBlock.first->GetKinematics();
-    const double                  qToQMax = DSBlock.second->GetCutqToverQ();
-    const std::vector<double>     qTv     = kin.qTv;
-    const double                  Qmin    = (kin.Intv1 ? kin.var1b.first : ( kin.var1b.first + kin.var1b.second ) / 2);
+    const DataHandler::Kinematics kin      = DSBlock.first->GetKinematics();
+    //const double                  qToQMax = DSBlock.second->GetCutqToverQ();
+    const DataHandler::Process    proc     = DSBlock.first->GetProcess();
+    const std::vector<double>     cutParam = DSBlock.second->GetcutParam();
+    const std::vector<double>     qTv      = kin.qTv;
+    const double                  Qmin     = (kin.Intv1 ? kin.var1b.first : ( kin.var1b.first + kin.var1b.second ) / 2);
 
-    // Run over the qTv vector, count how many data points pass
-    // the cut and push the number into the "_ndata" vector.
-    int idata = 0;
-    for (auto const& qT : qTv)
-      if (qT / Qmin < qToQMax)
-        idata++;
+    if (proc == 0) //DY
+      {
+        int idata = 0;
 
-    _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
+        double qToQMax = std::min(cutParam[0], cutParam[1]);
 
-    // Data the pass all the cuts
-    const std::valarray<bool> cm = DSBlock.second->GetCutMask();
-    _ndatac.push_back(std::count(std::begin(cm), std::end(cm), true));
+        for (auto const& qT : qTv)
+          if (qT / Qmin < qToQMax)
+          idata++;
+
+        _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
+
+        // Data the pass all the cuts
+        const std::valarray<bool> cm = DSBlock.second->GetCutMask();
+        _ndatac.push_back(std::count(std::begin(cm), std::end(cm), true));
+      }
+    else if (proc == 1) //SIDIS
+      {
+        const double                  zmin     = (kin.Intv3 ? kin.var3b.first : ( kin.var3b.first + kin.var3b.second ) / 2);
+
+        // Run over the qTv vector, count how many data points pass
+        // the cut and push the number into the "_ndata" vector.
+        int idata = 0;
+
+        //double qToQMax = std::min(std::min(cutParam[0] / zmin, cutParam[1]) + cutParam[2] / Qmin / zmin, 1.0);
+        double qToQMax = std::min(cutParam[0] / zmin, cutParam[1]) + cutParam[2] / Qmin / zmin;
+        //std::cout << "qToQMax from chisquare.cc = " << qToQMax << std::endl;
+        //std::cout << "param1 from chisquare.cc = " << cutParam[0] << std::endl;
+        //std::cout << "param2 from chisquare.cc = " << cutParam[1] << std::endl;
+        //std::cout << "param3 from chisquare.cc = " << cutParam[2] << std::endl;
+        //std::cout << "zmin from chisquare.cc = " << zmin << std::endl;
+        //std::cout << "Qmin from chisquare.cc = " << Qmin << std::endl;
+        //std::cout << "len(qT)" << qTv.size() << std::endl;
+        for (auto const& qT : qTv)
+          if (qT / Qmin / zmin < qToQMax)
+            idata++;
+
+        _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
+        //std::cout << "len(qT)" << idata << std::endl;
+        // Data the pass all the cuts
+        const std::valarray<bool> cm = DSBlock.second->GetCutMask();
+        _ndatac.push_back(std::count(std::begin(cm), std::end(cm), true));
+      }
+    else
+      {throw std::runtime_error("[Chisquare::AddBlock]: Only SIDIS or DY data sets can be treated here.");}
   };
 
   //_________________________________________________________________________________

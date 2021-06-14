@@ -56,7 +56,8 @@ int main(int argc, char* argv[])
         std::cout << "Reading table for " << ds["name"].as<std::string>() << "..." << std::endl;
 
         // Convolution table
-        NangaParbat::ConvolutionTable* ct =  new NangaParbat::ConvolutionTable{YAML::LoadFile(std::string(argv[4]) + "/" + ds["name"].as<std::string>() + ".yaml"), fitconfig["qToQmax"].as<double>()};
+        //NangaParbat::ConvolutionTable* ct =  new NangaParbat::ConvolutionTable{YAML::LoadFile(std::string(argv[4]) + "/" + ds["name"].as<std::string>() + ".yaml"), fitconfig["qToQmax"].as<double>()};
+        NangaParbat::ConvolutionTable* ct =  new NangaParbat::ConvolutionTable{YAML::LoadFile(std::string(argv[4]) + "/" + ds["name"].as<std::string>() + ".yaml"), fitconfig["cutParam"].as<std::vector<double>>()};
 
         // Datafile
         NangaParbat::DataHandler* dh = new NangaParbat::DataHandler{ds["name"].as<std::string>(), YAML::LoadFile(std::string(argv[3]) + "/" + exp.first.as<std::string>() + "/" + ds["file"].as<std::string>())};
