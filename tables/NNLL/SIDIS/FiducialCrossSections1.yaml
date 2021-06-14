@@ -1,18 +1,21 @@
-#### Prefactors2 for the convolution tables that must be included
-#### otherwise RunFit does not work.
-#### Run IncludePrefactors2_DY.py but pay attention on the file opened!
-
+#### Prefactors for the convolution tables NLL and LL.
+#### PDFs used to compute the fiducial cross section: MMHT2014lo68cl.
+####
+#### For Tevatron (D0 RunII and D0 RunIImu)
+#### fidcs = 1 / FiducialCrossSection@LO
+#### For LHC experiments:
+#### fidcs = 2 / FiducialCrossSection@LO
 
 D0:
 - {file: D0_RunI.yaml,   fidcs: 1}
-- {file: D0_RunII.yaml,   fidcs: 1}
-- {file: D0_RunIImu.yaml, fidcs: 1}
-CMS:
-- {file: CMS_7TeV.yaml, fidcs: 1}
-- {file: CMS_8TeV.yaml, fidcs: 1}
-CDF:
-- {file: CDF_RunI.yaml, fidcs: 1}
-- {file: CDF_RunII.yaml, fidcs: 1}
+#- {file: D0_RunII.yaml,   fidcs: 1}
+#- {file: D0_RunIImu.yaml, fidcs: 1}
+#CMS:
+#- {file: CMS_7TeV.yaml, fidcs: 1}
+#- {file: CMS_8TeV.yaml, fidcs: 1}
+#CDF:
+#- {file: CDF_RunI.yaml, fidcs: 1}
+#- {file: CDF_RunII.yaml, fidcs: 1}
 E605:
 - {file: E605_Q_10.5_11.5.yaml, fidcs: 1}
 - {file: E605_Q_11.5_13.5.yaml, fidcs: 1}
@@ -40,10 +43,10 @@ E288:
 #- {file: E288_400_Q_13_14.yaml, fidcs: 1}
 STAR:
 - {file: STAR_510.yaml, fidcs: 1}
-LHCb:
-- {file: LHCb_7TeV.yaml, fidcs: 1}
-- {file: LHCb_8TeV.yaml, fidcs: 1}
-- {file: LHCb_13TeV.yaml, fidcs: 1}
+#LHCb:
+#- {file: LHCb_7TeV.yaml, fidcs: 1}
+#- {file: LHCb_8TeV.yaml, fidcs: 1}
+#- {file: LHCb_13TeV.yaml, fidcs: 1}
 ##ATLAS:
 ##  #- {file: ATLAS_7TeV_y_0_1.yaaml,     fidcs: 0.01018}
 ##  #- {file: ATLAS_7TeV_y_1_2.yaaml,     fidcs: 0.01476}
