@@ -11,8 +11,11 @@ Minimiser: none
 Seed: '1234'
 
 # Cut on qT / Q. This has to be smaller than the production cut used
-# to produce the tables.
+# to produce the tables (now it is not used).
 qToQmax: '4'
+
+# Parameters to compute the cut qT / Q as PV17 fit.
+cutParam: [0.2, 0.7, 0.5]
 
 # Percentile cut (in percent) on the distribution of chi2's, error
 # functions and parameters used to identify outliers.
