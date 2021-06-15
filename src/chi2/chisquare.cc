@@ -55,7 +55,7 @@ namespace NangaParbat
 
         for (auto const& qT : qTv)
           if (qT / Qmin < qToQMax)
-          idata++;
+            idata++;
 
         _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
 
@@ -91,7 +91,9 @@ namespace NangaParbat
         _ndatac.push_back(std::count(std::begin(cm), std::end(cm), true));
       }
     else
-      {throw std::runtime_error("[Chisquare::AddBlock]: Only SIDIS or DY data sets can be treated here.");}
+      {
+        throw std::runtime_error("[Chisquare::AddBlock]: Only SIDIS or DY data sets can be treated here.");
+      }
   };
 
   //_________________________________________________________________________________

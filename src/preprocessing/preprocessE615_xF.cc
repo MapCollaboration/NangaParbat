@@ -146,128 +146,128 @@ namespace NangaParbat
                 }
 
 
-                // Initialize result maps
-                std::map<int, double> fdcross, fdstat, fdpT;
+            // Initialize result maps
+            std::map<int, double> fdcross, fdstat, fdpT;
 
-                // Prepare (outer) map for each output data file
-                std::map<std::string, std::map<int, double>> filedata;
+            // Prepare (outer) map for each output data file
+            std::map<std::string, std::map<int, double>> filedata;
 
-                // Finally select cross sections and their uncertainties.
-                for (int i : indexesxF)
+            // Finally select cross sections and their uncertainties.
+            for (int i : indexesxF)
+              {
+                fdcross[i] = data["cross"][i];
+                fdstat[i]  = data["stat"][i];
+                fdpT[i]    = data["pT"][i];
+              }
+
+            filedata["cross"] = fdcross;
+            filedata["stat"]  = fdstat;
+            filedata["pT"]    = fdpT;
+
+            // Open PDF-error file
+            std::ifstream pdferr(PDFErrorFolder + ofilexF + ".out");
+            std::string line;
+            getline(pdferr, line);
+            getline(pdferr, line);
+
+            // Plot labels
+            std::map<std::string, std::string> labels
+            {
+              {"xlabel", "#it{x}_{F}"},
+              {"ylabel", "#frac{d2#it{#sigma}}{d#it{x}_{F}#d#it{q}_{T}} [nb*GeV^{-2}"},
+              {"title", "E615, " + std::to_string(xFb.second.first) + " < xF < " + std::to_string(xFb.second.second)},
+              {"xlabelpy", "$x_F$"},
+              {"ylabelpy", "$\\frac{d^2\\sigma}{dp_{T} dq_{T}}[\\rm{nb}*{GeV}^{-2}]$"},
+              {"titlepy", "E615, \\n " + std::to_string(xFb.second.first) + " < xF < " + std::to_string(xFb.second.second)}
+            };
+
+            /*
+            NOTE on the conversion factor for the cross section. We will insert it in the output file.
+            The raw data have a cross section expressed in cm**2/GeV**2/nucleon, but we would like to have it in NB./NUCLEON/GEV**2,
+            then we have to convert: 1barn = 10**{-28}m**2 = 10**{-24}cm**2. Therefore, 1 cm**2 = 10**{24}barn= 10**{33}nb.
+
+            NOTE on the calculation of y_min and y_max: y=arcsinh(sqrt{s}*xF/(2Q)).
+            The value of x_min = 0, then y_min=0 for all bin in Q
+            x_max = 1, then y_max = arcsinh(sqrt(s)/(2 Q_min)) for a specific Qmin<Q<Qmax bin
+            */
+
+            // Allocate emitter
+            YAML::Emitter emit;
+
+            // Write kinematics on the YAML emitter
+            emit.SetFloatPrecision(8);
+            emit.SetDoublePrecision(8);
+            emit << YAML::BeginMap;
+            emit << YAML::Key << "dependent_variables";
+            emit << YAML::BeginSeq;
+            emit << YAML::BeginMap;
+            emit << YAML::Key << "header" << YAML::Value << YAML::Flow << labels;
+            emit << YAML::Key << "qualifiers" << YAML::Value;
+            emit << YAML::BeginSeq;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "Drell Yan" << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "observable" << YAML::Key << "value" << YAML::Value << "cross section" << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << 0.4025 << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 252 << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "xF" << YAML::Key
+                 << "low" << YAML::Value << xFb.second.first << YAML::Key << "high" << YAML::Value << xFb.second.second  << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
+                 << "low" << YAML::Value << asinh((252*xFb.second.first)/(2*13.05)) << YAML::Key << "high" << YAML::Value << asinh((252*xFb.second.second)/(2* 4.05)) << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
+            /*emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
+                 << "pTmin" << YAML::Value << "###" << YAML::Key << "etamin" << YAML::Value << "###" << YAML::Key << "etamax" << YAML::Value << "###" << YAML::EndMap;
+            emit << YAML::EndSeq;*/
+            emit << YAML::Key << "values" << YAML::Value;
+            for (auto const& f : filedata["cross"])
+              {
+                emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
+                //REMEMBER the conversion factor for the cross section:
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << (filedata["stat"][f.first])*pow(10,33) << YAML::EndMap;
+                if (PDFError)
                   {
-                    fdcross[i] = data["cross"][i];
-                    fdstat[i]  = data["stat"][i];
-                    fdpT[i]    = data["pT"][i];
+                    // Now read PDF errors
+                    getline(pdferr, line);
+                    std::stringstream stream(line);
+                    double dum, pe;
+                    stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
+
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.16 << YAML::EndMap;
+                    // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
                   }
-
-                filedata["cross"] = fdcross;
-                filedata["stat"]  = fdstat;
-                filedata["pT"]    = fdpT;
-
-                // Open PDF-error file
-                std::ifstream pdferr(PDFErrorFolder + ofilexF + ".out");
-                std::string line;
-                getline(pdferr, line);
-                getline(pdferr, line);
-
-                // Plot labels
-                std::map<std::string, std::string> labels
-                {
-                  {"xlabel", "#it{x}_{F}"},
-                  {"ylabel", "#frac{d2#it{#sigma}}{d#it{x}_{F}#d#it{q}_{T}} [nb*GeV^{-2}"},
-                  {"title", "E615, " + std::to_string(xFb.second.first) + " < xF < " + std::to_string(xFb.second.second)},
-                  {"xlabelpy", "$x_F$"},
-                  {"ylabelpy", "$\\frac{d^2\\sigma}{dp_{T} dq_{T}}[\\rm{nb}*{GeV}^{-2}]$"},
-                  {"titlepy", "E615, \\n " + std::to_string(xFb.second.first) + " < xF < " + std::to_string(xFb.second.second)}
-                };
-
-                /*
-                NOTE on the conversion factor for the cross section. We will insert it in the output file.
-                The raw data have a cross section expressed in cm**2/GeV**2/nucleon, but we would like to have it in NB./NUCLEON/GEV**2,
-                then we have to convert: 1barn = 10**{-28}m**2 = 10**{-24}cm**2. Therefore, 1 cm**2 = 10**{24}barn= 10**{33}nb.
-
-                NOTE on the calculation of y_min and y_max: y=arcsinh(sqrt{s}*xF/(2Q)).
-                The value of x_min = 0, then y_min=0 for all bin in Q
-                x_max = 1, then y_max = arcsinh(sqrt(s)/(2 Q_min)) for a specific Qmin<Q<Qmax bin
-                */
-
-                // Allocate emitter
-                YAML::Emitter emit;
-
-                // Write kinematics on the YAML emitter
-                emit.SetFloatPrecision(8);
-                emit.SetDoublePrecision(8);
-                emit << YAML::BeginMap;
-                emit << YAML::Key << "dependent_variables";
-                emit << YAML::BeginSeq;
-                emit << YAML::BeginMap;
-                emit << YAML::Key << "header" << YAML::Value << YAML::Flow << labels;
-                emit << YAML::Key << "qualifiers" << YAML::Value;
-                emit << YAML::BeginSeq;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "Drell Yan" << YAML::EndMap;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "observable" << YAML::Key << "value" << YAML::Value << "cross section" << YAML::EndMap;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << 0.4025 << YAML::EndMap;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 252 << YAML::EndMap;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "xF" << YAML::Key
-                     << "low" << YAML::Value << xFb.second.first << YAML::Key << "high" << YAML::Value << xFb.second.second  << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
-                     << "low" << YAML::Value << asinh((252*xFb.second.first)/(2*13.05)) << YAML::Key << "high" << YAML::Value << asinh((252*xFb.second.second)/(2* 4.05)) << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
-                /*emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
-                     << "pTmin" << YAML::Value << "###" << YAML::Key << "etamin" << YAML::Value << "###" << YAML::Key << "etamax" << YAML::Value << "###" << YAML::EndMap;
-                emit << YAML::EndSeq;*/
-                emit << YAML::Key << "values" << YAML::Value;
-                for (auto const& f : filedata["cross"])
-                  {
-                    emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
-                    //REMEMBER the conversion factor for the cross section:
-                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << (filedata["stat"][f.first])*pow(10,33) << YAML::EndMap;
-                    if (PDFError)
-                      {
-                        // Now read PDF errors
-                        getline(pdferr, line);
-                        std::stringstream stream(line);
-                        double dum, pe;
-                        stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
-
-                        emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.16 << YAML::EndMap;
-                        // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
-                      }
-                    // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
-                    // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
-                    emit << YAML::EndSeq;
-                    //REMEMBER the conversion factor for the cross section:
-                    emit << YAML::Key << "value" << YAML::Value << (f.second)*pow(10,33);
-                    // emit << YAML::Key << "id"    << YAML::Value << m.first;
-                    emit << YAML::EndMap;
-                  }
+                // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
+                // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
                 emit << YAML::EndSeq;
+                //REMEMBER the conversion factor for the cross section:
+                emit << YAML::Key << "value" << YAML::Value << (f.second)*pow(10,33);
+                // emit << YAML::Key << "id"    << YAML::Value << m.first;
                 emit << YAML::EndMap;
-                emit << YAML::EndSeq;
-                emit << YAML::Key << "independent_variables";
-                emit << YAML::BeginSeq;
-                emit << YAML::BeginMap;
-                emit << YAML::Key << "header" << YAML::Value << YAML::Flow;
-                emit << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PT" << YAML::Key << "units" << YAML::Value << "GEV" << YAML::EndMap;
-                emit << YAML::Key << "values" << YAML::Value;
-                emit << YAML::BeginSeq;
-                for (auto const& p : filedata["pT"])
-                  {
-                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << p.second << YAML::Key << "high" << YAML::Value << (p.second + 0.125) << YAML::Key << "low" << YAML::Value << (p.second - 0.125) << YAML::EndMap;
-                  }
-                emit << YAML::EndSeq;
-                emit << YAML::EndMap;
-                emit << YAML::EndSeq;
-                emit << YAML::EndMap;
+              }
+            emit << YAML::EndSeq;
+            emit << YAML::EndMap;
+            emit << YAML::EndSeq;
+            emit << YAML::Key << "independent_variables";
+            emit << YAML::BeginSeq;
+            emit << YAML::BeginMap;
+            emit << YAML::Key << "header" << YAML::Value << YAML::Flow;
+            emit << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PT" << YAML::Key << "units" << YAML::Value << "GEV" << YAML::EndMap;
+            emit << YAML::Key << "values" << YAML::Value;
+            emit << YAML::BeginSeq;
+            for (auto const& p : filedata["pT"])
+              {
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << p.second << YAML::Key << "high" << YAML::Value << (p.second + 0.125) << YAML::Key << "low" << YAML::Value << (p.second - 0.125) << YAML::EndMap;
+              }
+            emit << YAML::EndSeq;
+            emit << YAML::EndMap;
+            emit << YAML::EndSeq;
+            emit << YAML::EndMap;
 
-                pdferr.close();
+            pdferr.close();
 
-                // Dump table to file
-                std::ofstream fout(opath + "/" + ofilexF + ".yaml");
-                fout << emit.c_str() << std::endl;
-                fout.close();
+            // Dump table to file
+            std::ofstream fout(opath + "/" + ofilexF + ".yaml");
+            fout << emit.c_str() << std::endl;
+            fout.close();
 
-                filenames.push_back(ofilexF);
+            filenames.push_back(ofilexF);
 
           }
 

@@ -90,7 +90,7 @@ namespace NangaParbat
 
   //_________________________________________________________________________________
   //ConvolutionTable::ConvolutionTable(std::string const& infile, double const& qToQmax, std::vector<std::shared_ptr<Cut>> const& cuts, double const& acc):
-    //ConvolutionTable(YAML::LoadFile(infile), qToQmax, cuts, acc)
+  //ConvolutionTable(YAML::LoadFile(infile), qToQmax, cuts, acc)
   ConvolutionTable::ConvolutionTable(std::string const& infile, std::vector<double> const& cutParam, std::vector<std::shared_ptr<Cut>> const& cuts, double const& acc):
     ConvolutionTable(YAML::LoadFile(infile), cutParam, cuts, acc)
   {
@@ -100,7 +100,7 @@ namespace NangaParbat
   std::map<double, double> ConvolutionTable::ConvoluteDY(std::function<double(double const&, double const&, double const&)> const& fNP) const
   {
     // Compute cut qT / Q as same as PV17
-    double DYqToQmax = std::min(_cutParam[0] , _cutParam[1]);
+    double DYqToQmax = std::min(_cutParam[0], _cutParam[1]);
 
     // Compute predictions
     std::map<double, double> pred;
