@@ -4,6 +4,8 @@
 
 #include "NangaParbat/Trainingcut.h"
 
+#include <gsl/gsl_randist.h>
+
 namespace NangaParbat
 {
   //_________________________________________________________________________________
@@ -41,9 +43,13 @@ namespace NangaParbat
     if (Ndat_aftercut <= _NMin || _min == 1)
       return;
 
-    std::vector<bool> random_mask(floor(Ndat_aftercut * ( 1 - _min )), false);
-    random_mask.resize(Ndat_aftercut, true);
-    std::random_shuffle(random_mask.begin(), random_mask.end(), [=] (long unsigned n) -> long unsigned { return gsl_rng_uniform_int(_rng, n); });
+    bool random_mask[Ndat_aftercut];
+    for (int i = 0; i < Ndat_aftercut; i++)
+      if (i < floor(Ndat_aftercut * ( 1 - _min )))
+	random_mask[i] = false;
+      else
+	random_mask[i] = true;
+    gsl_ran_shuffle(_rng, random_mask, Ndat_aftercut, sizeof(bool));
 
     int j = 0;
     for (bool & m : _mask)
