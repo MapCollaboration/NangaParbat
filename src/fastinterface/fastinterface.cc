@@ -601,7 +601,7 @@ namespace NangaParbat
             double xbmax = xbb.second;
             if (PSRed)
               {
-		xbmin = std::min(xbmax, std::max(xbmin, pow(Q / Vs, 2) / yRange.second));
+                xbmin = std::min(xbmax, std::max(xbmin, pow(Q / Vs, 2) / yRange.second));
                 xbmax = std::max(xbmin, std::min(std::min(xbmax, pow(Q / Vs, 2) / yRange.first), 1 / ( 1 + pow(Wmin / Q, 2) )));
               }
             return pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * (Intxb ? IncxIntegrand.integrate(xbmin, xbmax, 1e-5) : IncxIntegrand.integrand(xav)) / (2 * Q);
@@ -813,8 +813,8 @@ namespace NangaParbat
                             if (IntQ)
                               for (int iQ = std::max(tau - idQ, 0); iQ < std::min(tau + 1, nQ); iQ++)
                                 Qintegral += QIntObj.integrate(Qg[iQ], Qg[iQ+1], 0);
-                              else
-                                Qintegral = QIntObj.integrand(Qg[tau]);
+                            else
+                              Qintegral = QIntObj.integrand(Qg[tau]);
 
                             // Compute the weight by multiplying the
                             // integral by the Ogata weight (note that

@@ -43,7 +43,7 @@ namespace NangaParbat
      * met within the tabulated points.
      */
     //ConvolutionTable(YAML::Node const& table, double const& qToQmax = 100, std::vector<std::shared_ptr<Cut>> const& cuts = {}, double const& acc = 1e-7);
-     ConvolutionTable(YAML::Node const& table, std::vector<double> const& cutParam = {}, std::vector<std::shared_ptr<Cut>> const& cuts = {}, double const& acc = 1e-7);
+    ConvolutionTable(YAML::Node const& table, std::vector<double> const& cutParam = {}, std::vector<std::shared_ptr<Cut>> const& cuts = {}, double const& acc = 1e-7);
 
     /**
      * @brief The "ConvolutionTable" constructor.
@@ -157,7 +157,7 @@ namespace NangaParbat
     double                                                                      _acc;     //!< The Ogata-quadrature accuracy
     std::vector<std::shared_ptr<Cut>>                                           _cuts;    //!< Cut objects
     std::valarray<bool>                                                         _cutmask; //!< Mask of points that pass the cuts
-    YAML::Node                                                            const _table;   //!< [Temporary] Yaml node of the table                  
+    YAML::Node                                                            const _table;   //!< [Temporary] Yaml node of the table
 
     /**
      * @name FF_SIDIS

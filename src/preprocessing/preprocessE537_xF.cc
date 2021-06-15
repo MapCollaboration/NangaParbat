@@ -120,8 +120,8 @@ namespace NangaParbat
                  << "low" << YAML::Value << xFlims.first << YAML::Key << "high" << YAML::Value << xFlims.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
                  << "low" << YAML::Value << y_min << YAML::Key << "high" << YAML::Value << y_max << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
-          /*  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
-                 << "pTmin" << YAML::Value << "###" << YAML::Key << "etamin" << YAML::Value << "###" << YAML::Key << "etamax" << YAML::Value << "###" << YAML::EndMap; */
+            /*  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
+                   << "pTmin" << YAML::Value << "###" << YAML::Key << "etamin" << YAML::Value << "###" << YAML::Key << "etamax" << YAML::Value << "###" << YAML::EndMap; */
             emit << YAML::EndSeq;
             emit << YAML::Key << "values" << YAML::Value;
             emit << YAML::BeginSeq;
@@ -187,5 +187,5 @@ namespace NangaParbat
       "  - {name: E537_xF_0.7_0.8,     file: E537_xF_0.7_0.8.yaml}\n"
       "  - {name: E537_xF_0.8_0.9,     file: E537_xF_0.8_0.9.yaml}\n"
       "  - {name: E537_xF_0.9_1.0,     file: E537_xF_0.9_1.0.yaml}\n";
-    }
+  }
 }

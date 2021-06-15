@@ -43,12 +43,12 @@ namespace NangaParbat
           const double alpha  = this->_pars[2];
           const double sigma  = this->_pars[3];
           const double lambda = this->_pars[4];
-	  const double N1B    = this->_pars[12];
+          const double N1B    = this->_pars[12];
           const double xhat   = 0.1;
           const double g1     = N1 * pow(x / xhat, sigma) * pow((1 - x) / (1 - xhat), alpha);
-	  const double g1B    = N1B * pow(x / xhat, sigma) * pow((1 - x) / (1 - xhat), alpha);
-	  return NPevol * ( g1 * exp( - g1 * pow(b / 2, 2))
-                          +  lambda  * pow(g1B, 2) * ( 1 - g1B * pow(b / 2, 2)) * exp( - g1B * pow(b / 2, 2)) )
+          const double g1B    = N1B * pow(x / xhat, sigma) * pow((1 - x) / (1 - xhat), alpha);
+          return NPevol * ( g1 * exp( - g1 * pow(b / 2, 2))
+                            +  lambda  * pow(g1B, 2) * ( 1 - g1B * pow(b / 2, 2)) * exp( - g1B * pow(b / 2, 2)) )
                  / ( g1 +  lambda  * pow(g1B, 2) );
         }
       // TMD FFs
@@ -66,7 +66,7 @@ namespace NangaParbat
           const double g3B     = N3B * cmn;
           const double z2      = x * x;
           return NPevol * ( g3 * exp( - g3 * pow(b / 2, 2) / z2 )
-                          + ( lambdaF / z2 ) * pow(g3B, 2) * ( 1 - g3B * pow(b / 2, 2) / z2 ) * exp( - g3B * pow(b / 2, 2) / z2 ) )
+                            + ( lambdaF / z2 ) * pow(g3B, 2) * ( 1 - g3B * pow(b / 2, 2) / z2 ) * exp( - g3B * pow(b / 2, 2) / z2 ) )
                  / ( g3 + ( lambdaF / z2 ) * pow(g3B, 2) );
         }
     };
@@ -76,7 +76,7 @@ namespace NangaParbat
       std::string formula;
       formula  = R"delimiter($$f_{\rm NP}(x,\zeta, b_T)=\exp\left[ - \left( g_1(x) + \frac{1}{2}g_2 \log\left(\frac{\zeta}{Q_0^2}\right) \right) b_T^2 \right])delimiter";
       formula += R"delimiter(\left[1  - \frac{\lambda g_1^2(x) b_T^2}{4(1 + \lambda g_1(x))}\right]$$\\)delimiter";
-      formula += R"delimiter($$D_{\rm NP}(x,\zeta, b_T)= \frac{1}{g_{3 a\to h} +\big(\lambda_F/z^2\big) g_{3b a \to h}^{2}})delimiter"; 
+      formula += R"delimiter($$D_{\rm NP}(x,\zeta, b_T)= \frac{1}{g_{3 a\to h} +\big(\lambda_F/z^2\big) g_{3b a \to h}^{2}})delimiter";
       //      formula += R"delimiter(\bigg(e^{- \frac{\bm{P}_{T}^2}{g_{3 a \to h}}} + \lambda_F \frac{\bm{P}_{\T}^2}{z^2} \  e^{- \frac{\bm{P}_{\T}^2}{g_{4 a \to h}}} \bigg)$$\\)delimiter";
       formula += R"delimiter($$g_{1,1b}(x) = N_{1,1b} \frac{x^{\sigma}(1-x)^{\alpha}}{\hat{x}^{\sigma}(1-\hat{x})^{\alpha}}$$\\)delimiter";
       formula += R"delimiter($$g_{3,3b}(z) = N_{3,3b} \frac{(z^{\beta}+\delta)(1-z)^{\gamma}}{(\hat{z}^{\beta}+\delta)(1-\hat{x})^{\gamma}}$$\\)delimiter";
@@ -110,5 +110,5 @@ namespace NangaParbat
 
   private:
     const double _Q02  = 1;
-   };
+  };
 }

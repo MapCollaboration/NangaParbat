@@ -203,8 +203,7 @@ namespace NangaParbat
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "observable" << YAML::Key << "value" << YAML::Value << "(dsigma/dxdzdQ2dPhT2)/dsigmaDIS" << YAML::EndMap;
               // "multiplicity" << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << 0.5 << YAML::EndMap;
-              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "hadron" << YAML::Key << "value" << YAML::Value <<
-              "HD" << YAML::EndMap;
+              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "hadron" << YAML::Key << "value" << YAML::Value << "HD" << YAML::EndMap;
               // (hcharge == "M^{h^{+}}" ? "Pp + Kp" : "Pm + Km") << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "charge" << YAML::Key << "value" << YAML::Value << (hcharge == "M^{h^{+}}" ? 1 : -1) << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
@@ -254,7 +253,7 @@ namespace NangaParbat
               emit << YAML::BeginSeq;
               emit << YAML::BeginMap;
               emit << YAML::Key << "header" << YAML::Value << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PhT" << YAML::Key
-              << "units" << YAML::Value << "GeV" << YAML::EndMap;
+                   << "units" << YAML::Value << "GeV" << YAML::EndMap;
               emit << YAML::Key << "values" << YAML::Value;
               emit << YAML::BeginSeq;
               for (auto const& iv : exp["independent_variables"])
