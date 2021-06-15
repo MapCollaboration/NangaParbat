@@ -110,6 +110,8 @@ namespace NangaParbat
      * @brief Function that sets the data central values replacing that
      * introduced in the constructor.
      * @param means: the new means
+     * @param rng: GSL random number generator
+     * @param fluctuation: fluctuation index (default: 0)
      */
     void SetMeans(std::vector<double> const& means, gsl_rng* rng = nullptr, int const& fluctuation = 0);
 

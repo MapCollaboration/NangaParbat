@@ -29,7 +29,7 @@ namespace NangaParbat
     /**
      * @brief Function returns the luminosity for the Drell-Yan
      * process as a "DoubleObject" for a fixed values of "b" and "Q".
-     * @param b: value of the impact parameter
+     * @param bT: value of the impact parameter
      * @param Q: value of the hard scale
      * @param targetiso: the isoscalarity of the target
      * @return the luminosity for Drell-Yan
