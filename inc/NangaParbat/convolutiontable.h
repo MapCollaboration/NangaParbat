@@ -35,7 +35,7 @@ namespace NangaParbat
     /**
      * @brief The "ConvolutionTable" constructor.
      * @param table: the YAML:Node with the interpolation table
-     * @param qToQmax: maximum value allowed for the ratio qT /Q (default: 100)
+     * @param cutParam: maximum value allowed for the ratio qT /Q (default: 100)
      * @param cuts: vector of cut objects (default: empty)
      * @param acc: the Ogata-quadrature required accuracy (default: 10<SUP>-7</SUP>)
      * @note The accuracy has to be intended as the best accuracy over
@@ -48,7 +48,7 @@ namespace NangaParbat
     /**
      * @brief The "ConvolutionTable" constructor.
      * @param infile: the name of interpolation table in YAML format
-     * @param qToQmax: maximum value allowed for the ratio qT /Q (default: 100)
+     * @param cutParam: maximum value allowed for the ratio qT /Q (default: 100)
      * @param cuts: vector of cut objects (default: empty)
      * @param acc: the Ogata-quadrature required accuracy (default: 10<SUP>-7</SUP>)
      * @note The accuracy has to be intended as the best accuracy over
