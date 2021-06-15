@@ -46,9 +46,9 @@ namespace NangaParbat
     bool random_mask[Ndat_aftercut];
     for (int i = 0; i < Ndat_aftercut; i++)
       if (i < floor(Ndat_aftercut * ( 1 - _min )))
-        random_mask[i] = false;
+	random_mask[i] = false;
       else
-        random_mask[i] = true;
+	random_mask[i] = true;
     gsl_ran_shuffle(_rng, random_mask, Ndat_aftercut, sizeof(bool));
 
     int j = 0;
