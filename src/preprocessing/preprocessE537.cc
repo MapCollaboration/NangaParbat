@@ -1,6 +1,6 @@
 /*
  * Authors: Simone Venturini
-            Chiara Bissolotti: chiara.bissolotti01@universitadipavia.it
+ *          Chiara Bissolotti: chiara.bissolotti01@universitadipavia.it
  */
 
 #include "NangaParbat/preprocessing.h"

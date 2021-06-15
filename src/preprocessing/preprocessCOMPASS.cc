@@ -152,11 +152,6 @@ namespace NangaParbat
                     // Q2bin = {low, high} where '(BIN=' has been removed from the lower bound
                     // and ')' from the upper bound (last character).
                     Q2bin = {low, high};
-
-                    /*
-                    std::cout << tab << std::endl;
-                    std::cout << Q2bin.first << "   " << Q2bin.second << std::endl;
-                    */
                   }
 
               // Get y
@@ -169,7 +164,6 @@ namespace NangaParbat
               std::map<std::string, std::string> hadrons = {{"M^{h^{+}}", "Pp_Kp"}, {"M^{h^{-}}", "Pm_Km"}};
 
               // Output file names
-              // std::string ofile = "COMPASS_Deu_" + hadrons[hcharge] + "_x_" + NangaParbat::to_string_with_precision(xbin.first) + "_" + NangaParbat::to_string_with_precision(xbin.second) + "_z_" + NangaParbat::to_string_with_precision(zbin.first, 2) + "_" + NangaParbat::to_string_with_precision(zbin.second, 2) + "_" + tab;
               std::string ofile = "COMPASS_Deu_" + hadrons[hcharge] + "_x_" + NangaParbat::to_string_with_precision(xcvalue, 4) + "_z_" + NangaParbat::to_string_with_precision(zcvalue);
 
               // Fill output vector string
@@ -206,7 +200,8 @@ namespace NangaParbat
               emit << YAML::Key << "qualifiers" << YAML::Value;
               emit << YAML::BeginSeq;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "SIDIS" << YAML::EndMap;
-              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "observable" << YAML::Key << "value" << YAML::Value << "multiplicity" << YAML::EndMap;
+              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "observable" << YAML::Key << "value" << YAML::Value << "(dsigma/dxdzdQ2dPhT2)/dsigmaDIS" << YAML::EndMap;
+              // "multiplicity" << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << 0.5 << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "hadron" << YAML::Key << "value" << YAML::Value <<
               "HD" << YAML::EndMap;
@@ -218,7 +213,6 @@ namespace NangaParbat
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 17.325 << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
                    << "low" << YAML::Value << sqrt(Q2bin.first) << YAML::Key << "high" << YAML::Value << sqrt(Q2bin.second) << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
-                   // << "low" << YAML::Value << 1 << YAML::Key << "high" << YAML::Value << 9 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "x" << YAML::Key
                    << "low" << YAML::Value << xbin.first << YAML::Key << "high" << YAML::Value << xbin.second << YAML::Key << "integrate" << YAML::Value << "true" // << YAML::Key << "value" << YAML::Value << xcvalue
                    << YAML::EndMap;
@@ -235,7 +229,7 @@ namespace NangaParbat
               for (auto const& m : str["values"])
                 {
                   emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << m["errors"][0]["symerror"].as<double>() << YAML::EndMap; // read statistical errors from HEPdata file
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << m["errors"][0]["symerror"].as<double>() << YAML::EndMap;
                   if (PDFError)
                     {
                       // Now read PDF errors
@@ -248,7 +242,6 @@ namespace NangaParbat
                       // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
                     }
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << m["errors"][1]["symerror"] << YAML::EndMap; // read systematic errors from HEPdata file
-                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << m["errors"][1]["symerror"] << YAML::EndMap;// read systematic errors from HEPdata file
                   // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
                   emit << YAML::EndSeq;
                   emit << YAML::Key << "value" << YAML::Value << m["value"].as<double>();
@@ -260,29 +253,20 @@ namespace NangaParbat
               emit << YAML::Key << "independent_variables";
               emit << YAML::BeginSeq;
               emit << YAML::BeginMap;
-              /*
-              // ### Values of PhT^2
-              emit << YAML::Key << "header" << YAML::Value << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "$P_{hT}^2$" << YAML::Key << "units" << YAML::Value << "$(GeV/c)^{2}$" << YAML::EndMap;
-              emit << YAML::Key << "values" << YAML::Value;
-              emit << YAML::BeginSeq;
-              for (auto const& iv : exp["independent_variables"])
-                for (auto const& vl : iv["values"])
-                  emit << YAML::Flow << vl;
-              */
               emit << YAML::Key << "header" << YAML::Value << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PhT" << YAML::Key
               << "units" << YAML::Value << "GeV" << YAML::EndMap;
               emit << YAML::Key << "values" << YAML::Value;
               emit << YAML::BeginSeq;
               for (auto const& iv : exp["independent_variables"])
                 for (auto const& vl : iv["values"])
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << sqrt(vl["high"].as<double>()) << YAML::Key << "low" << YAML::Value << std::max(sqrt(vl["low"].as<double>()), 1e-5) << YAML::Key << "value" << YAML::Value << sqrt(vl["value"].as<double>()) << YAML::EndMap;
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << sqrt(vl["high"].as<double>()) << YAML::Key << "low" << YAML::Value << std::max(sqrt(vl["low"].as<double>()), 1e-5) << YAML::Key << "value" << YAML::Value << sqrt(vl["value"].as<double>()) << YAML::Key << "factor" << YAML::Value << (sqrt(vl["high"].as<double>()) - std::max(sqrt(vl["low"].as<double>()), 1e-5)) / (vl["high"].as<double>() - pow(std::max(sqrt(vl["low"].as<double>()), 1e-5), 2)) << YAML::EndMap;
               emit << YAML::EndSeq;
               emit << YAML::EndMap;
               emit << YAML::BeginMap;
               emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "x" << YAML::EndMap;
               emit << YAML::Key << "values" << YAML::Value;
               emit << YAML::BeginSeq;
-              for (int i = 0; i < str["values"].size(); ++i )
+              for (int i = 0; i < (int) str["values"].size(); ++i )
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << xbin.second << YAML::Key << "low" << YAML::Value << xbin.first << YAML::Key << "value" << YAML::Value << xcvalue << YAML::EndMap;
               emit << YAML::EndSeq;
               emit << YAML::EndMap;
@@ -290,7 +274,7 @@ namespace NangaParbat
               emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "z" << YAML::EndMap;
               emit << YAML::Key << "values" << YAML::Value;
               emit << YAML::BeginSeq;
-              for (int i = 0; i < str["values"].size(); ++i )
+              for (int i = 0; i < (int) str["values"].size(); ++i )
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << zbin.second << YAML::Key << "low" << YAML::Value << zbin.first << YAML::Key << "value" << YAML::Value << zcvalue << YAML::EndMap;
               emit << YAML::EndSeq;
               emit << YAML::EndMap;
@@ -298,7 +282,7 @@ namespace NangaParbat
               emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::EndMap;
               emit << YAML::Key << "values" << YAML::Value;
               emit << YAML::BeginSeq;
-              for (int i = 0; i < str["values"].size(); ++i )
+              for (int i = 0; i < (int) str["values"].size(); ++i )
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << 0.9 << YAML::Key << "low" << YAML::Value << 0.1 << YAML::Key << "value" << YAML::Value << y << YAML::EndMap;
               emit << YAML::EndSeq;
               emit << YAML::EndMap;
@@ -306,7 +290,7 @@ namespace NangaParbat
               emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q2" << YAML::EndMap;
               emit << YAML::Key << "values" << YAML::Value;
               emit << YAML::BeginSeq;
-              for (int i = 0; i < str["values"].size(); ++i )
+              for (int i = 0; i < (int) str["values"].size(); ++i )
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << Q2bin.second << YAML::Key << "low" << YAML::Value << Q2bin.first << YAML::Key << "value" << YAML::Value << Q2cvalue << YAML::EndMap;
               emit << YAML::EndSeq;
               emit << YAML::EndMap;
