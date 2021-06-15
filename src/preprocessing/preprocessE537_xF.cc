@@ -128,17 +128,10 @@ namespace NangaParbat
             for (auto const& v : dv["values"])
               {
                 std::string stat = v["errors"][0]["symerror"].as<std::string>();
-
-                // std::string sysu = v["errors"][1]["symerror"].as<std::string>();
-                // std::string sysc = v["errors"][2]["symerror"].as<std::string>();
-                //
                 stat.erase(std::remove(stat.begin(), stat.end(), '%'), stat.end());
-                // sysu.erase(std::remove(sysu.begin(), sysu.end(), '%'), sysu.end());
-                // sysc.erase(std::remove(sysc.begin(), sysc.end(), '%'), sysc.end());
 
                 const double val = v["value"].as<double>();
                 const double unc = std::stod(stat);
-                // const double unc = sqrt( pow(val * std::stod(stat) / 100, 2) + pow(val * std::stod(sysu) / 100, 2));
 
                 // Now read PDF errors
                 getline(pdferr, line);

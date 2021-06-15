@@ -1,80 +1,97 @@
 dependent_variables:
   - header: {title: "E615, 4.050000 < Q < 4.500000", titlepy: "E615, \\n 4.050000 < Q < 4.500000", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q_T \\rm{[GeV]$", ylabel: "#frac{d2#it{#sigma}}{d#it{p}_{T}#d#it{q}_{T}} [nb*GeV^{-2}", ylabelpy: "$\\frac{d^2\\sigma}{dp_{T} dq_{T}}[\\rm{nb}*{GeV}^{-2}]$"}
     qualifiers:
-      - {name: process, value: Drell Yan}
-      - {name: observable, value: cross section}
+      - {name: process, value: DY}
       - {name: target_isoscalarity, value: 0.4025}
+      - {name: beam, value: PI}
       - {name: prefactor, value: 1}
       - {name: Vs, value: 252}
       - {name: Q, low: 4.05, high: 4.5, integrate: true}
       - {name: y, low: 0, high: 4.1309704, integrate: true}
-      - values
+    values:
       - errors:
           - {label: unc, value: 0.00095}
+          - {label: unc, value: 0}
           - {label: mult, value: 0.16}
         value: 0.02766
       - errors:
           - {label: unc, value: 0.0015}
+          - {label: unc, value: 0}
           - {label: mult, value: 0.16}
         value: 0.06735
       - errors:
           - {label: unc, value: 0.00175}
+          - {label: unc, value: 0}
           - {label: mult, value: 0.16}
         value: 0.08469
       - errors:
           - {label: unc, value: 0.00191}
+          - {label: unc, value: 0}
           - {label: mult, value: 0.16}
         value: 0.09042
       - errors:
           - {label: unc, value: 0.0018}
+          - {label: unc, value: 0}
           - {label: mult, value: 0.16}
         value: 0.07656
       - errors:
           - {label: unc, value: 0.0017}
+          - {label: unc, value: 0}
           - {label: mult, value: 0.16}
         value: 0.06231
       - errors:
           - {label: unc, value: 0.00158}
+          - {label: unc, value: 0}
           - {label: mult, value: 0.16}
         value: 0.0469
       - errors:
           - {label: unc, value: 0.00127}
+          - {label: unc, value: 0}
           - {label: mult, value: 0.16}
         value: 0.02834
       - errors:
           - {label: unc, value: 0.00105}
+          - {label: unc, value: 0}
           - {label: mult, value: 0.16}
         value: 0.0175
       - errors:
           - {label: unc, value: 0.00098}
+          - {label: unc, value: 0}
           - {label: mult, value: 0.16}
         value: 0.01226
       - errors:
           - {label: unc, value: 0.000781}
+          - {label: unc, value: 0}
           - {label: mult, value: 0.16}
         value: 0.007696
       - errors:
           - {label: unc, value: 0.000504}
+          - {label: unc, value: 0}
           - {label: mult, value: 0.16}
         value: 0.003107
       - errors:
           - {label: unc, value: 0.000512}
+          - {label: unc, value: 0}
           - {label: mult, value: 0.16}
         value: 0.002561
       - errors:
           - {label: unc, value: 0.0002986}
+          - {label: unc, value: 0}
           - {label: mult, value: 0.16}
         value: 0.0008958
       - errors:
           - {label: unc, value: 0.000473}
+          - {label: unc, value: 0}
           - {label: mult, value: 0.16}
         value: 0.001639
       - errors:
           - {label: unc, value: 0.0003477}
+          - {label: unc, value: 0}
           - {label: mult, value: 0.16}
         value: 0.0009833
       - errors:
           - {label: unc, value: 0.0001293}
+          - {label: unc, value: 0}
           - {label: mult, value: 0.16}
         value: 0.0001829
 independent_variables:

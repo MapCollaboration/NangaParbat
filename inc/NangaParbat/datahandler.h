@@ -148,6 +148,17 @@ namespace NangaParbat
     std::string GetHadron() const { return _hadron; };
 
     /**
+     * @brief Function that returns the possible hadron
+     * species in the beam.
+     */
+    std::string GetBeam() const { return _beam; };
+
+    /**
+     * @brief Map of beam hadron species
+     */
+    const std::map<std::string, std::string> BeamMap{{"PR", "protons"}, {"PI", "pions"}};
+
+    /**
      * @brief Function that returns the charge of the identified final
      * state.
      */
@@ -242,6 +253,7 @@ namespace NangaParbat
     Observable                         _obs;          //!< The observable
     double                             _targetiso;    //!< Isoscalarity of the target
     std::string                        _hadron;       //!< Hadron species identified in the final state
+    std::string                        _beam;         //!< Hadron species in the beam
     double                             _charge;       //!< Charge of the identified final state
     std::vector<apfel::QuarkFlavour>   _tagging;      //!< Possible quark-tagged components
     double                             _prefact;      //!< Possible overall prefactor to multiply the theoretical predictions

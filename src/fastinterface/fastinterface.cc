@@ -30,13 +30,8 @@ namespace NangaParbat
 
     // Alpha_s (from PDFs). Get it from the LHAPDF set and tabulate it.
     _TabAlphas = std::unique_ptr<apfel::TabulateObject<double>>(new apfel::TabulateObject<double> {[&] (double const& mu) -> double{return distpdf->alphasQ(mu); },
-                                                                                                   100, distpdf->qMin(), distpdf->qMax(), 3, _Thresholds
+                                                                                                   100, distpdf->qMin() * 0.9, distpdf->qMax(), 3, _Thresholds
                                                                                                   });
-
-    // If in the config file a PDF set for the beam is specified, set
-    // the boolean variable 'beam' as 'true'. When the beam hadrons are
-    // not specified, a proton beam is assumed in the following.
-    const bool beam = (_config["pdfsetbeam"]? true : false);
 
     // Open PDF set for hadrons in the beam (if present).
     // When the beam hadrons are not specified, a proton beam is assumed.
@@ -66,7 +61,7 @@ namespace NangaParbat
 
     // Tabulate collinear PDFs
     _TabPDFs = std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>
-               (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedPDFs, 100, distpdf->qMin(), distpdf->qMax(), 3, _Thresholds});
+               (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedPDFs, 100, distpdf->qMin() * 0.9, distpdf->qMax(), 3, _Thresholds});
 
     // Define x-space grid for beam PDFs.
     // If x-space grid for the PDFs of the beam is not specified
@@ -85,7 +80,7 @@ namespace NangaParbat
 
     // Tabulate collinear beam PDFs
     _TabBeamPDFs = std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>
-               (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedBeamPDFs, 100, distpdfbeam->qMin(), distpdfbeam->qMax(), 3, _Thresholds});
+               (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedBeamPDFs, 100, distpdfbeam->qMin() * 0.9, distpdfbeam->qMax(), 3, _Thresholds});
 
     // Define x-space grid for FFs
     std::vector<apfel::SubGrid> vsgff;
@@ -102,7 +97,7 @@ namespace NangaParbat
 
     // Tabulate collinear FFs
     _TabFFs = std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>
-              (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedFFs, 100, distff->qMin(), distff->qMax(), 3, _Thresholds});
+              (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedFFs, 100, distff->qMin() * 0.9, distff->qMax(), 3, _Thresholds});
 
     // Initialise TMD objects for PDFs
     _TmdPdfObjs = apfel::InitializeTmdObjectsLite(*_gpdf, _Thresholds);
@@ -151,7 +146,7 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  apfel::DoubleObject<apfel::Distribution> FastInterface::LuminosityDY(double const& bT, double const& Q, double const& targetiso) const
+  apfel::DoubleObject<apfel::Distribution> FastInterface::LuminosityDY(double const& bT, double const& Q, double const& targetiso, std::string const& beam) const
   {
     // TMD scales
     const double Cf    = _config["TMDscales"]["Cf"].as<double>();
@@ -184,17 +179,17 @@ namespace NangaParbat
 
     // Treat down and up separately to take isoscalarity of the target
     // into account.
-    Lumi.AddTerm({factor * Bq[0], frp * xF.at(sign)    + frn * xF.at(sign*2),  xFBeam.at(-1)});
-    Lumi.AddTerm({factor * Bq[0], frp * xF.at(-sign)   + frn * xF.at(-sign*2), xFBeam.at(1)});
-    Lumi.AddTerm({factor * Bq[1], frp * xF.at(sign*2)  + frn * xF.at(sign),    xFBeam.at(-2)});
-    Lumi.AddTerm({factor * Bq[1], frp * xF.at(-sign*2) + frn * xF.at(-sign),   xFBeam.at(2)});
+    Lumi.AddTerm({factor * Bq[0], frp * xF.at(sign)    + frn * xF.at(sign*2),  (beam == "PR" ? xF.at(-1) : xFBeam.at(-1))});
+    Lumi.AddTerm({factor * Bq[0], frp * xF.at(-sign)   + frn * xF.at(-sign*2), (beam == "PR" ? xF.at(1)  : xFBeam.at(1)) });
+    Lumi.AddTerm({factor * Bq[1], frp * xF.at(sign*2)  + frn * xF.at(sign),    (beam == "PR" ? xF.at(-2) : xFBeam.at(-2))});
+    Lumi.AddTerm({factor * Bq[1], frp * xF.at(-sign*2) + frn * xF.at(-sign),   (beam == "PR" ? xF.at(2)  : xFBeam.at(2)) });
 
     // Now run over the remaining flavours
     for (int i = 3; i <= nf; i++)
       {
         const int ip = i * sign;
-        Lumi.AddTerm({factor * Bq[i-1], xF.at(ip),  xFBeam.at(-i)});
-        Lumi.AddTerm({factor * Bq[i-1], xF.at(-ip), xFBeam.at(i)});
+        Lumi.AddTerm({factor * Bq[i-1], xF.at(ip),  (beam == "PR" ? xF.at(-i) : xFBeam.at(-i))});
+        Lumi.AddTerm({factor * Bq[i-1], xF.at(-ip), (beam == "PR" ? xF.at(i)  : xFBeam.at(i)) });
       }
     return Lumi;
   }
@@ -265,18 +260,19 @@ namespace NangaParbat
 
         // Retrieve kinematics
         const DataHandler::Kinematics                kin      = DHVect[i].GetKinematics();
-        const double                                 Vs       = kin.Vs;       // C.M.E.
-        const std::vector<double>                    qTv      = kin.qTv;      // Transverse momentum bin bounds
-        const std::vector<std::pair<double, double>> qTmap    = kin.qTmap;    // Map of qT bounds to associate to the single bins
-        const std::vector<double>                    qTfact   = kin.qTfact;   // Possible bin-by-bin prefactors to multiply the theoretical predictions
-        const std::pair<double, double>              Qb       = kin.var1b;    // Invariant mass interval
-        const std::pair<double, double>              yb       = kin.var2b;    // Rapidity interval
-        const bool                                   IntqT    = kin.IntqT;    // Whether the bins in qTv are to be integrated over
-        const bool                                   IntQ     = kin.Intv1;    // Whether the bin in Q is to be integrated over
-        const bool                                   Inty     = kin.Intv2;    // Whether the bin in y is to be integrated over
-        const bool                                   PSRed    = kin.PSRed;    // Whether there is a final-state PS reduction
-        const double                                 pTMin    = kin.pTMin;    // Minimum pT of the final-state leptons
-        const std::pair<double, double>              etaRange = kin.etaRange; // Allowed range in eta of the final-state leptons
+        const double                                 Vs       = kin.Vs;              // C.M.E.
+        const std::vector<double>                    qTv      = kin.qTv;             // Transverse momentum bin bounds
+        const std::vector<std::pair<double, double>> qTmap    = kin.qTmap;           // Map of qT bounds to associate to the single bins
+        const std::vector<double>                    qTfact   = kin.qTfact;          // Possible bin-by-bin prefactors to multiply the theoretical predictions
+        const std::pair<double, double>              Qb       = kin.var1b;           // Invariant mass interval
+        const std::pair<double, double>              yb       = kin.var2b;           // Rapidity interval
+        const bool                                   IntqT    = kin.IntqT;           // Whether the bins in qTv are to be integrated over
+        const bool                                   IntQ     = kin.Intv1;           // Whether the bin in Q is to be integrated over
+        const bool                                   Inty     = kin.Intv2;           // Whether the bin in y is to be integrated over
+        const bool                                   PSRed    = kin.PSRed;           // Whether there is a final-state PS reduction
+        const double                                 pTMin    = kin.pTMin;           // Minimum pT of the final-state leptons
+        const std::pair<double, double>              etaRange = kin.etaRange;        // Allowed range in eta of the final-state leptons
+        const std::string                            beam     = DHVect[i].GetBeam(); // Beam hadron species
 
         // Initialise two-particle phase-space object
         apfel::TwoBodyPhaseSpace ps{pTMin, etaRange.first, etaRange.second};
@@ -407,7 +403,7 @@ namespace NangaParbat
                   [&] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
                 {
                   const double Qt = (IntQ ? Q : Qav);
-                  return LuminosityDY(_bstar(b, Qt), Qt, targetiso);
+                  return LuminosityDY(_bstar(b, Qt), Qt, targetiso, beam);
                 };
                 const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabLumi{Lumi, (IntQ ? 200 : 2), Qb.first, Qb.second, 1, {}};
 
