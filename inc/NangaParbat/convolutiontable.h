@@ -143,7 +143,6 @@ namespace NangaParbat
     std::vector<std::vector<double>>                                      const _qTmap;   //!< Vector of bounds for each qT bin
     std::vector<double>                                                   const _qTfact;  //!< Bin-by-bin factors
     double                                                                const _prefact; //!< Overall prefactor
-    double                                                                const _prefact2; //!< Fulvio's ratio for SIDIS
     std::vector<double>                                                   const _zOgata;  //!< Unscaled Ogata coordinate
     std::vector<double>                                                   const _Qg;      //!< Grid in Q
     std::vector<double>                                                         _xig;     //!< Grid in xi;
@@ -158,6 +157,7 @@ namespace NangaParbat
     double                                                                      _acc;     //!< The Ogata-quadrature accuracy
     std::vector<std::shared_ptr<Cut>>                                           _cuts;    //!< Cut objects
     std::valarray<bool>                                                         _cutmask; //!< Mask of points that pass the cuts
+    YAML::Node                                                            const _table;   //!< [Temporary] Yaml node of the table                  
 
     /**
      * @name FF_SIDIS
