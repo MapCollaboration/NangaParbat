@@ -1,122 +1,104 @@
 dependent_variables:
-  - header: {title: "E537 at 125 GeV, 5 GeV < Q < 5.5 GeV,-0.138646< |#it{y}| < 1.211290", titlepy: "E537 at 125 GeV, 5 GeV < Q <5.5GeV, -0.138646 < $|y|$ < 1.211290", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q^2_T \\rm{ [GeV^2]}$", ylabel: "#frac{d^2#it{#sigma}}{d#it{Q}d#it{q}_{T}^2}  [pb GeV^{-3}]", ylabelpy: "$\\frac{d^2\\sigma}{dQdq_{T}^2}[\\rm{pb GeV}^{-3}]$"}
+  - header: {title: "E537 at 125 GeV, 5 GeV < Q < 5.5 GeV,-0.974588< |#it{y}| < 3.220472", titlepy: "E537 at 125 GeV, 5 GeV < Q <5.5GeV, -0.974588 < $|y|$ < 3.220472", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q_T \\rm{ [GeV]}$", ylabel: "#frac{d2#it{#sigma}}{d#it{q}_{T}d#it{p}_{T}^2}  [GeV^{-3}]", ylabelpy: "$\\frac{d2\\sigma}{dq_{T}dp_{T}^2}[\\rm{GeV}^{-3}]$"}
     qualifiers:
       - {name: process, value: DY}
       - {name: target_isoscalarity, value: 0.4025}
       - {name: beam, value: PI}
       - {name: prefactor, value: 1}
-      - {name: Vs, value: 15.3}
+      - {name: Vs, value: 125}
       - {name: Q, low: 5, high: 5.5, integrate: true}
-      - {name: y, low: -0.13864629, high: 1.2112898, integrate: true}
+      - {name: y, low: -0.97458797, high: 3.220472, integrate: true}
     values:
       - errors:
-          - {label: unc, value: 3}
-          - {label: mult, value: 0.020571304}
-          - {label: unc, value: 0.33016943}
-          - {label: mult, value: 0.0120342}
-          - {label: unc, value: 0.19314891}
-          - {label: add, value: 0.08}
-        value: 21.4
+          - {label: unc, value: 0.003}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0.0214
       - errors:
-          - {label: unc, value: 2.5}
-          - {label: mult, value: 0.020503104}
-          - {label: unc, value: 0.22143352}
-          - {label: mult, value: 0.011664672}
-          - {label: unc, value: 0.12597846}
-          - {label: add, value: 0.08}
-        value: 14.4
+          - {label: unc, value: 0.0025}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0.0144
       - errors:
-          - {label: unc, value: 1.41}
-          - {label: mult, value: 0.020465504}
-          - {label: unc, value: 0.080275939}
-          - {label: mult, value: 0.011109032}
-          - {label: unc, value: 0.043575178}
-          - {label: add, value: 0.08}
-        value: 5.23
+          - {label: unc, value: 0.00141}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0.00523
       - errors:
-          - {label: unc, value: 1.27}
-          - {label: mult, value: 0.020677088}
-          - {label: unc, value: 0.064667593}
-          - {label: mult, value: 0.010231552}
-          - {label: unc, value: 0.031999179}
-          - {label: add, value: 0.08}
-        value: 4.17
+          - {label: unc, value: 0.00127}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0.00417
       - errors:
-          - {label: unc, value: 1.18}
-          - {label: mult, value: 0.022283448}
-          - {label: unc, value: 0.055151534}
-          - {label: mult, value: 0.009482984}
-          - {label: unc, value: 0.023470385}
-          - {label: add, value: 0.08}
-        value: 3.3
+          - {label: unc, value: 0.00118}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0.0033
       - errors:
-          - {label: unc, value: 1.02}
-          - {label: mult, value: 0.032504144}
-          - {label: unc, value: 0.060213927}
-          - {label: mult, value: 0.0153048}
-          - {label: unc, value: 0.028352142}
-          - {label: add, value: 0.08}
-        value: 2.47
+          - {label: unc, value: 0.00102}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0.00247
       - errors:
-          - {label: unc, value: 0.816}
-          - {label: mult, value: 0.16906504}
-          - {label: unc, value: 0.24725762}
-          - {label: mult, value: 0.11347832}
-          - {label: unc, value: 0.16596204}
-          - {label: add, value: 0.08}
-        value: 1.95
+          - {label: unc, value: 0.000816}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0.00195
       - errors:
-          - {label: unc, value: 0.669}
-          - {label: mult, value: 0.08729952}
-          - {label: unc, value: 0.073986343}
-          - {label: mult, value: 0.066585664}
-          - {label: unc, value: 0.05643135}
-          - {label: add, value: 0.08}
-        value: 1.13
+          - {label: unc, value: 0.000669}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0.00113
       - errors:
-          - {label: unc, value: 0.516}
-          - {label: mult, value: 0.049344856}
-          - {label: unc, value: 0.032345553}
-          - {label: mult, value: 0.03878124}
-          - {label: unc, value: 0.025421103}
-          - {label: add, value: 0.08}
-        value: 0.874
+          - {label: unc, value: 0.000516}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0.000874
       - errors:
-          - {label: unc, value: 0.41}
-          - {label: mult, value: 0.040206848}
-          - {label: unc, value: 0.01221283}
-          - {label: mult, value: 0.031702464}
-          - {label: unc, value: 0.0096296234}
-          - {label: add, value: 0.08}
-        value: 0.405
+          - {label: unc, value: 0.00041}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0.000405
       - errors:
-          - {label: unc, value: 0.66}
-          - {label: mult, value: 0.03599648}
-          - {label: unc, value: 0.029157149}
-          - {label: mult, value: 0.028307192}
-          - {label: unc, value: 0.022928826}
-          - {label: add, value: 0.08}
-        value: 1.08
+          - {label: unc, value: 0.00066}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0.00108
       - errors:
-          - {label: unc, value: 0.536}
-          - {label: mult, value: 0.033624888}
-          - {label: unc, value: 0.018182658}
-          - {label: mult, value: 0.026299744}
-          - {label: unc, value: 0.014221587}
-          - {label: add, value: 0.08}
-        value: 0.721
+          - {label: unc, value: 0.000536}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0.000721
+      - errors:
+          - {label: unc, value: 0.000285}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.000468}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.000261}
+          - {label: unc, value: 0}
+          - {label: mult, value: 0.08}
+        value: 0
 independent_variables:
   - header: {name: PT, units: GEV}
     values:
-      - {high: 0.70710678, low: 1e-05, factor: 2.8284271}
-      - {high: 1, low: 0.70710678, factor: 1.1715729}
-      - {high: 1.2247449, low: 1, factor: 0.89897949}
-      - {high: 1.4142136, low: 1.2247449, factor: 0.75787476}
-      - {high: 1.5811388, low: 1.4142136, factor: 0.66770107}
-      - {high: 1.7320508, low: 1.5811388, factor: 0.60364791}
-      - {high: 1.8708287, low: 1.7320508, factor: 0.55511154}
-      - {high: 2, low: 1.8708287, factor: 0.51668523}
-      - {high: 2.1213203, low: 2, factor: 0.48528137}
-      - {high: 2.236068, low: 2.1213203, factor: 0.45899054}
-      - {high: 2.3452079, low: 2.236068, factor: 0.43655961}
-      - {high: 2.4494897, low: 2.3452079, factor: 0.41712745}
+      - {high: 0.5, low: 1e-05}
+      - {high: 1, low: 0.5}
+      - {high: 1.5, low: 1}
+      - {high: 2, low: 1.5}
+      - {high: 2.5, low: 2}
+      - {high: 3, low: 2.5}
+      - {high: 3.5, low: 3}
+      - {high: 4, low: 3.5}
+      - {high: 4.5, low: 4}
+      - {high: 5, low: 4.5}
+      - {high: 5.5, low: 5}
+      - {high: 6, low: 5.5}
+      - {high: 6.5, low: 6}
+      - {high: 7, low: 6.5}
+      - {high: 7.5, low: 7}

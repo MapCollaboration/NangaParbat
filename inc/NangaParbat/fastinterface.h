@@ -32,9 +32,10 @@ namespace NangaParbat
      * @param b: value of the impact parameter
      * @param Q: value of the hard scale
      * @param targetiso: the isoscalarity of the target
+     * @param beam: type of hadrons in the beam
      * @return the luminosity for Drell-Yan
      */
-    apfel::DoubleObject<apfel::Distribution> LuminosityDY(double const& bT, double const& Q, double const& targetiso) const;
+    apfel::DoubleObject<apfel::Distribution> LuminosityDY(double const& bT, double const& Q, double const& targetiso, std::string const& beam) const;
 
     /**
      * @brief Function that computes the interpolation tables given as
