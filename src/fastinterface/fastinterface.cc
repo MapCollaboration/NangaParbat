@@ -311,6 +311,7 @@ namespace NangaParbat
         Tabs[i] << YAML::Key << "name"         << YAML::Value << name;
         Tabs[i] << YAML::Key << "process"      << YAML::Value << proc;
         Tabs[i] << YAML::Key << "CME"          << YAML::Value << Vs;
+        Tabs[i] << YAML::Key << "hadron_beam"  << YAML::Value << beam;
         Tabs[i] << YAML::Key << "qTintegrated" << YAML::Value << IntqT;
         Tabs[i] << YAML::Key << "qT_bounds"    << YAML::Value << YAML::Flow << qTv;
         Tabs[i] << YAML::Key << "qT_map"       << YAML::Value << YAML::Flow << YAML::BeginSeq;
@@ -342,7 +343,7 @@ namespace NangaParbat
                     const double Q   = Qg[tau];
                     const double xi  = xig[alpha];
                     const double rap = log(xi);
-                    PS[tau][alpha] = ps.PhaseSpaceReduction(Q, rap, qT);
+                    PS[tau][alpha]   = ps.PhaseSpaceReduction(Q, rap, qT);
                     if (IntqT)
                       dPS[tau][alpha] = ps.DerivePhaseSpaceReduction(Q, rap, qT);
                   }
