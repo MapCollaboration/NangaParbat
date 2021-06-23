@@ -33,6 +33,9 @@ namespace NangaParbat
     // Output folder for preprocessed data
     const std::string ofolder = "E537";
 
+    // Vs ( Vs = sqrt(2*M*E) for fixed target experiments, here E = 125 GeV)
+    const double Vs = 15.3;
+
     // Initialize naming map for the Q-integration ranges
     std::map<std::string, std::string> Qranges = {{"4.0TO4.5", "_Q_4.0_4.5"}, {"4.5TO5.0", "_Q_4.5_5.0"}, {"5.0TO5.5", "_Q_5.0_5.5"}, {"5.5TO6.0", "_Q_5.5_6.0"}, {"6.0TO6.5","_Q_6.0_6.5"}, {"6.5TO7.0", "_Q_6.5_7.0"}, {"7.0TO7.5", "_Q_7.0_7.5"}, {"7.5TO8.0", "_Q_7.5_8.0"}, {"8.0TO8.5", "_Q_8.0_8.5"}, {"8.5TO9.0", "_Q_8.5_9.0"}};
     std::map<std::string, std::pair<std::string, std::string>> Qrangelims = {{"4.0TO4.5", {"4", "5"}}, {"4.5TO5.0", {"4.5", "5.0"}}, {"5.0TO5.5", {"5", "5.5"}}, {"5.5TO6.0", {"5.5", "6"}}, {"6.0TO6.5", {"6", "6.5"}}, {"6.5TO7.0", {"6.5", "7"}}, {"7.0TO7.5", {"7", "7.5"}}, {"7.5TO8.0", {"7.5", "8"}}, {"8.0TO8.5", {"8", "8.5"}}, {"8.5TO9.0", {"8.5", "9"}}};
@@ -48,11 +51,11 @@ namespace NangaParbat
         // Reading table with YAML
         const YAML::Node exp = YAML::LoadFile(RawDataFolder + tab);
 
-        // Get pT bin bounds (transverse momentum)
+        // Get pT bin bounds
         std::vector<std::pair<double,double>> pT;
         for (auto const& iv : exp["independent_variables"])
           for (auto const& vl : iv["values"])
-            pT.push_back(std::make_pair(vl["low"].as<double>(), vl["high"].as<double>()));
+            pT.push_back(std::make_pair(sqrt(vl["low"].as<double>()), sqrt(vl["high"].as<double>())));
 
         // Run over the energy ranges
         for (auto const& dv : exp["dependent_variables"])
@@ -80,8 +83,8 @@ namespace NangaParbat
                   Qestremi = Qextremes[q["value"].as<std::string>()];
                   Qexmin   = Qestremi.first;
                   Qexmax   = Qestremi.second;
-                  y_min    = asinh((- 0.1 * 125) / (2 * Qexmax));
-                  y_max    = asinh(125 / (2 * Qexmin));
+                  y_min    = asinh((- 0.1 * Vs) / (2 * Qexmax));
+                  y_max    = asinh(Vs / (2 * Qexmin));
                 }
 
             // Open PDF-error file
@@ -120,7 +123,7 @@ namespace NangaParbat
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << 0.4025 << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "beam" << YAML::Key << "value" << YAML::Value << "PI" << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
-            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 125 << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << Vs << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
                  << "low" << YAML::Value << Qlims.first << YAML::Key << "high" << YAML::Value << Qlims.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "y" << YAML::Key
@@ -166,7 +169,9 @@ namespace NangaParbat
             emit << YAML::BeginSeq;
             for (auto const& pTs : pT)
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << pTs.second
-                   << YAML::Key << "low" << YAML::Value << std::max(pTs.first, 1e-5) << YAML::EndMap;
+                   << YAML::Key << "low" << YAML::Value << std::max(pTs.first, 1e-5)
+                   << YAML::Key << "factor" << YAML::Value << "###" // 1 / (pTs.first + pTs.second)
+                   << YAML::EndMap;
             emit << YAML::EndSeq;
             emit << YAML::EndMap;
             emit << YAML::EndSeq;
@@ -182,15 +187,15 @@ namespace NangaParbat
           }
       }
     return
-      "  - {name: E537_Q_4.0_4.5,      file: E537_Q_4.0_4.5.yaml}\n"
-      "  - {name: E537_Q_4.5_5.0,      file: E537_Q_4.5_5.0.yaml}\n"
-      "  - {name: E537_Q_5.0_5.5,      file: E537_Q_5.0_5.5.yaml}\n"
-      "  - {name: E537_Q_5.5_6.0,      file: E537_Q_5.5_6.0.yaml}\n"
-      "  - {name: E537_Q_6.0_6.5,      file: E537_Q_6.0_6.5.yaml}\n"
-      "  - {name: E537_Q_6.5_7.0,      file: E537_Q_6.5_7.0.yaml}\n"
-      "  - {name: E537_Q_7.0_7.5,      file: E537_Q_7.0_7.5.yaml}\n"
-      "  - {name: E537_Q_7.5_8.0,      file: E537_Q_7.5_8.0.yaml}\n"
-      "  - {name: E537_Q_8.0_8.5,      file: E537_Q_8.0_8.5.yaml}\n"
-      "  - {name: E537_Q_8.5_9.0,      file: E537_Q_8.5_9.0.yaml}\n";
+      "  - {name: E537_Q_4.0_4.5, file: E537_Q_4.0_4.5.yaml}\n"
+      "  - {name: E537_Q_4.5_5.0, file: E537_Q_4.5_5.0.yaml}\n"
+      "  - {name: E537_Q_5.0_5.5, file: E537_Q_5.0_5.5.yaml}\n"
+      "  - {name: E537_Q_5.5_6.0, file: E537_Q_5.5_6.0.yaml}\n"
+      "  - {name: E537_Q_6.0_6.5, file: E537_Q_6.0_6.5.yaml}\n"
+      "  - {name: E537_Q_6.5_7.0, file: E537_Q_6.5_7.0.yaml}\n"
+      "  - {name: E537_Q_7.0_7.5, file: E537_Q_7.0_7.5.yaml}\n"
+      "  - {name: E537_Q_7.5_8.0, file: E537_Q_7.5_8.0.yaml}\n"
+      "  - {name: E537_Q_8.0_8.5, file: E537_Q_8.0_8.5.yaml}\n"
+      "  - {name: E537_Q_8.5_9.0, file: E537_Q_8.5_9.0.yaml}\n";
   }
 }
