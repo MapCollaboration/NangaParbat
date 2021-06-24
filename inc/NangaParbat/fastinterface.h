@@ -64,13 +64,23 @@ namespace NangaParbat
      */
     std::vector<YAML::Emitter> ComputeTablesSIDIS(std::vector<DataHandler> const& DHVect) const;
 
+    /**
+     * @brief Function that computes the normalisation factors to be
+     * applied to SIDIS to normalise the integral of the qT
+     * distribution to the integrated fixed-order cross section.
+     * @param DHVect: vector of "DataHandler" objects.
+     * @return a vector of "double" containing as many normalisation
+     * factors as elements of "DHVect".
+     */
+    std::vector<double> NormalisationFactorsSIDIS(std::vector<DataHandler> const& DHVect) const;
+
   private:
     YAML::Node                                                                                  _config;          //!< Configuration YAML::Node
     std::vector<double>                                                                         _Thresholds;      //!< Heavy-quark thresholds
     std::unique_ptr<apfel::TabulateObject<double>>                                              _TabAlphas;       //!< Strong coupling
     std::unique_ptr<apfel::TabulateObject<double>>                                              _TabAlphaem;      //!< Fine-structure coupling
-    std::map<int,apfel::TmdObjects>                                                             _TmdPdfObjs;      //!< Space-like TMD objects
-    std::map<int,apfel::TmdObjects>                                                             _TmdFfObjs;       //!< Time-like TMD objects
+    std::map<int, apfel::TmdObjects>                                                            _TmdPdfObjs;      //!< Space-like TMD objects
+    std::map<int, apfel::TmdObjects>                                                            _TmdFfObjs;       //!< Time-like TMD objects
     std::unique_ptr<const apfel::Grid>                                                          _gpdf;            //!< APFEL x-space grid for PDFs
     std::unique_ptr<const apfel::Grid>                                                          _gff;             //!< APFEL x-space grid for FFs
     std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>                     _TabPDFs;         //!< Collinear PDFs

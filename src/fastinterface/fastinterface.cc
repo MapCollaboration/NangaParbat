@@ -7,6 +7,7 @@
 #include "NangaParbat/bstar.h"
 
 #include <LHAPDF/LHAPDF.h>
+#include <apfel/SIDIS.h>
 
 namespace NangaParbat
 {
@@ -476,7 +477,7 @@ namespace NangaParbat
         // Process
         const DataHandler::Process proc = DHVect[i].GetProcess();
 
-        // Stop the code if the process is not Drell-Yan
+        // Stop the code if the process is not SIDIS
         if (proc != DataHandler::Process::SIDIS)
           throw std::runtime_error("[FastInterface::ComputeTablesSIDIS]: Only SIDIS data sets can be treated here.");
 
@@ -844,5 +845,179 @@ namespace NangaParbat
     std::cout << std::endl;
 
     return Tabs;
+  }
+
+  //_________________________________________________________________________________
+  std::vector<double> FastInterface::NormalisationFactorsSIDIS(std::vector<DataHandler> const& DHVect) const
+  {
+    // Get logarihtmic perturbative order
+    const int pto = _config["PerturbativeOrder"].as<int>();
+
+    // Determine perturbative order according to the logarithmic
+    // accuracy
+    int PerturbativeOrder = 0;
+    if (pto > 1 || pto < 0)
+      PerturbativeOrder++;
+    if (pto > 2 || pto < -1)
+      PerturbativeOrder++;
+
+    // Initialize SIDIS objects (use the PDF grid)
+    const apfel::SidisObjects so = InitializeSIDIS(*_gpdf, *_gff);
+
+    // Initialise container of vector of normalisation factors
+    std::vector<double> NormFacts(DHVect.size());
+
+    // Loop over the vector of "Kinematics" objects
+    for (int i = 0; i < (int) DHVect.size(); i++)
+      {
+        // Process
+        const DataHandler::Process proc = DHVect[i].GetProcess();
+
+        // Stop the code if the process is not SIDIS
+        if (proc != DataHandler::Process::SIDIS)
+          throw std::runtime_error("[FastInterface::NormalisationFactorsSIDIS]: Only SIDIS data sets can be treated here.");
+
+        // Get target isoscalarity
+        const double targetiso = DHVect[i].GetTargetIsoscalarity();
+
+        // Fractions of protons and neutrons in the target
+        const double frp = std::abs(targetiso);
+        const double frn = 1 - frp;
+
+        // Whether the target is isoscalar of proton or antiproton
+        const int sign = (targetiso >= 0 ? 1 : -1);
+
+        // Retrieve kinematics
+        const DataHandler::Kinematics   kin    = DHVect[i].GetKinematics();
+        const double                    Vs     = kin.Vs;       // C.M.E.
+        const std::pair<double, double> Qb     = kin.var1b;    // Invariant mass interval
+        const std::pair<double, double> xbb    = kin.var2b;    // Bjorken x interval
+        const std::pair<double, double> zb     = kin.var3b;    // z interval
+        //std::cout << std::scientific << Qb.first << "  " << Qb.second << "  " << i + 1 << "/" << DHVect.size() << std::endl;
+
+        // Define function to compute SIDIS fixed-order cross section at O(as)
+        const std::function<apfel::DoubleObject<apfel::Distribution>(double const&)> CrossSectionFO = [=] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
+        {
+          // Functions of x and z that multiplies the structure
+          // functions.
+          const std::function<double(double const&)> y2 = [=] (double const& x) -> double{ return pow(pow(Q / Vs, 2) / x, 2) / x; };
+          const std::function<double(double const&)> yp = [=] (double const& x) -> double{ return ( 1 + pow(1 - pow(Q / Vs, 2) / x, 2) ) / x; };
+          const std::function<double(double const&)> iz = [=] (double const& z) -> double{ return 1 / z; };
+
+          // Compute number of active flavours
+          const int nf = apfel::NF(Q, _Thresholds);
+
+          // Coupling from PDF set
+          const double coup = _TabAlphas->Evaluate(Q) / apfel::FourPi;
+
+          // Get distributions for PDFs and FFs in the physical
+          // basis.
+          const std::map<int, apfel::Distribution> dPDF = apfel::QCDEvToPhys(_TabPDFs->Evaluate(Q).GetObjects());
+          const std::map<int, apfel::Distribution> dFF  = apfel::QCDEvToPhys(_TabFFs->Evaluate(Q).GetObjects());
+
+          // Put together double object
+          apfel::DoubleObject<apfel::Distribution> distqq;
+          apfel::DoubleObject<apfel::Distribution> distgq;
+          apfel::DoubleObject<apfel::Distribution> distqg;
+
+          // Adjust up and down PDFs according to the target isoscalarity
+          const apfel::Distribution dw  = frp * dPDF.at(sign)    + frn * dPDF.at(sign*2);
+          const apfel::Distribution up  = frp * dPDF.at(sign*2)  + frn * dPDF.at(sign);
+          const apfel::Distribution dwb = frp * dPDF.at(-sign)   + frn * dPDF.at(-sign*2);
+          const apfel::Distribution upb = frp * dPDF.at(-sign*2) + frn * dPDF.at(-sign);
+
+          distqq.AddTerm({apfel::QCh2[0], dw,         dFF.at(1)});
+          distgq.AddTerm({apfel::QCh2[0], dw,         dFF.at(0)});
+          distqg.AddTerm({apfel::QCh2[0], dPDF.at(0), dFF.at(1)});
+
+          distqq.AddTerm({apfel::QCh2[0], dwb,        dFF.at(-1)});
+          distgq.AddTerm({apfel::QCh2[0], dwb,        dFF.at(0)});
+          distqg.AddTerm({apfel::QCh2[0], dPDF.at(0), dFF.at(-1)});
+
+          distqq.AddTerm({apfel::QCh2[1], up,         dFF.at(2)});
+          distgq.AddTerm({apfel::QCh2[1], up,         dFF.at(0)});
+          distqg.AddTerm({apfel::QCh2[1], dPDF.at(0), dFF.at(2)});
+
+          distqq.AddTerm({apfel::QCh2[1], upb,        dFF.at(-2)});
+          distgq.AddTerm({apfel::QCh2[1], upb,        dFF.at(0)});
+          distqg.AddTerm({apfel::QCh2[1], dPDF.at(0), dFF.at(-2)});
+
+          // Now run over the other quark flavours
+          for (auto j = 3; j <= nf; j++)
+            {
+              const int jp = j * sign;
+              distqq.AddTerm({apfel::QCh2[j-1], dPDF.at(jp), dFF.at(jp)});
+              distgq.AddTerm({apfel::QCh2[j-1], dPDF.at(jp), dFF.at(0)});
+              distqg.AddTerm({apfel::QCh2[j-1], dPDF.at(0),  dFF.at(jp)});
+
+              distqq.AddTerm({apfel::QCh2[j-1], dPDF.at(-jp), dFF.at(-jp)});
+              distgq.AddTerm({apfel::QCh2[j-1], dPDF.at(-jp), dFF.at(0)});
+              distqg.AddTerm({apfel::QCh2[j-1], dPDF.at(0),   dFF.at(-jp)});
+            }
+
+          // Assemble double distribution for the cross section as
+          // Y^+ F2 - y^2 FL times a constant.
+          return ( 4 * M_PI * pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) )
+                 * ( ( ( so.C20qq + coup * so.C21qq ) * distqq + coup * ( so.C21gq * distgq + so.C21qg * distqg ) ).MultiplyBy(yp, iz)
+                     - ( coup * ( so.CL1qq * distqq + so.CL1gq * distgq + so.CL1qg * distqg ) ).MultiplyBy(y2, iz) );
+        };
+
+        // Tabulate cross section
+        const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabCrossSectionFO{CrossSectionFO, 50, 1, 20, 3, _Thresholds};
+
+        // Define function to compute SIDIS asymptotic cross section at O(as)
+        const std::function<apfel::DoubleObject<apfel::Distribution>(double const&)> CrossSectionAsy = [=] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
+        {
+          // Functions of x and z that multiplies the structure
+          // functions.
+          const std::function<double(double const&)> yp = [=] (double const& x) -> double{ return ( 1 + pow(1 - pow(Q / Vs, 2) / x, 2) ) / x; };
+          const std::function<double(double const&)> iz = [=] (double const& z) -> double{ return 1 / z; };
+
+          // Compute number of active flavours
+          const int nf = apfel::NF(Q, _Thresholds);
+
+          // Get matched PDFs and FFs in the physical basis
+          const double bmin = _config["TMDscales"]["Ci"].as<double>() * 2 * exp(- apfel::emc) / Q;
+          const std::map<int, apfel::Distribution> dPDF = apfel::QCDEvToPhys(_MatchTMDPDFs(bmin).GetObjects());
+          const std::map<int, apfel::Distribution> dFF  = apfel::QCDEvToPhys(_MatchTMDFFs(bmin).GetObjects());
+
+          // Put together double object
+          apfel::DoubleObject<apfel::Distribution> distqq;
+
+          // Adjust up and down PDFs according to the target isoscalarity
+          const apfel::Distribution dw  = frp * dPDF.at(sign)   + frn * dPDF.at(sign*2);
+          const apfel::Distribution up  = frp * dPDF.at(sign*2) + frn * dPDF.at(sign);
+          const apfel::Distribution dwb = frp * dPDF.at(-sign)   + frn * dPDF.at(-sign*2);
+          const apfel::Distribution upb = frp * dPDF.at(-sign*2) + frn * dPDF.at(-sign);
+
+          distqq.AddTerm({apfel::QCh2[0], dw,  dFF.at(1)});
+          distqq.AddTerm({apfel::QCh2[0], dwb, dFF.at(-1)});
+          distqq.AddTerm({apfel::QCh2[1], up,  dFF.at(2)});
+          distqq.AddTerm({apfel::QCh2[1], upb, dFF.at(-2)});
+
+          // Now run over the other quark flavours
+          for (auto j = 3; j <= nf; j++)
+            {
+              const int jp = j * sign;
+              distqq.AddTerm({apfel::QCh2[j-1], dPDF.at(jp),  dFF.at(jp)});
+              distqq.AddTerm({apfel::QCh2[j-1], dPDF.at(-jp), dFF.at(-jp)});
+            }
+
+          return ( 4 * M_PI * pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * _HardFactorSIDIS(Q) ) * distqq.MultiplyBy(yp, iz);
+        };
+
+        // Tabulate cross section
+        const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabCrossSectionAsy{CrossSectionAsy, 50, 1, 20, 3, {}};
+
+        // Put normalisation factor together. If the accuracy is LO
+        // set it to one.
+        NormFacts[i] = (PerturbativeOrder == 0 ? 1 : TabCrossSectionFO.Integrate(Qb.first, Qb.second).Integrate(xbb.first, xbb.second, zb.first, zb.second)
+                        / TabCrossSectionAsy.Integrate(Qb.first, Qb.second).Integrate(xbb.first, xbb.second, zb.first, zb.second));
+
+        std::cout << "Computing SIDIS normalisation factors..." << std::setw(6) << std::setprecision(4) << 100. * i / DHVect.size() << "\% completed\r";
+        std::cout.flush();
+      }
+
+    return NormFacts;
   }
 }
