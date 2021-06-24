@@ -888,12 +888,14 @@ namespace NangaParbat
         const int sign = (targetiso >= 0 ? 1 : -1);
 
         // Retrieve kinematics
-        const DataHandler::Kinematics   kin    = DHVect[i].GetKinematics();
-        const double                    Vs     = kin.Vs;       // C.M.E.
-        const std::pair<double, double> Qb     = kin.var1b;    // Invariant mass interval
-        const std::pair<double, double> xbb    = kin.var2b;    // Bjorken x interval
-        const std::pair<double, double> zb     = kin.var3b;    // z interval
-        //std::cout << std::scientific << Qb.first << "  " << Qb.second << "  " << i + 1 << "/" << DHVect.size() << std::endl;
+        const DataHandler::Kinematics   kin   = DHVect[i].GetKinematics();
+        const double                    Vs    = kin.Vs;       // C.M.E.
+        const std::pair<double, double> Qb    = kin.var1b;    // Invariant mass interval
+        const std::pair<double, double> xbb   = kin.var2b;    // Bjorken x interval
+        const std::pair<double, double> zb    = kin.var3b;    // z interval
+        const bool                      IntQ  = kin.Intv1;    // Whether the bin in Q is to be integrated over
+        const bool                      Intxb = kin.Intv2;    // Whether the bin in Bjorken x is to be integrated over
+        const bool                      Intz  = kin.Intv3;    // Whether the bin in z is to be integrated over
 
         // Define function to compute SIDIS fixed-order cross section at O(as)
         const std::function<apfel::DoubleObject<apfel::Distribution>(double const&)> CrossSectionFO = [=] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
@@ -1009,10 +1011,34 @@ namespace NangaParbat
         // Tabulate cross section
         const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabCrossSectionAsy{CrossSectionAsy, 50, 1, 20, 3, {}};
 
-        // Put normalisation factor together. If the accuracy is LO
-        // set it to one.
-        NormFacts[i] = (PerturbativeOrder == 0 ? 1 : TabCrossSectionFO.Integrate(Qb.first, Qb.second).Integrate(xbb.first, xbb.second, zb.first, zb.second)
-                        / TabCrossSectionAsy.Integrate(Qb.first, Qb.second).Integrate(xbb.first, xbb.second, zb.first, zb.second));
+        // Put normalisation factor together integrating as
+        // appropriate. If the accuracy is LO set it to one.
+        if (PerturbativeOrder == 0)
+          NormFacts[i] = 1;
+        else if (!IntQ && !Intxb && !Intz)
+          NormFacts[i] = TabCrossSectionFO.Evaluate(( Qb.first + Qb.second ) / 2).Evaluate(( xbb.first + xbb.second ) / 2, ( zb.first + zb.second ) / 2)
+                         / TabCrossSectionAsy.Evaluate(( Qb.first + Qb.second ) / 2).Evaluate(( xbb.first + xbb.second ) / 2, ( zb.first + zb.second ) / 2);
+        else if (!IntQ && !Intxb && Intz)
+          NormFacts[i] = TabCrossSectionFO.Evaluate(( Qb.first + Qb.second ) / 2).Integrate2(zb.first, zb.second ).Evaluate(( xbb.first + xbb.second ) / 2)
+                         / TabCrossSectionAsy.Evaluate(( Qb.first + Qb.second ) / 2).Integrate2(zb.first, zb.second ).Evaluate(( xbb.first + xbb.second ) / 2);
+        else if (!IntQ && Intxb && !Intz)
+          NormFacts[i] = TabCrossSectionFO.Evaluate(( Qb.first + Qb.second ) / 2).Integrate1(xbb.first, xbb.second ).Evaluate(( zb.first + zb.second ) / 2)
+                         / TabCrossSectionAsy.Evaluate(( Qb.first + Qb.second ) / 2).Integrate2(zb.first, zb.second ).Evaluate(( xbb.first + xbb.second ) / 2);
+        else if (!IntQ && Intxb && Intz)
+          NormFacts[i] = TabCrossSectionFO.Evaluate(( Qb.first + Qb.second ) / 2).Integrate(xbb.first, xbb.second, zb.first, zb.second)
+                         / TabCrossSectionAsy.Evaluate(( Qb.first + Qb.second ) / 2).Integrate(xbb.first, xbb.second, zb.first, zb.second);
+        else if (IntQ && !Intxb && !Intz)
+          NormFacts[i] = TabCrossSectionFO.Integrate(Qb.first, Qb.second).Evaluate(( xbb.first + xbb.second ) / 2, ( zb.first + zb.second ) / 2)
+                         / TabCrossSectionAsy.Integrate(Qb.first, Qb.second).Evaluate(( xbb.first + xbb.second ) / 2, ( zb.first + zb.second ) / 2);
+        else if (IntQ && !Intxb && Intz)
+          NormFacts[i] = TabCrossSectionFO.Integrate(Qb.first, Qb.second).Integrate2(zb.first, zb.second ).Evaluate(( xbb.first + xbb.second ) / 2)
+                         / TabCrossSectionAsy.Integrate(Qb.first, Qb.second).Integrate2(zb.first, zb.second ).Evaluate(( xbb.first + xbb.second ) / 2);
+        else if (IntQ && Intxb && !Intz)
+          NormFacts[i] = TabCrossSectionFO.Integrate(Qb.first, Qb.second).Integrate1(xbb.first, xbb.second ).Evaluate(( zb.first + zb.second ) / 2)
+                         / TabCrossSectionAsy.Integrate(Qb.first, Qb.second).Integrate2(zb.first, zb.second ).Evaluate(( xbb.first + xbb.second ) / 2);
+        else
+          NormFacts[i] = TabCrossSectionFO.Integrate(Qb.first, Qb.second).Integrate(xbb.first, xbb.second, zb.first, zb.second)
+                         / TabCrossSectionAsy.Integrate(Qb.first, Qb.second).Integrate(xbb.first, xbb.second, zb.first, zb.second);
 
         std::cout << "Computing SIDIS normalisation factors..." << std::setw(6) << std::setprecision(4) << 100. * ( i + 1 ) / DHVect.size() << "\% completed\r";
         std::cout.flush();
