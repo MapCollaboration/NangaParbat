@@ -1014,7 +1014,7 @@ namespace NangaParbat
         NormFacts[i] = (PerturbativeOrder == 0 ? 1 : TabCrossSectionFO.Integrate(Qb.first, Qb.second).Integrate(xbb.first, xbb.second, zb.first, zb.second)
                         / TabCrossSectionAsy.Integrate(Qb.first, Qb.second).Integrate(xbb.first, xbb.second, zb.first, zb.second));
 
-        std::cout << "Computing SIDIS normalisation factors..." << std::setw(6) << std::setprecision(4) << 100. * i / DHVect.size() << "\% completed\r";
+        std::cout << "Computing SIDIS normalisation factors..." << std::setw(6) << std::setprecision(4) << 100. * ( i + 1 ) / DHVect.size() << "\% completed\r";
         std::cout.flush();
       }
 
