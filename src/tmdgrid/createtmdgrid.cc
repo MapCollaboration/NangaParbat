@@ -160,10 +160,10 @@ namespace NangaParbat
     // Get TMDs distributions
     std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> Tmds;
     if (pf == "pdf")
-      Tmds = BuildTmdPDFs(apfel::InitializeTmdObjectsLite(g, Thresholds), CollDists, Alphas,
+      Tmds = BuildTmdPDFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas,
                           config["PerturbativeOrder"].as<int>(), config["TMDscales"]["Ci"].as<double>());
     else if (pf == "ff")
-      Tmds = BuildTmdFFs(apfel::InitializeTmdObjectsLite(g, Thresholds), CollDists, Alphas,
+      Tmds = BuildTmdFFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas,
                          config["PerturbativeOrder"].as<int>(), config["TMDscales"]["Ci"].as<double>());
     else
       throw std::runtime_error("[EmitTMDGrid]: Unknown distribution prefix.");
