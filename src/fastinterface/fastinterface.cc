@@ -74,10 +74,10 @@ namespace NangaParbat
               (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedFFs, 100, distff->qMin(), distff->qMax(), 3, _Thresholds});
 
     // Initialise TMD objects for PDFs
-    _TmdPdfObjs = apfel::InitializeTmdObjectsLite(*_gpdf, _Thresholds);
+    _TmdPdfObjs = apfel::InitializeTmdObjects(*_gpdf, _Thresholds);
 
     // Initialise TMD objects for FFs
-    _TmdFfObjs = apfel::InitializeTmdObjectsLite(*_gff, _Thresholds);
+    _TmdFfObjs = apfel::InitializeTmdObjects(*_gff, _Thresholds);
 
     // Build evolved TMD PDFs and FFs
     const int    pto = _config["PerturbativeOrder"].as<int>();
