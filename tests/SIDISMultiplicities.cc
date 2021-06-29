@@ -1,8 +1,7 @@
-//
-// APFEL++ 2017
-//
-// Authors: Valerio Bertone: valerio.bertone@cern.ch
-//
+/*
+ * Authors: Valerio Bertone: valerio.bertone@cern.ch
+ *          Chiara Bissolotti: chiara.bissolotti01@universitadipavia.it
+ */
 
 #include <LHAPDF/LHAPDF.h>
 #include <apfel/apfelxx.h>

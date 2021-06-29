@@ -203,7 +203,8 @@ namespace NangaParbat
     const int npred = _qTmap.size();
     std::vector<double> vpred(npred);
     std::map<double, double> pred;
-    double prefact2 = 0;
+
+    double prefact2 = 1;
     if (_table["prefactor2"])
       prefact2 = _table["prefactor2"].as<double>();
     // std::cout << "prefactor2 from convolutiontable.cc = " << prefact2 << std::endl;
