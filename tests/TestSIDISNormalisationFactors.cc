@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
   if (argc < 3 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./CreateTables <configuration file> <path to data folder>\n" << std::endl;
+      std::cout << "Syntax: ./TestSIDISNormalisationFactors <configuration file> <path to data folder>\n" << std::endl;
       exit(-10);
     }
 
@@ -44,20 +44,25 @@ int main(int argc, char* argv[])
   // Compute tables
   const std::vector<double> Facts = FIObj.NormalisationFactorsSIDIS(DHVect);
 
-  std::cout << "Normalisation factors:" << std::endl;
   // Dump table to file
+  std::ofstream fout ("Normalization_factors_binned.dat");
+  
+  fout << "Normalisation factors:" << std::endl;
+
   for (int i = 0; i < Facts.size(); i++)
     {
       const NangaParbat::DataHandler::Kinematics kin = DHVect[i].GetKinematics();
       const std::pair<double, double> Qb  = kin.var1b;    // Invariant mass interval
       const std::pair<double, double> xbb = kin.var2b;    // Bjorken x interval
       const std::pair<double, double> zb  = kin.var3b;    // z interval
-      std::cout << std::scientific << i << "\t"
+      fout << std::scientific << i << "\t"
                 << " [" << Qb.first << ":" << Qb.second << "]"
                 << " [" << xbb.first << ":" << xbb.second << "]"
                 << " [" << zb.first << ":" << zb.second << "]"
-                << "  " << Facts[i] << std::endl;
+	   << "  " << Facts[i] << std::endl;
     }
 
+  fout.close();
+    
   return 0;
 }
