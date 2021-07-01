@@ -1,8 +1,7 @@
-//
-// APFEL++ 2017
-//
-// Authors: Valerio Bertone: valerio.bertone@cern.ch
-//
+/*
+ * Authors: Valerio Bertone: valerio.bertone@cern.ch
+ *          Chiara Bissolotti: chiara.bissolotti01@universitadipavia.it
+ */
 
 #include <LHAPDF/LHAPDF.h>
 #include <apfel/apfelxx.h>
@@ -101,7 +100,7 @@ int main(int argc, char* argv[])
   */
 
   // Initialize TMD PDF objects
-  const auto TmdObjPDF = apfel::InitializeTmdObjectsLite(gpdf, Thresholds);
+  const auto TmdObjPDF = apfel::InitializeTmdObjects(gpdf, Thresholds);
 
   // Build evolved TMD PDFs
   const auto EvTMDPDFs    = BuildTmdPDFs(TmdObjPDF, CollPDFs, Alphas, pto, Ci);
@@ -192,7 +191,7 @@ int main(int argc, char* argv[])
         const auto CollFFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabFFs.Evaluate(mu); };
 
         // Initialize TMD FF objects
-        const auto TmdObjFF  = apfel::InitializeTmdObjectsLite(gff,  Thresholds);
+        const auto TmdObjFF  = apfel::InitializeTmdObjects(gff,  Thresholds);
 
         // Build evolved TMD FFs
         const auto EvTMDFFs    = BuildTmdFFs(TmdObjFF, CollFFs, Alphas, pto, Ci);

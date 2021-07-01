@@ -389,9 +389,9 @@ namespace NangaParbat
         // uncertainty and systemetic shift.
         os << YAML::BeginMap;
         os << YAML::Key << "Name" << YAML::Value << dh->GetName();
-        os << YAML::Key << "Plot title" << YAML::Value << labels.at("title");
-        os << YAML::Key << "xlabel" << YAML::Value << labels.at("xlabel");
-        os << YAML::Key << "ylabel" << YAML::Value << labels.at("ylabel");
+        // os << YAML::Key << "Plot title" << YAML::Value << labels.at("title");
+        // os << YAML::Key << "xlabel" << YAML::Value << labels.at("xlabel");
+        // os << YAML::Key << "ylabel" << YAML::Value << labels.at("ylabel");
         os << YAML::Key << "Plot title python" << YAML::Value << labels.at("titlepy");
         os << YAML::Key << "xlabelpy" << YAML::Value << labels.at("xlabelpy");
         os << YAML::Key << "ylabelpy" << YAML::Value << labels.at("ylabelpy");
