@@ -862,8 +862,10 @@ namespace NangaParbat
       PerturbativeOrder++;
 
     // Initialize SIDIS objects (use the PDF grid)
-    const apfel::SidisObjects so = InitializeSIDIS(*_gpdf, *_gff);
-
+    //const apfel::SidisObjects so = InitializeSIDIS(*_gpdf, *_gff);
+    // The following line makes it possible to exclude the so-called "mixed" terms in the calculation of the collinear structure functions
+    const apfel::SidisObjects so = InitializeSIDIS(*_gpdf, *_gff, {5, 6, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22});
+    
     // Initialise container of vector of normalisation factors
     std::vector<double> NormFacts(DHVect.size());
 
