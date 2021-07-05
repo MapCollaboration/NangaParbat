@@ -19,18 +19,18 @@ namespace NangaParbat
     ndata(0),
     Vs(0),
     qTv({}),
-      qTmap({}),
-      qTfact({}),
-      var1b({0, 0}),
-      var2b({0, 0}),
-      var3b({0, 0}),
-      IntqT(false),
-      Intv1(false),
-      Intv2(false),
-      Intv3(false),
-      PSRed(false),
-      pTMin(0),
-      etaRange({-10, 10})
+    qTmap({}),
+    qTfact({}),
+    var1b({0, 0}),
+    var2b({0, 0}),
+    var3b({0, 0}),
+    IntqT(false),
+    Intv1(false),
+    Intv2(false),
+    Intv3(false),
+    PSRed(false),
+    pTMin(0),
+    etaRange({-10, 10})
   {
   }
 
@@ -103,10 +103,10 @@ namespace NangaParbat
     _hadron("NONE"),
     _charge(0),
     _tagging({apfel::QuarkFlavour::TOTAL}),
-  _prefact(1),
-  _kin(DataHandler::Kinematics{}),
-  _labels({}),
-  _t0(t0)
+    _prefact(1),
+    _kin(DataHandler::Kinematics{}),
+    _labels({}),
+    _t0(t0)
   {
     // Retrieve kinematics
     for (auto const& dv : datafile["dependent_variables"])
@@ -139,9 +139,11 @@ namespace NangaParbat
                 else if (ql["value"].as<std::string>() == "dsigma/dxdQdz")
                   _obs = dsigma_dxdQdz;
                 else if (ql["value"].as<std::string>() == "multiplicity")
-                  _obs = dsigma_dxdQdz;
+                  _obs = multiplicity; /* --- NOT USED --- */
                 else if (ql["value"].as<std::string>() == "(dsigma/dxdzdQ2dPhT2)/dsigmaDIS")
-                  _obs = dsigma_dxdQdz;
+                  _obs = multiplicity; /* --- NOT USED --- */
+                else if (ql["value"].as<std::string>() == "FUUT")
+                  _obs = F_uut;        /* --- NOT USED --- */
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown observable.");
               }
