@@ -24,7 +24,7 @@ namespace NangaParbat
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
-      if (ifunc < 0)
+      if (ifunc < 0 || ifunc >= this->_nfuncs)
         throw std::runtime_error("[PV17::Evaluate]: function index out of range");
 
       // If the value of 'x' exceeds one returns zero
@@ -37,7 +37,7 @@ namespace NangaParbat
       const double evol = exp( - g2 * log(zeta / Q02) * b * b / 4 );
 
       // TMD PDFs
-      if (ifunc < 2)
+      if (ifunc == 0)
         {
           const double N1     = this->_pars[1];
           const double alpha  = this->_pars[2];
@@ -70,12 +70,14 @@ namespace NangaParbat
     std::string LatexFormula() const
     {
       std::string formula;
-      formula  = R"delimiter($$f_{\rm NP}(x,\zeta, b_T)=\exp\Biggl[ - g_2 \log\left(\frac{\zeta}{Q_0^2}\right) \frac{b_T^2}{4}\Biggr]\exp\Biggl[ - g_1 \frac{b_T^2}{4}\Biggr]\left[1 - \frac{\lambda g_1^2(x)}{(1 + \lambda g_1(x))}\frac{b_T^2}{4}\right]$$)delimiter";
-      formula += R"delimiter($$D_{\rm NP}(x,\zeta, b_T)=\exp\Biggl[ - g_2 \log\left(\frac{\zeta}{Q_0^2}\right) \frac{b_T^2}{4}\Biggr]\frac{\Biggl( g_3 \exp\left[ - g_3 \frac{b_T^2}{4 z^2} \right] + \frac{\lambda_F}{z^2} g_4^2 \left( 1 - g_4 \frac{b_T^2}{4 z^2} \right) \left( - g_4 \frac{b_T^2}{4 z^2 } \right)\Biggr)} {\Biggl( g_3 + g_4^2 \frac{\lambda_F}{z^2} \Biggr)}$$)delimiter";
-      formula += R"delimiter($$g_1(x) = N_1 \frac{x^{\sigma}(1-x)^{\alpha}}{\hat{x}^{\sigma}(1-\hat{x})^{\alpha}}$$)delimiter";
-      formula += R"delimiter($$g_{3,4}(z) = N_{3,4} \frac{(z^{\beta}+\delta)(1-z)^{\gamma}}{(\hat{z}^{\beta}+\delta)(1-\hat{z})^{\gamma}}$$)delimiter";
-      formula += R"delimiter($$Q_0^2 = 1\;{\rm GeV}^2$$)delimiter";
-      formula += R"delimiter($$\hat{x} = 0.1$$)delimiter";
+      formula  = R"delimiter($$f_{\rm NP}(x,\zeta, b_T)=\exp\Biggl[ - \Biggl( g_1(x) + \frac{1}{2}g_2 \log\left(\frac{\zeta}{Q_0^2}\right) \Biggr) b_T^2 \Biggr])delimiter";
+      formula += R"delimiter(\left[1  - \frac{\lambda g_1^2(x) b_T^2}{4(1 + \lambda g_1(x))}\right]$$\\)delimiter";
+      formula += R"delimiter($$D_{\rm NP}(x,\zeta, b_T)=\exp\Biggl[ - g_2 \log\left(\frac{\zeta}{Q_0^2}\right) \frac{b_T^2}{4}Biggr]
+      \frac{\Biggl( g_3 \exp\left[ - g_3 \frac{b_T^2}{4} / z^2\right] + \lambda_F / z^2 g_4^2 \left( 1 - g_4 \frac{b_T^2}{4} / z^2 \right)  \left( - g_4 \frac{b_T^2}{4} / z^2 \right)\Biggr)} {\Biggl( g_3 + \lambda_F / z^2 g_4^2 \Biggr)}$$\\)delimiter";
+      formula += R"delimiter($$g_1(x) = N_1 \frac{x^{\sigma}(1-x)^{\alpha}}{\hat{x}^{\sigma}(1-\hat{x})^{\alpha}}$$\\)delimiter";
+      formula += R"delimiter($$g_{3,4}(z) = N_{3,4} \frac{(z^{\beta}+\delta)(1-z)^{\gamma}}{(\hat{z}^{\beta}+\delta)(1-\hat{z})^{\gamma}}$$\\)delimiter";
+      formula += R"delimiter($$Q_0^2 = 1\;{\rm GeV}^2$$\\)delimiter";
+      formula += R"delimiter($$\hat{x} = 0.1$$\\)delimiter";
       formula += R"delimiter($$\hat{z} = 0.5$$)delimiter";
       return formula;
     };

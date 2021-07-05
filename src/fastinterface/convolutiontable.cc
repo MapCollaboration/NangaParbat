@@ -17,18 +17,18 @@ namespace NangaParbat
     _Vs(-1),
     _IntqT(false),
     _qTv({}),
-  _qTmap({{}}),
-  _qTfact({}),
-  _prefact(1),
-  _zOgata({}),
-  _Qg({}),
-  _xig({}),
-  _xbg({}),
-  _zg({}),
-  _cutParam({}),
-  _acc(1e-7),
-  _cuts({}),
-  _cutmask({})
+    _qTmap({{}}),
+    _qTfact({}),
+    _prefact(1),
+    _zOgata({}),
+    _Qg({}),
+    _xig({}),
+    _xbg({}),
+    _zg({}),
+    _cutParam({}),
+    _acc(1e-7),
+    _cuts({}),
+    _cutmask({})
   {
   }
 

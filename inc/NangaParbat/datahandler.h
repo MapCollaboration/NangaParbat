@@ -26,12 +26,12 @@ namespace NangaParbat
     /**
      * @brief The process enumerator
      */
-    enum Process: int {UnknownProcess = -1, DY = 0, SIDIS = 1, SIA = 2, DIA = 3, JetSIDIS = 4, pDIS = 5};
+    enum Process: int {UnknownProcess = -1, DY = 0, SIDIS = 1, SIA = 2, DIA = 3};
 
     /**
      * @brief The observable enumerator
      */
-    enum Observable: int {UnknownObservable = -1, dsigma_dxdydz = 0, dsigma_dxdQdz = 1, multiplicity = 2, F_uut = 3, g1 = 4};
+    enum Observable: int {UnknownObservable = -1, dsigma_dxdydz = 0, dsigma_dxdQdz = 1, multiplicity = 2, F_uut = 3};
 
     /**
      * @brief Structure containing the kinematic information of one
@@ -150,17 +150,6 @@ namespace NangaParbat
     std::string GetHadron() const { return _hadron; };
 
     /**
-     * @brief Function that returns the possible hadron
-     * species in the beam.
-     */
-    std::string GetBeam() const { return _beam; };
-
-    /**
-     * @brief Map of beam hadron species
-     */
-    const std::map<std::string, std::string> BeamMap{{"PR", "protons"}, {"PI", "pions"}};
-
-    /**
      * @brief Function that returns the charge of the identified final
      * state.
      */
@@ -179,15 +168,7 @@ namespace NangaParbat
     double GetPrefactor() const { return _prefact; };
 
     /**
-     * @brief Function that returns true or false according to whether
-     * the data set is normalised to some integrated cross section or
-     * not. The normalisation, if present, is assumed to be provided
-     * by the code.
-     */
-    bool GetNormalised() const { return _normalised; };
-
-    /**
-     * @Brief Function that returns the kinematic object
+     * @brief Function that returns the kinematic object
      */
     Kinematics GetKinematics() const { return _kin; };
 
@@ -200,11 +181,6 @@ namespace NangaParbat
      * @brief Function that returns the fluctuated data
      */
     std::vector<double> GetFluctutatedData() const { return _fluctuations; };
-
-    // /**
-    //  * @brief Function that returns the fluctuation number
-    //  */
-    double GetFluctuation() const { return _fluctuation; };
 
     /**
      * @brief Function that returns the sum in quadrature of the
@@ -268,11 +244,9 @@ namespace NangaParbat
     Observable                         _obs;          //!< The observable
     double                             _targetiso;    //!< Isoscalarity of the target
     std::string                        _hadron;       //!< Hadron species identified in the final state
-    std::string                        _beam;         //!< Hadron species in the beam
     double                             _charge;       //!< Charge of the identified final state
     std::vector<apfel::QuarkFlavour>   _tagging;      //!< Possible quark-tagged components
     double                             _prefact;      //!< Possible overall prefactor to multiply the theoretical predictions
-    bool                               _normalised;   //!< Whether the measurements are normalised to some "integrated" cross sections
     Kinematics                         _kin;          //!< Kinematics block
     std::vector<double>                _means;        //!< Vector of central values
     std::vector<double>                _uncor;        //!< Vector of uncorrelated uncertainties
@@ -283,7 +257,6 @@ namespace NangaParbat
     apfel::matrix<double>              _CholL;        //!< Cholesky decomposition of the covariance matrix
     std::map<std::string, std::string> _labels;       //!< Labels used for plotting
     std::vector<double>                _fluctuations; //!< Vector of fluctuated data
-    double                             _fluctuation;  //!< Number of replicaID
     std::vector<double>                _t0;           //!< Vector of t0-predictions
     std::vector<Binning>               _bins;         //!< Vector of bins (currently used only for the FF_SIDIS project)
 
