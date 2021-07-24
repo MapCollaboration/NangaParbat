@@ -11,6 +11,7 @@
 #include <algorithm> // std::transform
 #include <sys/stat.h>
 #include <fstream>
+#include <numeric> // std::accumulate
 
 #include <NangaParbat/bstar.h>
 #include <NangaParbat/nonpertfunctions.h>
@@ -88,12 +89,13 @@ int main(int argc, char* argv[])
   };
 
   // Tabulate collinear PDFs
-  const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 200, distpdf->qMin() * 0.9, distpdf->qMax(), 3, Thresholds};
+  const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabPDFs{EvolvedPDFs, 100, distpdf->qMin() * 0.9, distpdf->qMax(), 3, Thresholds};
   const auto CollPDFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabPDFs.Evaluate(mu); };
 
-  std::cout << TabPDFs.EvaluatexQ(0, 0.1, 0.9) << std::endl;
-
   /*
+  // Check
+  // std::cout << TabPDFs.EvaluatexQ(0, 0.1, 0.9) << std::endl;
+
   // Check to see which points in Q are tabulated
   for (auto f : TabPDFs.GetQGrid())
     std::cout << f << std::endl;
@@ -217,15 +219,13 @@ int main(int argc, char* argv[])
 
         // Get Q from the fist point, (Q is constant in each bin)
         const double Qav  = dh->GetBinning()[0].Qav;
-        // const double Qav  = dh->GetKinematics().var1b.first; // Q min
-        // const double Qav  = dh->GetKinematics().var1b.second; // Q max
 
         // Get z (which for HERMES changes slightly in a bin)
         std::vector<double> zv(dh->GetKinematics().ndata);
         for (int j = 0; j < dh->GetKinematics().ndata; j++)
           zv[j] = dh->GetBinning()[j].zav;
-        // zv[j] = dh->GetKinematics().var3b.first; // z min
-        // zv[j] = dh->GetKinematics().var3b.second; // z max
+        // Get average z as average value in the bin
+        const double zav = std::accumulate(zv.begin(), zv.end(), 0.) / zv.size();
 
         // Get PhT values
         std::vector<double> PhTv;
@@ -372,8 +372,8 @@ int main(int argc, char* argv[])
             const double qTm = qTv[iqT];
             const double Qm  = Qav;
             const double xm  = xav;
-            const double zm  = zv[iqT];
-            // const double zm  = zv[6];
+            // const double zm  = zv[iqT];
+            const double zm  = zav;
 
             // Scales
             const double mu  = Cf * Qm;
@@ -447,7 +447,7 @@ int main(int argc, char* argv[])
         em << YAML::Key << "ylabelpy" << YAML::Value << labels.at("ylabelpy");
         em << YAML::Key << "Q"   << YAML::Value << Qav;
         em << YAML::Key << "x"   << YAML::Value << xav;
-        em << YAML::Key << "z"   << YAML::Value << zv[0];
+        em << YAML::Key << "z"   << YAML::Value << zav;
         em << YAML::Key << "PhT"  << YAML::Value << YAML::Flow << YAML::BeginSeq;
         for (int i = 0; i < (int) PhTv.size(); i++)
           em << PhTv[i];

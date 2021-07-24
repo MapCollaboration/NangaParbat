@@ -1,6 +1,7 @@
 //
 // Author: Valerio Bertone: valerio.bertone@cern.ch
 //
+#include <numeric> // std::accumulate
 
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/generategrid.h"
@@ -31,7 +32,7 @@ namespace NangaParbat
 
     // Alpha_s (from PDFs). Get it from the LHAPDF set and tabulate it.
     _TabAlphas = std::unique_ptr<apfel::TabulateObject<double>>(new apfel::TabulateObject<double> {[&] (double const& mu) -> double{return distpdf->alphasQ(mu); },
-                                                                                                   100, distpdf->qMin() - 0.1, distpdf->qMax(), 3, _Thresholds
+                                                                                                   100, distpdf->qMin() * 0.9, distpdf->qMax(), 3, _Thresholds
                                                                                                   });
 
     // Open LHAPDF FF set
@@ -55,7 +56,7 @@ namespace NangaParbat
 
     // Tabulate collinear PDFs
     _TabPDFs = std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>
-               (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedPDFs, 100, distpdf->qMin() - 0.1, distpdf->qMax(), 3, _Thresholds});
+               (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedPDFs, 100, distpdf->qMin() * 0.9, distpdf->qMax(), 3, _Thresholds});
 
     // Define x-space grid for FFs
     std::vector<apfel::SubGrid> vsgff;
@@ -72,7 +73,7 @@ namespace NangaParbat
 
     // Tabulate collinear FFs
     _TabFFs = std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>
-              (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedFFs, 100, distff->qMin() - 0.1, distff->qMax(), 3, _Thresholds});
+              (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedFFs, 100, distff->qMin() * 0.9, distff->qMax(), 3, _Thresholds});
 
     // Initialise TMD objects for PDFs
     _TmdPdfObjs = apfel::InitializeTmdObjects(*_gpdf, _Thresholds);
@@ -474,6 +475,9 @@ namespace NangaParbat
         // Name of the dataset
         const std::string name = DHVect[i].GetName();
 
+        // Whether the observable is differential in PhT^2 or not
+        const bool dPhT2 = (name.substr(0, 7) == "COMPASS" ? true : false);
+
         // Process
         const DataHandler::Process proc = DHVect[i].GetProcess();
 
@@ -498,9 +502,23 @@ namespace NangaParbat
         const double                                 Wmin   = kin.pTMin;    // Minimum W of the final-state lepton
         const std::pair<double, double>              yRange = kin.etaRange; // Allowed y of the final-state lepton
 
-        // Retrieve average variables. Q and x are assumed to be constant in each bin.
-        const double                                 Qav    = DHVect[i].GetBinning()[0].Qav; // Get average Q from the first data point of the bin.
-        const double                                 xav    = DHVect[i].GetBinning()[0].xav; // Get average x from the first data point of the bin.
+        // Get average Q as average value in the bin
+        std::vector<double> Qv(DHVect[i].GetKinematics().ndata);
+        for (int j = 0; j < DHVect[i].GetKinematics().ndata; j++)
+          Qv[j] = DHVect[i].GetBinning()[j].Qav;
+        const double Qav = std::accumulate(Qv.begin(), Qv.end(), 0.) / Qv.size();
+
+        // Get average x as average value in the bin
+        std::vector<double> xv(DHVect[i].GetKinematics().ndata);
+        for (int j = 0; j < DHVect[i].GetKinematics().ndata; j++)
+          xv[j] = DHVect[i].GetBinning()[j].xav;
+        const double xav = std::accumulate(xv.begin(), xv.end(), 0.) / xv.size();
+
+        // Get average z as average value in the bin
+        std::vector<double> zv(DHVect[i].GetKinematics().ndata);
+        for (int j = 0; j < DHVect[i].GetKinematics().ndata; j++)
+          zv[j] = DHVect[i].GetBinning()[j].zav;
+        const double zav = std::accumulate(zv.begin(), zv.end(), 0.) / zv.size();
 
         // Tabulate initial scale TMD FFs in b in the physical basis
         std::function<apfel::Set<apfel::Distribution>(double const&)> isTMDFFs =
@@ -614,16 +632,10 @@ namespace NangaParbat
         // integrand at Q average.
         const double prefactor = DHVect[i].GetPrefactor() / (IntQ ? IncQIntegrand.integrate(Qb.first, Qb.second, 1e-5) : IncQIntegrand.integrand(Qav));
 
-        // Assume that Intz and IntqT are .true., if not stop the code.
-        // There is the possibility to not to integrate in Q.
-        // There is the possibility to not to integrate in x.
-        if (!IntqT || !Intz)
-          throw std::runtime_error("[FastInterface::ComputeTablesSIDIS]: Only fully integrated or differential in Q cross sections can be treated here.");
-
         // Ogata-quadrature object of degree one or zero according to
         // whether the cross sections have to be integrated over the
         // bins in qT or not.
-        apfel::OgataQuadrature OgataObj{1};
+        apfel::OgataQuadrature OgataObj{IntqT ? 1 : 0};
 
         // Unscaled coordinates and weights of the Ogata quadrature.
         std::vector<double> zo = OgataObj.GetCoordinates();
@@ -638,7 +650,7 @@ namespace NangaParbat
         const apfel::QGrid<double> xbgrid{xbg, idxb};
 
         // Construct QGrid-like grids for the integration in z
-        const std::vector<double> zg = GenerateGrid(nz, zb.first, zb.second, idz - 1, true);
+        const std::vector<double> zg = (Intz ? NangaParbat::GenerateGrid(nz, zb.first, zb.second, idz - 1, true) : std::vector<double> {zav});
         const apfel::QGrid<double> zgrid{zg, idz};
 
         // Number of points of the grids
@@ -797,13 +809,18 @@ namespace NangaParbat
                                       }
 
                                     // Return z integrand
-                                    return zgrid.Interpolant(0, beta, z) * pow(_QuarkSudakov(bs, muf, zetaf), 2) * xbintegralq / z / (zb.second - zb.first);
+                                    // If qT integration is not required, multiply by b = csi(0) / qT = csi(0) * z / PhT.
+                                    return zgrid.Interpolant(0, beta, z) * pow(_QuarkSudakov(bs, muf, zetaf), 2) * xbintegralq / z * (IntqT ? 1 : (z * zo[n] / qT));
                                   }
                                 };
+
                                 // Perform the integral in z
                                 double zintegral = 0;
-                                for (int iz = std::max(beta - idz, 0); iz < std::min(beta + 1, nz); iz++)
-                                  zintegral += zIntObj.integrate(zg[iz], zg[iz+1], 0);
+                                if(Intz)
+                                  for (int iz = std::max(beta - idz, 0); iz < std::min(beta + 1, nz); iz++)
+                                    zintegral += zIntObj.integrate(zg[iz], zg[iz+1], 0) / (zb.second - zb.first);
+                                else
+                                  zintegral = zIntObj.integrand(zg[beta]) * (dPhT2 ? 1 / (2 * pow(zg[beta], 2) * qT / zg[beta]) : 1 / zg[beta]);
 
                                 // Return Q integrand
                                 return Qgrid.Interpolant(0, tau, Q) * pow((arun ? _TabAlphaem->Evaluate(Q) : aref), 2) * _HardFactorSIDIS(muf) / pow(Q, 3) * zintegral / (2 * Q);
@@ -865,7 +882,7 @@ namespace NangaParbat
     //const apfel::SidisObjects so = InitializeSIDIS(*_gpdf, *_gff);
     // The following line makes it possible to exclude the so-called "mixed" terms in the calculation of the collinear structure functions
     const apfel::SidisObjects so = InitializeSIDIS(*_gpdf, *_gff, {5, 6, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22});
-    
+
     // Initialise container of vector of normalisation factors
     std::vector<double> NormFacts(DHVect.size());
 

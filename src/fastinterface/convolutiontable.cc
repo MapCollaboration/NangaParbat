@@ -156,9 +156,9 @@ namespace NangaParbat
   std::map<double, double> ConvolutionTable::ConvoluteSIDIS(std::function<double(double const&, double const&, double const&)> const& fNP,
                                                             std::function<double(double const&, double const&, double const&)> const& DNP) const
   {
-    // Compute cut qT / Q as same as PV17
-    //double SIDISqToQmax = std::min(std::min(_cutParam[0] / _zg.front(), _cutParam[1]) + _cutParam[2] / _Qg.front() / _zg.front(), 1.0);
-    double SIDISqToQmax = std::min(_cutParam[0] / _zg.front(), _cutParam[1]) + _cutParam[2] / _Qg.front() / _zg.front();
+    // Compute cut qT / Q as in PV17
+    double SIDISqToQmax = std::min(std::min(_cutParam[0] / _zg.front(), _cutParam[1]) + _cutParam[2] / _Qg.front() / _zg.front(), 1.0);
+    // double SIDISqToQmax = std::min(_cutParam[0] / _zg.front(), _cutParam[1]) + _cutParam[2] / _Qg.front() / _zg.front();
 
     // Compute predictions
     std::map<double, double> pred;
@@ -207,7 +207,6 @@ namespace NangaParbat
     double prefact2 = 1;
     if (_table["prefactor2"])
       prefact2 = _table["prefactor2"].as<double>();
-    // std::cout << "prefactor2 from convolutiontable.cc = " << prefact2 << std::endl;
 
     switch (_proc)
       {
