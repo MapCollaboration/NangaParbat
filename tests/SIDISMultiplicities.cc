@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
    const auto CollPDFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabPDFs.Evaluate(mu); };
 
    // Initialize TMD PDF objects
-   const auto TmdObjPDF = apfel::InitializeTmdObjectsLite(gpdf, Thresholds);
+   const auto TmdObjPDF = apfel::InitializeTmdObjects(gpdf, Thresholds);
 
    // Build evolved TMD PDFs
    const auto EvTMDPDFs    = BuildTmdPDFs(TmdObjPDF, CollPDFs, Alphas, PerturbativeOrder, Ci);
@@ -186,7 +186,7 @@ int main(int argc, char* argv[])
       const auto CollFFs = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabFFs.Evaluate(mu); };
 
       // Initialize TMD FF objects
-      const auto TmdObjFF  = apfel::InitializeTmdObjectsLite(gff,  Thresholds);
+      const auto TmdObjFF  = apfel::InitializeTmdObjects(gff,  Thresholds);
 
       // Build evolved TMD FFs
       const auto EvTMDFFs    = BuildTmdFFs(TmdObjFF, CollFFs, Alphas, PerturbativeOrder, Ci);

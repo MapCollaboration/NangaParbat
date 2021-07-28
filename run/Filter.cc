@@ -35,6 +35,7 @@ int main(int argc, char* argv[])
   // Include on not PDF uncertainties
   const bool pdferr = true;
 
+  /*
   fout << "E605:\n";
   fout << NangaParbat::PreprocessE605(RawDataPath, ProcessedDataPath, pdferr);
 
@@ -74,6 +75,7 @@ int main(int argc, char* argv[])
 
   fout << "COMPASS:\n";
   fout << NangaParbat::PreprocessCOMPASS(RawDataPath, ProcessedDataPath, pdferr);
+  */
 
   fout << "E537:\n";
   fout << NangaParbat::PreprocessE537(RawDataPath, ProcessedDataPath, pdferr);
