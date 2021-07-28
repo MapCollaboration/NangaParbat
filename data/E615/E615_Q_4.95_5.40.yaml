@@ -1,13 +1,13 @@
 dependent_variables:
-  - header: {title: "E615, 4.950000 < Q < 5.400000", titlepy: "E615, \\n 4.950000 < Q < 5.400000", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q_T \\rm{[GeV]$", ylabel: "#frac{d2#it{#sigma}}{d#it{p}_{T}#d#it{q}_{T}} [nb*GeV^{-2}", ylabelpy: "$\\frac{d^2\\sigma}{dp_{T} dq_{T}}[\\rm{nb}*{GeV}^{-2}]$"}
+  - header: {title: "E615 at 252 GeV, 4.950000 < Q < 5.400000", titlepy: "E615 at 252 GeV, 4.950000 < Q < 5.400000", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q_T \\rm{[GeV]$", ylabel: "#frac{d2#it{#sigma}}{d#it{p}_{T}#d#it{q}_{T}} [nb*GeV^{-2}", ylabelpy: "$\\frac{d^2\\sigma}{dp_{T} dq_{T}}[\\rm{nb}*{GeV}^{-2}]$"}
     qualifiers:
       - {name: process, value: DY}
       - {name: target_isoscalarity, value: 0.4025}
       - {name: beam, value: PI}
       - {name: prefactor, value: 1}
-      - {name: Vs, value: 252}
+      - {name: Vs, value: 21.8}
       - {name: Q, low: 4.95, high: 5.4, integrate: true}
-      - {name: y, low: 0, high: 3.9304271, integrate: true}
+      - {name: y, low: 0, high: 1.5304961, integrate: true}
     values:
       - errors:
           - {label: unc, value: 0.000527}

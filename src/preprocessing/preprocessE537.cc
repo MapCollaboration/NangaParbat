@@ -170,7 +170,10 @@ namespace NangaParbat
             for (auto const& pTs : pT)
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << pTs.second
                    << YAML::Key << "low" << YAML::Value << std::max(pTs.first, 1e-5)
-                   << YAML::Key << "factor" << YAML::Value << "###" // 1 / (pTs.first + pTs.second)
+                   /* Since for E537 the observable is differential in dqT2, a factor is needed for each pT bin
+                    to divide the predictions the by the right pT interval. Since the experimental observable is
+                    not divided by the Q bin width, we multiply the predictions by such value.  */
+                   << YAML::Key << "factor" << YAML::Value << (Qestremi.second - Qestremi.first) * (pTs.second - pTs.first) / (pow(pTs.second, 2) - pow(pTs.first, 2))
                    << YAML::EndMap;
             emit << YAML::EndSeq;
             emit << YAML::EndMap;
