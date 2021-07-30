@@ -71,9 +71,7 @@ namespace NangaParbat
     {
       std::string formula;
       formula  = R"delimiter($$f_{\rm NP}(x,\zeta, b_T)=\exp\Biggl[ - g_2 \log\left(\frac{\zeta}{Q_0^2}\right) \frac{b_T^2}{4}\Biggr]\exp\Biggl[ - g_1 \frac{b_T^2}{4}\Biggr]\left[1 - \frac{\lambda g_1^2(x)}{(1 + \lambda g_1(x))}\frac{b_T^2}{4}\right]$$)delimiter";
-      // formula += R"delimiter($$\exp\Biggl[ - g_1 \frac{b_T^2}{4}\Biggr]\left[1 - \frac{\lambda g_1^2(x)}{(1 + \lambda g_1(x))}\frac{b_T^2}{4}\right]$$)delimiter";
       formula += R"delimiter($$D_{\rm NP}(x,\zeta, b_T)=\exp\Biggl[ - g_2 \log\left(\frac{\zeta}{Q_0^2}\right) \frac{b_T^2}{4}\Biggr]\frac{\Biggl( g_3 \exp\left[ - g_3 \frac{b_T^2}{4 z^2} \right] + \frac{\lambda_F}{z^2} g_4^2 \left( 1 - g_4 \frac{b_T^2}{4 z^2} \right) \left( - g_4 \frac{b_T^2}{4 z^2 } \right)\Biggr)} {\Biggl( g_3 + g_4^2 \frac{\lambda_F}{z^2} \Biggr)}$$)delimiter";
-      // formula += R"delimiter($$\frac{\Biggl( g_3 \exp\left[ - g_3 \frac{b_T^2}{4 z^2} \right] + \frac{\lambda_F}{z^2} g_4^2 \left( 1 - g_4 \frac{b_T^2}{4 z^2} \right) \left( - g_4 \frac{b_T^2}{4 z^2 } \right)\Biggr)} {\Biggl( g_3 + g_4^2 \frac{\lambda_F}{z^2} \Biggr)}$$)delimiter";
       formula += R"delimiter($$g_1(x) = N_1 \frac{x^{\sigma}(1-x)^{\alpha}}{\hat{x}^{\sigma}(1-\hat{x})^{\alpha}}$$)delimiter";
       formula += R"delimiter($$g_{3,4}(z) = N_{3,4} \frac{(z^{\beta}+\delta)(1-z)^{\gamma}}{(\hat{z}^{\beta}+\delta)(1-\hat{z})^{\gamma}}$$)delimiter";
       formula += R"delimiter($$Q_0^2 = 1\;{\rm GeV}^2$$)delimiter";
