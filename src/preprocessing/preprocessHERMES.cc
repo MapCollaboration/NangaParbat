@@ -15,6 +15,7 @@
 #include <utility> // std::pair
 #include <stdexcept> // std::runtime_error
 #include <sstream> // std::stringstream
+#include <algorithm>  // erase-remove idiom in Linux
 
 namespace NangaParbat
 {
@@ -37,7 +38,7 @@ namespace NangaParbat
     const std::string ofolder = "HERMES";
 
     // Vector for output names
-    std::vector<std::string> filenames;
+    std::vector<std::string> datafilestrings;
 
     // Initialize naming map for the z-integration ranges (the first element is for the name of the output data file)
     // (from http://hermesmults.appspot.com/, section Balanced Binning)
@@ -54,6 +55,19 @@ namespace NangaParbat
     // Create directory
     std::string opath = ProcessedDataPath + "/" + ofolder;
     mkdir(opath.c_str(), ACCESSPERMS);
+
+    // Our cuts on z and x
+    const double zlower = 0.2;
+    const double zupper = 0.7;
+    const double xupper = 0.8;
+    const double Qlower = 1.4;
+    // const double Qlower = 1.1832;  // original PV17 cut, Q^2 > 1.4 GeV^2
+
+    std::cout << "\033[1;37mDatasets that do not pass the following cuts are commented in datasets.yaml"  << std::endl;
+    std::cout << "\033[1;37mApplied cuts:"  << std::endl;
+    std::cout << "\033[1;37m- z:  ["        << zlower << ": " << zupper << "]" << std::endl;
+    std::cout << "\033[1;37m- x:  [1e-05: " << xupper << "]\033[0m" << std::endl;
+    std::cout << "\033[1;37m- Q > " << Qlower << "\n\033[0m" << std::endl;
 
     // Loop over tables
     for (auto const& tab : tables)
@@ -131,6 +145,13 @@ namespace NangaParbat
         std::size_t pos = tab.find("mults_");
         std::string ofile = "HERMES" + targets[tab.substr(7,6)] + hadrons[tab.substr(pos + 6)];
 
+        // Comment (or not) datafile name in datafiles.yaml.
+        /* --- If a bin does not pass the cut we impose,
+        (e.g. the bin z: [0.1, 0.2] is  generally too low
+        to be included in a fit), produce the datafile
+        but comment it in datasets.yaml. --- */
+        bool comment = false;
+
         // Conditions to separate the values in the columns into different files.
         // Loop on x bin boundaries.
         for (auto const& xb : xrangelims)
@@ -153,6 +174,10 @@ namespace NangaParbat
 
                   // Get x value
                   xvalue = ix.second;
+
+                  // Apply x cut (aim: reproduce PV17)
+                  if (ix.second > xupper)
+                    comment = true;
                 }
 
             // Loop on z bin boundaries
@@ -175,8 +200,18 @@ namespace NangaParbat
                       {
                         // Fill inner map with selected values (bin)
                         fdz[i] = data["z"][i];
+
                         // Store indexes
                         indexesZ.push_back(i);
+
+                        // Apply our z cut to avoid including in the
+                        // fit too low or too high z values. The cut is
+                        // applied on the z mean values, therefore, for examples
+                        // in the case of z bin = [0.6, 0.8] with a  z = 0.7
+                        // cut, if none of the actual z mean values is above
+                        // 0.7 the bin is included, otherwise is commented.
+                        if (data["z"][i] < zlower || data["z"][i] > zupper )
+                          comment = true;
                       }
 
                     // z bin outer map
@@ -208,12 +243,31 @@ namespace NangaParbat
 
                 // Create Php vector of pairs for <bin min, bin max> and <index, exact value>.
                 // It can not be a map because there may be two points within the same Php bin
-                // and in that case there would be two equal keys (the bin boundaries)
+                // and in that case there would be two equal keys (the bin boundaries).
                 std::vector<std::pair<std::pair<double, double>, std::pair<int,double>>> Phpbinval;
+
+                bool inPhTbin = false;
+                std::vector<int> notinPhTbin;
+
                 for (int n : indexesZ)
-                  for (auto const& bin : Phplims)
-                    if (data["Php"][n] > bin.first && data["Php"][n] < bin.second)
-                      Phpbinval.push_back(std::make_pair(bin, std::make_pair(n, data["Php"][n])));
+                  {
+                    for (auto const& bin : Phplims)
+                      if (data["Php"][n] > bin.first && data["Php"][n] < bin.second)
+                        {
+                          Phpbinval.push_back(std::make_pair(bin, std::make_pair(n, data["Php"][n])));
+                          inPhTbin = true;
+                        }
+                    if(!inPhTbin)
+                      notinPhTbin.push_back(n);
+                  }
+
+                for (int n : notinPhTbin)
+                  {
+                    indexesZ.erase(std::remove(indexesZ.begin(), indexesZ.end(), n), indexesZ.end());
+                    filedata["z"].erase(n);
+                    filedata["mult"].erase(n);
+                  }
+
 
                 // Open PDF-error file
                 std::ifstream pdferr(PDFErrorFolder + ofileXZ + ".out");
@@ -262,7 +316,7 @@ namespace NangaParbat
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "z" << YAML::Key
                      << "low" << YAML::Value << zb.second.first << YAML::Key << "high" << YAML::Value << zb.second.second << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PS_reduction" << YAML::Key
-                     << "W"  << YAML::Value << 3.162277660168379   << YAML::Key << YAML::Key
+                     << "W"    << YAML::Value << 3.162277660168379   << YAML::Key << YAML::Key
                      << "ymin" << YAML::Value << 0.1 << YAML::Key << "ymax" << YAML::Value << 0.85 << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::Key << "values" << YAML::Value;
@@ -280,10 +334,8 @@ namespace NangaParbat
                         double dum, pe;
                         stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
 
-                        emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.000 << YAML::EndMap;
                         // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
                       }
-                    // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
                     // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
                     emit << YAML::EndSeq;
                     emit << YAML::Key << "value" << YAML::Value << m.second;
@@ -307,7 +359,7 @@ namespace NangaParbat
                 emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "x" << YAML::EndMap;
                 emit << YAML::Key << "values" << YAML::Value;
                 emit << YAML::BeginSeq;
-                for (int i = 0; i < (int) data.size(); i++ )
+                for (int i = 0; i < (int) indexesZ.size(); i++ )
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << xb.second.second << YAML::Key << "low" << YAML::Value << xb.second.first << YAML::Key << "value" << YAML::Value << xvalue << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::EndMap;
@@ -346,21 +398,34 @@ namespace NangaParbat
                 fout << emit.c_str() << std::endl;
                 fout.close();
 
-                filenames.push_back(ofileXZ);
+                // Map to space properly the dataset names in datasets.yaml
+                std::map<int, std::string> spaces = {{34,"         "}, {35, "        "}, {36, "       "}, {37, "      "}, {38, "     "}, {39, "    "}, {40, "   "}, {41, "  "}, {42, " "}};
+
+                // Eliminate datafiles without any points
+                if (ofileXZ == "HERMES_Deu_Km_x_0.35_0.6_z_0.8_1.1")
+                  break;
+
+                // Comment datasets that do not pass the Q2 cut
+                if (sqrt(data["Q2"][indexesZ[0]]) < Qlower)
+                  comment = true;
+
+                // Compose datafile strings
+                datafilestrings.push_back((comment ? "#  - {name: " : "  - {name: ") + ofileXZ + "," + spaces[ofileXZ.size()] + "file: " + ofileXZ + ".yaml}\n");
+
+                // Reset comment to false
+                comment = false;
+
               }
 
           }
 
       }
 
-    // Map to space properly the dataset names in datasets.yaml
-    std::map<int, std::string> spaces = {{34,"         "}, {35, "        "}, {36, "       "}, {37, "      "}, {38, "     "}, {39, "    "}, {40, "   "}, {41, "  "}, {42, " "}};
-
     // Produce outputnames to put in datasets.yaml
-    std::string outputnames;
-    for (std::string name : filenames)
-      outputnames += "  - {name: " + name + "," + spaces[name.size()] + "file: " + name + ".yaml}\n";
+    std::string outputs;
+    for (std::string names : datafilestrings)
+      outputs += names;
 
-    return outputnames;
+    return outputs;
   }
 }
