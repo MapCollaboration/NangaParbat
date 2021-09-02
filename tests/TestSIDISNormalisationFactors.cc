@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
   
   fout << "Normalisation factors:" << std::endl;
 
-  for (int i = 0; i < Facts.size(); i++)
+  for (int i = 0; i < (int) Facts.size(); i++)
     {
       const NangaParbat::DataHandler::Kinematics kin = DHVect[i].GetKinematics();
       const std::pair<double, double> Qb  = kin.var1b;    // Invariant mass interval
