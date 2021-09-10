@@ -338,12 +338,18 @@ namespace NangaParbat
       os << YAML::Key << chi2.GetNonPerturbativeFunction()->GetParameterNames()[i] << YAML::Value << chi2.GetParameters()[i];
     os << YAML::EndMap;
 
+    // Initialise counter for total number of data points
+    int tnd = 0;
+
     // Loop over the blocks
     os << YAML::Key << "Experiments" << YAML::Value << YAML::BeginSeq;
     for (int i = 0; i < (int) chi2._DSVect.size(); i++)
       {
         // Number of data points
         const int nd = chi2._ndata[i];
+
+        // Total number of data points
+        tnd = nd + tnd;
 
         // Get "DataHandler" and "ConvolutionTable" objects
         DataHandler      * dh = chi2._DSVect[i].first;
@@ -422,6 +428,9 @@ namespace NangaParbat
       }
     os << YAML::EndSeq;
     os << YAML::EndMap;
+
+    std::cout << "\033[1;32mTotal number of data points: " << tnd << "\033[0m\n" << std::endl;
+
     return os;
   }
 }
