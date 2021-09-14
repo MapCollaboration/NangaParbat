@@ -74,14 +74,20 @@ namespace NangaParbat
         int idata = 0;
 
         double qToQMax = std::min(std::min(cutParam[0] / zmin, cutParam[1]) + cutParam[2] / Qmin / zmin, 1.0);
-        // double qToQMax = std::min(cutParam[0] / zmin, cutParam[1]) + cutParam[2] / Qmin / zmin;
-
+        //double qToQMax = std::min(cutParam[0] / zmin, cutParam[1]) + cutParam[2] / Qmin / zmin;
+        // std::cout << "qToQMax from chisquare.cc = " << qToQMax << std::endl;
+        //std::cout << "param1 from chisquare.cc = " << cutParam[0] << std::endl;
+        //std::cout << "param2 from chisquare.cc = " << cutParam[1] << std::endl;
+        //std::cout << "param3 from chisquare.cc = " << cutParam[2] << std::endl;
+        //std::cout << "zmin from chisquare.cc = " << zmin << std::endl;
+        //std::cout << "Qmin from chisquare.cc = " << Qmin << std::endl;
+        //std::cout << "len(qT)" << qTv.size() << std::endl;
         for (auto const& qT : qTv)
           if (qT / Qmin / zmin < qToQMax)
             idata++;
 
         _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
-
+        //std::cout << "len(qT)" << idata << std::endl;
         // Data the pass all the cuts
         const std::valarray<bool> cm = DSBlock.second->GetCutMask();
         _ndatac.push_back(std::count(std::begin(cm), std::end(cm), true));
@@ -361,6 +367,10 @@ namespace NangaParbat
         // Get systematic shifts and associated penalty
         const std::pair<std::vector<double>, double> sp = chi2.GetSystematicShifts(i);
         const std::vector<double> shifts = sp.first;
+        // for(int i=0; i<shifts.size(); ++i)
+        //   std::cout  << shifts[i] << ' ';
+        // std::cout << "shifts from chisquare.cc = " << sp.first << std::endl;
+
 
         // Get experimental central values and uncorrelated
         // uncertainties.

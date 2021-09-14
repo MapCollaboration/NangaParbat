@@ -156,9 +156,10 @@ namespace NangaParbat
   std::map<double, double> ConvolutionTable::ConvoluteSIDIS(std::function<double(double const&, double const&, double const&)> const& fNP,
                                                             std::function<double(double const&, double const&, double const&)> const& DNP) const
   {
-    // Compute cut qT / Q as in PV17
-    double SIDISqToQmax = std::min(std::min(_cutParam[0] / _zg.front(), _cutParam[1]) + _cutParam[2] / _Qg.front() / _zg.front(), 1.0);
-    // double SIDISqToQmax = std::min(_cutParam[0] / _zg.front(), _cutParam[1]) + _cutParam[2] / _Qg.front() / _zg.front();
+    // Compute cut qT / Q as same as PV17
+    // double SIDISqToQmax = std::min(std::min(_cutParam[0] / _zg.front(), _cutParam[1]) + _cutParam[2] / _Qg.front() / _zg.front(), 1.0);
+    double SIDISqToQmax = std::min(_cutParam[0] / _zg.front(), _cutParam[1]) + _cutParam[2] / _Qg.front() / _zg.front();
+    // std::cout << "cut from convolutiontable.cc = " << SIDISqToQmax << std::endl;
 
     // Compute predictions
     std::map<double, double> pred;
@@ -207,6 +208,7 @@ namespace NangaParbat
     double prefact2 = 1;
     if (_table["prefactor2"])
       prefact2 = _table["prefactor2"].as<double>();
+    // std::cout << "prefactor2 from convolutiontable.cc = " << prefact2 << std::endl;
 
     switch (_proc)
       {
@@ -230,7 +232,9 @@ namespace NangaParbat
         pred = ConvoluteSIDIS(fNP1, fNP2);
         if (_IntqT)
           for (int i = 0; i < npred; i++)
-            vpred[i] = _prefact * prefact2 * _qTfact[i] * (pred.at(_qTmap[i][1]) - pred.at(_qTmap[i][0])) / ( _qTmap[i][1] - _qTmap[i][0]);
+            // vpred[i] = _prefact * _qTfact[i] * (pred.at(_qTmap[i][1]) - pred.at(_qTmap[i][0])) / ( _qTmap[i][1] - _qTmap[i][0]);
+             vpred[i] = _prefact * prefact2 * _qTfact[i] * (pred.at(_qTmap[i][1]) - pred.at(_qTmap[i][0])) / ( _qTmap[i][1] - _qTmap[i][0]);
+
         else
           for (int i = 0; i < npred; i++)
             vpred[i] = _prefact * prefact2 * _qTfact[i] * pred.at(_qTmap[i][1]);
