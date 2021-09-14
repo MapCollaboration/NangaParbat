@@ -14,6 +14,9 @@ Seed: '1234'
 # to produce the tables.
 qToQmax: '4'
 
+# Parameters to compute the cut qT / Q as PV17 fit.
+cutParam: [0.2, 0.5, 0.3]
+
 # Percentile cut (in percent) on the distribution of chi2's, error
 # functions and parameters used to identify outliers.
 Percentile cut: '5'
@@ -24,7 +27,8 @@ Percentile cut: '5'
 # prescriprion is enabled). They have to be as many and ordered as the
 # "Parameters" below.
 t0prescription: true
-t0parameters: [0.128, 0.285, 2.98, 0.173, 0.39, 0.212, 2.10, 0.094, 2.52, 5.29, 0.033, 0.00, 0.285]
+# t0parameters: [0.128, 0.285, 2.98, 0.173, 0.39, 0.212, 2.10, 0.094, 2.52, 5.29, 0.033, 0.001, 0.285, 0.285, 0.285, 0.285, 0.285, 0.212, 0.212, 0.033, 0.033]
+t0parameters: [0.12524167655038446, 0.26191741411073438, 0.22317790224149422, 0.21029348546169954, 5.7157831135392145, 0.03635426366754186, 0.0001, 0.21239052578779208, 0.22314034013145606, 0.31171752804222802, 0.1000278567064532, 0.65264217465718033, 0.20674409641120781, 0.21110366263702079, 0.040502107432664518, 0.031206919568077592]
 
 # Parameterisation to be fitted to data. This has to correspond to a
 # derivarion of the "Parameterisation" class.
@@ -37,16 +41,19 @@ Paramfluct: false
 # number and order of parameters matches those expected by the
 # particular parameterisation being used.
 Parameters:
-  - {name: "g2",      starting_value: 0.128, step: 0.001, fix: false}#, lower_bound: 0, upper_bound: 10}
-  - {name: "N1",      starting_value: 0.285, step: 0.003, fix: false}#, lower_bound: 0, upper_bound: 10}
-  - {name: "alpha",   starting_value: 2.98,  step: 0.030, fix: false}#, lower_bound: 0, upper_bound: 10}
-  - {name: "sigma",   starting_value: 0.173, step: 0.002, fix: false}#, lower_bound: 0, upper_bound: 10}
-  - {name: "lambda",  starting_value: 0.39,  step: 0.005, fix: true }#, lower_bound: 0, upper_bound: 10}
-  - {name: "N3",      starting_value: 0.212, step: 0.002, fix: true }#, lower_bound: 0, upper_bound: 10}
-  - {name: "beta",    starting_value: 2.10,  step: 0.02,  fix: true }#, lower_bound: 0, upper_bound: 10}
-  - {name: "delta",   starting_value: 0.094, step: 0.02,  fix: true }#, lower_bound: 0, upper_bound: 10}
-  - {name: "gamma",   starting_value: 2.52,  step: 0.001, fix: true }#, lower_bound: 0, upper_bound: 10}
-  - {name: "lambdaF", starting_value: 5.29,  step: 0.05,  fix: true }#, lower_bound: 0, upper_bound: 10}
-  - {name: "N3b",     starting_value: 0.033, step: 0.001, fix: true }#, lower_bound: 0, upper_bound: 10}
-  - {name: "g2b",     starting_value: 0.0,   step: 0.001, fix: true }#, lower_bound: 0, upper_bound: 10}
-  - {name: "N1b",     starting_value: 0.285, step: 0.001, fix: true }#, lower_bound: 0, upper_bound: 10}
+  - {name: g2, starting_value: 0.12524167655038446, step: 0.001, fix: false}
+  - {name: N1, starting_value: 0.26191741411073438, step: 0.003, fix: false}
+  - {name: lambda, starting_value: 0.22317790224149422, step: 0.005, fix: false}
+  - {name: N3, starting_value: 0.21029348546169954, step: 0.002, fix: false}
+  - {name: lambdaF, starting_value: 5.7157831135392145, step: 0.05, fix: false}
+  - {name: N3b, starting_value: 0.03635426366754186, step: 0.001, fix: false}
+  - {name: g2b, starting_value: 0.0001, step: 0.001, fix: false}
+  - {name: N1b, starting_value: 0.21239052578779208, step: 0.001, fix: false}
+  - {name: N11, starting_value: 0.22314034013145606, step: 0.001, fix: false}
+  - {name: N12, starting_value: 0.31171752804222802, step: 0.001, fix: false}
+  - {name: N1B1, starting_value: 0.1000278567064532, step: 0.001, fix: false}
+  - {name: N1B2, starting_value: 0.65264217465718033, step: 0.001, fix: false}
+  - {name: N31, starting_value: 0.20674409641120781, step: 0.001, fix: false}
+  - {name: N32, starting_value: 0.21110366263702079, step: 0.001, fix: false}
+  - {name: N3B1, starting_value: 0.040502107432664518, step: 0.001, fix: false}
+  - {name: N3B2, starting_value: 0.031206919568077592, step: 0.001, fix: false}
