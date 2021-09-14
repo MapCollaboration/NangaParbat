@@ -17,7 +17,8 @@ namespace NangaParbat
   class MAP21test: public NangaParbat::Parameterisation
   {
   public:
-    MAP21test(): Parameterisation{"MAP21test", 2, std::vector<double>{0.12840E+00, 0.28516E+00, 0.29755E+01, 0.17293E+00, 0.39432E+00, 2.12062E-01, 0.21012E+01, 0.93554E-01, 0.25246E+01, 0.52915E+01, 3.37975E-02, 0.0, 0.28516E+00}} { };
+    // MAP21test(): Parameterisation{"MAP21test", 2, std::vector<double>{0.12840E+00, 0.28516E+00, 0.29755E+01, 0.17293E+00, 0.39432E+00, 2.12062E-01, 0.21012E+01, 0.93554E-01, 0.25246E+01, 0.52915E+01, 3.37975E-02, 0.0, 0.28516E+00, 0.28516E+00, 3.37975E-02, 0.39432E+00, 0.52915E+01, 0.29755E+01, 0.29755E+01, 0.17293E+00, 0.17293E+00, 0.21012E+01, 0.21012E+01, 0.93554E-01, 0.93554E-01, 0.25246E+01, 0.25246E+01}} { };
+    MAP21test(): Parameterisation{"MAP21test", 2, std::vector<double>{0.12840E+00, 0.28516E+00, 0.29755E+01, 0.17293E+00, 0.39432E+00, 2.12062E-01, 0.21012E+01, 0.93554E-01, 0.25246E+01, 0.52915E+01, 3.37975E-02, 0.28516E+00, 0.28516E+00, 3.37975E-02, 0.39432E+00, 0.52915E+01, 0.29755E+01, 0.29755E+01, 0.17293E+00, 0.17293E+00, 0.21012E+01, 0.21012E+01, 0.93554E-01, 0.93554E-01, 0.25246E+01, 0.25246E+01, 0.01}} { };
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
@@ -30,44 +31,63 @@ namespace NangaParbat
 
       // Evolution
       const double g2   = this->_pars[0];
-      const double g2B  = this->_pars[11];
+      const double g2B  = this->_pars[26];
       const double b2 = b * b;
       const double lnz    = log(zeta / _Q02);
       const double NPevol = exp( - ( g2 * b2 + g2B * b2 * b2 ) * lnz / 4 );
+      // const double NPevol = exp( - ( g2 * b2 ) * lnz / 4 );
 
 
       // TMD PDFs
       if (ifunc == 0)
         {
-          const double N1     = this->_pars[1];
-          const double alpha  = this->_pars[2];
-          const double sigma  = this->_pars[3];
-          const double lambda = this->_pars[4];
-          const double N1B    = this->_pars[12];
-          const double xhat   = 0.1;
-          const double g1     = N1 * pow(x / xhat, sigma) * pow((1 - x) / (1 - xhat), alpha);
-          const double g1B    = N1B * pow(x / xhat, sigma) * pow((1 - x) / (1 - xhat), alpha);
-          return NPevol * ( g1 * exp( - g1 * pow(b / 2, 2))
-                            +  lambda  * pow(g1B, 2) * ( 1 - g1B * pow(b / 2, 2)) * exp( - g1B * pow(b / 2, 2)) )
-                 / ( g1 +  lambda  * pow(g1B, 2) );
+          const double N1      = this->_pars[1];
+          const double alpha1  = this->_pars[2];
+          const double alpha2  = this->_pars[16];
+          const double alpha3  = this->_pars[17];
+          const double sigma1  = this->_pars[3];
+          const double sigma2  = this->_pars[18];
+          const double sigma3  = this->_pars[19];
+          const double lambda  = this->_pars[4];
+	        const double N1B     = this->_pars[11];
+          const double N1C     = this->_pars[12];
+          const double lambda2 = this->_pars[14];
+          const double xhat    = 0.1;
+          const double g1      = N1 * pow(x / xhat, sigma1) * pow((1 - x) / (1 - xhat), pow(alpha1, 2));
+	        const double g1B     = N1B * pow(x / xhat, sigma2) * pow((1 - x) / (1 - xhat), pow(alpha2, 2));
+          const double g1C     = N1C * pow(x / xhat, sigma3) * pow((1 - x) / (1 - xhat), pow(alpha3, 2));
+	        return NPevol * ( g1 * exp( - g1 * pow(b / 2, 2))
+                          +  lambda  * pow(g1B, 2) * ( 1 - g1B * pow(b / 2, 2)) * exp( - g1B * pow(b / 2, 2)) + g1C * pow(lambda2, 2) * exp( - g1C * pow(b / 2, 2)))
+                 / ( g1 +  lambda  * pow(g1B, 2) + g1C * pow(lambda2, 2));
         }
       // TMD FFs
       else
         {
-          const double N3      = this->_pars[5];
-          const double beta    = this->_pars[6];
-          const double delta   = this->_pars[7];
-          const double gamma   = this->_pars[8];
-          const double lambdaF = this->_pars[9];
-          const double N3B     = this->_pars[10];
-          const double zhat    = 0.5;
-          const double cmn     = ( ( pow(x, beta) + delta ) / ( pow(zhat, beta) + delta ) ) * pow((1 - x) / (1 - zhat), gamma);
-          const double g3      = N3 * cmn;
-          const double g3B     = N3B * cmn;
-          const double z2      = x * x;
+          const double N3        = this->_pars[5];
+          const double beta1     = this->_pars[6];
+          const double beta2     = this->_pars[20];
+          const double beta3     = this->_pars[21];
+          const double delta1    = this->_pars[7];
+          const double delta2    = this->_pars[22];
+          const double delta3    = this->_pars[23];
+          const double gamma1    = this->_pars[8];
+          const double gamma2    = this->_pars[24];
+          const double gamma3    = this->_pars[25];
+          const double lambdaF   = this->_pars[9];
+          const double N3B       = this->_pars[10];
+          const double N3C       = this->_pars[13];
+          const double lambdaF2  = this->_pars[15];
+          const double zhat      = 0.5;
+          const double cmn1      = ( ( pow(x, beta1) + pow(delta1, 2) ) / ( pow(zhat, beta1) + pow(delta1, 2) ) ) * pow((1 - x) / (1 - zhat), pow(gamma1, 2));
+          const double cmn2      = ( ( pow(x, beta2) + pow(delta2, 2) ) / ( pow(zhat, beta2) + pow(delta2, 2) ) ) * pow((1 - x) / (1 - zhat), pow(gamma2, 2));
+          const double cmn3      = ( ( pow(x, beta3) + pow(delta3, 2) ) / ( pow(zhat, beta3) + pow(delta3, 2) ) ) * pow((1 - x) / (1 - zhat), pow(gamma3, 2));
+          const double g3       = N3 * cmn1;
+          const double g3B      = N3B * cmn2;
+          const double g3C      = N3C * cmn3;
+          const double z2       = x * x;
           return NPevol * ( g3 * exp( - g3 * pow(b / 2, 2) / z2 )
-                            + ( lambdaF / z2 ) * pow(g3B, 2) * ( 1 - g3B * pow(b / 2, 2) / z2 ) * exp( - g3B * pow(b / 2, 2) / z2 ) )
-                 / ( g3 + ( lambdaF / z2 ) * pow(g3B, 2) );
+                          + ( lambdaF / z2 ) * pow(g3B, 2) * ( 1 - g3B * pow(b / 2, 2) / z2 ) * exp( - g3B * pow(b / 2, 2) / z2 ) + g3C * lambdaF2 * exp( - g3C * pow(b / 2, 2)) )
+                 / ( g3 + ( lambdaF / z2 ) * pow(g3B, 2) + g3C * lambdaF2 );
         }
     };
 
@@ -90,17 +110,32 @@ namespace NangaParbat
     {
       return {R"delimiter($g_2$)delimiter",
               R"delimiter($N_1$)delimiter",
-              R"delimiter($\alpha$)delimiter",
-              R"delimiter($\sigma$)delimiter",
+              R"delimiter($\alpha1$)delimiter",
+              R"delimiter($\sigma1$)delimiter",
               R"delimiter($\lambda$)delimiter",
               R"delimiter($N_3$)delimiter",
-              R"delimiter($\beta$)delimiter",
-              R"delimiter($\delta$)delimiter",
-              R"delimiter($\gamma$)delimiter",
+              R"delimiter($\beta1$)delimiter",
+              R"delimiter($\delta1$)delimiter",
+              R"delimiter($\gamma1$)delimiter",
               R"delimiter($\lambda_F$)delimiter",
               R"delimiter($N_{3B}$)delimiter",
-              R"delimiter($g_{2B}$)delimiter",
-              R"delimiter($N_{1B}$)delimiter"};
+              // R"delimiter($g_{2B}$)delimiter",
+              R"delimiter($N_{1B}$)delimiter",
+              R"delimiter($N_{1C}$)delimiter",
+              R"delimiter($N_{3C}$)delimiter",
+              R"delimiter($\lambda2$)delimiter",
+              R"delimiter($\lambdaF2$)delimiter",
+              R"delimiter($\alpha2$)delimiter",
+              R"delimiter($\alpha3$)delimiter",
+              R"delimiter($\sigma2$)delimiter",
+              R"delimiter($\sigma3$)delimiter",
+              R"delimiter($\beta2$)delimiter",
+              R"delimiter($\beta3$)delimiter",
+              R"delimiter($\delta2$)delimiter",
+              R"delimiter($\delta3$)delimiter",
+              R"delimiter($\gamma2$)delimiter",
+              R"delimiter($\gamma3$)delimiter",
+              R"delimiter($\g2B$)delimiter"};
     };
 
     std::string GetDescription() const
@@ -110,5 +145,5 @@ namespace NangaParbat
 
   private:
     const double _Q02  = 1;
-  };
+   };
 }
