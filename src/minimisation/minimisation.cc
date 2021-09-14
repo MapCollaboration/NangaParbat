@@ -25,9 +25,18 @@ namespace NangaParbat
   {
     std::cout << "\nMinimising with Minuit...\n" << std::endl;
 
+    // Minimisation strategy. Three levels of strategies:
+    // low (0),  medium (1), high (>=2)
+    ROOT::Minuit2::MnStrategy str(0);
+    // str.SetLowStrategy();
+    // str.SetMediumStrategy();
+    // str.SetHighStrategy();
+
     // Create Minuit parameters with name, starting value, step and,
     // when available, upper and lower bounds.
-    ROOT::Minuit2::MnUserParameters upar;
+    ROOT::Minuit2::MnUserParameterState upar;
+    // ROOT::Minuit2::MnUserParameters upar;
+
     for (auto const p : parameters)
       {
         // If the GSL random-number generator object is NULL use the
@@ -57,13 +66,16 @@ namespace NangaParbat
         NangaParbat::FcnMinuitGrad fcn{chi2};
 
         // Create MIGRAD minimiser
-        ROOT::Minuit2::MnMigrad minimiser{fcn, upar};
+        ROOT::Minuit2::MnMigrad minimiser{fcn, upar, str};
 
         // Increase verbosity of Minuit
         minimiser.Minimizer().Builder().SetPrintLevel(2);
 
+        // Define tolerance for Expected Distance to Minimum
+        const double toler = 0.1;
+
         // Minimise
-        ROOT::Minuit2::FunctionMinimum min = minimiser(10000);
+        ROOT::Minuit2::FunctionMinimum min = minimiser(10000, toler);
 
         // Output of Minuit
         std::cout << "minimum: " << min << std::endl;
@@ -81,13 +93,16 @@ namespace NangaParbat
         NangaParbat::FcnMinuit fcn{chi2};
 
         // Create MIGRAD minimiser
-        ROOT::Minuit2::MnMigrad minimiser{fcn, upar};
+        ROOT::Minuit2::MnMigrad minimiser{fcn, upar, str};
 
         // Increase verbosity of Minuit
-        minimiser.Minimizer().Builder().SetPrintLevel(2);
+        minimiser.Minimizer().Builder().SetPrintLevel(3);
+
+        // Define tolerance for Expected Distance to Minimum
+        const double toler = 1e+04;
 
         // Minimise
-        ROOT::Minuit2::FunctionMinimum min = minimiser(10000);
+        ROOT::Minuit2::FunctionMinimum min = minimiser(10000, toler);
 
         // Output of Minuit
         std::cout << "minimum: " << min << std::endl;
