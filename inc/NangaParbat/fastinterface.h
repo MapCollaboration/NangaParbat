@@ -91,16 +91,21 @@ namespace NangaParbat
     std::unique_ptr<apfel::TabulateObject<double>>                                              _TabAlphaem;      //!< Fine-structure coupling
     std::map<int, apfel::TmdObjects>                                                            _TmdPdfObjs;      //!< Space-like TMD objects
     std::map<int, apfel::TmdObjects>                                                            _TmdFfObjs;       //!< Time-like TMD objects
+    std::map<int, apfel::TmdObjects>                                                            _TmdFfObjs2;      //!< Time-like TMD objects
     std::unique_ptr<const apfel::Grid>                                                          _gpdf;            //!< APFEL x-space grid for PDFs
-    std::unique_ptr<const apfel::Grid>                                                          _gpdf2;           //!< APFEL x-space grid for PDFs
+    std::unique_ptr<const apfel::Grid>                                                          _gpdf2;           //!< APFEL x-space grid for sencond set of PDFs
     std::unique_ptr<const apfel::Grid>                                                          _gff;             //!< APFEL x-space grid for FFs
+    std::unique_ptr<const apfel::Grid>                                                          _gff2;            //!< APFEL x-space grid for second set of FFs
     std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>                     _TabPDFs;         //!< Collinear PDFs
     std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>                     _TabPDFs2;        //!< Collinear PDFs2
     std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>                     _TabFFs;          //!< Collinear FFs
+    std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>                     _TabFFs2;          //!< Collinear FFs2
     std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> _EvTMDPDFs;       //!< TMD PDFs
     std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> _EvTMDFFs;        //!< TMD FFs
+    std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> _EvTMDFFs2;       //!< TMD FFs2
     std::function<apfel::Set<apfel::Distribution>(double const&)>                               _MatchTMDPDFs;    //!< TMD PDFs w/o/ Sudakov evolution
     std::function<apfel::Set<apfel::Distribution>(double const&)>                               _MatchTMDFFs;     //!< TMD FFs w/o/ Sudakov evolution
+    std::function<apfel::Set<apfel::Distribution>(double const&)>                               _MatchTMDFFs2;   //!< TMD FFs2 w/o/ Sudakov evolution
     std::function<double(double const&, double const&, double const&)>                          _QuarkSudakov;    //!< Quark evolution factor
     std::function<double(double const&)>                                                        _HardFactorDY;    //!< Hard factor for Drell-Yan
     std::function<double(double const&)>                                                        _HardFactorSIDIS; //!< Hard factor for SIDIS
