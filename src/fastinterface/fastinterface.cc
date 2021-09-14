@@ -1118,6 +1118,8 @@ namespace NangaParbat
 
           // Put together double object
           apfel::DoubleObject<apfel::Distribution> distqq;
+          apfel::DoubleObject<apfel::Distribution> distqq2;
+
 
           // Adjust up and down PDFs according to the target isoscalarity
           const apfel::Distribution dw  = frp * dPDF.at(sign)   + frn * dPDF.at(sign*2);
