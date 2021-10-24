@@ -145,7 +145,7 @@ namespace NangaParbat
                 else if (ql["value"].as<std::string>() == "FUUT")
                   _obs = F_uut;
                 else if (ql["value"].as<std::string>() == "opposite_sign_ratio")
-		  _obs = opposite_sign_ratio;
+                  _obs = opposite_sign_ratio;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown observable.");
               }
