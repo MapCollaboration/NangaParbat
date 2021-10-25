@@ -238,11 +238,11 @@ namespace NangaParbat
                 if (err["label"].as<std::string>() == "unc")
                   u += pow(err["value"].as<double>(), 2);
 
-                // Additive correlated uncertities
+                // Additive correlated uncertainties
                 if (err["label"].as<std::string>() == "add")
                   a.push_back(err["value"].as<double>());
 
-                // Multiplicative correlated uncertities
+                // Multiplicative correlated uncertainties
                 if (err["label"].as<std::string>() == "mult")
                   m.push_back(err["value"].as<double>());
               }
