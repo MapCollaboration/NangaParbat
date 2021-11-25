@@ -20,6 +20,7 @@ namespace NangaParbat
     _qTmap({{}}),
     _qTfact({}),
     _prefact(1),
+    _prefact2(1),
     _zOgata({}),
     _Qg({}),
     _xig({}),
@@ -43,12 +44,12 @@ namespace NangaParbat
     _qTmap(table["qT_map"].as<std::vector<std::vector<double>>>()),
     _qTfact(table["bin_factors"].as<std::vector<double>>()),
     _prefact(table["prefactor"].as<double>()),
+    _prefact2(table["prefactor2"] ? table["prefactor2"].as<double>() : 1),
     _zOgata(table["Ogata_coordinates"].as<std::vector<double>>()),
     _Qg(table["Qgrid"].as<std::vector<double>>()),
     _cutParam(cutParam),
     _acc(acc),
-    _cuts(cuts),
-    _table(table)
+    _cuts(cuts)
   {
     // Compute total cut mask as a product of single masks
     _cutmask.resize(_qTfact.size(), true);
@@ -204,10 +205,6 @@ namespace NangaParbat
     std::vector<double> vpred(npred);
     std::map<double, double> pred;
 
-    double prefact2 = 1;
-    if (_table["prefactor2"])
-      prefact2 = _table["prefactor2"].as<double>();
-
     switch (_proc)
       {
       // Drell-Yan: two PDFs
@@ -230,10 +227,10 @@ namespace NangaParbat
         pred = ConvoluteSIDIS(fNP1, fNP2);
         if (_IntqT)
           for (int i = 0; i < npred; i++)
-            vpred[i] = _prefact * prefact2 * _qTfact[i] * (pred.at(_qTmap[i][1]) - pred.at(_qTmap[i][0])) / ( _qTmap[i][1] - _qTmap[i][0]);
+            vpred[i] = _prefact * _prefact2 * _qTfact[i] * (pred.at(_qTmap[i][1]) - pred.at(_qTmap[i][0])) / ( _qTmap[i][1] - _qTmap[i][0]);
         else
           for (int i = 0; i < npred; i++)
-            vpred[i] = _prefact * prefact2 * _qTfact[i] * pred.at(_qTmap[i][1]);
+            vpred[i] = _prefact * _prefact2 * _qTfact[i] * pred.at(_qTmap[i][1]);
         break;
 
       // e+e- annihilation into two hadrons: two FFs (Not present
