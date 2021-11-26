@@ -34,7 +34,7 @@ namespace NangaParbat
       const double g2B  = this->_pars[26];
       const double b2 = b * b;
       const double lnz    = log(zeta / _Q02);
-      const double NPevol = exp( - ( g2 * b2 + g2B * b2 * b2 ) * lnz / 4 );
+      const double NPevol = exp( - ( pow(g2, 2) * b2 + g2B * b2 * b2 ) * lnz / 4 );
       // const double NPevol = exp( - ( g2 * b2 ) * lnz / 4 );
 
 
