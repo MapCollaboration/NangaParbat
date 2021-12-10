@@ -1,6 +1,7 @@
 set(preprocessing_source
   preprocessE288.cc
   preprocessE605.cc
+  preprocessE772.cc
   preprocessCDFRunI.cc
   preprocessCDFRunII.cc
   preprocessD0RunI.cc
@@ -12,10 +13,11 @@ set(preprocessing_source
   preprocessLHCb8TeV.cc
   preprocessLHCb13TeV.cc
   preprocessCMS7TeV.cc
-  preprocessCMS8TeV.cc 
+  preprocessCMS8TeV.cc
   preprocessCMS13TeV.cc
   preprocessATLAS7TeV.cc
   preprocessATLAS8TeV.cc
+  preprocessATLAS13TeV.cc
   preprocessEICPseudodata.cc
   preprocessCOMPASS.cc
   preprocessHERMES.cc

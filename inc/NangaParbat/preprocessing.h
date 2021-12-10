@@ -27,6 +27,15 @@ namespace NangaParbat
   std::string PreprocessE605(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = true);
 
   /**
+   * @brief Preprocessing of the E772 datasets
+   * @param RawDataPath: the path to the raw-data folder
+   * @param ProcessedDataPath: the path to the folder where the processed data will be stored
+   * @param PDFError: whether PDF uncertainties have to be included in the processed datafiles (default: true)
+   * @return the coordinate string
+   */
+  std::string PreprocessE772(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = false);
+
+  /**
    * @brief Preprocessing of the STAR dataset at 510 GeV
    * @param RawDataPath: the path to the raw-data folder
    * @param ProcessedDataPath: the path to the folder where the processed data will be stored
@@ -134,6 +143,15 @@ namespace NangaParbat
    */
   std::string PreprocessCMS8TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = true);
 
+    /**
+     * @brief Preprocessing of the CMS dataset at 13 TeV
+     * @param RawDataPath: the path to the raw-data folder
+     * @param ProcessedDataPath: the path to the folder where the processed data will be stored
+     * @param PDFError: whether PDF uncertainties have to be included in the processed datafiles (default: true)
+     * @return the coordinate string
+     */
+  std::string PreprocessCMS13TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = false);
+
   /**
    * @brief Preprocessing of the ATLAS dataset at 7 TeV
    * @param RawDataPath: the path to the raw-data folder
@@ -153,6 +171,15 @@ namespace NangaParbat
   std::string PreprocessATLAS8TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = true);
 
   /**
+   * @brief Preprocessing of the ATLAS dataset at 13 TeV
+   * @param RawDataPath: the path to the raw-data folder
+   * @param ProcessedDataPath: the path to the folder where the processed data will be stored
+   * @param PDFError: whether PDF uncertainties have to be included in the processed datafiles (default: true)
+   * @return the coordinate string
+   */
+  std::string PreprocessATLAS13TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = false);
+
+  /**
    * @brief Preprocessing of the EIC pseudodata
    * @param RawDataPath: the path to the raw-data folder
    * @param ProcessedDataPath: the path to the folder where the processed data will be stored
@@ -166,18 +193,20 @@ namespace NangaParbat
    * @param RawDataPath: the path to the raw-data folder
    * @param ProcessedDataPath: the path to the folder where the processed data will be stored
    * @param PDFError: whether PDF uncertainties have to be included in the processed datafiles (default: true)
+   * @param FFError: whether FF uncertainties have to be included in the processed datafiles (default: true)
    * @return the coordinate string
    */
-  std::string PreprocessHERMES(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = true);
+  std::string PreprocessHERMES(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = true, bool const& FFError = true);
 
   /**
    * @brief Preprocessing of the COMPASS multiplicities
    * @param RawDataPath: the path to the raw-data folder
    * @param ProcessedDataPath: the path to the folder where the processed data will be stored
    * @param PDFError: whether PDF uncertainties have to be included in the processed datafiles (default: true)
+   * @param FFError: whether FF uncertainties have to be included in the processed datafiles (default: true)
    * @return the coordinate string
    */
-  std::string PreprocessCOMPASS(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = true);
+  std::string PreprocessCOMPASS(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = true, bool const& FFError = true);
 
   /**
    * @brief Preprocessing of the E537 data
