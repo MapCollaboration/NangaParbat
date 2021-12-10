@@ -134,52 +134,49 @@ namespace NangaParbat
             emit << YAML::EndSeq;
             emit << YAML::Key << "values" << YAML::Value;
             emit << YAML::BeginSeq;
-
-            const int obs = dv["values"].size();
-            // std::cout << "obs: " << obs << std::endl;
-
-            std::vector<int> bins;
-            // std::string bins[obs];
-
-            for (int i = 0; i < obs; i++)
+            for (auto const& v : dv["values"])
               {
                 // Now read PDF errors
                 getline(pdferr, line);
                 std::stringstream stream(line);
                 double dum, pe = 0;
-                // stream >> dum >> dum >> dum >> dum >> dum >> pe >> dum;
-                stream >> dum >> dum >> dum >> dum >> pe >> dum;
+                stream >> dum >> dum >> dum >> dum >> dum >> pe >> dum;
 
-                if (dv["values"][i]["value"].as<std::string>() != "-")
+                if (v["value"].as<std::string>() != "-")
                   {
-                    bins.push_back(1);
-                    const double val = dv["values"][i]["value"].as<double>();
+                    const double val = v["value"].as<double>();
                     // const double uncsys = 0.10 * val;
                     // // sum of statistical and systematic errors
                     // const double unc = sqrt( pow(v["errors"][0]["symerror"].as<double>(), 2) + pow(uncsys, 2) );
                     emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
                     // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << unc << YAML::EndMap;
-                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << dv["values"][i]["errors"][0]["symerror"].as<double>() << YAML::EndMap;
-                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.1 * val << YAML::EndMap;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << v["errors"][0]["symerror"].as<double>() << YAML::EndMap;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.1 << YAML::EndMap;
                     if (PDFError)
-                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * 0.8 << YAML::EndMap;
-                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * val * 0.6 << YAML::EndMap;
+                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
                     // [TEMPORARY] Simulation of the correlated error associated to collinear PDFs
-                    // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.10 << YAML::EndMap;
-                    //[TEMPORARY] trial of introduction of new theoretical error
-                    // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.005 * val << YAML::EndMap;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.10 << YAML::EndMap;
                     emit << YAML::EndSeq;
                     emit << YAML::Key << "value" << YAML::Value << val;
                     emit << YAML::EndMap;
                   }
 
-                if (dv["values"][i]["value"].as<std::string>() == "-")
+                if (v["value"].as<std::string>() == "-")
                   {
-                    bins.push_back(0);
+                    const double val = 0;
+                    const double unc = 0.1;
+                    // const double unc = v["errors"][0]["symerror"].as<double>();
+                    emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << unc << YAML::EndMap;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.1 << YAML::EndMap;
+                    // Simulation of the correlated error associated to collinear PDFs
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.10 << YAML::EndMap;
+                    emit << YAML::EndSeq;
+                    emit << YAML::Key << "value" << YAML::Value << val;
+                    emit << YAML::EndMap;
                   }
 
               }
-
             emit << YAML::EndSeq;
             emit << YAML::EndMap;
             emit << YAML::EndSeq;
@@ -190,12 +187,9 @@ namespace NangaParbat
             emit << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PT" << YAML::Key << "units" << YAML::Value << "GEV" << YAML::EndMap;
             emit << YAML::Key << "values" << YAML::Value;
             emit << YAML::BeginSeq;
-            for (int j =0; j < (int) bins.size(); j++)
-              if (bins[j] == 1)
-                {
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << qTb[j].second
-                       << YAML::Key << "factor" << YAML::Value << 1. / qTb[j].second << YAML::EndMap;
-                }
+            for (auto const& qT : qTb)
+              emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << qT.second
+                   << YAML::Key << "factor" << YAML::Value << 1. / qT.second << YAML::EndMap;
             emit << YAML::EndSeq;
             emit << YAML::EndMap;
             emit << YAML::EndSeq;
