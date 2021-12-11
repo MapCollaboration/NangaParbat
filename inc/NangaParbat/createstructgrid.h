@@ -30,7 +30,7 @@ namespace NangaParbat
    * F_UUT, according to the input string.
    * @param pf: whether F_UUT or others (not implemented yet)
    */
-  FourDGrid Inter4DGrid(std::string const& pf)
+  FourDGrid Inter4DGrid(std::string const&)
   {
     FourDGrid grid{};
     grid.Qg = std::vector<double>
@@ -122,7 +122,7 @@ namespace NangaParbat
                                                 std::string const& GridTMDPDFfolder,
                                                 std::string const& GridTMDFFfolder,
                                                 int         const& repnumber,
-                                                std::string const& pf,
+                                                std::string const&,
                                                 FourDGrid   const& fdg,
                                                 int         const& qToQcut = 5);
 

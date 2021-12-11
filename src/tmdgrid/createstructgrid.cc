@@ -118,7 +118,7 @@ namespace NangaParbat
                                                 std::string const& GridTMDPDFfolder,
                                                 std::string const& GridTMDFFfolder,
                                                 int         const& repnumber,
-                                                std::string const& pf,
+                                                std::string const&,
                                                 FourDGrid   const& fdg,
                                                 int         const& qToQcut)
   {
@@ -186,9 +186,9 @@ namespace NangaParbat
   //_________________________________________________________________________________
   std::unique_ptr<YAML::Emitter> EmitStructGridDirect(std::string const& FitDirectory,
                                                       int         const& repnumber,
-                                                      std::string const& pf,
+                                                      std::string const&,
                                                       FourDGrid   const& fdg,
-                                                      int         const& qToQcut)
+                                                      int         const&)
   {
     // Timer
     apfel::Timer t;
@@ -386,14 +386,14 @@ namespace NangaParbat
   std::unique_ptr<YAML::Emitter> EmitStructInfo(std::string      const& GridsDirectory,
                                                 std::string      const& GridTMDPDFfolder,
                                                 std::string      const& GridTMDFFfolder,
-                                                YAML::Node       const& config,
+                                                YAML::Node       const&,
                                                 int              const& NumMembers,
                                                 std::string      const& pf,
                                                 FourDGrid        const& fdg,
                                                 std::vector<int> const& Flavors,
                                                 std::string      const& SetDesc,
                                                 std::string      const& Target,
-                                                std::string      const& Hadron,
+                                                std::string      const&,
                                                 std::string      const& Authors,
                                                 std::string      const& Reference,
                                                 std::string      const& SetIndex,
