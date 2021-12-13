@@ -1,0 +1,103 @@
+# Collinear PDF set and member to be used for the generation of the
+# tables. They are assumed to be in the LHAPDF format.
+pdfset:
+  name: "MMHT2014nnlo68cl"
+  member: 0
+
+# Collinear PDF set and member to be used for the generation of the
+# collinear cross section for the SIDIS normalization factors.
+# They are assumed to be in the LHAPDF format.
+pdfset2:
+  name: "MMHT2014nnlo68cl"
+  member: 0
+
+# Collinear FF set and member to be used for the generation of the
+# tables. They are assumed to be in the LHAPDF format.
+ffset:
+  name: "DSS17_NLO_KaonMinus"
+  member: 0
+
+# Collinear FF set and member to be used for the generation of the
+# tables. They are assumed to be in the LHAPDF format.
+ffset2:
+  name: "DSS14_NLO_Pim"
+  member: 0
+
+# Name of the b* prescription. This name has to correspond to a
+# function in inc/NangaParbat/bstar.h
+bstar: bstarmin
+
+# Perturbative order of the computation. 0: LL, 1: NLL, 2: NNLL, 3:
+# NNNLL, -1: NLL', -2: NNLL'
+PerturbativeOrder: 3
+
+# Initial and final scale-variation factors around mub = 2e^{-gamma_E}
+# / b and Q, respectively.
+TMDscales:
+  Ci: 1
+  Cf: 1
+
+# Reference value of alpha_em.
+alphaem:
+  aref: 0.00776578395589
+  Qref: 91.1876
+  run: true
+
+# Parameters of the x-space subgrids on which collinear PDFs are
+# tabulated.
+xgridpdf:
+  - [60, 1e-4, 3]
+  - [60, 1e-1, 3]
+  - [50, 6e-1, 3]
+  - [50, 8e-1, 3]
+
+# Parameters of the x-space subgrids on which collinear FFs are
+# tabulated.
+xgridff:
+  - [60, 1e-2, 3]
+  - [50, 6e-1, 3]
+  - [50, 8e-1, 3]
+
+# Maximum number of Ogata-quadrature points (no more than 1000).
+nOgata: 200
+
+# Number of points, interpolation degree, and integration accuracy of
+# the grid in Q.
+Qgrid:
+  n: 4
+  InterDegree: 3
+  eps: 1e-3
+
+# Number of points, interpolation degree, and integration accuracy of
+# the grid in xi = exp(y) (used for the Drell-Yan tables).
+xigrid:
+  n: 3
+  InterDegree: 2
+  eps: 1e-3
+
+# Number of points, interpolation degree, and integration accuracy of
+# the grid in Bjorken x (used for the SIDIS tables).
+xbgrid:
+  n: 3
+  InterDegree: 2
+  eps: 1e-3
+
+# Number of points, interpolation degree, and integration accuracy of
+# the grid in z Bjorken (used for the SIDIS tables).
+zgrid:
+  n: 3
+  InterDegree: 2
+  eps: 1e-3
+
+# Maximum value allowed for the ratio qT / Q. This has to be intended
+# as a "generation-level" cut meaning that only data points with qT /
+# Q below this value are generated. Those above are simply set to
+# zero. However, a more restrictive cut can still be applied at the
+# fit level. This avoids computing predictions for points whose
+# kinematics is such that TMD factorisation is not valid.
+qToverQmax: 5
+
+#Parameters needed to compute the correct cut in PhT for SIDIS data
+param1: 0.2
+param2: 0.7
+param3: 0.5
