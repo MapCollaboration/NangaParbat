@@ -132,13 +132,14 @@ namespace NangaParbat
                 getline(pdferr, line);
                 std::stringstream stream(line);
                 double dum, pe;
-                stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
+                stream >> dum >> dum >> dum >> dum >> dum >> pe >> dum;
 
                 emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << unc << YAML::EndMap;
                 if (PDFError)
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << cor << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.015 * val << YAML::EndMap; //[TEMPORARY] trial of introduction of new theoretical error
                 emit << YAML::EndSeq;
                 emit << YAML::Key << "value" << YAML::Value << val;
                 emit << YAML::EndMap;

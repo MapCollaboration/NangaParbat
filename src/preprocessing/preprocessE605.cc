@@ -84,8 +84,11 @@ namespace NangaParbat
 
             ofile += ".yaml";
 
-            // Overall factor
-            const double factor = Vs / 2 / Qav / cosh(y) / M_PI / 2;
+            // Overall factor (old)
+            // const double factor = Vs / 2 / Qav / cosh(y) / M_PI / 2;
+
+            // Overall factor (new)
+            const double factor = 1 / M_PI;
 
             // Plot labels
             std::map<std::string, std::string> labels
@@ -136,7 +139,7 @@ namespace NangaParbat
                 getline(pdferr, line);
                 std::stringstream stream(line);
                 double dum, pe = 0;
-                stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
+                stream >> dum >> dum >> dum >> dum >> dum >> pe >> dum;
 
                 const double val = v["value"].as<double>();
                 const double uncsys = 0.05 * val;
@@ -144,7 +147,7 @@ namespace NangaParbat
                 emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << unc << YAML::EndMap;
                 if (PDFError)
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.15 << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::Key << "value" << YAML::Value << val;

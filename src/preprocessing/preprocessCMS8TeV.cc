@@ -103,7 +103,7 @@ namespace NangaParbat
                   getline(pdferr, line);
                   std::stringstream stream(line);
                   double dum, pe;
-                  stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
+                  stream >> dum >> dum >> dum >> dum >> dum >> pe >> dum;
 
                   // Vectors of uncorrelated and correlated errors
                   // from article https://arxiv.org/pdf/1606.05864.pdf Tab.4
@@ -115,7 +115,7 @@ namespace NangaParbat
                        << YAML::Value << uncart[it]<< YAML::EndMap;
                   // << YAML::Value << v["errors"][0]["symerror"].as<double>()<< YAML::EndMap; // read unc errors from HEPData file
                   if (PDFError)
-                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value"
                        << YAML::Value << addart[it] << YAML::EndMap;
                   emit << YAML::EndSeq;

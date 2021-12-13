@@ -18,7 +18,7 @@ namespace NangaParbat
 {
 
   //_________________________________________________________________________________
-  std::string PreprocessCOMPASS(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError)
+  std::string PreprocessCOMPASS(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError, bool const& FFError)
   {
     std::cout << "Processing COMPASS data ..." << std::endl;
 
@@ -26,7 +26,10 @@ namespace NangaParbat
     const std::string RawDataFolder = RawDataPath + "/HEPData-ins1624692-v1-yaml/";
 
     // Path to the PDF-error folder
-    const std::string PDFErrorFolder = RawDataPath + "/PDFErrors/";
+    const std::string PDFErrorFolder = RawDataPath + "/PDFErrors/COMPASS/";
+
+    // Path to the FF-error folder
+    const std::string FFErrorFolder = RawDataPath + "/FFErrors/COMPASS/";
 
     // Vector of tables to process:
     // get all the files in RawDataFolder and remove 'submission.yaml' from the list
@@ -210,17 +213,23 @@ namespace NangaParbat
               std::ifstream pdferr(PDFErrorFolder + ofile + ".out");
               std::string line;
               getline(pdferr, line);
-              getline(pdferr, line);
+              // getline(pdferr, line);
+
+              // Open FF-error file
+              std::ifstream fferr(FFErrorFolder + ofile + ".out");
+              std::string linef;
+              getline(fferr, linef);
+              // getline(fferr, linef);
 
               // Plot labels
               std::map<std::string, std::string> labels
               {
                 {"xlabel", "#it{P}_{hT} [GeV]"},
                 {"ylabel", hcharge + "#left(x, z, |{P}_{hT}|^2, Q^2 #right)"},
-                {"title", "COMPASS, Deu  -  " + hadtitle[hcharge] + "   " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < |#it{z}| < " + std::to_string(zbin.second)},
+                {"title", "COMPASS, Deu  -  " + hadrons[hcharge] + "   " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < |#it{z}| < " + std::to_string(zbin.second)},
                 {"xlabelpy", "$P_{hT} \\rm{ [GeV]}$"},
                 {"ylabelpy", "$" + hcharge + "\\left(x, z, |{P}_{hT}|^2, Q^2 \\right)$"},
-                {"titlepy", "COMPASS, Deu - " + hadtitle[hcharge] + " \\\\ " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < z < " + std::to_string(zbin.second)}
+                {"titlepy", "COMPASS, Deu - " + hadrons[hcharge] + " \\\\ " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < z < " + std::to_string(zbin.second)}
               };
 
               // Allocate emitter
@@ -271,14 +280,24 @@ namespace NangaParbat
                       getline(pdferr, line);
                       std::stringstream stream(line);
                       double dum, pe;
-                      stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
+                      stream >> dum >> dum >> dum >> dum >> dum >> pe >> dum;
 
-                      // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
                     }
+                    if (FFError)
+                      {
+                        // Now read FF errors
+                        getline(fferr, linef);
+                        std::stringstream stream(linef);
+                        double dum, pe;
+                        stream >> dum >> dum >> dum >> dum >> dum >> pe >> dum;
+
+                        emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                      }
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << m["errors"][1]["symerror"] << YAML::EndMap; // read systematic errors from HEPdata file
                   // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "0.05" << YAML::EndMap;
                   // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << m["errors"][1]["symerror"].as<double>() / m["value"].as<double>() << YAML::EndMap;
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "0.05" << YAML::EndMap;
+                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "0.05" << YAML::EndMap;
                   emit << YAML::EndSeq;
                   emit << YAML::Key << "value" << YAML::Value << m["value"].as<double>();
                   emit << YAML::EndMap;
@@ -335,6 +354,9 @@ namespace NangaParbat
 
               // Close PDF-error file
               pdferr.close();
+
+              // Close FF-error file
+              fferr.close();
 
               // Dump table to file
               std::ofstream fout(opath + "/" + ofile + ".yaml");
