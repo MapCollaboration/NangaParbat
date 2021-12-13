@@ -83,16 +83,6 @@ namespace NangaParbat
      * @param fNP2: the second non-perturbative input function
      * @return a vector of predictions.
      */
-     std::map<double, double> ConvoluteJetSIDIS(std::function<double(double const&, double const&, double const&)> const& fNP,
-                                             std::function<double(double const&, double const&, double const&)> const& DNPjet) const;
-
-     /**
-      * @brief This function returns a vector of predictions given two
-      * user-defined non-perturbative functions.
-      * @param fNP1: the first non-perturbative input function
-      * @param fNP2: the second non-perturbative input function
-      * @return a vector of predictions.
-      */
     virtual std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP1,
                                                std::function<double(double const&, double const&, double const&)> const& fNP2) const;
 
@@ -162,7 +152,6 @@ namespace NangaParbat
     std::map<double,std::vector<std::vector<double>>>                           _PSRed;    //!< The phase-space reduction factors
     std::map<double,std::vector<std::vector<double>>>                           _dPSRed;   //!< The derivative of the phase-space reduction factors
     std::map<double,std::vector<std::vector<std::vector<double>>>>              _WDY;      //!< The weights for Drell-Yan
-    std::map<double,std::vector<std::vector<std::vector<double>>>>              _WJetSIDIS;  // The weights for JetSIDIS
     std::map<double,std::vector<std::vector<std::vector<std::vector<double>>>>> _WSIDIS;   //!< The weights for SIDIS
     //double                                                                      _qToQmax;  //!< Maximum value allowed for the ratio qT / Q for DY
     std::vector<double>                                                   const _cutParam; //!< The parameters needed to compute the ratio qT / Q
@@ -176,8 +165,8 @@ namespace NangaParbat
      */
     ///@{
   public:
-    virtual void SetInputFFs(std::function<std::map<int, double>(double const &, double const &)> const&) {};
-    virtual void SetInputFFs(std::function<apfel::Set<apfel::Distribution>(double const&)> const&) {};
+    virtual void SetInputFFs(std::function<std::map<int, double>(double const &, double const &)> const &InDistFunc) {};
+    virtual void SetInputFFs(std::function<apfel::Set<apfel::Distribution>(double const&)> const& InDistFunc) {};
     virtual std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&)> const&) const { return {}; };
     ///@}
   };
