@@ -109,7 +109,8 @@ namespace NangaParbat
         minimiser.Minimizer().Builder().SetPrintLevel(3);
 
         // Define tolerance for Expected Distance to Minimum
-        const double toler = 1e+04;
+        // const double toler = 1e+04;
+        const double toler = 1;
 
         // Minimise
         ROOT::Minuit2::FunctionMinimum min = minimiser(10000, toler);
