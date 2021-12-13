@@ -34,7 +34,7 @@ namespace NangaParbat
       const double g2B  = this->_pars[26];
       const double b2 = b * b;
       const double lnz    = log(zeta / _Q02);
-      const double NPevol = exp( - ( pow(g2, 2) * b2 + g2B * b2 * b2 ) * lnz / 4 );
+      const double NPevol = exp( - ( g2 * b2 + g2B * b2 * b2 ) * lnz / 4 );
       // const double NPevol = exp( - ( g2 * b2 ) * lnz / 4 );
 
 
@@ -57,8 +57,8 @@ namespace NangaParbat
 	        const double g1B     = N1B * pow(x / xhat, sigma2) * pow((1 - x) / (1 - xhat), pow(alpha2, 2));
           const double g1C     = N1C * pow(x / xhat, sigma3) * pow((1 - x) / (1 - xhat), pow(alpha3, 2));
 	        return NPevol * ( g1 * exp( - g1 * pow(b / 2, 2))
-                          +  lambda  * pow(g1B, 2) * ( 1 - g1B * pow(b / 2, 2)) * exp( - g1B * pow(b / 2, 2)) + g1C * pow(lambda2, 2) * exp( - g1C * pow(b / 2, 2)))
-                 / ( g1 +  lambda  * pow(g1B, 2) + g1C * pow(lambda2, 2));
+                          + pow(lambda, 2)  * pow(g1B, 2) * ( 1 - g1B * pow(b / 2, 2)) * exp( - g1B * pow(b / 2, 2)) + g1C * pow(lambda2, 2) * exp( - g1C * pow(b / 2, 2)))
+                 / ( g1 + pow(lambda, 2)  * pow(g1B, 2) + g1C * pow(lambda2, 2));
         }
       // TMD FFs
       else
