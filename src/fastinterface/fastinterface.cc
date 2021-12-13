@@ -1078,13 +1078,15 @@ namespace NangaParbat
 
               distqq2.AddTerm({apfel::QCh2[j-1], dPDF.at(jp), dFF2.at(jp)});
               distgq2.AddTerm({apfel::QCh2[j-1], dPDF.at(jp), dFF2.at(0)});
-              distqg.AddTerm({apfel::QCh2[j-1], dPDF.at(0),  dFF2.at(jp)});
+              distqg2.AddTerm({apfel::QCh2[j-1], dPDF.at(0),  dFF2.at(jp)});
 
               distqq2.AddTerm({apfel::QCh2[j-1], dPDF.at(-jp), dFF2.at(-jp)});
               distgq2.AddTerm({apfel::QCh2[j-1], dPDF.at(-jp), dFF2.at(0)});
               distqg2.AddTerm({apfel::QCh2[j-1], dPDF.at(0),   dFF2.at(-jp)});
 
             }
+
+          std::cout << "debug1" << std::endl;
 
           // Assemble double distribution for the cross section as
           // Y^+ F2 - y^2 FL times a constant.
@@ -1096,9 +1098,12 @@ namespace NangaParbat
                      - ( coup * ( so2.CL1qq * distqq2 + so2.CL1gq * distgq2 + so2.CL1qg * distqg2 ) ).MultiplyBy(y2, iz) );
         };
 
+
+        std::cout << "debug2" << std::endl;
+        std::cout << "debug2.111" << std::endl;
         // Tabulate cross section
         const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabCrossSectionFO{CrossSectionFO, 50, 1, 20, 3, _Thresholds};
-
+        std::cout << "debug2.11" << std::endl;
         // Define function to compute SIDIS asymptotic cross section at O(as)
         const std::function<apfel::DoubleObject<apfel::Distribution>(double const&)> CrossSectionAsy = [=] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
         {
@@ -1151,10 +1156,10 @@ namespace NangaParbat
               distqq2.AddTerm({apfel::QCh2[j-1], dPDF.at(jp),  dFF2.at(jp)});
               distqq2.AddTerm({apfel::QCh2[j-1], dPDF.at(-jp), dFF2.at(-jp)});
             }
-
+          std::cout << "debug3" << std::endl;
           return ( 4 * M_PI * pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * _HardFactorSIDIS(Q) ) * distqq.MultiplyBy(yp, iz) + ( 4 * M_PI * pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * _HardFactorSIDIS(Q) ) * distqq2.MultiplyBy(yp, iz);
         };
-
+        std::cout << "debug4" << std::endl;
         // Tabulate cross section
         const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabCrossSectionAsy{CrossSectionAsy, 50, 1, 20, 3, {}};
 
