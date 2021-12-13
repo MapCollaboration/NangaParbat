@@ -135,29 +135,29 @@ namespace NangaParbat
     std::valarray<bool> GetCutMask() const { return _cutmask; };
 
   protected:
-    std::string                                                           const _name;    //!< Name of the table
-    int                                                                   const _proc;    //!< Index of the process (0: DY, 1: SIDIS)
-    double                                                                const _Vs;      //!< Center of mass energy
-    bool                                                                  const _IntqT;   //!< Whether the bin are integrated in qT or not
-    std::vector<double>                                                   const _qTv;     //!< Vector of qT bin-bounds
-    std::vector<std::vector<double>>                                      const _qTmap;   //!< Vector of bounds for each qT bin
-    std::vector<double>                                                   const _qTfact;  //!< Bin-by-bin factors
-    double                                                                const _prefact; //!< Overall prefactor
-    std::vector<double>                                                   const _zOgata;  //!< Unscaled Ogata coordinate
-    std::vector<double>                                                   const _Qg;      //!< Grid in Q
-    std::vector<double>                                                         _xig;     //!< Grid in xi;
-    std::vector<double>                                                         _xbg;     //!< Grid in xi;
-    std::vector<double>                                                         _zg;      //!< Grid in xi;
-    std::map<double,std::vector<std::vector<double>>>                           _PSRed;   //!< The phase-space reduction factors
-    std::map<double,std::vector<std::vector<double>>>                           _dPSRed;  //!< The derivative of the phase-space reduction factors
-    std::map<double,std::vector<std::vector<std::vector<double>>>>              _WDY;     //!< The weights for Drell-Yan
-    std::map<double,std::vector<std::vector<std::vector<std::vector<double>>>>> _WSIDIS;  //!< The weights for SIDIS
-    //double                                                                      _qToQmax; //!< Maximum value allowed for the ratio qT / Q for DY
+    std::string                                                           const _name;     //!< Name of the table
+    int                                                                   const _proc;     //!< Index of the process (0: DY, 1: SIDIS)
+    double                                                                const _Vs;       //!< Center of mass energy
+    bool                                                                  const _IntqT;    //!< Whether the bin are integrated in qT or not
+    std::vector<double>                                                   const _qTv;      //!< Vector of qT bin-bounds
+    std::vector<std::vector<double>>                                      const _qTmap;    //!< Vector of bounds for each qT bin
+    std::vector<double>                                                   const _qTfact;   //!< Bin-by-bin factors
+    double                                                                const _prefact;  //!< Overall prefactor
+    double                                                                const _prefact2; //!< Second overall prefactor (do we really need it?)
+    std::vector<double>                                                   const _zOgata;   //!< Unscaled Ogata coordinate
+    std::vector<double>                                                   const _Qg;       //!< Grid in Q
+    std::vector<double>                                                         _xig;      //!< Grid in xi;
+    std::vector<double>                                                         _xbg;      //!< Grid in xi;
+    std::vector<double>                                                         _zg;       //!< Grid in xi;
+    std::map<double,std::vector<std::vector<double>>>                           _PSRed;    //!< The phase-space reduction factors
+    std::map<double,std::vector<std::vector<double>>>                           _dPSRed;   //!< The derivative of the phase-space reduction factors
+    std::map<double,std::vector<std::vector<std::vector<double>>>>              _WDY;      //!< The weights for Drell-Yan
+    std::map<double,std::vector<std::vector<std::vector<std::vector<double>>>>> _WSIDIS;   //!< The weights for SIDIS
+    //double                                                                      _qToQmax;  //!< Maximum value allowed for the ratio qT / Q for DY
     std::vector<double>                                                   const _cutParam; //!< The parameters needed to compute the ratio qT / Q
-    double                                                                      _acc;     //!< The Ogata-quadrature accuracy
-    std::vector<std::shared_ptr<Cut>>                                           _cuts;    //!< Cut objects
-    std::valarray<bool>                                                         _cutmask; //!< Mask of points that pass the cuts
-    YAML::Node                                                            const _table;   //!< [Temporary] Yaml node of the table
+    double                                                                      _acc;      //!< The Ogata-quadrature accuracy
+    std::vector<std::shared_ptr<Cut>>                                           _cuts;     //!< Cut objects
+    std::valarray<bool>                                                         _cutmask;  //!< Mask of points that pass the cuts
 
     /**
      * @name FF_SIDIS
