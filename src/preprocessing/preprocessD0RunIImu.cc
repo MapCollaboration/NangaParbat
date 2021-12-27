@@ -126,15 +126,18 @@ namespace NangaParbat
                 getline(pdferr, line);
                 std::stringstream stream(line);
                 double dum, pe;
-                stream >> dum >> dum >> dum >> dum >> dum >> pe >> dum;
+                // stream >> dum >> dum >> dum >> dum >> dum >> pe >> dum;
+                stream >> dum >> dum >> dum >> dum >> pe >> dum;
 
                 emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << unc << YAML::EndMap;
                 if (PDFError)
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << cor1 << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << cor2 << YAML::EndMap;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << cor3 << YAML::EndMap;
+                //[TEMPORARY] introduction of 5 per mil of error
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.01 * val << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::Key << "value" << YAML::Value << val;
                 emit << YAML::EndMap;
