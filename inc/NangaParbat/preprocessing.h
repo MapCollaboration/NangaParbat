@@ -33,7 +33,7 @@ namespace NangaParbat
    * @param PDFError: whether PDF uncertainties have to be included in the processed datafiles (default: true)
    * @return the coordinate string
    */
-  std::string PreprocessE772(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = false);
+  std::string PreprocessE772(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = true);
 
   /**
    * @brief Preprocessing of the STAR dataset at 510 GeV
@@ -150,7 +150,7 @@ namespace NangaParbat
      * @param PDFError: whether PDF uncertainties have to be included in the processed datafiles (default: true)
      * @return the coordinate string
      */
-  std::string PreprocessCMS13TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = false);
+  std::string PreprocessCMS13TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = true);
 
   /**
    * @brief Preprocessing of the ATLAS dataset at 7 TeV
@@ -177,7 +177,7 @@ namespace NangaParbat
    * @param PDFError: whether PDF uncertainties have to be included in the processed datafiles (default: true)
    * @return the coordinate string
    */
-  std::string PreprocessATLAS13TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = false);
+  std::string PreprocessATLAS13TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = true);
 
   /**
    * @brief Preprocessing of the EIC pseudodata

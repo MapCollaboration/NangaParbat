@@ -197,6 +197,9 @@ namespace NangaParbat
               // Map for hadron names (output files)
               std::map<std::string, std::string> hadrons = {{"M^{h^{+}}", "Pp_Kp"}, {"M^{h^{-}}", "Pm_Km"}};
 
+              // Map for hadron names (pytitle)
+              std::map<std::string, std::string> pyhadrons = {{"M^{h^{+}}", "PpKp"}, {"M^{h^{-}}", "PmKm"}};
+
               // Map for hadron names (plot titles)
               std::map<std::string, std::string> hadtitle = {{"M^{h^{+}}", "$M^{h^{+}}$"}, {"M^{h^{-}}", "$M^{h^{-}}$"}};
 
@@ -226,10 +229,10 @@ namespace NangaParbat
               {
                 {"xlabel", "#it{P}_{hT} [GeV]"},
                 {"ylabel", hcharge + "#left(x, z, |{P}_{hT}|^2, Q^2 #right)"},
-                {"title", "COMPASS, Deu  -  " + hadrons[hcharge] + "   " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < |#it{z}| < " + std::to_string(zbin.second)},
+                {"title", "COMPASS, Deu  -  " + pyhadrons[hcharge] + "   " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < |#it{z}| < " + std::to_string(zbin.second)},
                 {"xlabelpy", "$P_{hT} \\rm{ [GeV]}$"},
                 {"ylabelpy", "$" + hcharge + "\\left(x, z, |{P}_{hT}|^2, Q^2 \\right)$"},
-                {"titlepy", "COMPASS, Deu - " + hadrons[hcharge] + " \\\\ " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < z < " + std::to_string(zbin.second)}
+                {"titlepy", "COMPASS, Deu - " + pyhadrons[hcharge] + " \\\\ " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < z < " + std::to_string(zbin.second)}
               };
 
               // Allocate emitter
@@ -298,6 +301,8 @@ namespace NangaParbat
                   // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "0.05" << YAML::EndMap;
                   // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << m["errors"][1]["symerror"].as<double>() / m["value"].as<double>() << YAML::EndMap;
                   // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "0.05" << YAML::EndMap;
+                  //[TEMPORARY] introduction of 5 per mil of error
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.01 * m["value"].as<double>() << YAML::EndMap;
                   emit << YAML::EndSeq;
                   emit << YAML::Key << "value" << YAML::Value << m["value"].as<double>();
                   emit << YAML::EndMap;

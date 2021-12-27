@@ -121,7 +121,8 @@ namespace NangaParbat
                   getline(pdferr, line);
                   std::stringstream stream(line);
                   double dum, pe;
-                  stream >> dum >> dum >> dum >> dum >> dum >> pe >> dum;
+                  // stream >> dum >> dum >> dum >> dum >> dum >> pe >> dum;
+                  stream >> dum >> dum >> dum >> dum >> pe >> dum;
 
                   // Vectors of uncorrelated and correlated errors
                   // from article https://arxiv.org/pdf/1606.05864.pdf Tab.4
@@ -133,9 +134,10 @@ namespace NangaParbat
                        << YAML::Value << unc << YAML::EndMap;
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value"
                             << YAML::Value << cor << YAML::EndMap;
-                  // << YAML::Value << v["errors"][0]["symerror"].as<double>()<< YAML::EndMap; // read unc errors from HEPData file
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.01 * val << YAML::EndMap; //[TEMPORARY] trial of introduction of new theoretical error
+                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.01 << YAML::EndMap; //[TEMPORARY] trial of introduction of hessian error
                   if (PDFError)
-                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) << YAML::EndMap;
 
                   emit << YAML::EndSeq;
                   emit << YAML::Key << "value" << YAML::Value << val;
