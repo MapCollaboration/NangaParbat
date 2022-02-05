@@ -26,10 +26,10 @@ namespace NangaParbat
     const std::string RawDataFolder = RawDataPath + "/HEPData-ins1624692-v1-yaml/";
 
     // Path to the PDF-error folder
-    const std::string PDFErrorFolder = RawDataPath + "/PDFErrors/COMPASS/";
+    const std::string PDFErrorFolder = RawDataPath + "/PDFErrors/SIDIS/N3LL/COMPASS/";
 
     // Path to the FF-error folder
-    const std::string FFErrorFolder = RawDataPath + "/FFErrors/COMPASS/";
+    const std::string FFErrorFolder = RawDataPath + "/FFErrors/N3LL/COMPASS/";
 
     // Vector of tables to process:
     // get all the files in RawDataFolder and remove 'submission.yaml' from the list
@@ -283,7 +283,7 @@ namespace NangaParbat
                       getline(pdferr, line);
                       std::stringstream stream(line);
                       double dum, pe;
-                      stream >> dum >> dum >> dum >> dum >> dum >> pe >> dum;
+                      stream >> dum >> dum >> dum >> dum >> pe >> dum;
 
                       emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
                     }
@@ -293,7 +293,7 @@ namespace NangaParbat
                         getline(fferr, linef);
                         std::stringstream stream(linef);
                         double dum, pe;
-                        stream >> dum >> dum >> dum >> dum >> dum >> pe >> dum;
+                        stream >> dum >> dum >> dum >> dum >> pe >> dum;
 
                         emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
                       }
@@ -302,7 +302,7 @@ namespace NangaParbat
                   // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << m["errors"][1]["symerror"].as<double>() / m["value"].as<double>() << YAML::EndMap;
                   // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "0.05" << YAML::EndMap;
                   //[TEMPORARY] introduction of 5 per mil of error
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.01 * m["value"].as<double>() << YAML::EndMap;
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.005 * m["value"].as<double>() << YAML::EndMap;
                   emit << YAML::EndSeq;
                   emit << YAML::Key << "value" << YAML::Value << m["value"].as<double>();
                   emit << YAML::EndMap;
@@ -319,6 +319,10 @@ namespace NangaParbat
               emit << YAML::BeginSeq;
               for (auto const& iv : exp["independent_variables"])
                 for (auto const& vl : iv["values"])
+                  // The value "factor" is needed only when the integral in PhT is performed
+                  // it is the factor used to correct the division for the bin width performed in convolutiontable.cc
+                  // which is PhTmax - PhTmin, whereas it should be PhT2max - PhT2min for COMPASS datasets.
+                  // Hence, factor is needed to replace the denominator.
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << sqrt(vl["high"].as<double>()) << YAML::Key << "low" << YAML::Value << std::max(sqrt(vl["low"].as<double>()), 1e-5) << YAML::Key << "value" << YAML::Value << sqrt(vl["value"].as<double>()) << YAML::Key << "factor" << YAML::Value << (sqrt(vl["high"].as<double>()) - std::max(sqrt(vl["low"].as<double>()), 1e-5)) / (vl["high"].as<double>() - pow(std::max(sqrt(vl["low"].as<double>()), 1e-5), 2)) << YAML::EndMap;
               emit << YAML::EndSeq;
               emit << YAML::EndMap;
