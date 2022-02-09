@@ -127,6 +127,8 @@ namespace NangaParbat
                   _proc = SIDIS;
                 else if (ql["value"].as<std::string>() == "SIA")
                   _proc = SIA;
+                else if (ql["value"].as<std::string>() == "JetSIDIS")
+                  _proc = JetSIDIS;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown process.");
               }
@@ -585,6 +587,8 @@ namespace NangaParbat
       os << "- Process: Drell-Yan\n";
     else if (DH._proc == DataHandler::Process::SIDIS)
       os << "- Process: SIDIS\n";
+    else if (DH._proc == DataHandler::Process::JetSIDIS)
+      os << "- Process: JetSIDIS\n";
     else
       os << "- Process: Unknown\n";
 
@@ -638,7 +642,11 @@ namespace NangaParbat
             os << "- Minimum W: " << DH._kin.pTMin << " GeV \n";
             os << "- Range in y: [" << DH._kin.etaRange.first << ": " << DH._kin.etaRange.second << "]\n";
           }
-
+        else if (DH._proc == DataHandler::Process::JetSIDIS)
+          {
+            os << "- Minimum W: " << DH._kin.pTMin << " GeV \n";
+            os << "- Range in y: [" << DH._kin.etaRange.first << ": " << DH._kin.etaRange.second << "]\n";
+          }
       }
     os << "\n";
 

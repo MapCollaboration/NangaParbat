@@ -10,6 +10,7 @@
 #include "NangaParbat/PV19b.h"
 #include "NangaParbat/PV19x.h"
 #include "NangaParbat/MAP21test.h"
+#include "NangaParbat/PV17jet.h"
 #include "NangaParbat/QGG6.h"
 #include "NangaParbat/QGG13.h"
 
@@ -30,7 +31,8 @@ namespace NangaParbat
     //{"PV19",  new NangaParbat::PV19{}},
     {"PV19b", new NangaParbat::PV19b{}},
     {"PV19x", new NangaParbat::PV19x{}},
-    {"MAP21test", new NangaParbat::MAP21test{}}//,
+    {"MAP21test", new NangaParbat::MAP21test{}},
+    {"PV17jet", new NangaParbat::PV17jet{}}//,
     //{"QGG6",  new NangaParbat::QGG6{}},
     //{"QGG13", new NangaParbat::QGG13{}}
   };
