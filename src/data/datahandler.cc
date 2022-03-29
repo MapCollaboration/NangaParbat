@@ -79,6 +79,7 @@ namespace NangaParbat
     _charge       = DH._charge;
     _tagging      = DH._tagging;
     _prefact      = DH._prefact;
+    _normalised   = DH._normalised;
     _kin          = DH._kin;
     _means        = DH._means;
     _uncor        = DH._uncor;
@@ -104,6 +105,7 @@ namespace NangaParbat
     _charge(0),
     _tagging({apfel::QuarkFlavour::TOTAL}),
     _prefact(1),
+    _normalised(true),
     _kin(DataHandler::Kinematics{}),
     _labels({}),
     _t0(t0)
@@ -186,6 +188,10 @@ namespace NangaParbat
             // Possible prefactor
             if (ql["name"].as<std::string>() == "prefactor")
               _prefact = ql["value"].as<double>();
+
+            // Whether the cross section is normalised
+            if (ql["name"].as<std::string>() == "normalised")
+              _normalised = ql["value"].as<bool>();
 
             // Center of mass energy
             if (ql["name"].as<std::string>() == "Vs")
