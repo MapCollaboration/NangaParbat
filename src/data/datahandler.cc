@@ -129,10 +129,6 @@ namespace NangaParbat
                   _proc = SIDIS;
                 else if (ql["value"].as<std::string>() == "SIA")
                   _proc = SIA;
-                else if (ql["value"].as<std::string>() == "DIA")
-                  _proc = DIA;
-                else if (ql["value"].as<std::string>() == "pDIS")
-                  _proc = pDIS;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown process.");
               }
@@ -152,8 +148,6 @@ namespace NangaParbat
                   _obs = F_uut;
                 else if (ql["value"].as<std::string>() == "opposite_sign_ratio")
                   _obs = opposite_sign_ratio;
-                else if (ql["value"].as<std::string>() == "g1")
-                  _obs = g1;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown observable.");
               }
@@ -199,18 +193,18 @@ namespace NangaParbat
             if (ql["name"].as<std::string>() == "normalised")
               _normalised = ql["value"].as<bool>();
 
-            // Center-of-mass energy
+            // Center of mass energy
             if (ql["name"].as<std::string>() == "Vs")
               _kin.Vs = ql["value"].as<double>();
 
-            // Boson virtuality (absolute value)
+            // Invariant-mass (DY) or virtuality (SIDIS) interval
             if (ql["name"].as<std::string>() == "Q")
               {
                 _kin.var1b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
                 _kin.Intv1 = ql["integrate"].as<bool>();
               }
 
-            // Rapidity (DY) or Bjorken-x (SIDIS and DIS) interval
+            // Rapidity (DY) or Bjorken-x (SIDIS) interval
             if (ql["name"].as<std::string>() == "y" || ql["name"].as<std::string>() == "x")
               {
                 _kin.var2b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
@@ -596,13 +590,7 @@ namespace NangaParbat
     if (DH._proc == DataHandler::Process::DY)
       os << "- Process: Drell-Yan\n";
     else if (DH._proc == DataHandler::Process::SIDIS)
-      os << "- Process: semi-inclusive DIS\n";
-    else if (DH._proc == DataHandler::Process::SIA)
-      os << "- Process: single-inclusive annihilation\n";
-    else if (DH._proc == DataHandler::Process::DIA)
-      os << "- Process: double-inclusive annihilation\n";
-    else if (DH._proc == DataHandler::Process::pDIS)
-      os << "- Process: polarised DIS\n";
+      os << "- Process: SIDIS\n";
     else
       os << "- Process: Unknown\n";
 
