@@ -1,7 +1,10 @@
+pdfsetbeam:
+  name: "xFitterPI_NLO_EIG"   #pion
+  member: 0
 # Collinear PDF set and member to be used for the generation of the
 # tables. They are assumed to be in the LHAPDF format.
 pdfset:
-  name: "MMHT2014nnlo68cl"
+  name: "MMHT2014nnlo68cl"    #proton
   member: 0
 
 # Collinear FF set and member to be used for the generation of the
@@ -46,33 +49,33 @@ xgridff:
   - [50, 8e-1, 3]
 
 # Maximum number of Ogata-quadrature points (no more than 1000).
-nOgata: 100
+nOgata: 200
 
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in Q.
 Qgrid:
-  n: 10
+  n: 4
   InterDegree: 3
   eps: 1e-3
 
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in xi = exp(y) (used for the Drell-Yan tables).
 xigrid:
-  n: 10
+  n: 4
   InterDegree: 3
   eps: 1e-3
 
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in Bjorken x (used for the SIDIS tables).
 xbgrid:
-  n: 10
+  n: 4
   InterDegree: 3
   eps: 1e-3
 
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in z Bjorken (used for the SIDIS tables).
 zgrid:
-  n: 10
+  n: 4
   InterDegree: 3
   eps: 1e-3
 
@@ -82,4 +85,4 @@ zgrid:
 # zero. However, a more restrictive cut can still be applied at the
 # fit level. This avoids computing predictions for points whose
 # kinematics is such that TMD factorisation is not valid.
-qToverQmax: 0.3
+qToverQmax: 0.8

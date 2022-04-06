@@ -1,5 +1,5 @@
 dependent_variables:
-  - header: {title: "E537 at 125 GeV, 8 GeV < Q < 8.5 GeV,-0.089879< |#it{y}| < 0.850097", titlepy: "E537 at 125 GeV, 8 GeV < Q <8.5GeV, -0.089879 < $|y|$ < 0.850097", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q_T \\rm{ [GeV]}$", ylabel: "#frac{d2#it{#sigma}}{d#it{q}_{T}d#it{p}_{T}^2}  [GeV^{-3}]", ylabelpy: "$\\frac{d2\\sigma}{dq_{T}dp_{T}^2}[\\rm{GeV}^{-3}]$"}
+  - header: {title: "E537 at 125 GeV, 8 GeV < Q < 8.5 GeV,-0.089879< |#it{y}| < 0.850097", titlepy: "E537 at 125 GeV, 8 GeV < Q <8.5GeV, -0.089879 < $|y|$ < 0.850097", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q_T \\rm{ [GeV]}$", ylabel: "#frac{d2#it{#sigma}}{d#it{Q}d#it{p}_{T}^2}  [GeV^{-3}]", ylabelpy: "$\\frac{d2\\sigma}{dQdp_{T}^2}[\\rm{GeV}^{-3}]$"}
     qualifiers:
       - {name: process, value: DY}
       - {name: target_isoscalarity, value: 0.4025}
@@ -10,95 +10,17 @@ dependent_variables:
       - {name: y, low: -0.089878941, high: 0.85009688, integrate: true}
     values:
       - errors:
-          - {label: unc, value: 0.000776}
+          - {label: unc, value: 0.776}
           - {label: unc, value: 0}
           - {label: mult, value: 0.08}
-        value: 0.0013
+        value: 1.3
       - errors:
-          - {label: unc, value: 0.00056}
+          - {label: unc, value: 0.409}
           - {label: unc, value: 0}
           - {label: mult, value: 0.08}
-        value: 0
-      - errors:
-          - {label: unc, value: 0.000716}
-          - {label: unc, value: 0}
-          - {label: mult, value: 0.08}
-        value: 0
-      - errors:
-          - {label: unc, value: 0.000409}
-          - {label: unc, value: 0}
-          - {label: mult, value: 0.08}
-        value: 0.000396
-      - errors:
-          - {label: unc, value: 0.000446}
-          - {label: unc, value: 0}
-          - {label: mult, value: 0.08}
-        value: 0
-      - errors:
-          - {label: unc, value: 0.000332}
-          - {label: unc, value: 0}
-          - {label: mult, value: 0.08}
-        value: 0
-      - errors:
-          - {label: unc, value: 0.000718}
-          - {label: unc, value: 0}
-          - {label: mult, value: 0.08}
-        value: 0
-      - errors:
-          - {label: unc, value: 0.000377}
-          - {label: unc, value: 0}
-          - {label: mult, value: 0.08}
-        value: 0
-      - errors:
-          - {label: unc, value: 0.000165}
-          - {label: unc, value: 0}
-          - {label: mult, value: 0.08}
-        value: 0
-      - errors:
-          - {label: unc, value: 0.000316}
-          - {label: unc, value: 0}
-          - {label: mult, value: 0.08}
-        value: 0
-      - errors:
-          - {label: unc, value: 0.000377}
-          - {label: unc, value: 0}
-          - {label: mult, value: 0.08}
-        value: 0
-      - errors:
-          - {label: unc, value: 0.000628}
-          - {label: unc, value: 0}
-          - {label: mult, value: 0.08}
-        value: 0
-      - errors:
-          - {label: unc, value: 0.00023}
-          - {label: unc, value: 0}
-          - {label: mult, value: 0.08}
-        value: 0
-      - errors:
-          - {label: unc, value: 1e-05}
-          - {label: unc, value: 0}
-          - {label: mult, value: 0.08}
-        value: 0
-      - errors:
-          - {label: unc, value: 0.000249}
-          - {label: unc, value: 0}
-          - {label: mult, value: 0.08}
-        value: 0
+        value: 0.396
 independent_variables:
   - header: {name: PT, units: GEV}
     values:
-      - {high: 0.70710678, low: 1e-05, factor: 0.70710678}
-      - {high: 1, low: 0.70710678, factor: 0.29289322}
-      - {high: 1.2247449, low: 1, factor: 0.22474487}
-      - {high: 1.4142136, low: 1.2247449, factor: 0.18946869}
-      - {high: 1.5811388, low: 1.4142136, factor: 0.16692527}
-      - {high: 1.7320508, low: 1.5811388, factor: 0.15091198}
-      - {high: 1.8708287, low: 1.7320508, factor: 0.13877789}
-      - {high: 2, low: 1.8708287, factor: 0.12917131}
-      - {high: 2.1213203, low: 2, factor: 0.12132034}
-      - {high: 2.236068, low: 2.1213203, factor: 0.11474763}
-      - {high: 2.3452079, low: 2.236068, factor: 0.1091399}
-      - {high: 2.4494897, low: 2.3452079, factor: 0.10428186}
-      - {high: 2.5495098, low: 2.4494897, factor: 0.10002001}
-      - {high: 2.6457513, low: 2.5495098, factor: 0.096241554}
-      - {high: 2.7386128, low: 2.6457513, factor: 0.092861476}
+      - {high: 0.70710678, low: 1e-05, factor: 2.8284271}
+      - {high: 1.4142136, low: 1.2247449, factor: 0.75787476}
