@@ -154,10 +154,10 @@ namespace NangaParbat
             std::map<std::string, std::string> labels
             {
               {"xlabel", "#it{q}_{T} [GeV]"},
-              {"ylabel", "#frac{d2#it{#sigma}}{d#it{p}_{T}#d#it{q}_{T}} [nb*GeV^{-2}"},
+              {"ylabel", "#frac{d2#it{#sigma}}{d#it{Q}#d#it{q}_{T}} [pb*GeV^{-2}"},
               {"title", "E615 at 252 GeV, " + std::to_string(Qb.second.first) + " < Q < " + std::to_string(Qb.second.second)},
               {"xlabelpy", "$q_T \\rm{[GeV]$"},
-              {"ylabelpy", "$\\frac{d^2\\sigma}{dp_{T} dq_{T}}[\\rm{nb}*{GeV}^{-2}]$"},
+              {"ylabelpy", "$\\frac{d^2\\sigma}{dQ dq_{T}}[\\rm{pb}*{GeV}^{-2}]$"},
               {"titlepy", "E615 at 252 GeV, " + std::to_string(Qb.second.first) + " < Q < " + std::to_string(Qb.second.second)}
             };
 
@@ -202,8 +202,11 @@ namespace NangaParbat
               {
                 emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
 
+                // Oss: the conversion from cm**2 to barn is: 1b = 10**{-24}cm**2,
+                //      but we need the cross section in pb: 1pb = 10**{-36}cm**2,
+                //      <=> 1 cm**2 = 10**{36}pb
                 // Remember conversion factor for the cross section
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << (filedata["stat"][m.first]) * pow(10, 33) << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << (filedata["stat"][m.first]) * pow(10, 36) << YAML::EndMap;
                 if (PDFError)
                   {
                     // Now read PDF errors
@@ -218,7 +221,7 @@ namespace NangaParbat
                   }
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.16 << YAML::EndMap;
                 emit << YAML::EndSeq;
-                emit << YAML::Key << "value" << YAML::Value << (m.second) * pow(10, 33);
+                emit << YAML::Key << "value" << YAML::Value << (m.second) * pow(10, 36);
                 // emit << YAML::Key << "id"    << YAML::Value << m.first;
                 emit << YAML::EndMap;
               }
@@ -232,11 +235,22 @@ namespace NangaParbat
             emit << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PT" << YAML::Key << "units" << YAML::Value << "GEV" << YAML::EndMap;
             emit << YAML::Key << "values" << YAML::Value;
             emit << YAML::BeginSeq;
+            // for (auto const& p : filedata["pT"])
+            //   {
+            //     emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << p.second << YAML::Key << "high" << YAML::Value << (p.second + 0.125) << YAML::Key << "low" << YAML::Value << (p.second - 0.125) << YAML::Key
+            //     /* Since Nangaparbat cross section is differential in qT, while this experimental set is differential in qT**2 and Q, we need to correct the value of the predictions by a factor DqT/(DQ * D(qT**2))*/
+            //     << "factor" << YAML::Value << (p.second - p.first) / ((Qb.second.second - Qb.second.first) * (pow(p.second, 2) - pow(p.first, 2)))<< YAML::EndMap;
+            //     // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << p.second << YAML::EndMap;
+            //   }
             for (auto const& p : filedata["pT"])
               {
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << p.second << YAML::Key << "high" << YAML::Value << (p.second + 0.125) << YAML::Key << "low" << YAML::Value << (p.second - 0.125) << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << p.second << YAML::Key
+                /* Since Nangaparbat cross section is differential in qT, while this experimental set is differential in qT**2 and Q, we need to correct the value of the predictions by a factor DqT/(DQ * D(qT**2))*/
+                << "factor" << YAML::Value << 1.0 / (Qb.second.second - Qb.second.first)<< YAML::EndMap;
                 // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << p.second << YAML::EndMap;
               }
+
+
             emit << YAML::EndSeq;
             emit << YAML::EndMap;
             emit << YAML::EndSeq;

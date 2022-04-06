@@ -1,7 +1,10 @@
+pdfsetbeam:
+  name: "xFitterPI_NLO_EIG"   #pion
+  member: 0
 # Collinear PDF set and member to be used for the generation of the
 # tables. They are assumed to be in the LHAPDF format.
 pdfset:
-  name: "MMHT2014nnlo68cl"
+  name: "MMHT2014nnlo68cl"    #proton
   member: 0
 
 # Collinear FF set and member to be used for the generation of the
@@ -64,22 +67,37 @@ Qgrid:
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in xi = exp(y) (used for the Drell-Yan tables).
 xigrid:
+<<<<<<< HEAD
   n: 3
   InterDegree: 2
+=======
+  n: 4
+  InterDegree: 3
+>>>>>>> b85e1eb4 (Update of data preprocessing and other small changes)
   eps: 1e-3
 
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in Bjorken x (used for the SIDIS tables).
 xbgrid:
+<<<<<<< HEAD
   n: 3
   InterDegree: 2
+=======
+  n: 4
+  InterDegree: 3
+>>>>>>> b85e1eb4 (Update of data preprocessing and other small changes)
   eps: 1e-3
 
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in z Bjorken (used for the SIDIS tables).
 zgrid:
+<<<<<<< HEAD
   n: 3
   InterDegree: 2
+=======
+  n: 4
+  InterDegree: 3
+>>>>>>> b85e1eb4 (Update of data preprocessing and other small changes)
   eps: 1e-3
 
 # Maximum value allowed for the ratio qT / Q. This has to be intended
@@ -88,7 +106,11 @@ zgrid:
 # zero. However, a more restrictive cut can still be applied at the
 # fit level. This avoids computing predictions for points whose
 # kinematics is such that TMD factorisation is not valid.
+<<<<<<< HEAD
 qToverQmax: 0.5
 
 #Parameters needed to compute the correct cut in PhT for SIDIS data
 cutParams: [0.2, 0.7, 0.5]
+=======
+qToverQmax: 0.8
+>>>>>>> b85e1eb4 (Update of data preprocessing and other small changes)

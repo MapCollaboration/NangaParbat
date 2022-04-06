@@ -1,5 +1,5 @@
 dependent_variables:
-  - header: {title: "E615 at 252 GeV, 6.750000 < Q < 7.650000", titlepy: "E615 at 252 GeV, 6.750000 < Q < 7.650000", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q_T \\rm{[GeV]$", ylabel: "#frac{d2#it{#sigma}}{d#it{p}_{T}#d#it{q}_{T}} [nb*GeV^{-2}", ylabelpy: "$\\frac{d^2\\sigma}{dp_{T} dq_{T}}[\\rm{nb}*{GeV}^{-2}]$"}
+  - header: {title: "E615 at 252 GeV, 6.750000 < Q < 7.650000", titlepy: "E615 at 252 GeV, 6.750000 < Q < 7.650000", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q_T \\rm{[GeV]$", ylabel: "#frac{d2#it{#sigma}}{d#it{Q}#d#it{q}_{T}} [pb*GeV^{-2}", ylabelpy: "$\\frac{d^2\\sigma}{dQ dq_{T}}[\\rm{pb}*{GeV}^{-2}]$"}
     qualifiers:
       - {name: process, value: DY}
       - {name: target_isoscalarity, value: 0.4025}
@@ -10,95 +10,95 @@ dependent_variables:
       - {name: y, low: 0, high: 1.2568091, integrate: true}
     values:
       - errors:
-          - {label: unc, value: 0.000226}
+          - {label: unc, value: 0.226}
           - {label: unc, value: 0}
           - {label: mult, value: 0.16}
-        value: 0.001766
+        value: 1.766
       - errors:
-          - {label: unc, value: 0.000375}
+          - {label: unc, value: 0.375}
           - {label: unc, value: 0}
           - {label: mult, value: 0.16}
-        value: 0.004535
+        value: 4.535
       - errors:
-          - {label: unc, value: 0.000492}
+          - {label: unc, value: 0.492}
           - {label: unc, value: 0}
           - {label: mult, value: 0.16}
-        value: 0.007258
+        value: 7.258
       - errors:
-          - {label: unc, value: 0.00051}
+          - {label: unc, value: 0.51}
           - {label: unc, value: 0}
           - {label: mult, value: 0.16}
-        value: 0.00712
+        value: 7.12
       - errors:
-          - {label: unc, value: 0.00047}
+          - {label: unc, value: 0.47}
           - {label: unc, value: 0}
           - {label: mult, value: 0.16}
-        value: 0.005846
+        value: 5.846
       - errors:
-          - {label: unc, value: 0.000476}
+          - {label: unc, value: 0.476}
           - {label: unc, value: 0}
           - {label: mult, value: 0.16}
-        value: 0.00594
+        value: 5.94
       - errors:
-          - {label: unc, value: 0.0004}
+          - {label: unc, value: 0.4}
           - {label: unc, value: 0}
           - {label: mult, value: 0.16}
-        value: 0.004157
+        value: 4.157
       - errors:
-          - {label: unc, value: 0.000351}
+          - {label: unc, value: 0.351}
           - {label: unc, value: 0}
           - {label: mult, value: 0.16}
-        value: 0.002938
+        value: 2.938
       - errors:
-          - {label: unc, value: 0.000292}
+          - {label: unc, value: 0.292}
           - {label: unc, value: 0}
           - {label: mult, value: 0.16}
-        value: 0.001914
+        value: 1.914
       - errors:
-          - {label: unc, value: 0.000215}
+          - {label: unc, value: 0.215}
           - {label: unc, value: 0}
           - {label: mult, value: 0.16}
-        value: 0.001054
+        value: 1.054
       - errors:
-          - {label: unc, value: 0.0001849}
+          - {label: unc, value: 0.1849}
           - {label: unc, value: 0}
           - {label: mult, value: 0.16}
-        value: 0.0006668
+        value: 0.6668
       - errors:
-          - {label: unc, value: 0.0001592}
+          - {label: unc, value: 0.1592}
           - {label: unc, value: 0}
           - {label: mult, value: 0.16}
-        value: 0.00039
+        value: 0.39
       - errors:
-          - {label: unc, value: 9.27e-05}
+          - {label: unc, value: 0.0927}
           - {label: unc, value: 0}
           - {label: mult, value: 0.16}
-        value: 0.0001311
+        value: 0.1311
       - errors:
-          - {label: unc, value: 0.0001099}
+          - {label: unc, value: 0.1099}
           - {label: unc, value: 0}
           - {label: mult, value: 0.16}
-        value: 0.0001904
+        value: 0.1904
       - errors:
-          - {label: unc, value: 9.39e-05}
+          - {label: unc, value: 0.0939}
           - {label: unc, value: 0}
           - {label: mult, value: 0.16}
-        value: 9.39e-05
+        value: 0.0939
 independent_variables:
   - header: {name: PT, units: GEV}
     values:
-      - {value: 0.125, high: 0.25, low: 0}
-      - {value: 0.375, high: 0.5, low: 0.25}
-      - {value: 0.625, high: 0.75, low: 0.5}
-      - {value: 0.875, high: 1, low: 0.75}
-      - {value: 1.125, high: 1.25, low: 1}
-      - {value: 1.375, high: 1.5, low: 1.25}
-      - {value: 1.625, high: 1.75, low: 1.5}
-      - {value: 1.875, high: 2, low: 1.75}
-      - {value: 2.125, high: 2.25, low: 2}
-      - {value: 2.375, high: 2.5, low: 2.25}
-      - {value: 2.625, high: 2.75, low: 2.5}
-      - {value: 2.875, high: 3, low: 2.75}
-      - {value: 3.125, high: 3.25, low: 3}
-      - {value: 3.375, high: 3.5, low: 3.25}
-      - {value: 3.875, high: 4, low: 3.75}
+      - {value: 0.125, factor: 1.1111111}
+      - {value: 0.375, factor: 1.1111111}
+      - {value: 0.625, factor: 1.1111111}
+      - {value: 0.875, factor: 1.1111111}
+      - {value: 1.125, factor: 1.1111111}
+      - {value: 1.375, factor: 1.1111111}
+      - {value: 1.625, factor: 1.1111111}
+      - {value: 1.875, factor: 1.1111111}
+      - {value: 2.125, factor: 1.1111111}
+      - {value: 2.375, factor: 1.1111111}
+      - {value: 2.625, factor: 1.1111111}
+      - {value: 2.875, factor: 1.1111111}
+      - {value: 3.125, factor: 1.1111111}
+      - {value: 3.375, factor: 1.1111111}
+      - {value: 3.875, factor: 1.1111111}
