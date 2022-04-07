@@ -31,7 +31,7 @@ namespace NangaParbat
     /**
      * @brief The observable enumerator
      */
-    enum Observable: int {UnknownObservable = -1, dsigma_dxdydz = 0, dsigma_dxdQdz = 1, multiplicity = 2};
+    enum Observable: int {UnknownObservable = -1, dsigma_dxdydz = 0, dsigma_dxdQdz = 1, multiplicity = 2, F_uut = 3, opposite_sign_ratio = 4};
 
     /**
      * @brief Structure containing the kinematic information of one
@@ -110,6 +110,8 @@ namespace NangaParbat
      * @brief Function that sets the data central values replacing that
      * introduced in the constructor.
      * @param means: the new means
+     * @param rng: GSL random number generator
+     * @param fluctuation: fluctuation index (default: 0)
      */
     void SetMeans(std::vector<double> const& means, gsl_rng* rng = nullptr, int const& fluctuation = 0);
 
@@ -166,7 +168,15 @@ namespace NangaParbat
     double GetPrefactor() const { return _prefact; };
 
     /**
-     * @brief Function that returns the kinematic object
+     * @brief Function that returns true or false according to whether
+     * the data set is normalised to some integrated cross section or
+     * not. The normalisation, if present, is assumed to be provided
+     * by the code.
+     */
+    bool GetNormalised() const { return _normalised; };
+
+    /**
+     * @Brief Function that returns the kinematic object
      */
     Kinematics GetKinematics() const { return _kin; };
 
@@ -245,6 +255,7 @@ namespace NangaParbat
     double                             _charge;       //!< Charge of the identified final state
     std::vector<apfel::QuarkFlavour>   _tagging;      //!< Possible quark-tagged components
     double                             _prefact;      //!< Possible overall prefactor to multiply the theoretical predictions
+    bool                               _normalised;   //!< Whether the measurements are normalised to some "integrated" cross sections
     Kinematics                         _kin;          //!< Kinematics block
     std::vector<double>                _means;        //!< Vector of central values
     std::vector<double>                _uncor;        //!< Vector of uncorrelated uncertainties

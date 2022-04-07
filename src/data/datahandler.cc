@@ -79,6 +79,7 @@ namespace NangaParbat
     _charge       = DH._charge;
     _tagging      = DH._tagging;
     _prefact      = DH._prefact;
+    _normalised   = DH._normalised;
     _kin          = DH._kin;
     _means        = DH._means;
     _uncor        = DH._uncor;
@@ -104,6 +105,7 @@ namespace NangaParbat
     _charge(0),
     _tagging({apfel::QuarkFlavour::TOTAL}),
     _prefact(1),
+    _normalised(true),
     _kin(DataHandler::Kinematics{}),
     _labels({}),
     _t0(t0)
@@ -139,7 +141,13 @@ namespace NangaParbat
                 else if (ql["value"].as<std::string>() == "dsigma/dxdQdz")
                   _obs = dsigma_dxdQdz;
                 else if (ql["value"].as<std::string>() == "multiplicity")
-                  _obs = dsigma_dxdQdz;
+                  _obs = multiplicity;
+                else if (ql["value"].as<std::string>() == "(dsigma/dxdzdQ2dPhT2)/dsigmaDIS")
+                  _obs = multiplicity;
+                else if (ql["value"].as<std::string>() == "FUUT")
+                  _obs = F_uut;
+                else if (ql["value"].as<std::string>() == "opposite_sign_ratio")
+                  _obs = opposite_sign_ratio;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown observable.");
               }
@@ -180,6 +188,10 @@ namespace NangaParbat
             // Possible prefactor
             if (ql["name"].as<std::string>() == "prefactor")
               _prefact = ql["value"].as<double>();
+
+            // Whether the cross section is normalised
+            if (ql["name"].as<std::string>() == "normalised")
+              _normalised = ql["value"].as<bool>();
 
             // Center of mass energy
             if (ql["name"].as<std::string>() == "Vs")
@@ -232,11 +244,11 @@ namespace NangaParbat
                 if (err["label"].as<std::string>() == "unc")
                   u += pow(err["value"].as<double>(), 2);
 
-                // Additive correlated uncertities
+                // Additive correlated uncertainties
                 if (err["label"].as<std::string>() == "add")
                   a.push_back(err["value"].as<double>());
 
-                // Multiplicative correlated uncertities
+                // Multiplicative correlated uncertainties
                 if (err["label"].as<std::string>() == "mult")
                   m.push_back(err["value"].as<double>());
               }
@@ -617,7 +629,7 @@ namespace NangaParbat
         if (DH._kin.Intv3)
           os << "- Integration bounds of the third kinematic variable: [" << DH._kin.var3b.first << ": " << DH._kin.var3b.second << "]\n";
         else
-          os << "- Value of the second kinematic variable: " << ( DH._kin.var3b.first + DH._kin.var3b.second ) / 2 << "\n";
+          os << "- Value of the third kinematic variable: " << ( DH._kin.var3b.first + DH._kin.var3b.second ) / 2 << "\n";
       }
 
     if (DH._kin.PSRed)
