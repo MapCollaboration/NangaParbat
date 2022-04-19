@@ -266,7 +266,7 @@ namespace NangaParbat
                 // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
                 emit << YAML::EndSeq;
                 //REMEMBER the conversion factor for the cross section:
-                emit << YAML::Key << "value" << YAML::Value << (f.second)*pow(10,33);
+                //emit << YAML::Key << "value" << YAML::Value << (f.second)*pow(10,33);
                 // emit << YAML::Key << "id"    << YAML::Value << m.first;
                 emit << YAML::EndMap;
                 emit << YAML::EndSeq;
