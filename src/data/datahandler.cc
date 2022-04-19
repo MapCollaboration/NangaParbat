@@ -629,6 +629,13 @@ namespace NangaParbat
         else
           os << "- Value of the third kinematic variable: " << ( DH._kin.var3b.first + DH._kin.var3b.second ) / 2 << "\n";
       }
+          if (DH._proc == DataHandler::Process::JetSIDIS)
+      {
+              if (DH._kin.Intv3)
+                os << "- Integration bounds of the third kinematic variable: [" << DH._kin.var3b.first << ": " << DH._kin.var3b.second << "]\n";
+              else
+                os << "- Value of the third kinematic variable: " << ( DH._kin.var3b.first + DH._kin.var3b.second ) / 2 << "\n";
+      }
 
     if (DH._kin.PSRed)
       {

@@ -101,10 +101,10 @@ namespace NangaParbat
     const double JetR = _config["JetR"].as<double>();
 
     // Choice of the Jet Algorithm
-    const apfel::JetAlgorithm JetAlgo = apfel::JetAlgorithm::KT;
-    //const apfel::JetAlgorithm JetAlgo = apfel::JetAlgorithm::CONE;
+    //const apfel::JetAlgorithm JetAlgo = apfel::JetAlgorithm::KT;
+    const apfel::JetAlgorithm JetAlgo = apfel::JetAlgorithm::CONE;
 
-    _EvTMDJet  = BuildTmdJet(_TmdPdfObjs, JetAlgo,  JetR, Alphas, pto, Ci, 1, 1e-7);
+    _EvTMDJet  = BuildTmdJet(_TmdPdfObjs, JetAlgo,  JetR, Alphas, pto, Ci, Ci, 1e-7);
 
     _HardFactorDY    = apfel::HardFactor("DY",    _TmdPdfObjs, Alphas, pto, Cf);
     _HardFactorSIDIS = apfel::HardFactor("SIDIS", _TmdPdfObjs, Alphas, pto, Cf);
@@ -185,7 +185,7 @@ namespace NangaParbat
             break;
           case DataHandler::Process::JetSIDIS:
             Tabs.push_back(ComputeTablesJetSIDIS({dh})[0].c_str());
-            break;            
+            break;
           default:
             throw std::runtime_error("[FastInterface::ComputeTables]: Unsupported process.");
           }
@@ -1040,7 +1040,7 @@ namespace NangaParbat
         // Choice of the value of the cut qToverQmax
         // double qToQ = std::min(param1 , param2) + param3 / Qb.first;
         // double qToQ = std::min(std::max( param2 , param3 / zb.first / Qb.first ) , 1 )
-        const  double qToQ = 0.2;
+        const  double qToQ = 0.8;
 
         // Write kinematics on the YAML emitter
         Tabs[i].SetFloatPrecision(8);
@@ -1123,7 +1123,9 @@ namespace NangaParbat
                                 const double zetaf = Q * Q;
                                 const double muj   = Cf * Q;
                                 const double tR = tan(JetR/2);
+                                //std::cout << "tan(R/2)= " << tR << std::endl;
                                 const double zetaj = pow(tR * 2 * exp(- apfel::emc) / bs, 2);
+                                //const double zetaj = pow(2 * exp(- apfel::emc) / bs, 2);
 
                                     // Partonic fractional energy
                                     const double TauP = pow(Q / Vs, 2);
@@ -1179,7 +1181,7 @@ namespace NangaParbat
                                         else
                                           xbintegral = xbIntObj.integrand(xbg[alpha]);
 
-                                        // Multiply by electric charge and the JetTMD
+                                        // Multiply by electric charge, the JetTMD and the bT
                                          xbintegral *= apfel::QCh2[std::abs(q)-1] * _EvTMDJet(bs, muj, zetaj) * pow(_QuarkSudakov(bs, muf, zetaf), 1) * (IntqT ? 1 : ( zo[n] / qT));
                                         // Include current term
                                         xbintegralq += xbintegral;
