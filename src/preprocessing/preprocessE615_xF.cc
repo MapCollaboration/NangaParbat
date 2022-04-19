@@ -256,6 +256,12 @@ namespace NangaParbat
                     emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << p.second << YAML::Key << "high" << YAML::Value << (p.second + 0.125) << YAML::Key << "low" << YAML::Value << (p.second - 0.125) << YAML::EndMap;
                   }
                 emit << YAML::EndSeq;
+<<<<<<< HEAD
+=======
+                //REMEMBER the conversion factor for the cross section:
+                //emit << YAML::Key << "value" << YAML::Value << (f.second)*pow(10,33);
+                // emit << YAML::Key << "id"    << YAML::Value << m.first;
+>>>>>>> 80011827 (Fixing bugs)
                 emit << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::EndMap;
