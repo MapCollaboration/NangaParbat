@@ -21,7 +21,7 @@ namespace NangaParbat
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
-      if (ifunc < 0)
+      if (ifunc < 0 || ifunc >= this->_nfuncs)
         throw std::runtime_error("[MAP22g5::Evaluate]: function index out of range");
 
       // If the value of 'x' exceeds one returns zero
@@ -34,8 +34,9 @@ namespace NangaParbat
       const double lnz    = log(zeta / _Q02);
       const double NPevol = exp( - ( pow(g2, 2) * b2 ) * lnz / 4 );
 
+
       // TMD PDFs
-      if (ifunc < 2)
+      if (ifunc == 0)
         {
           const double N1      = this->_pars[1];
           const double alpha1  = this->_pars[2];
@@ -45,15 +46,15 @@ namespace NangaParbat
           const double sigma2  = this->_pars[16];
           const double sigma3  = this->_pars[17];
           const double lambda  = this->_pars[4];
-          const double N1B     = this->_pars[11];
+	        const double N1B     = this->_pars[11];
           const double N1C     = this->_pars[12];
           const double lambda2 = this->_pars[13];
           const double xhat    = 0.1;
           const double g1      = N1 * pow(x / xhat, sigma1) * pow((1 - x) / (1 - xhat), pow(alpha1, 2));
-          const double g1B     = N1B * pow(x / xhat, sigma2) * pow((1 - x) / (1 - xhat), pow(alpha2, 2));
+	        const double g1B     = N1B * pow(x / xhat, sigma2) * pow((1 - x) / (1 - xhat), pow(alpha2, 2));
           const double g1C     = N1C * pow(x / xhat, sigma3) * pow((1 - x) / (1 - xhat), pow(alpha3, 2));
-          return NPevol * ( g1 * exp( - g1 * pow(b / 2, 2))
-                            +  pow(lambda, 2)  * pow(g1B, 2) * ( 1 - g1B * pow(b / 2, 2)) * exp( - g1B * pow(b / 2, 2)) + g1C * pow(lambda2, 2) * exp( - g1C * pow(b / 2, 2)))
+	        return NPevol * ( g1 * exp( - g1 * pow(b / 2, 2))
+                          +  pow(lambda, 2)  * pow(g1B, 2) * ( 1 - g1B * pow(b / 2, 2)) * exp( - g1B * pow(b / 2, 2)) + g1C * pow(lambda2, 2) * exp( - g1C * pow(b / 2, 2)))
                  / ( g1 +  pow(lambda, 2)  * pow(g1B, 2) + g1C * pow(lambda2, 2));
         }
       // TMD FFs
@@ -85,7 +86,7 @@ namespace NangaParbat
           //                + ( lambdaF / z2 ) * pow(g3B, 2) * ( 1 - g3B * pow(b / 2, 2) / z2 ) * exp( - g3B * pow(b / 2, 2) / z2 ) + g3C * lambdaF2 * exp( - g3C * pow(b / 2, 2) / z2) )
           //       / ( g3 + ( lambdaF / z2 ) * pow(g3B, 2) + g3C * lambdaF2 );
           return NPevol * ( g3 * exp( - g3 * pow(b / 2, 2) / z2 )
-                            + ( lambdaF / z2 ) * pow(g3B, 2) * ( 1 - g3B * pow(b / 2, 2) / z2 ) * exp( - g3B * pow(b / 2, 2) / z2 ) )
+                          + ( lambdaF / z2 ) * pow(g3B, 2) * ( 1 - g3B * pow(b / 2, 2) / z2 ) * exp( - g3B * pow(b / 2, 2) / z2 ) )
                  / ( g3 + ( lambdaF / z2 ) * pow(g3B, 2) );
         }
     };
@@ -148,5 +149,5 @@ namespace NangaParbat
 
   private:
     const double _Q02  = 1;
-  };
+   };
 }

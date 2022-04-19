@@ -18,7 +18,7 @@ namespace NangaParbat
   {
   public:
     // MAP21test(): Parameterisation{"MAP21test", 2, std::vector<double>{0.12840E+00, 0.28516E+00, 0.29755E+01, 0.17293E+00, 0.39432E+00, 2.12062E-01, 0.21012E+01, 0.93554E-01, 0.25246E+01, 0.52915E+01, 3.37975E-02, 0.0, 0.28516E+00, 0.28516E+00, 3.37975E-02, 0.39432E+00, 0.52915E+01, 0.29755E+01, 0.29755E+01, 0.17293E+00, 0.17293E+00, 0.21012E+01, 0.21012E+01, 0.93554E-01, 0.93554E-01, 0.25246E+01, 0.25246E+01}} { };
-    MAP21test(): Parameterisation{"MAP21test", 2, std::vector<double>{0.12840E+00, 0.28516E+00, 0.29755E+01, 0.17293E+00, 0.39432E+00, 2.12062E-01, 0.21012E+01, 0.93554E-01, 0.25246E+01, 0.52915E+01, 3.37975E-02, 0.28516E+00, 0.28516E+00, 3.37975E-02, 0.39432E+00, 0.52915E+01, 0.29755E+01, 0.29755E+01, 0.17293E+00, 0.17293E+00, 0.21012E+01, 0.21012E+01, 0.93554E-01, 0.93554E-01, 0.25246E+01, 0.25246E+01, 0.01}} { };
+    MAP21test(): Parameterisation{"MAP21test", 2, std::vector<double>{0.12840E+00, 0.28516E+00, 0.29755E+01, 0.17293E+00, 0.39432E+00, 2.12062E-01, 0.21012E+01, 0.93554E-01, 0.25246E+01, 0.52915E+01, 3.37975E-02, 0.28516E+00, 0.28516E+00, 3.37975E-02, 0.39432E+00, 0.52915E+01, 0.29755E+01, 0.29755E+01, 0.17293E+00, 0.17293E+00, 0.21012E+01, 0.21012E+01, 0.93554E-01, 0.93554E-01, 0.25246E+01, 0.25246E+01}} { };
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
@@ -31,11 +31,18 @@ namespace NangaParbat
 
       // Evolution
       const double g2   = this->_pars[0];
-      const double g2B  = this->_pars[26];
+      // const double g2B  = this->_pars[26];
       const double b2 = b * b;
-      const double lnz    = log(zeta / _Q02);
-      const double NPevol = exp( - ( pow(g2, 2) * b2 + g2B * b2 * b2 ) * lnz / 4 );
-      // const double NPevol = exp( - ( g2 * b2 ) * lnz / 4 );
+      // const double lnz    = log(zeta / _Q02);
+      const double lnz    = log(zeta / _Q02 );
+      // const double den = 4 * (1 + pow(g2B, 2) * b2);
+      // const double NPevol = exp( - ( pow(g2, 2) * b2 + g2B * b2 * b2 ) * lnz / 4 );
+      const double NPevol = exp( - ( pow(g2, 2) * b2 ) * lnz / 4 );
+      // const double NPevol =  exp( - ( pow(g2, 2) * log ( 1 + g2B * b2) * lnz ));
+      // const double NPevol =  exp( - ( pow(g2, 2) * b2 / ( 1 + g2B * b2) * lnz ));
+      // const double NPevol =  exp( - ( pow(g2, 2) * b2 * lnz ));
+      // const double NPevol =  exp( - ( pow(g2, 2) * b2 / ( 1 + pow(g2B, 2) * b2) * lnz / 4));
+      // const double NPevol =  exp( - ( pow(g2, 2) * b2 * lnz / den));
 
 
       // TMD PDFs
@@ -49,16 +56,20 @@ namespace NangaParbat
           const double sigma2  = this->_pars[18];
           const double sigma3  = this->_pars[19];
           const double lambda  = this->_pars[4];
-	  const double N1B     = this->_pars[11];
+	        const double N1B     = this->_pars[11];
           const double N1C     = this->_pars[12];
           const double lambda2 = this->_pars[14];
           const double xhat    = 0.1;
           const double g1      = N1 * pow(x / xhat, sigma1) * pow((1 - x) / (1 - xhat), pow(alpha1, 2));
-	  const double g1B     = N1B * pow(x / xhat, sigma2) * pow((1 - x) / (1 - xhat), pow(alpha2, 2));
+	        const double g1B     = N1B * pow(x / xhat, sigma2) * pow((1 - x) / (1 - xhat), pow(alpha2, 2));
           const double g1C     = N1C * pow(x / xhat, sigma3) * pow((1 - x) / (1 - xhat), pow(alpha3, 2));
-	        return NPevol * ( g1 * exp( - g1 * pow(b / 2, 2))
+	        // return NPevol * ( g1 * exp( - g1 * pow(b / 2, 2))
+          //                 + g1C * pow(lambda2, 2) * exp( - g1C * pow(b / 2, 2)))
+          //        / ( g1 + g1C * pow(lambda2, 2));
+          return NPevol * ( g1 * exp( - g1 * pow(b / 2, 2))
                           +  lambda  * pow(g1B, 2) * ( 1 - g1B * pow(b / 2, 2)) * exp( - g1B * pow(b / 2, 2)) + g1C * pow(lambda2, 2) * exp( - g1C * pow(b / 2, 2)))
                  / ( g1 +  lambda  * pow(g1B, 2) + g1C * pow(lambda2, 2));
+          // return 1;
         }
       // TMD FFs
       else
@@ -86,23 +97,36 @@ namespace NangaParbat
           const double g3C      = N3C * cmn3;
           const double z2       = x * x;
           return NPevol * ( g3 * exp( - g3 * pow(b / 2, 2) / z2 )
-                          + ( lambdaF / z2 ) * pow(g3B, 2) * ( 1 - g3B * pow(b / 2, 2) / z2 ) * exp( - g3B * pow(b / 2, 2) / z2 ) + g3C * lambdaF2 * exp( - g3C * pow(b / 2, 2)) )
+                          + ( lambdaF / z2 ) * pow(g3B, 2) * ( 1 - g3B * pow(b / 2, 2) / z2 ) * exp( - g3B * pow(b / 2, 2) / z2 ) + g3C * lambdaF2 * exp( - g3C * pow(b / 2, 2) / z2) )
                  / ( g3 + ( lambdaF / z2 ) * pow(g3B, 2) + g3C * lambdaF2 );
+          // return 1;
         }
     };
 
     std::string LatexFormula() const
     {
       std::string formula;
-      formula  = R"delimiter($$f_{\rm NP}(x,\zeta, b_T)=\exp\left[ - \left( g_1(x) + \frac{1}{2}g_2 \log\left(\frac{\zeta}{Q_0^2}\right) \right) b_T^2 \right])delimiter";
-      formula += R"delimiter(\left[1  - \frac{\lambda g_1^2(x) b_T^2}{4(1 + \lambda g_1(x))}\right]$$\\)delimiter";
-      formula += R"delimiter($$D_{\rm NP}(x,\zeta, b_T)= \frac{1}{g_{3 a\to h} +\big(\lambda_F/z^2\big) g_{3b a \to h}^{2}})delimiter";
-      //      formula += R"delimiter(\bigg(e^{- \frac{\bm{P}_{T}^2}{g_{3 a \to h}}} + \lambda_F \frac{\bm{P}_{\T}^2}{z^2} \  e^{- \frac{\bm{P}_{\T}^2}{g_{4 a \to h}}} \bigg)$$\\)delimiter";
-      formula += R"delimiter($$g_{1,1b}(x) = N_{1,1b} \frac{x^{\sigma}(1-x)^{\alpha}}{\hat{x}^{\sigma}(1-\hat{x})^{\alpha}}$$\\)delimiter";
-      formula += R"delimiter($$g_{3,3b}(z) = N_{3,3b} \frac{(z^{\beta}+\delta)(1-z)^{\gamma}}{(\hat{z}^{\beta}+\delta)(1-\hat{x})^{\gamma}}$$\\)delimiter";
+
+      formula  = R"delimiter($$f_{\rm NP}(x,\zeta, b_T)= \exp(S_{\rm NP}(\zeta, b_T)))delimiter";
+      formula += R"delimiter(\frac{g_1(x) \exp( - g_1(x) \frac{b_T^2}{4}) + \lambda g_{1B}^2(x) ( 1 - g_{1B}(x) \frac{b_T^2}{4}) \exp( - g_{1B}(x) \frac{b_T^2}{4}) + \lambda_2^2 g_{1C}(x) exp( - g_{1C}(x) \frac{b_T^2}{4}) }{  g_1(x) +  \lambda g_{1B}^2(x) + \lambda_2^2 g_{1C}(x) }$$)delimiter";
+      formula += R"delimiter($$D_{\rm NP}(z,\zeta, b_T)= \exp(S_{\rm NP}(\zeta, b_T)))delimiter";
+      formula += R"delimiter(\frac{g_3(z) \exp( - g_3(z) \frac{b_T^2}{4z^2}) + \frac{\lambda_F}{z^2} g_{3B}^2(z) \big ( 1 - g_{3B}(z) \frac{b_T^2}{4z^2} \big ) \exp( - g_{3B}(z) \frac{b_T^2}{4z^2}) + \lambda_{F2} g_{3C}(z) exp( - g_{3C}(z) \frac{b_T^2}{4z^2}) }{  g_3(z) +  \frac{\lambda_F}{z^2} g_{3B}^2(z) + \lambda_{F2} g_{3C}(z) }$$)delimiter";
+      formula += R"delimiter($$S_{\rm NP} = \exp\left[ - \left( g_2^2 + g_{2B}b_T^2 \right) \frac{b_T^2}{4} \log \big (\frac{\zeta}{Q_0^2}\big ) \right]$$)delimiter";
+      formula += R"delimiter($$g_{1,1B,1C}(x) = N_{1,1B,1C} \frac{x^{\sigma_{1,2,3}}(1-x)^{\alpha^2_{1,2,3}}}{\hat{x}^{\sigma_{1,2,3}}(1-\hat{x})^{\alpha^2_{1,2,3}}}$$)delimiter";
+      formula += R"delimiter($$g_{3,3B,3C}(z) = N_{3,3B,3C} \frac{(z^{\beta_{1,2,3}}+\delta^2_{1,2,3})(1-z)^{\gamma^2_{1,2,3}}}{(\hat{z}^{\beta_{1,2,3}}+\delta^2_{1,2,3})(1-\hat{z})^{\gamma^2_{1,2,3}}}$$)delimiter";
       formula += R"delimiter($$Q_0^2 = 1\;{\rm GeV}^2$$\\)delimiter";
       formula += R"delimiter($$\hat{x} = 0.1$$\\)delimiter";
       formula += R"delimiter($$\hat{z} = 0.5$$)delimiter";
+
+      // formula  = R"delimiter($$f_{\rm NP}(x,\zeta, b_T)=\exp\left[ - \left( g_1(x) + \frac{1}{2}g_2 \log\left(\frac{\zeta}{Q_0^2}\right) \right) b_T^2 \right])delimiter";
+      // formula += R"delimiter(\left[1  - \frac{\lambda g_1^2(x) b_T^2}{4(1 + \lambda g_1(x))}\right]$$\\)delimiter";
+      // formula += R"delimiter($$D_{\rm NP}(x,\zeta, b_T)= \frac{1}{g_{3 a\to h} +\big(\lambda_F/z^2\big) g_{3b a \to h}^{2}})delimiter";
+      // //      formula += R"delimiter(\bigg(e^{- \frac{\bm{P}_{T}^2}{g_{3 a \to h}}} + \lambda_F \frac{\bm{P}_{\T}^2}{z^2} \  e^{- \frac{\bm{P}_{\T}^2}{g_{4 a \to h}}} \bigg)$$\\)delimiter";
+      // formula += R"delimiter($$g_{1,1b}(x) = N_{1,1b} \frac{x^{\sigma}(1-x)^{\alpha}}{\hat{x}^{\sigma}(1-\hat{x})^{\alpha}}$$\\)delimiter";
+      // formula += R"delimiter($$g_{3,3b}(z) = N_{3,3b} \frac{(z^{\beta}+\delta)(1-z)^{\gamma}}{(\hat{z}^{\beta}+\delta)(1-\hat{x})^{\gamma}}$$\\)delimiter";
+      // formula += R"delimiter($$Q_0^2 = 1\;{\rm GeV}^2$$\\)delimiter";
+      // formula += R"delimiter($$\hat{x} = 0.1$$\\)delimiter";
+      // formula += R"delimiter($$\hat{z} = 0.5$$)delimiter";
       return formula;
     };
 
@@ -110,32 +134,30 @@ namespace NangaParbat
     {
       return {R"delimiter($g_2$)delimiter",
               R"delimiter($N_1$)delimiter",
-              R"delimiter($\alpha1$)delimiter",
-              R"delimiter($\sigma1$)delimiter",
+              R"delimiter($\alpha_1$)delimiter",
+              R"delimiter($\sigma_1$)delimiter",
               R"delimiter($\lambda$)delimiter",
               R"delimiter($N_3$)delimiter",
-              R"delimiter($\beta1$)delimiter",
-              R"delimiter($\delta1$)delimiter",
-              R"delimiter($\gamma1$)delimiter",
+              R"delimiter($\beta_1$)delimiter",
+              R"delimiter($\delta_1$)delimiter",
+              R"delimiter($\gamma_1$)delimiter",
               R"delimiter($\lambda_F$)delimiter",
               R"delimiter($N_{3B}$)delimiter",
-              // R"delimiter($g_{2B}$)delimiter",
               R"delimiter($N_{1B}$)delimiter",
               R"delimiter($N_{1C}$)delimiter",
               R"delimiter($N_{3C}$)delimiter",
-              R"delimiter($\lambda2$)delimiter",
-              R"delimiter($\lambdaF2$)delimiter",
-              R"delimiter($\alpha2$)delimiter",
-              R"delimiter($\alpha3$)delimiter",
-              R"delimiter($\sigma2$)delimiter",
-              R"delimiter($\sigma3$)delimiter",
-              R"delimiter($\beta2$)delimiter",
-              R"delimiter($\beta3$)delimiter",
-              R"delimiter($\delta2$)delimiter",
-              R"delimiter($\delta3$)delimiter",
-              R"delimiter($\gamma2$)delimiter",
-              R"delimiter($\gamma3$)delimiter",
-              R"delimiter($\g2B$)delimiter"};
+              R"delimiter($\lambda_2$)delimiter",
+              R"delimiter($\lambda_{F2}$)delimiter",
+              R"delimiter($\alpha_2$)delimiter",
+              R"delimiter($\alpha_3$)delimiter",
+              R"delimiter($\sigma_2$)delimiter",
+              R"delimiter($\sigma_3$)delimiter",
+              R"delimiter($\beta_2$)delimiter",
+              R"delimiter($\beta_3$)delimiter",
+              R"delimiter($\delta_2$)delimiter",
+              R"delimiter($\delta_3$)delimiter",
+              R"delimiter($\gamma_2$)delimiter",
+              R"delimiter($\gamma_3$)delimiter"};
     };
 
     std::string GetDescription() const
