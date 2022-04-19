@@ -49,8 +49,8 @@ class fitresults:
         self.mdout.write(" ")
         self.mdout.write("$\chi_{0}^2$ = " + str(round(self.report0["Global chi2"], 4)) + "  \n")
         self.mdout.write(" ")
-        self.mdout.write("$\chi_{mean}^2$ = " + str(round(self.report_mean["Global chi2"], 4)) + "  \n")
-        self.mdout.write(" ")
+        # self.mdout.write("$\chi_{mean}^2$ = " + str(round(self.report_mean["Global chi2"], 4)) + "  \n")
+        # self.mdout.write(" ")
         # print(self.chi2s)
         self.mdout.write(r"$\langle\chi^2\rangle \pm \sigma_{\chi^2}$ = " + str(round(np.mean(self.chi2s), 4)) + " $\pm$ " + str(round(np.std(self.chi2s), 4)) + "  \n")
         self.mdout.write(" ")
@@ -88,13 +88,13 @@ class fitresults:
         fig, ax = plt.subplots(figsize = (22,15), constrained_layout=True)
         im = ax.imshow(corr, vmin = -1, vmax = 1, cmap=cm.coolwarm)
         labels = list(self.report0["Parameters"].keys())
-        # labels = [r"$g_2$", r"$N_1$", r"$\alpha_1$", r"$\sigma_1$", r"$\lambda$", r"$N_3$", r"$\beta_1$", r"$\delta_1$", r"$\gamma_1$", r"$\lambda_F$", r"$N_{\scriptscriptstyle{3B}}$", r"$N_{\scriptscriptstyle{1B}}$", r"$N_{\scriptscriptstyle{1C}}$", r"$\lambda_2$", r"$\alpha_2$", r"$\alpha_3$", r"$\sigma_2$", r"$\sigma_3$", r"$\beta_2$", r"$\delta_2$", r"$\gamma_2$"]
+        # labels = ["$g_2$", "$N_1$", "$\\alpha_1$", "$\sigma_1$", "$\lambda$", "$N_3$", "$\\beta_1$", "$\delta_1$", "$\gamma_1$", "$\lambda_F$", "$N_{3B}$", "$N_{1B}$", "$N_{1C}$", "$N_{3C}$", "$\lambda_2$", "$\lambda_{F2}$", "$\\alpha_2$", "$\\alpha_3$", "$\sigma_2$", "$\sigma_3$", "$\\beta_2$", "$\\beta_3$", "$\delta_2$", "$\delta_3$", "$\gamma_2$", "$\gamma_3$", "$g_{2B}$"]
         ax.set_xticks(np.arange(len(labels)))
         ax.set_yticks(np.arange(len(labels)))
-        ax.set_xticklabels(labels, fontsize = 30)
-        ax.set_yticklabels(labels, fontsize = 30)
+        ax.set_xticklabels(labels)
+        ax.set_yticklabels(labels)
         cbar = fig.colorbar(im, ticks=[-1, -0.5, 0, 0.5, 1])
-        cbar.ax.set_yticklabels(["$-1$", "$-0.5$", "$0$", "$0.5$", "$1$"], fontsize = 30)
+        cbar.ax.set_yticklabels(["$-1$", "$-0.5$", "$0$", "$0.5$", "$1$"])
         ax.set_title(r"\textbf{Correlation matrix}")
         # fig.tight_layout()
         plt.savefig(self.pdffolder + "CorrelationMatrix.pdf")
@@ -230,26 +230,14 @@ class fitresults:
         par.append(("Total", self.ntot, totunc, totcor, round(self.report0["Global chi2"], 3)))
         writemarkdown.table(self.mdout, par, headings)
 
-        # Mean replica
-        self.mdout.write("Table: Mean-replica $\chi^2$'s:\n")
-        par = [(e["Name"], len(e["qT"]), round(e["partial chi2"] - e["penalty chi2"], 3), round(e["penalty chi2"], 3), round(e["partial chi2"], 3))
-                for e in self.report_mean["Experiments"]]
-        totunc = round(sum([len(e["qT"]) * ( e["partial chi2"] - e["penalty chi2"] ) for e in self.report_mean["Experiments"]]) / self.ntot, 3)
-        totcor = round(sum([len(e["qT"]) * e["penalty chi2"] for e in self.report_mean["Experiments"]]) / self.ntot, 3)
-        par.append(("Total", self.ntot, totunc, totcor, round(self.report_mean["Global chi2"], 3)))
-        writemarkdown.table(self.mdout, par, headings)
-
-        # Comparison mean replica with central replica
-        headings = ["Experiment", "Number of points", "$\chi_{0D}^2$", "$\chi_{0\lambda}^2$", "$\chi^2_0$", "$\chi_{m,D}^2$", "$\chi_{m,\lambda}^2$", "$\chi^2_m$"]
-        self.mdout.write("Table: Comparison Central-replica with Mean-replica $\chi^2$'s:\n")
-        par = [(e["Name"], len(e["qT"]), round(e["partial chi2"] - e["penalty chi2"], 3), round(e["penalty chi2"], 3), round(e["partial chi2"], 3), round(f["partial chi2"] - f["penalty chi2"], 3), round(f["penalty chi2"], 3), round(f["partial chi2"], 3))
-                for e,f in zip(self.report0["Experiments"],self.report_mean["Experiments"])]
-        totunc0 = round(sum([len(e["qT"]) * ( e["partial chi2"] - e["penalty chi2"] ) for e in self.report0["Experiments"]]) / self.ntot, 3)
-        totcor0 = round(sum([len(e["qT"]) * e["penalty chi2"] for e in self.report0["Experiments"]]) / self.ntot, 3)
-        totuncm = round(sum([len(e["qT"]) * ( e["partial chi2"] - e["penalty chi2"] ) for e in self.report_mean["Experiments"]]) / self.ntot, 3)
-        totcorm = round(sum([len(e["qT"]) * e["penalty chi2"] for e in self.report_mean["Experiments"]]) / self.ntot, 3)
-        par.append(("Total", self.ntot, totunc0, totcor0, round(self.report0["Global chi2"], 3), totuncm, totcorm, round(self.report_mean["Global chi2"], 3)))
-        writemarkdown.table(self.mdout, par, headings)
+        # # Mean replica
+        # self.mdout.write("Table: Mean-replica $\chi^2$'s:\n")
+        # par = [(e["Name"], len(e["qT"]), round(e["partial chi2"] - e["penalty chi2"], 3), round(e["penalty chi2"], 3), round(e["partial chi2"], 3))
+        #         for e in self.report_mean["Experiments"]]
+        # totunc = round(sum([len(e["qT"]) * ( e["partial chi2"] - e["penalty chi2"] ) for e in self.report_mean["Experiments"]]) / self.ntot, 3)
+        # totcor = round(sum([len(e["qT"]) * e["penalty chi2"] for e in self.report_mean["Experiments"]]) / self.ntot, 3)
+        # par.append(("Total", self.ntot, totunc, totcor, round(self.report_mean["Global chi2"], 3)))
+        # writemarkdown.table(self.mdout, par, headings)
 
         # Average over replicas
         headings = ["Experiment", "Number of points", "$\chi^2$"]
@@ -280,14 +268,6 @@ class fitresults:
         with open(self.reportfolder + "/Parameters.yaml", "w") as ofile:
             yaml.dump(param, ofile, Dumper = yaml.RoundTripDumper)
             yaml.dump(tpars, ofile, Dumper = yaml.RoundTripDumper)
-        with open(self.reportfolder + "/FixedParameters.yaml", "w") as ofilef:
-            yaml.dump(param, ofilef, Dumper = yaml.RoundTripDumper)
-            yaml.dump(self.parameters, ofilef, Dumper = yaml.RoundTripDumper, default_flow_style=True)
-
-        # Creation of the file containing all the parameters' value
-        with open(self.reportfolder + "/FixedParameters.yaml", "w") as ofilef:
-            yaml.dump(param, ofilef, Dumper = yaml.RoundTripDumper)
-            yaml.dump(self.parameters, ofilef, Dumper = yaml.RoundTripDumper, default_flow_style=True)
 
         # Now the code ./run/PlotsTMDs is run with the appropriate input
         print(bcolours.ACTREPORT + "\nProducing TMD plots..." + bcolours.ENDC)
@@ -449,14 +429,14 @@ class fitresults:
             # Draw plot of the central and mean replica
             if (e["Plot title python"][:7] == "COMPASS"):
                 ax1.plot(np.array(qT)*np.array(qT), pred0, label = r"\textbf{Central replica}", color = "k")
-                ax1.plot(np.array(qT)*np.array(qT), pred_mean, label = r"\textbf{Mean replica}", color = "r")
+                # ax1.plot(np.array(qT)*np.array(qT), pred_mean, label = r"\textbf{Mean replica}", color = "r")
             else:
                 if len(qT) == 1:
                     ax1.plot(qT, pred0, label = r"\textbf{Central replica}", color = "k", linestyle = "None", marker = "_", markersize = 10, mew = '2')
-                    ax1.plot(qT, pred_mean, label = r"\textbf{Mean replica}", color = "r", linestyle = "None", marker = "_", markersize = 10, mew = '2')
+                    # ax1.plot(qT, pred_mean, label = r"\textbf{Mean replica}", color = "r", linestyle = "None", marker = "_", markersize = 10, mew = '2')
                 else:
                     ax1.plot(qT, pred0, label = r"\textbf{Central replica}", color = "k")
-                    ax1.plot(qT, pred_mean, label = r"\textbf{Mean replica}", color = "r")
+                    # ax1.plot(qT, pred_mean, label = r"\textbf{Mean replica}", color = "r")
 
             # Plot data with experimental errors
             if (e["Plot title python"][:7] == "COMPASS"):

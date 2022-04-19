@@ -6,15 +6,11 @@
 #include "NangaParbat/bstar.h"
 #include "NangaParbat/nonpertfunctions.h"
 
-#include <numeric> // std::accumulate
-
 #include <fstream>
 #include <cstring>
 #include <algorithm>
 #include <apfel/apfelxx.h>
 #include <LHAPDF/LHAPDF.h>
-#include <apfel/SIDIS.h>
-
 
 //_________________________________________________________________________________
 int main(int argc, char* argv[])
@@ -23,7 +19,7 @@ int main(int argc, char* argv[])
   if (argc < 8 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./PlotTMDs <configuration file> <output file> <pdf/ff/jet> <flavour ID> <Scale in GeV> <value of x> <parameters file>\n" << std::endl;
+      std::cout << "Syntax: ./PlotTMDs <configuration file> <output file> <pdf/ff> <flavour ID> <Scale in GeV> <value of x> <parameters file>\n" << std::endl;
       exit(-10);
     }
 
@@ -56,7 +52,6 @@ int main(int argc, char* argv[])
 
   // Set verbosity level of APFEL++ to the minimum
   apfel::SetVerbosityLevel(0);
-
   // Define x-space grid
   std::vector<apfel::SubGrid> vsg;
   for (auto const& sg : config["xgrid" + pf])
@@ -71,28 +66,26 @@ int main(int argc, char* argv[])
   };
 
   // Tabulate collinear distributions
-  const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabDists{EvolvedDists, 100, dist->qMin(), dist->qMax(), 3, Thresholds};
-
-
-  // Definition of the Jet Radius and the Jet Algorithm
-  double JetR = config["JetR"].as<double>();
-  const apfel::JetAlgorithm JetAlgo = apfel::JetAlgorithm::KT;
+  const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabDists{EvolvedDists, 100, dist->qMin()*0.9, dist->qMax(), 3, Thresholds};
 
   // Build evolved TMD distributions
   const int pto = config["PerturbativeOrder"].as<int>();
   const auto Alphas = [&] (double const& mu) -> double{ return dist->alphasQ(mu); };
   const auto CollDists = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabDists.Evaluate(mu); };
-
   std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> EvTMDs;
-  if (pf == "pdf") {
-    EvTMDs = BuildTmdPDFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);}
-  else if (pf == "jet") {
-    EvTMDs = BuildTmdFFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);}
+  if (pf == "pdf")
+    EvTMDs = BuildTmdPDFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);
+  else if (pf == "ff")
+    EvTMDs = BuildTmdFFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);
+  else if (pf == "ff2")
+    EvTMDs = BuildTmdFFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);
+  else if (pf == "ff3")
+    EvTMDs = BuildTmdFFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);
+  else if (pf == "ff4")
+    EvTMDs = BuildTmdFFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);
   else
     throw std::runtime_error("[PlotTMDs]: Unknown distribution prefix");
 
-  std::function<double(double const&, double const&, double const&)> EvTMDJet;
-  EvTMDJet = BuildTmdJet(apfel::InitializeTmdObjects(g, Thresholds), JetAlgo,  JetR, Alphas, pto, Ci, 1, 1e-7);
   // b* prescription
   const std::function<double(double const&, double const&)> bs = NangaParbat::bstarMap.at(config["bstar"].as<std::string>());
 
@@ -107,13 +100,13 @@ int main(int argc, char* argv[])
   const double x = std::stod(argv[6]);
 
   // Double exponential quadrature
-  //apfel::DoubleExponentialQuadrature DEObj{};
-  apfel::OgataQuadrature DEObj{};
+  // apfel::OgataQuadrature DEObj{0, 1e-10};
+  apfel::DoubleExponentialQuadrature DEObj{0, 1e-10};
 
   // Values of qT
-  const int nqT   = 200;
+  const int nqT   = 100;
   const double qTmin = Q * 1e-4;
-  const double qTmax = 5;
+  const double qTmax = Q * 2;
   const double qTstp = exp( log( qTmax / qTmin ) / ( nqT - 1 ) );
   std::vector<double> qTv;
   for (double qT = qTmin; qT <= qTmax * ( 1 + 1e-5 ); qT *= qTstp)
@@ -129,13 +122,26 @@ int main(int argc, char* argv[])
       4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 5,
       6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10
     };
+
+    const std::vector<double> qTv
+    {
+      0.0001*Q, 0.0010*Q, 0.0025*Q, 0.0050*Q, 0.0075*Q, 0.0100*Q, 0.0200*Q, 0.0300*Q, 0.0400*Q,
+      0.0500*Q, 0.0600*Q, 0.0700*Q, 0.0800*Q, 0.0900*Q, 0.1000*Q, 0.1250*Q, 0.1500*Q, 0.1750*Q,
+      0.2000*Q, 0.2250*Q, 0.2500*Q, 0.2750*Q, 0.3000*Q, 0.3500*Q, 0.4000*Q, 0.4500*Q, 0.5000*Q,
+      0.5500*Q, 0.6000*Q, 0.6500*Q, 0.7000*Q, 0.8000*Q, 0.9000*Q, 1*Q
+    };
+
   */
+
   // Read file of parameters
   const YAML::Node parfile = YAML::LoadFile(argv[7]);
 
   // Get parameterisation and sets of parameters
   NangaParbat::Parameterisation *NPFunc = NangaParbat::GetParametersation(parfile["Parameterisation"].as<std::string>());
   const std::vector<std::vector<double>> pars = parfile["Parameters"].as<std::vector<std::vector<double>>>();
+
+  const double bTmin = 0.000005;
+  const double bTmax = 1000;
 
   apfel::Timer t;
   // Loop over sets of parameters
@@ -145,18 +151,25 @@ int main(int argc, char* argv[])
       // Set vector of parameters
       NPFunc->SetParameters(pars[ip]);
 
-      // Zeta Jet Definition
-      double tR = tan(JetR/2);
-      // double zetaJ = pow(tR * 2 * exp(- apfel::emc) / bs(bT,Q), 2);
-
       // bT-space TMD
-      const auto xFb = [&] (double const& bT) -> double { return bT * EvTMDJet(bs(bT, Q), Q, pow(tR * 2 * exp(- apfel::emc) / bs(bT,Q), 2)) * NPFunc->Evaluate(x, bT, pow(tR * 2 * exp(- apfel::emc) / bs(bT,Q), 2), (pf == "ciao" ? 0 : 1)); };
-      const apfel::TabulateObject<double> TabxFb{xFb, 1000, 0.00005, 10000, 5, bThresholds, [] (double const& x)->double{ return log(x); }, [] (double const& x)->double{ return exp(x); }};
+      const auto xFb = [&] (double const& bT) -> double { return bT * QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1)); };
+      const apfel::TabulateObject<double> TabxFb{xFb, 300, bTmin, bTmax, 3, bThresholds, [] (double const& x)->double{ return log(x); }, [] (double const& x)->double{ return exp(x); }};
       const std::function<double(double const&)> txFb = [&] (double const& bT) -> double{ return TabxFb.Evaluate(bT); };
+
+      const std::function<double(double const&)> fnp = [&] (double const& bT) -> double { return bT * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1));};
+
+      // const std::function<double(double const&)> fpert = [&] (double const& bT) -> double { return QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x);};
+      //
+      // std::cout << " " << fpert(1.0) << std::endl;
 
       // Compute TMDs in qT space
       for (int iqT = 0; iqT < (int) qTv.size(); iqT++)
-        tmds[ip][iqT] = DEObj.transform(txFb, qTv[iqT]);
+        {
+          // tmds[ip][iqT] = DEObj.transform(txFb, qTv[iqT], 200);
+          tmds[ip][iqT] = DEObj.transform(txFb, qTv[iqT]);
+          // tmds[ip][iqT] = DEObj.transform(fnp, qTv[iqT]);
+          // std::cout << qTv[iqT] << " " << DEObj.transform(fnp, qTv[iqT]) << std::endl;
+        }
     }
   t.stop();
 
@@ -168,6 +181,8 @@ int main(int argc, char* argv[])
   out << YAML::Key << "Flavour index" << YAML::Value << ifl;
   out << YAML::Key << "Scale" << YAML::Value << Q;
   out << YAML::Key << "Bjorken x" << YAML::Value << x;
+  out << YAML::Key << "bTmin" << YAML::Value << bTmin;
+  out << YAML::Key << "bTmax" << YAML::Value << bTmax;
   out << YAML::Key << "qT" << YAML::Value << YAML::Flow << qTv;
   out << YAML::Key << "TMD" << YAML::Value << YAML::Flow << tmds;
   out << YAML::EndMap;
