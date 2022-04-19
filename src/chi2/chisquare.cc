@@ -94,7 +94,7 @@ namespace NangaParbat
           // the cut and push the number into the "_ndata" vector.
           int idata = 0;
 
-          double qToQMax = 0.2;
+          double qToQMax = 0.8;
           //double qToQMax = std::min(cutParam[0] / zmin, cutParam[1]) + cutParam[2] / Qmin / zmin;
           std::cout << "qToQMax from chisquare.cc = " << qToQMax << std::endl;
           //std::cout << "param1 from chisquare.cc = " << cutParam[0] << std::endl;

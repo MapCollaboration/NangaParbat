@@ -6,11 +6,15 @@
 #include "NangaParbat/bstar.h"
 #include "NangaParbat/nonpertfunctions.h"
 
+#include <numeric> // std::accumulate
+
 #include <fstream>
 #include <cstring>
 #include <algorithm>
 #include <apfel/apfelxx.h>
 #include <LHAPDF/LHAPDF.h>
+#include <apfel/SIDIS.h>
+
 
 //_________________________________________________________________________________
 int main(int argc, char* argv[])
@@ -19,7 +23,7 @@ int main(int argc, char* argv[])
   if (argc < 8 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./PlotTMDs <configuration file> <output file> <pdf/ff> <flavour ID> <Scale in GeV> <value of x> <parameters file>\n" << std::endl;
+      std::cout << "Syntax: ./PlotTMDs <configuration file> <output file> <pdf/ff/jet> <flavour ID> <Scale in GeV> <value of x> <parameters file>\n" << std::endl;
       exit(-10);
     }
 
@@ -69,19 +73,26 @@ int main(int argc, char* argv[])
   // Tabulate collinear distributions
   const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabDists{EvolvedDists, 100, dist->qMin(), dist->qMax(), 3, Thresholds};
 
+
+  // Definition of the Jet Radius and the Jet Algorithm
+  double JetR = config["JetR"].as<double>();
+  const apfel::JetAlgorithm JetAlgo = apfel::JetAlgorithm::KT;
+
   // Build evolved TMD distributions
   const int pto = config["PerturbativeOrder"].as<int>();
   const auto Alphas = [&] (double const& mu) -> double{ return dist->alphasQ(mu); };
   const auto CollDists = [&] (double const& mu) -> apfel::Set<apfel::Distribution> { return TabDists.Evaluate(mu); };
 
   std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> EvTMDs;
-  if (pf == "pdf")
-    EvTMDs = BuildTmdPDFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);
-  else if (pf == "ff")
-    EvTMDs = BuildTmdFFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);
+  if (pf == "pdf") {
+    EvTMDs = BuildTmdPDFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);}
+  else if (pf == "jet") {
+    EvTMDs = BuildTmdFFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);}
   else
     throw std::runtime_error("[PlotTMDs]: Unknown distribution prefix");
 
+  std::function<double(double const&, double const&, double const&)> EvTMDJet;
+  EvTMDJet = BuildTmdJet(apfel::InitializeTmdObjects(g, Thresholds), JetAlgo,  JetR, Alphas, pto, Ci, 1, 1e-7);
   // b* prescription
   const std::function<double(double const&, double const&)> bs = NangaParbat::bstarMap.at(config["bstar"].as<std::string>());
 
@@ -96,12 +107,13 @@ int main(int argc, char* argv[])
   const double x = std::stod(argv[6]);
 
   // Double exponential quadrature
-  apfel::DoubleExponentialQuadrature DEObj{};
+  //apfel::DoubleExponentialQuadrature DEObj{};
+  apfel::OgataQuadrature DEObj{};
 
   // Values of qT
-  const int nqT   = 100;
+  const int nqT   = 200;
   const double qTmin = Q * 1e-4;
-  const double qTmax = Q * 2;
+  const double qTmax = 5;
   const double qTstp = exp( log( qTmax / qTmin ) / ( nqT - 1 ) );
   std::vector<double> qTv;
   for (double qT = qTmin; qT <= qTmax * ( 1 + 1e-5 ); qT *= qTstp)
@@ -133,8 +145,12 @@ int main(int argc, char* argv[])
       // Set vector of parameters
       NPFunc->SetParameters(pars[ip]);
 
+      // Zeta Jet Definition
+      double tR = tan(JetR/2);
+      // double zetaJ = pow(tR * 2 * exp(- apfel::emc) / bs(bT,Q), 2);
+
       // bT-space TMD
-      const auto xFb = [&] (double const& bT) -> double { return bT * QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1)); };
+      const auto xFb = [&] (double const& bT) -> double { return bT * EvTMDJet(bs(bT, Q), Q, pow(tR * 2 * exp(- apfel::emc) / bs(bT,Q), 2)) * NPFunc->Evaluate(x, bT, pow(tR * 2 * exp(- apfel::emc) / bs(bT,Q), 2), (pf == "ciao" ? 0 : 1)); };
       const apfel::TabulateObject<double> TabxFb{xFb, 1000, 0.00005, 10000, 5, bThresholds, [] (double const& x)->double{ return log(x); }, [] (double const& x)->double{ return exp(x); }};
       const std::function<double(double const&)> txFb = [&] (double const& bT) -> double{ return TabxFb.Evaluate(bT); };
 

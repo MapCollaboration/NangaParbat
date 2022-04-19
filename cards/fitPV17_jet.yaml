@@ -12,7 +12,7 @@ Seed: '1234'
 
 # Cut on qT / Q. This has to be smaller than the production cut used
 # to produce the tables (now it is not used).
-qToQmax: '0.2'
+qToQmax: '0.8'
 
 # Parameters to compute the cut qT / Q as PV17 fit.
 cutParam: [0.2, 0.7, 0.5]
@@ -27,7 +27,7 @@ Percentile cut: '5'
 # prescriprion is enabled). They have to be as many and ordered as the
 # "Parameters" below.
 t0prescription: false
-t0parameters: [0.128, 0.285, 2.98, 0.173, 0.39, 0.2]
+t0parameters: [0.128, 0.285, 2.98, 0.173, 0.39, 0.125]
 
 # Parameterisation to be fitted to data. This has to correspond to a
 # derivarion of the "Parameterisation" class.
@@ -45,4 +45,4 @@ Parameters:
   - {name: "alpha",   starting_value: 2.98,  step: 0.030, fix: false}
   - {name: "sigma",   starting_value: 0.173, step: 0.002, fix: false}
   - {name: "lambda",  starting_value: 0.39,  step: 0.005, fix: false}
-  - {name: "g3",      starting_value: 0.2,   step: 0.001, fix: false}
+  - {name: "g3",      starting_value: 0.125,   step: 0.001, fix: false}
