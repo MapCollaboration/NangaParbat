@@ -245,8 +245,8 @@ namespace NangaParbat
             for (auto const& p : filedata["pT"])
               {
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << p.second << YAML::Key
-                /* Since Nangaparbat cross section is differential in qT, while this experimental set is differential in qT**2 and Q, we need to correct the value of the predictions by a factor DqT/(DQ * D(qT**2))*/
-                << "factor" << YAML::Value << 1.0 / (Qb.second.second - Qb.second.first)<< YAML::EndMap;
+                     /* Since Nangaparbat cross section is differential in qT, while this experimental set is differential in qT**2 and Q, we need to correct the value of the predictions by a factor DqT/(DQ * D(qT**2))*/
+                     << "factor" << YAML::Value << 1.0 / (Qb.second.second - Qb.second.first)<< YAML::EndMap;
                 // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << p.second << YAML::EndMap;
               }
 

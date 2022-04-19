@@ -61,10 +61,12 @@ namespace NangaParbat
     /**
      * @brief This function convolutes a Drell-Yan input convolution
      * table with a user-defined non-perturbative function.
-     * @param fNP: the non-perturbative input function associated to PDFs
+     * @param fNP1: the non-perturbative input function associated to the first set of PDFs
+     * @param fNP2: the non-perturbative input function associated to the second set of PDFs
      * @return a map that associates each value of qT to a prediction.
      */
-    std::map<double, double> ConvoluteDY(std::function<double(double const&, double const&, double const&)> const& fNP) const;
+    std::map<double, double> ConvoluteDY(std::function<double(double const&, double const&, double const&)> const& fNP1,
+                                         std::function<double(double const&, double const&, double const&)> const& fNP2) const;
 
     /**
      * @brief This function convolutes a SIDIS input convolution

@@ -17,8 +17,12 @@
 #include "NangaParbat/MAP22g4.h"
 #include "NangaParbat/QGG6.h"
 #include "NangaParbat/QGG13.h"
+<<<<<<< HEAD
 #include "NangaParbat/PV17jet3w.h"
 #include "NangaParbat/PV17jetww.h"
+=======
+#include "NangaParbat/MAPTMDPion.h"
+>>>>>>> 8af7cc4b (Working on pion TMDs)
 
 #include <map>
 #include <memory>
@@ -37,6 +41,7 @@ namespace NangaParbat
     //{"PV19",  new NangaParbat::PV19{}},
     {"PV19b", new NangaParbat::PV19b{}},
     {"PV19x", new NangaParbat::PV19x{}},
+<<<<<<< HEAD
     {"PV17jet", new NangaParbat::PV17jet{}},
     {"PV17jet3w", new NangaParbat::PV17jet3w{}},
     {"PV17jetww", new NangaParbat::PV17jetww{}},//,
@@ -45,6 +50,10 @@ namespace NangaParbat
     {"MAP22g5", new NangaParbat::MAP22g5{}},
     {"MAP22g52", new NangaParbat::MAP22g52{}},
     {"MAP22g4", new NangaParbat::MAP22g4{}}//,
+=======
+    {"MAP21test", new NangaParbat::MAP21test{}},
+    {"MAPTMDPion", new NangaParbat::MAPTMDPion{YAML::LoadFile("ciao"), 0}}//,
+>>>>>>> 8af7cc4b (Working on pion TMDs)
     //{"QGG6",  new NangaParbat::QGG6{}},
     //{"QGG13", new NangaParbat::QGG13{}}
   };
