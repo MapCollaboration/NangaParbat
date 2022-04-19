@@ -6,6 +6,7 @@
 
 #include "NangaParbat/parameterisation.h"
 
+#include <yaml-cpp/yaml.h>
 #include <math.h>
 
 namespace NangaParbat
@@ -17,7 +18,7 @@ namespace NangaParbat
   class MAP21test: public NangaParbat::Parameterisation
   {
   public:
-    MAP21test(): Parameterisation{"MAP21test", 2, std::vector<double>{0.12840E+00, 0.28516E+00, 0.29755E+01, 0.17293E+00, 0.39432E+00, 2.12062E-01, 0.21012E+01, 0.93554E-01, 0.25246E+01, 0.52915E+01, 3.37975E-02, 0.0, 0.28516E+00}} { };
+    MAP21test(): Parameterisation{"MAP21test", 4, std::vector<double>{0.12840E+00, 0.28516E+00, 0.29755E+01, 0.17293E+00, 0.39432E+00, 2.12062E-01, 0.21012E+01, 0.93554E-01, 0.25246E+01, 0.52915E+01, 3.37975E-02, 0.0, 0.28516E+00}} { };
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
@@ -29,15 +30,14 @@ namespace NangaParbat
         return 0;
 
       // Evolution
-      const double g2   = this->_pars[0];
-      const double g2B  = this->_pars[11];
-      const double b2 = b * b;
+      const double g2     = this->_pars[0];
+      const double g2B    = this->_pars[11];
+      const double b2     = b * b;
       const double lnz    = log(zeta / _Q02);
       const double NPevol = exp( - ( g2 * b2 + g2B * b2 * b2 ) * lnz / 4 );
 
-
       // TMD PDFs
-      if (ifunc == 0)
+      if (ifunc == 0 || ifunc == 1)
         {
           const double N1     = this->_pars[1];
           const double alpha  = this->_pars[2];

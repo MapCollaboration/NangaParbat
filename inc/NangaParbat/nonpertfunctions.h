@@ -12,6 +12,7 @@
 #include "NangaParbat/MAP21test.h"
 #include "NangaParbat/QGG6.h"
 #include "NangaParbat/QGG13.h"
+#include "NangaParbat/MAPTMDPion.h"
 
 #include <map>
 #include <memory>
@@ -30,7 +31,8 @@ namespace NangaParbat
     //{"PV19",  new NangaParbat::PV19{}},
     {"PV19b", new NangaParbat::PV19b{}},
     {"PV19x", new NangaParbat::PV19x{}},
-    {"MAP21test", new NangaParbat::MAP21test{}}//,
+    {"MAP21test", new NangaParbat::MAP21test{}},
+    {"MAPTMDPion", new NangaParbat::MAPTMDPion{YAML::LoadFile("ciao"), 0}}//,
     //{"QGG6",  new NangaParbat::QGG6{}},
     //{"QGG13", new NangaParbat::QGG13{}}
   };

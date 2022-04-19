@@ -164,8 +164,8 @@ namespace NangaParbat
                     emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << unc * 1000 << YAML::EndMap;
                     if (PDFError)
                       emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0 << YAML::EndMap;
-                      /* !! When PDF uncertainties will be available, use the line below instead of the one above !! */
-                      // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                    /* !! When PDF uncertainties will be available, use the line below instead of the one above !! */
+                    // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
                     emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.08 << YAML::EndMap;
                     emit << YAML::EndSeq;
                     emit << YAML::Key << "value" << YAML::Value << val * 1000;
@@ -176,109 +176,105 @@ namespace NangaParbat
                     bins.push_back(0);
                   }
               }
-              emit << YAML::EndSeq;
-              emit << YAML::EndMap;
-              emit << YAML::EndSeq;
-              emit << YAML::Key << "independent_variables";
-              emit << YAML::BeginSeq;
-              emit << YAML::BeginMap;
-              emit << YAML::Key << "header" << YAML::Value << YAML::Flow;
-              emit << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PT" << YAML::Key << "units" << YAML::Value << "GEV" << YAML::EndMap;
-              emit << YAML::Key << "values" << YAML::Value;
-              emit << YAML::BeginSeq;
+            emit << YAML::EndSeq;
+            emit << YAML::EndMap;
+            emit << YAML::EndSeq;
+            emit << YAML::Key << "independent_variables";
+            emit << YAML::BeginSeq;
+            emit << YAML::BeginMap;
+            emit << YAML::Key << "header" << YAML::Value << YAML::Flow;
+            emit << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PT" << YAML::Key << "units" << YAML::Value << "GEV" << YAML::EndMap;
+            emit << YAML::Key << "values" << YAML::Value;
+            emit << YAML::BeginSeq;
 
 
-              for (int j=0; j < bins.size(); j++)
+            for (int j = 0; j < (int) bins.size(); j++)
               {
                 if(bins[j] == 1)
-                {
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << pT[j].second
-                       << YAML::Key << "low" << YAML::Value << std::max(pT[j].first, 1e-5)
-                       /* Since Nangaparbat cross section is differential in qT, while this experimental set is differential in qT**2 and Q, we need to correct the value of the predictions by a factor DqT/(DQ * D(qT**2))*/
-                        << YAML::Key << "factor" << YAML::Value << (pT[j].second - pT[j].first) / ((Qestremi.second - Qestremi.first) * (pow(pT[j].second, 2) - pow(pT[j].first, 2)))
-                        // << YAML::Key << "factor" << YAML::Value << (Qestremi.second - Qestremi.first) * (pTs.second - pTs.first) / (pow(pTs.second, 2) - pow(pTs.first, 2))
+                  {
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << pT[j].second
+                         << YAML::Key << "low" << YAML::Value << std::max(pT[j].first, 1e-5)
+                         /* Since Nangaparbat cross section is differential in qT, while this experimental set is differential in qT**2 and Q, we need to correct the value of the predictions by a factor DqT/(DQ * D(qT**2))*/
+                         << YAML::Key << "factor" << YAML::Value << (pT[j].second - pT[j].first) / ((Qestremi.second - Qestremi.first) * (pow(pT[j].second, 2) - pow(pT[j].first, 2)))
+                         // << YAML::Key << "factor" << YAML::Value << (Qestremi.second - Qestremi.first) * (pTs.second - pTs.first) / (pow(pTs.second, 2) - pow(pTs.first, 2))
 
-                       << YAML::EndMap;
-                }
+                         << YAML::EndMap;
+                  }
               }
 
-              emit << YAML::EndSeq;
-              emit << YAML::EndMap;
-              emit << YAML::EndSeq;
-              emit << YAML::EndMap;
+            emit << YAML::EndSeq;
+            emit << YAML::EndMap;
+            emit << YAML::EndSeq;
+            emit << YAML::EndMap;
 
-              // Close PDF-error file
-              pdferr.close();
+            // Close PDF-error file
+            pdferr.close();
 
-              // Dump table to file
-              std::ofstream fout(opath + "/" + ofile);
-              fout << emit.c_str() << std::endl;
-              fout.close();
-            }
-        }
+            // Dump table to file
+            std::ofstream fout(opath + "/" + ofile);
+            fout << emit.c_str() << std::endl;
+            fout.close();
+          }
+      }
 
-
-
-
-
-            // for (auto const& v : dv["values"])
-            //   {
-            //     std::string stat = v["errors"][0]["symerror"].as<std::string>();
-            //     const double unc = std::max(std::stod(stat), 1e-05);
-            //
-            //     const double val = v["value"].as<double>();
-            //     //Oss: the values of the observables must be multipied by a factor x1000, since the cross section
-            //     //     is measured in nb (pb needed)
-            //
-            //     // Now read PDF errors
-            //     getline(pdferr, line);
-            //     std::stringstream stream(line);
-            //     double dum, pe;
-            //     stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
-            //
-            //     emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
-            //     emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << unc * 1000 << YAML::EndMap;
-            //     if (PDFError)
-            //       emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0 << YAML::EndMap;
-            //       /* !! When PDF uncertainties will be available, use the line below instead of the one above !! */
-            //       // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
-            //     emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.08 << YAML::EndMap;
-            //     emit << YAML::EndSeq;
-            //     emit << YAML::Key << "value" << YAML::Value << val * 1000;
-            //     emit << YAML::EndMap;
-            //   }
-      //       emit << YAML::EndSeq;
-      //       emit << YAML::EndMap;
-      //       emit << YAML::EndSeq;
-      //       emit << YAML::Key << "independent_variables";
-      //       emit << YAML::BeginSeq;
-      //       emit << YAML::BeginMap;
-      //       emit << YAML::Key << "header" << YAML::Value << YAML::Flow;
-      //       emit << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PT" << YAML::Key << "units" << YAML::Value << "GEV" << YAML::EndMap;
-      //       emit << YAML::Key << "values" << YAML::Value;
-      //       emit << YAML::BeginSeq;
-      //       for (auto const& pTs : pT)
-      //         emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << pTs.second
-      //              << YAML::Key << "low" << YAML::Value << std::max(pTs.first, 1e-5)
-      //              /* Since Nangaparbat cross section is differential in qT, while this experimental set is differential in qT**2 and Q, we need to correct the value of the predictions by a factor DqT/(DQ * D(qT**2))*/
-      //               << YAML::Key << "factor" << YAML::Value << (pTs.second - pTs.first) / ((Qestremi.second - Qestremi.first) * (pow(pTs.second, 2) - pow(pTs.first, 2)))
-      //               // << YAML::Key << "factor" << YAML::Value << (Qestremi.second - Qestremi.first) * (pTs.second - pTs.first) / (pow(pTs.second, 2) - pow(pTs.first, 2))
-      //
-      //              << YAML::EndMap;
-      //       emit << YAML::EndSeq;
-      //       emit << YAML::EndMap;
-      //       emit << YAML::EndSeq;
-      //       emit << YAML::EndMap;
-      //
-      //       // Close PDF-error file
-      //       pdferr.close();
-      //
-      //       // Dump table to file
-      //       std::ofstream fout(opath + "/" + ofile);
-      //       fout << emit.c_str() << std::endl;
-      //       fout.close();
-      //     }
-      // }
+    // for (auto const& v : dv["values"])
+    //   {
+    //     std::string stat = v["errors"][0]["symerror"].as<std::string>();
+    //     const double unc = std::max(std::stod(stat), 1e-05);
+    //
+    //     const double val = v["value"].as<double>();
+    //     //Oss: the values of the observables must be multipied by a factor x1000, since the cross section
+    //     //     is measured in nb (pb needed)
+    //
+    //     // Now read PDF errors
+    //     getline(pdferr, line);
+    //     std::stringstream stream(line);
+    //     double dum, pe;
+    //     stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
+    //
+    //     emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
+    //     emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << unc * 1000 << YAML::EndMap;
+    //     if (PDFError)
+    //       emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0 << YAML::EndMap;
+    //       /* !! When PDF uncertainties will be available, use the line below instead of the one above !! */
+    //       // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+    //     emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.08 << YAML::EndMap;
+    //     emit << YAML::EndSeq;
+    //     emit << YAML::Key << "value" << YAML::Value << val * 1000;
+    //     emit << YAML::EndMap;
+    //   }
+    //       emit << YAML::EndSeq;
+    //       emit << YAML::EndMap;
+    //       emit << YAML::EndSeq;
+    //       emit << YAML::Key << "independent_variables";
+    //       emit << YAML::BeginSeq;
+    //       emit << YAML::BeginMap;
+    //       emit << YAML::Key << "header" << YAML::Value << YAML::Flow;
+    //       emit << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PT" << YAML::Key << "units" << YAML::Value << "GEV" << YAML::EndMap;
+    //       emit << YAML::Key << "values" << YAML::Value;
+    //       emit << YAML::BeginSeq;
+    //       for (auto const& pTs : pT)
+    //         emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << pTs.second
+    //              << YAML::Key << "low" << YAML::Value << std::max(pTs.first, 1e-5)
+    //              /* Since Nangaparbat cross section is differential in qT, while this experimental set is differential in qT**2 and Q, we need to correct the value of the predictions by a factor DqT/(DQ * D(qT**2))*/
+    //               << YAML::Key << "factor" << YAML::Value << (pTs.second - pTs.first) / ((Qestremi.second - Qestremi.first) * (pow(pTs.second, 2) - pow(pTs.first, 2)))
+    //               // << YAML::Key << "factor" << YAML::Value << (Qestremi.second - Qestremi.first) * (pTs.second - pTs.first) / (pow(pTs.second, 2) - pow(pTs.first, 2))
+    //
+    //              << YAML::EndMap;
+    //       emit << YAML::EndSeq;
+    //       emit << YAML::EndMap;
+    //       emit << YAML::EndSeq;
+    //       emit << YAML::EndMap;
+    //
+    //       // Close PDF-error file
+    //       pdferr.close();
+    //
+    //       // Dump table to file
+    //       std::ofstream fout(opath + "/" + ofile);
+    //       fout << emit.c_str() << std::endl;
+    //       fout.close();
+    //     }
+    // }
     return
       "  - {name: E537_Q_4.0_4.5, file: E537_Q_4.0_4.5.yaml}\n"
       "  - {name: E537_Q_4.5_5.0, file: E537_Q_4.5_5.0.yaml}\n"
