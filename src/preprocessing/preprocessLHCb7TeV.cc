@@ -111,13 +111,14 @@ namespace NangaParbat
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value"
                        << YAML::Value << v["errors"][0]["symerror"].as<double>() / binw << YAML::EndMap;
                   if (PDFError)
-                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) << YAML::EndMap;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * 0.8 << YAML::EndMap;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * 0.6 * v["value"].as<double>() / binw << YAML::EndMap;
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value"
                        << YAML::Value << v["errors"][1]["symerror"].as<double>() / v["value"].as<double>() << YAML::EndMap;
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value"
                        << YAML::Value << sqrt( pow(0.0125, 2) + pow(0.0172, 2) ) << YAML::EndMap;
                   //[TEMPORARY] introduction of 5 per mil of error
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.01 * v["value"].as<double>() / binw << YAML::EndMap;
+                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.005 * v["value"].as<double>() / binw << YAML::EndMap;
                   emit << YAML::EndSeq;
                   emit << YAML::Key << "value" << YAML::Value << v["value"].as<double>() / binw;
                   emit << YAML::EndMap;

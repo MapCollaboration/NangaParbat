@@ -29,10 +29,10 @@ namespace NangaParbat
     const std::string RawDataFolder = RawDataPath + "/HERMES/";
 
     // Path to the PDF-error folder
-    const std::string PDFErrorFolder = RawDataPath + "/PDFErrors/HERMES/";
+    const std::string PDFErrorFolder = RawDataPath + "/PDFErrors/SIDIS/N3LL/HERMES/";
 
     // Path to the FF-error folder
-    const std::string FFErrorFolder = RawDataPath + "/FFErrors/HERMES/";
+    const std::string FFErrorFolder = RawDataPath + "/FFErrors/N3LL/HERMES/";
 
     // Vector of tables to process
     const std::vector<std::string> tables = {"hermes.deuteron.zxpt-3D.vmsub.mults_kminus.list", "hermes.deuteron.zxpt-3D.vmsub.mults_kplus.list", "hermes.deuteron.zxpt-3D.vmsub.mults_piminus.list", "hermes.deuteron.zxpt-3D.vmsub.mults_piplus.list", "hermes.proton.zxpt-3D.vmsub.mults_kminus.list", "hermes.proton.zxpt-3D.vmsub.mults_kplus.list", "hermes.proton.zxpt-3D.vmsub.mults_piminus.list", "hermes.proton.zxpt-3D.vmsub.mults_piplus.list"};
@@ -341,9 +341,10 @@ namespace NangaParbat
                         getline(pdferr, line);
                         std::stringstream stream(line);
                         double dum, pe;
-                        stream >> dum >> dum >> dum >> dum >> dum >> pe >> dum;
+                        stream >> dum >> dum >> dum >> dum >> pe >> dum;
 
-                        emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                        emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe * 0.8 << YAML::EndMap;
+                        emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe * m.second * 0.6 << YAML::EndMap;
                       }
                       if (FFError)
                         {
@@ -351,12 +352,13 @@ namespace NangaParbat
                           getline(fferr, linef);
                           std::stringstream stream(linef);
                           double dum, pe;
-                          stream >> dum >> dum >> dum >> dum >> dum >> pe >> dum;
+                          stream >> dum >> dum >> dum >> dum >> pe >> dum;
 
-                          emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                          emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe * 0.8 << YAML::EndMap;
+                          emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe * m.second * 0.6 << YAML::EndMap;
                         }
                       //[TEMPORARY] introduction of 5 per mil of error
-                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.01 * m.second << YAML::EndMap;
+                      // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.005 * m.second << YAML::EndMap;
                     // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
                     // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "0.05" << YAML::EndMap;
                     emit << YAML::EndSeq;

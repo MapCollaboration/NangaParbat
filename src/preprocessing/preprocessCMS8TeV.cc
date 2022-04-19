@@ -116,11 +116,12 @@ namespace NangaParbat
                        << YAML::Value << uncart[it]<< YAML::EndMap;
                   // << YAML::Value << v["errors"][0]["symerror"].as<double>()<< YAML::EndMap; // read unc errors from HEPData file
                   if (PDFError)
-                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) << YAML::EndMap;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * 0.8 << YAML::EndMap;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * v["value"].as<double>() * 0.6 << YAML::EndMap;
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value"
                        << YAML::Value << addart[it] << YAML::EndMap;
                   //[TEMPORARY] introduction of 5 per mil of error
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.01 * v["value"].as<double>() << YAML::EndMap;
+                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.005 * v["value"].as<double>() << YAML::EndMap;
                   emit << YAML::EndSeq;
                   emit << YAML::Key << "value" << YAML::Value << v["value"].as<double>();
                   emit << YAML::EndMap;

@@ -1,26 +1,26 @@
 # Collinear PDF set and member to be used for the generation of the
 # tables. They are assumed to be in the LHAPDF format.
 pdfset:
-  name: "MMHT2014nnlo68cl"
+  name: "MMHT2014nlo68cl"
   member: 0
 
 # Collinear PDF set and member to be used for the generation of the
 # collinear cross section for the SIDIS normalization factors.
 # They are assumed to be in the LHAPDF format.
 pdfset2:
-  name: "MMHT2014nnlo68cl"
+  name: "MMHT2014nlo68cl"
   member: 0
 
 # Collinear FF set and member to be used for the generation of the
 # tables. They are assumed to be in the LHAPDF format.
 ffset:
-  name: "DSS17_NLO_KaonMinus"
+  name: "DSS17_NLO_KaonPlus"
   member: 0
 
 # Collinear FF set and member to be used for the generation of the
 # tables. They are assumed to be in the LHAPDF format.
 ffset2:
-  name: "DSS14_NLO_Pim"
+  name: "DSS14_NLO_Pip"
   member: 0
 
 # Name of the b* prescription. This name has to correspond to a
@@ -29,7 +29,7 @@ bstar: bstarmin
 
 # Perturbative order of the computation. 0: LL, 1: NLL, 2: NNLL, 3:
 # NNNLL, -1: NLL', -2: NNLL'
-PerturbativeOrder: 3
+PerturbativeOrder: 1
 
 # Initial and final scale-variation factors around mub = 2e^{-gamma_E}
 # / b and Q, respectively.
@@ -95,9 +95,9 @@ zgrid:
 # zero. However, a more restrictive cut can still be applied at the
 # fit level. This avoids computing predictions for points whose
 # kinematics is such that TMD factorisation is not valid.
-qToverQmax: 5
+qToverQmax: 0.5
 
 #Parameters needed to compute the correct cut in PhT for SIDIS data
-param1: 0.2
+param1: 0.5
 param2: 0.7
 param3: 0.5
