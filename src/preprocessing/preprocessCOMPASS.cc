@@ -285,7 +285,8 @@ namespace NangaParbat
                       double dum, pe;
                       stream >> dum >> dum >> dum >> dum >> pe >> dum;
 
-                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * 0.8 << YAML::EndMap;
+                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * m["value"].as<double>() * 0.6 << YAML::EndMap;
                     }
                     if (FFError)
                       {
@@ -295,14 +296,15 @@ namespace NangaParbat
                         double dum, pe;
                         stream >> dum >> dum >> dum >> dum >> pe >> dum;
 
-                        emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                        emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * 0.8 << YAML::EndMap;
+                        emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * m["value"].as<double>() * 0.6 << YAML::EndMap;
                       }
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << m["errors"][1]["symerror"] << YAML::EndMap; // read systematic errors from HEPdata file
                   // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "0.05" << YAML::EndMap;
                   // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << m["errors"][1]["symerror"].as<double>() / m["value"].as<double>() << YAML::EndMap;
                   // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "0.05" << YAML::EndMap;
                   //[TEMPORARY] introduction of 5 per mil of error
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.005 * m["value"].as<double>() << YAML::EndMap;
+                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.005 * m["value"].as<double>() << YAML::EndMap;
                   emit << YAML::EndSeq;
                   emit << YAML::Key << "value" << YAML::Value << m["value"].as<double>();
                   emit << YAML::EndMap;
