@@ -4,7 +4,7 @@ Description: PV19 version x
 
 # Minimiser to be used for the fit. Possible options so far are
 # 'minuit', 'ceres', and 'none'.
-Minimiser: minuit
+Minimiser: none
 
 # Seed used with the random-number generator for the generation of the
 # Monte Carlo replicas
@@ -13,6 +13,9 @@ Seed: '1234'
 # Cut on qT / Q. This has to be smaller than the production cut used
 # to produce the tables.
 qToQmax: '0.2'
+
+# Parameters to compute the cut qT / Q as PV17 fit.
+cutParam: [0.2, 0.5, 0.3]
 
 # Percentile cut (in percent) on the distribution of chi2's, error
 # functions and parameters used to identify outliers.

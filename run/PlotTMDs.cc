@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
 
       // bT-space TMD
       const auto xFb = [&] (double const& bT) -> double { return bT * QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1)); };
-      const apfel::TabulateObject<double> TabxFb{xFb, 300, 0.0001, 10, 3, bThresholds, [] (double const& x)->double{ return log(x); }, [] (double const& x)->double{ return exp(x); }};
+      const apfel::TabulateObject<double> TabxFb{xFb, 1000, 0.00005, 10000, 5, bThresholds, [] (double const& x)->double{ return log(x); }, [] (double const& x)->double{ return exp(x); }};
       const std::function<double(double const&)> txFb = [&] (double const& bT) -> double{ return TabxFb.Evaluate(bT); };
 
       // Compute TMDs in qT space

@@ -1,0 +1,143 @@
+#### Prefactors for the convolution tables NLL and LL.
+#### PDFs used to compute the fiducial cross section: MMHT2014lo68cl.
+####
+#### For Tevatron (D0 RunII and D0 RunIImu)
+#### fidcs = 1 / FiducialCrossSection@LO
+#### For LHC experiments:
+#### fidcs = 2 / FiducialCrossSection@LO
+
+#D0:
+##- {file: D0_RunI.yaml,   fidcs: 1}
+#- {file: D0_RunII.yaml,   fidcs: 1}
+#- {file: D0_RunIImu.yaml, fidcs: 1}
+#CMS:
+#- {file: CMS_7TeV.yaml, fidcs: 1}
+#- {file: CMS_8TeV.yaml, fidcs: 1}
+#CDF:
+#- {file: CDF_RunI.yaml, fidcs: 1}
+#- {file: CDF_RunII.yaml, fidcs: 1}
+#E605:
+#- {file: E605_Q_10.5_11.5.yaml, fidcs: 1}
+#- {file: E605_Q_11.5_13.5.yaml, fidcs: 1}
+#- {file: E605_Q_13.5_18.yaml, fidcs: 1}
+#- {file: E605_Q_7_8.yaml, fidcs: 1}
+#- {file: E605_Q_8_9.yaml, fidcs: 1}
+#E288:
+##- {file: E288_200_Q_4_5.yaml, fidcs: 1}
+##- {file: E288_200_Q_5_6.yaml, fidcs: 1}
+##- {file: E288_200_Q_6_7.yaml, fidcs: 1}
+##- {file: E288_200_Q_7_8.yaml, fidcs: 1}
+##- {file: E288_200_Q_8_9.yaml, fidcs: 1}
+##- {file: E288_300_Q_4_5.yaml, fidcs: 1}
+##- {file: E288_300_Q_5_6.yaml, fidcs: 1}
+##- {file: E288_300_Q_6_7.yaml, fidcs: 1}
+##- {file: E288_300_Q_7_8.yaml, fidcs: 1}
+##- {file: E288_300_Q_8_9.yaml, fidcs: 1}
+##- {file: E288_300_Q_11_12.yaml, fidcs: 1}
+#- {file: E288_400_Q_5_6.yaml, fidcs: 1}
+#- {file: E288_400_Q_6_7.yaml, fidcs: 1}
+#- {file: E288_400_Q_7_8.yaml, fidcs: 1}
+#- {file: E288_400_Q_8_9.yaml, fidcs: 1}
+#- {file: E288_400_Q_11_12.yaml, fidcs: 1}
+#- {file: E288_400_Q_12_13.yaml, fidcs: 1}
+#- {file: E288_400_Q_13_14.yaml, fidcs: 1}
+#STAR:
+#- {file: STAR_510.yaml, fidcs: 1}
+#LHCb:
+#- {file: LHCb_7TeV.yaml, fidcs: 1}
+#- {file: LHCb_8TeV.yaml, fidcs: 1}
+#- {file: LHCb_13TeV.yaml, fidcs: 1}
+##ATLAS:
+##  - {file: ATLAS_7TeV_y_0_1.yaaml,     fidcs: 0.01018}
+##  - {file: ATLAS_7TeV_y_1_2.yaaml,     fidcs: 0.01476}
+##  - {file: ATLAS_7TeV_y_2_2.4.yaaml,   fidcs: 0.15913}
+##  - {file: ATLAS_8TeV_y_0_0.4.yaaml,   fidcs: 0.02234}
+##  - {file: ATLAS_8TeV_y_0.4_0.8.yaaml, fidcs: 0.02244}
+##  - {file: ATLAS_8TeV_y_0.8_1.2.yaaml, fidcs: 0.02339}
+##  - {file: ATLAS_8TeV_y_1.2_1.6.yaaml, fidcs: 0.02900}
+##  - {file: ATLAS_8TeV_y_1.6_2.yaaml,   fidcs: 0.04587}
+##  - {file: ATLAS_8TeV_y_2_2.4.yaaml,   fidcs: 0.13891}
+##  - {file: ATLAS_8TeV_Q_46_66.yaaml,   fidcs: 0.13159 }
+##  - {file: ATLAS_8TeV_Q_116_150.yaaml, fidcs: 0.52562}
+COMPASS:
+- {file: COMPASS_Deu_Pm_Km_x_0.2544_z_0.344.yaml, fidcs: 1.7712}
+- {file: COMPASS_Deu_Pm_Km_x_0.2544_z_0.479.yaml, fidcs: 1.8646}
+- {file: COMPASS_Deu_Pm_Km_x_0.2544_z_0.680.yaml, fidcs: 2.0713}
+- {file: COMPASS_Deu_Pm_Km_x_0.2909_z_0.243.yaml, fidcs: 1.6442}
+- {file: COMPASS_Deu_Pm_Km_x_0.2909_z_0.343.yaml, fidcs: 1.6818}
+- {file: COMPASS_Deu_Pm_Km_x_0.2909_z_0.479.yaml, fidcs: 1.7616}
+##- {file: COMPASS_Deu_Pm_Km_x_0.0062_z_0.244.yaml, fidcs: }
+##- {file: COMPASS_Deu_Pm_Km_x_0.0062_z_0.345.yaml, fidcs: }
+##- {file: COMPASS_Deu_Pm_Km_x_0.0062_z_0.483.yaml, fidcs: }
+##- {file: COMPASS_Deu_Pm_Km_x_0.0062_z_0.686.yaml, fidcs: }
+#- {file: COMPASS_Deu_Pm_Km_x_0.0074_z_0.244.yaml, fidcs: 2.3382}
+#- {file: COMPASS_Deu_Pm_Km_x_0.0074_z_0.345.yaml, fidcs: 2.2830}
+#- {file: COMPASS_Deu_Pm_Km_x_0.0074_z_0.484.yaml, fidcs: 2.4308}
+##- {file: COMPASS_Deu_Pm_Km_x_0.0102_z_0.244.yaml, fidcs: }
+##- {file: COMPASS_Deu_Pm_Km_x_0.0102_z_0.345.yaml, fidcs: }
+##- {file: COMPASS_Deu_Pm_Km_x_0.0102_z_0.482.yaml, fidcs: }
+##- {file: COMPASS_Deu_Pm_Km_x_0.0102_z_0.686.yaml, fidcs: }
+- {file: COMPASS_Deu_Pm_Km_x_0.0106_z_0.243.yaml, fidcs: 1.7811}
+- {file: COMPASS_Deu_Pm_Km_x_0.0106_z_0.345.yaml, fidcs: 1.8074}
+- {file: COMPASS_Deu_Pm_Km_x_0.0106_z_0.481.yaml, fidcs: 1.9648}
+- {file: COMPASS_Deu_Pm_Km_x_0.0106_z_0.686.yaml, fidcs: 2.4054}
+- {file: COMPASS_Deu_Pm_Km_x_0.0161_z_0.243.yaml, fidcs: 1.6984}
+- {file: COMPASS_Deu_Pm_Km_x_0.0161_z_0.344.yaml, fidcs: 1.7147}
+- {file: COMPASS_Deu_Pm_Km_x_0.0161_z_0.481.yaml, fidcs: 1.8536}
+- {file: COMPASS_Deu_Pm_Km_x_0.0161_z_0.684.yaml, fidcs: 2.2661}
+##- {file: COMPASS_Deu_Pm_Km_x_0.0162_z_0.244.yaml, fidcs: }
+##- {file: COMPASS_Deu_Pm_Km_x_0.0162_z_0.345.yaml, fidcs: }
+##- {file: COMPASS_Deu_Pm_Km_x_0.0162_z_0.483.yaml, fidcs: }
+##- {file: COMPASS_Deu_Pm_Km_x_0.0162_z_0.686.yaml, fidcs: }
+- {file: COMPASS_Deu_Pm_Km_x_0.0170_z_0.243.yaml, fidcs: 1.3958}
+- {file: COMPASS_Deu_Pm_Km_x_0.0170_z_0.344.yaml, fidcs: 1.4705}
+- {file: COMPASS_Deu_Pm_Km_x_0.0170_z_0.480.yaml, fidcs: 1.6282}
+- {file: COMPASS_Deu_Pm_Km_x_0.0170_z_0.683.yaml, fidcs: 1.9767}
+- {file: COMPASS_Deu_Pm_Km_x_0.0254_z_0.243.yaml, fidcs: 1.7350}
+- {file: COMPASS_Deu_Pm_Km_x_0.0254_z_0.344.yaml, fidcs: 1.7295}
+- {file: COMPASS_Deu_Pm_Km_x_0.0254_z_0.481.yaml, fidcs: 1.8563}
+- {file: COMPASS_Deu_Pm_Km_x_0.0254_z_0.686.yaml, fidcs: 2.2705}
+##- {file: COMPASS_Deu_Pm_Km_x_0.0255_z_0.244.yaml, fidcs: }
+##- {file: COMPASS_Deu_Pm_Km_x_0.0255_z_0.345.yaml, fidcs: }
+##- {file: COMPASS_Deu_Pm_Km_x_0.0255_z_0.483.yaml, fidcs: }
+##- {file: COMPASS_Deu_Pm_Km_x_0.0255_z_0.685.yaml, fidcs: }
+- {file: COMPASS_Deu_Pm_Km_x_0.0260_z_0.243.yaml, fidcs: 1.4589}
+- {file: COMPASS_Deu_Pm_Km_x_0.0260_z_0.344.yaml, fidcs: 1.5108}
+- {file: COMPASS_Deu_Pm_Km_x_0.0260_z_0.480.yaml, fidcs: 1.6438}
+- {file: COMPASS_Deu_Pm_Km_x_0.0260_z_0.682.yaml, fidcs: 1.9510}
+##- {file: COMPASS_Deu_Pm_Km_x_0.0389_z_0.345.yaml, fidcs: }
+##- {file: COMPASS_Deu_Pm_Km_x_0.0389_z_0.483.yaml, fidcs: }
+##- {file: COMPASS_Deu_Pm_Km_x_0.0389_z_0.685.yaml, fidcs: }
+- {file: COMPASS_Deu_Pm_Km_x_0.0423_z_0.244.yaml, fidcs: 1.8164}
+- {file: COMPASS_Deu_Pm_Km_x_0.0423_z_0.344.yaml, fidcs: 1.7907}
+- {file: COMPASS_Deu_Pm_Km_x_0.0423_z_0.481.yaml, fidcs: 1.9138}
+- {file: COMPASS_Deu_Pm_Km_x_0.0423_z_0.685.yaml, fidcs: 2.3426}
+- {file: COMPASS_Deu_Pm_Km_x_0.0427_z_0.243.yaml, fidcs: 1.5403}
+- {file: COMPASS_Deu_Pm_Km_x_0.0427_z_0.344.yaml, fidcs: 1.5764}
+- {file: COMPASS_Deu_Pm_Km_x_0.0427_z_0.479.yaml, fidcs: 1.6953}
+- {file: COMPASS_Deu_Pm_Km_x_0.0427_z_0.681.yaml, fidcs: 1.9840}
+- {file: COMPASS_Deu_Pm_Km_x_0.0455_z_0.243.yaml, fidcs: 1.4122}
+- {file: COMPASS_Deu_Pm_Km_x_0.0455_z_0.344.yaml, fidcs: 1.4671}
+- {file: COMPASS_Deu_Pm_Km_x_0.0455_z_0.479.yaml, fidcs: 1.5785}
+- {file: COMPASS_Deu_Pm_Km_x_0.0455_z_0.678.yaml, fidcs: 1.8056}
+- {file: COMPASS_Deu_Pm_Km_x_0.0678_z_0.345.yaml, fidcs: 1.8426}
+- {file: COMPASS_Deu_Pm_Km_x_0.0678_z_0.482.yaml, fidcs: 1.9662}
+- {file: COMPASS_Deu_Pm_Km_x_0.0678_z_0.685.yaml, fidcs: 2.3910}
+- {file: COMPASS_Deu_Pm_Km_x_0.0752_z_0.244.yaml, fidcs: 1.6573}
+- {file: COMPASS_Deu_Pm_Km_x_0.0752_z_0.344.yaml, fidcs: 1.6817}
+- {file: COMPASS_Deu_Pm_Km_x_0.0752_z_0.480.yaml, fidcs: 1.7958}
+- {file: COMPASS_Deu_Pm_Km_x_0.0752_z_0.682.yaml, fidcs: 2.0840}
+- {file: COMPASS_Deu_Pm_Km_x_0.0771_z_0.243.yaml, fidcs: 1.5118}
+- {file: COMPASS_Deu_Pm_Km_x_0.0771_z_0.344.yaml, fidcs: 1.5546}
+- {file: COMPASS_Deu_Pm_Km_x_0.0771_z_0.479.yaml, fidcs: 1.6535}
+- {file: COMPASS_Deu_Pm_Km_x_0.0771_z_0.679.yaml, fidcs: 1.8636}
+- {file: COMPASS_Deu_Pm_Km_x_0.1326_z_0.345.yaml, fidcs: 1.7773}
+- {file: COMPASS_Deu_Pm_Km_x_0.1326_z_0.479.yaml, fidcs: 1.8870}
+- {file: COMPASS_Deu_Pm_Km_x_0.1326_z_0.682.yaml, fidcs: 2.1618}
+- {file: COMPASS_Deu_Pm_Km_x_0.1488_z_0.244.yaml, fidcs: 1.6304}
+- {file: COMPASS_Deu_Pm_Km_x_0.1488_z_0.344.yaml, fidcs: 1.6671}
+- {file: COMPASS_Deu_Pm_Km_x_0.1488_z_0.478.yaml, fidcs: 1.7630}
+- {file: COMPASS_Deu_Pm_Km_x_0.1488_z_0.679.yaml, fidcs: 1.9718}
+- {file: COMPASS_Deu_Pm_Km_x_0.1570_z_0.243.yaml, fidcs: 1.5252}
+- {file: COMPASS_Deu_Pm_Km_x_0.1570_z_0.344.yaml, fidcs: 1.5672}
+- {file: COMPASS_Deu_Pm_Km_x_0.1570_z_0.477.yaml, fidcs: 1.6496}

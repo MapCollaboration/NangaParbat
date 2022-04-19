@@ -17,23 +17,25 @@ namespace NangaParbat
     _Vs(-1),
     _IntqT(false),
     _qTv({}),
-  _qTmap({{}}),
-  _qTfact({}),
-  _prefact(1),
-  _zOgata({}),
-  _Qg({}),
-  _xig({}),
-  _xbg({}),
-  _zg({}),
-  _qToQmax(1000),
-  _acc(1e-7),
-  _cuts({}),
-  _cutmask({})
+    _qTmap({{}}),
+    _qTfact({}),
+    _prefact(1),
+    _prefact2(1),
+    _zOgata({}),
+    _Qg({}),
+    _xig({}),
+    _xbg({}),
+    _zg({}),
+    _cutParam({}),
+    _acc(1e-7),
+    _cuts({}),
+    _cutmask({})
   {
   }
 
   //_________________________________________________________________________________
-  ConvolutionTable::ConvolutionTable(YAML::Node const& table, double const& qToQmax, std::vector<std::shared_ptr<Cut>> const& cuts, double const& acc):
+  //ConvolutionTable::ConvolutionTable(YAML::Node const& table, double const& qToQmax, std::vector<std::shared_ptr<Cut>> const& cuts, double const& acc):
+  ConvolutionTable::ConvolutionTable(YAML::Node const& table, std::vector<double> const& cutParam, std::vector<std::shared_ptr<Cut>> const& cuts, double const& acc):
     _name(table["name"].as<std::string>()),
     _proc(table["process"].as<int>()),
     _Vs(table["CME"].as<double>()),
@@ -42,9 +44,10 @@ namespace NangaParbat
     _qTmap(table["qT_map"].as<std::vector<std::vector<double>>>()),
     _qTfact(table["bin_factors"].as<std::vector<double>>()),
     _prefact(table["prefactor"].as<double>()),
+    _prefact2(table["prefactor2"] ? table["prefactor2"].as<double>() : 1),
     _zOgata(table["Ogata_coordinates"].as<std::vector<double>>()),
     _Qg(table["Qgrid"].as<std::vector<double>>()),
-    _qToQmax(qToQmax),
+    _cutParam(cutParam),
     _acc(acc),
     _cuts(cuts)
   {
@@ -87,19 +90,24 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
-  ConvolutionTable::ConvolutionTable(std::string const& infile, double const& qToQmax, std::vector<std::shared_ptr<Cut>> const& cuts, double const& acc):
-    ConvolutionTable(YAML::LoadFile(infile), qToQmax, cuts, acc)
+  //ConvolutionTable::ConvolutionTable(std::string const& infile, double const& qToQmax, std::vector<std::shared_ptr<Cut>> const& cuts, double const& acc):
+  //ConvolutionTable(YAML::LoadFile(infile), qToQmax, cuts, acc)
+  ConvolutionTable::ConvolutionTable(std::string const& infile, std::vector<double> const& cutParam, std::vector<std::shared_ptr<Cut>> const& cuts, double const& acc):
+    ConvolutionTable(YAML::LoadFile(infile), cutParam, cuts, acc)
   {
   }
 
   //_________________________________________________________________________________
   std::map<double, double> ConvolutionTable::ConvoluteDY(std::function<double(double const&, double const&, double const&)> const& fNP) const
   {
+    // Compute cut qT / Q as same as PV17
+    double DYqToQmax = std::min(_cutParam[0], _cutParam[1]);
+
     // Compute predictions
     std::map<double, double> pred;
     for (int iqT = 0; iqT < (int) _qTv.size(); iqT++)
       {
-        if (_qTv[iqT] / _Qg.front() > _qToQmax)
+        if (_qTv[iqT] / _Qg.front() > DYqToQmax)   //_qToQmax
           {
             pred.insert({_qTv[iqT],  0});
             pred.insert({-_qTv[iqT], 0});
@@ -149,11 +157,15 @@ namespace NangaParbat
   std::map<double, double> ConvolutionTable::ConvoluteSIDIS(std::function<double(double const&, double const&, double const&)> const& fNP,
                                                             std::function<double(double const&, double const&, double const&)> const& DNP) const
   {
+    // Compute cut qT / Q as in PV17
+    double SIDISqToQmax = std::min(std::min(_cutParam[0] / _zg.front(), _cutParam[1]) + _cutParam[2] / _Qg.front() / _zg.front(), 1.0);
+    // double SIDISqToQmax = std::min(_cutParam[0] / _zg.front(), _cutParam[1]) + _cutParam[2] / _Qg.front() / _zg.front();
+
     // Compute predictions
     std::map<double, double> pred;
     for (int iqT = 0; iqT < (int) _qTv.size(); iqT++)
       {
-        if (_qTv[iqT] / _Qg.front() / _zg.front() > _qToQmax)
+        if (_qTv[iqT] / _Qg.front() / _zg.front() > SIDISqToQmax)
           {
             pred.insert({_qTv[iqT],  0});
             continue;
@@ -192,6 +204,7 @@ namespace NangaParbat
     const int npred = _qTmap.size();
     std::vector<double> vpred(npred);
     std::map<double, double> pred;
+
     switch (_proc)
       {
       // Drell-Yan: two PDFs
@@ -214,10 +227,10 @@ namespace NangaParbat
         pred = ConvoluteSIDIS(fNP1, fNP2);
         if (_IntqT)
           for (int i = 0; i < npred; i++)
-              vpred[i] = _prefact * (pred.at(_qTmap[i][1]) - pred.at(_qTmap[i][0])) / ( _qTmap[i][1] - _qTmap[i][0]); 
+            vpred[i] = _prefact * _prefact2 * _qTfact[i] * (pred.at(_qTmap[i][1]) - pred.at(_qTmap[i][0])) / ( _qTmap[i][1] - _qTmap[i][0]);
         else
           for (int i = 0; i < npred; i++)
-            vpred[i] = _prefact * _qTfact[i] * pred.at(_qTmap[i][1]);
+            vpred[i] = _prefact * _prefact2 * _qTfact[i] * pred.at(_qTmap[i][1]);
         break;
 
       // e+e- annihilation into two hadrons: two FFs (Not present

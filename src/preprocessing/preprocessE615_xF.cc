@@ -61,8 +61,8 @@ namespace NangaParbat
         // Dummy variables to read columns
         std::string line;
         int vindex;
-        double vxFmin, vxFmax, vpT, vcross, vstat, vsyst;
-        vsyst = 0.16;
+        double vxFmin, vxFmax, vpT, vcross, vstat;//, vsyst;
+        //vsyst = 0.16;
 
         // Create map to store the data
         std::map<std::string, std::map<int, double>> data;
@@ -253,21 +253,33 @@ namespace NangaParbat
                 emit << YAML::BeginSeq;
                 for (auto const& p : filedata["pT"])
                   {
-                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << p.second << YAML::Key << "high" << YAML::Value << (p.second + 0.125) << YAML::Key << "low" << YAML::Value << (p.second - 0.125) << YAML::EndMap;
+                    // Now read PDF errors
+                    getline(pdferr, line);
+                    std::stringstream stream(line);
+                    double dum, pe;
+                    stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
+
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.16 << YAML::EndMap;
+                    // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
                   }
+                // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
+                // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
                 emit << YAML::EndSeq;
+                //REMEMBER the conversion factor for the cross section:
+                emit << YAML::Key << "value" << YAML::Value << (f.second)*pow(10,33);
+                // emit << YAML::Key << "id"    << YAML::Value << m.first;
                 emit << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::EndMap;
 
                 pdferr.close();
 
-                // Dump table to file
-                std::ofstream fout(opath + "/" + ofilexF + ".yaml");
-                fout << emit.c_str() << std::endl;
-                fout.close();
+            // Dump table to file
+            std::ofstream fout(opath + "/" + ofilexF + ".yaml");
+            fout << emit.c_str() << std::endl;
+            fout.close();
 
-                filenames.push_back(ofilexF);
+            filenames.push_back(ofilexF);
 
           }
 

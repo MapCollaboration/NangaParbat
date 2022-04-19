@@ -20,6 +20,7 @@ set(NangaParbat_VERSION 1.5.0)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -fPIC")
 
 # export version to file
 configure_file(
@@ -120,6 +121,12 @@ if (ROOT_CONFIG)
 else(ROOT_CONFIG)
   message ("ROOT not found. Some parts of the code will not be compiled.")
 endif(ROOT_CONFIG)
+
+find_path(MINUIT2 Minuit2)
+if (MINUIT2)
+  add_definitions(-DMINUIT2_NOT_BUNDLED_WITH_ROOT=true)
+endif(MINUIT2)
+
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LHAPDF_CXX_FLAGS} ${APFELXX_CXX_FLAGS} ${GSL_CXX_FLAGS} ${YAML_CFLAGS} ${ROOT_CXX_FLAGS} ${EIGEN3_CFLAGS} ${Ceres_CFLAGS} ${GLOG_CFLAGS} ${GFLAGS_CFLAGS} -Wall -fPIC -Wunused")

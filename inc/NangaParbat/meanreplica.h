@@ -34,7 +34,7 @@ namespace NangaParbat
     /**
      * @brief Function that returns the value of one of the functions.
      * @param x: momentum fraction
-     * @param b: impact parameter
+     * @param bT: impact parameter
      * @param zeta: rapidity scale &zeta;
      * @param ifunc: index of the function
      * @return it returns the value of the ifunc-th function at (x, b,

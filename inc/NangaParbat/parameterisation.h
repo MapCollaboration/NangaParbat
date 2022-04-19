@@ -49,7 +49,8 @@ namespace NangaParbat
      * @return it returns the value of the ifunc-th function at (x, b,
      * &zeta;)
      */
-    virtual double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const { return 0; };
+    //virtual double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const { return 0; };
+    virtual double Evaluate(double const&, double const&, double const&, int const&) const { return 0; };
     virtual void EvaluateOnGrid() {};
     /**
      * @brief Function that returns the parametrisation in the form of
@@ -68,7 +69,8 @@ namespace NangaParbat
      * @return it returns the value of the derivative w.r.t. the
      * ipar-th parameter of the ifunc-th function at (x, b, zeta;)
      */
-    virtual double Derive(double const& x, double const& b, double const& zeta, int const& ifunc, int const& ipar) const { return 0; };
+    //virtual double Derive(double const& x, double const& b, double const& zeta, int const& ifunc, int const& ipar) const { return 0; };
+    virtual double Derive(double const&, double const&, double const&, int const&, int const&) const { return 0; };
     virtual void DeriveOnGrid() {};
 
     /**

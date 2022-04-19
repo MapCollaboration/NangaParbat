@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 
         // Convolution table
         NangaParbat::ConvolutionTable* ct = new NangaParbat::ConvolutionTable{YAML::LoadFile(std::string(argv[4]) + "/" + ds["name"].as<std::string>() + ".yaml"),
-                                                                              fitconfig["qToQmax"].as<double>()};
+                                                                              fitconfig["cutParam"].as<std::vector<double>>()};
         //ct.NumericalAccuracy(NPFunc->Function());
 
         // Datafile

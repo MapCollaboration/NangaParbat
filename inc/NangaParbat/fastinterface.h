@@ -29,7 +29,7 @@ namespace NangaParbat
     /**
      * @brief Function returns the luminosity for the Drell-Yan
      * process as a "DoubleObject" for a fixed values of "b" and "Q".
-     * @param b: value of the impact parameter
+     * @param bT: value of the impact parameter
      * @param Q: value of the hard scale
      * @param targetiso: the isoscalarity of the target
      * @param beam: type of hadrons in the beam
@@ -64,6 +64,16 @@ namespace NangaParbat
      * tables as elements of "DHVect".
      */
     std::vector<YAML::Emitter> ComputeTablesSIDIS(std::vector<DataHandler> const& DHVect) const;
+
+    /**
+     * @brief Function that computes the normalisation factors to be
+     * applied to SIDIS to normalise the integral of the qT
+     * distribution to the integrated fixed-order cross section.
+     * @param DHVect: vector of "DataHandler" objects.
+     * @return a vector of "double" containing as many normalisation
+     * factors as elements of "DHVect".
+     */
+    std::vector<double> NormalisationFactorsSIDIS(std::vector<DataHandler> const& DHVect) const;
 
   private:
     YAML::Node                                                                                  _config;            //!< Configuration YAML::Node

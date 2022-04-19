@@ -1,12 +1,14 @@
 //
 // Author: Valerio Bertone: valerio.bertone@cern.ch
 //
+#include <numeric> // std::accumulate
 
 #include "NangaParbat/fastinterface.h"
 #include "NangaParbat/generategrid.h"
 #include "NangaParbat/bstar.h"
 
 #include <LHAPDF/LHAPDF.h>
+#include <apfel/SIDIS.h>
 
 namespace NangaParbat
 {
@@ -495,7 +497,7 @@ namespace NangaParbat
     const bool   arun   = _config["alphaem"]["run"].as<bool>();
     const int    pto    = _config["PerturbativeOrder"].as<int>();
 
-    // Initialise container of YAML:Emitter objects.
+    // Initialise container of YAML::Emitter objects.
     std::vector<YAML::Emitter> Tabs(DHVect.size());
 
     // Loop over the vector of "Kinematics" objects
@@ -511,10 +513,13 @@ namespace NangaParbat
         // Name of the dataset
         const std::string name = DHVect[i].GetName();
 
+        // Whether the observable is differential in PhT^2 or not
+        const bool dPhT2 = (name.substr(0, 7) == "COMPASS" ? true : false);
+
         // Process
         const DataHandler::Process proc = DHVect[i].GetProcess();
 
-        // Stop the code if the process is not Drell-Yan
+        // Stop the code if the process is not SIDIS
         if (proc != DataHandler::Process::SIDIS)
           throw std::runtime_error("[FastInterface::ComputeTablesSIDIS]: Only SIDIS data sets can be treated here.");
 
@@ -534,6 +539,24 @@ namespace NangaParbat
         const bool                                   PSRed  = kin.PSRed;    // Whether there is a final-state PS reduction
         const double                                 Wmin   = kin.pTMin;    // Minimum W of the final-state lepton
         const std::pair<double, double>              yRange = kin.etaRange; // Allowed y of the final-state lepton
+
+        // Get average Q as average value in the bin
+        std::vector<double> Qv(DHVect[i].GetKinematics().ndata);
+        for (int j = 0; j < DHVect[i].GetKinematics().ndata; j++)
+          Qv[j] = DHVect[i].GetBinning()[j].Qav;
+        const double Qav = std::accumulate(Qv.begin(), Qv.end(), 0.) / Qv.size();
+
+        // Get average x as average value in the bin
+        std::vector<double> xv(DHVect[i].GetKinematics().ndata);
+        for (int j = 0; j < DHVect[i].GetKinematics().ndata; j++)
+          xv[j] = DHVect[i].GetBinning()[j].xav;
+        const double xav = std::accumulate(xv.begin(), xv.end(), 0.) / xv.size();
+
+        // Get average z as average value in the bin
+        std::vector<double> zv(DHVect[i].GetKinematics().ndata);
+        for (int j = 0; j < DHVect[i].GetKinematics().ndata; j++)
+          zv[j] = DHVect[i].GetBinning()[j].zav;
+        const double zav = std::accumulate(zv.begin(), zv.end(), 0.) / zv.size();
 
         // Tabulate initial scale TMD FFs in b in the physical basis
         std::function<apfel::Set<apfel::Distribution>(double const&)> isTMDFFs =
@@ -635,44 +658,37 @@ namespace NangaParbat
             double xbmax = xbb.second;
             if (PSRed)
               {
-                xbmin = std::max(xbmin, pow(Q / Vs, 2) / yRange.second);
-                xbmax = std::min(std::min(xbmax, pow(Q / Vs, 2) / yRange.first), 1 / ( 1 + pow(Wmin / Q, 2) ));
+                xbmin = std::min(xbmax, std::max(xbmin, pow(Q / Vs, 2) / yRange.second));
+                xbmax = std::max(xbmin, std::min(std::min(xbmax, pow(Q / Vs, 2) / yRange.first), 1 / ( 1 + pow(Wmin / Q, 2) )));
               }
-            return pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * IncxIntegrand.integrate(xbmin, xbmax, 1e-5) / (2 * Q);
+            return pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * (Intxb ? IncxIntegrand.integrate(xbmin, xbmax, 1e-5) : IncxIntegrand.integrand(xav)) / (2 * Q);
           }
         };
 
         // Prefactor that includes the inverse of the inclusive cross
-        // section.
-        const double prefactor = DHVect[i].GetPrefactor() / IncQIntegrand.integrate(Qb.first, Qb.second, 1e-5);
-
-        // Since keeping track whether the cross section is to be
-        // integrated over the final state kinematics is costly and
-        // so far only fully integrated SIDIS cross sections
-        // considered, it is useful to assume that IntQ, Intxb, Intz,
-        // and IntqT are all .true., if not stop the code.
-        if (!IntqT || !IntQ || !Intxb || !Intz)
-          throw std::runtime_error("[FastInterface::ComputeTablesSIDIS]: Only fully integrated cross sections can be treated here.");
+        // section.  If no integration in Q is requested, compute the
+        // integrand at Q average.
+        const double prefactor = DHVect[i].GetPrefactor() / (IntQ ? IncQIntegrand.integrate(Qb.first, Qb.second, 1e-5) : IncQIntegrand.integrand(Qav));
 
         // Ogata-quadrature object of degree one or zero according to
         // whether the cross sections have to be integrated over the
         // bins in qT or not.
-        apfel::OgataQuadrature OgataObj{1};
+        apfel::OgataQuadrature OgataObj{IntqT ? 1 : 0};
 
         // Unscaled coordinates and weights of the Ogata quadrature.
         std::vector<double> zo = OgataObj.GetCoordinates();
         std::vector<double> wo = OgataObj.GetWeights();
 
         // Construct QGrid-like grids for the integration in Q
-        const std::vector<double> Qg = GenerateGrid(nQ, Qb.first, Qb.second, idQ - 1);
+        const std::vector<double> Qg = (IntQ ? GenerateGrid(nQ, Qb.first, Qb.second, idQ - 1) : std::vector<double> {Qav});
         const apfel::QGrid<double> Qgrid{Qg, idQ};
 
         // Construct QGrid-like grids for the integration in Bjorken x
-        const std::vector<double> xbg = GenerateGrid(nxb, xbb.first, xbb.second, idxb - 1, true);
+        const std::vector<double> xbg = (Intxb ? GenerateGrid(nxb, xbb.first, xbb.second, idxb - 1, true) : std::vector<double> {xav});
         const apfel::QGrid<double> xbgrid{xbg, idxb};
 
         // Construct QGrid-like grids for the integration in z
-        const std::vector<double> zg = GenerateGrid(nz, zb.first, zb.second, idz - 1, true);
+        const std::vector<double> zg = (Intz ? NangaParbat::GenerateGrid(nz, zb.first, zb.second, idz - 1, true) : std::vector<double> {zav});
         const apfel::QGrid<double> zgrid{zg, idz};
 
         // Number of points of the grids
@@ -806,17 +822,22 @@ namespace NangaParbat
                                           }
                                         // Perform the integral in x
                                         double xbintegral = 0;
-                                        for (int ixb = std::max(alpha - idxb, 0); ixb < std::min(alpha + 1, nxb); ixb++)
-                                          if (xbg[ixb+1] < xmin || xbg[ixb] > xmax)
-                                            continue;
-                                          else if (xbg[ixb] < xmin && xbg[ixb+1] > xmin)
-                                            xbintegral += xbIntObj.integrate(xmin, xbg[ixb+1], 0);
-                                          else if (xbg[ixb] < xmax && xbg[ixb+1] > xmax)
-                                            xbintegral += xbIntObj.integrate(xbg[ixb], xmax, 0);
-                                          else if (xbg[ixb] < xmin && xbg[ixb+1] > xmax)
-                                            xbintegral += xbIntObj.integrate(xmin, xmax, 0);
-                                          else
-                                            xbintegral += xbIntObj.integrate(xbg[ixb], xbg[ixb+1], 0);
+                                        if (Intxb)
+                                          for (int ixb = std::max(alpha - idxb, 0); ixb < std::min(alpha + 1, nxb); ixb++)
+                                            {
+                                              if (xbg[ixb+1] < xmin || xbg[ixb] > xmax)
+                                                continue;
+                                              else if (xbg[ixb] < xmin && xbg[ixb+1] > xmin)
+                                                xbintegral += xbIntObj.integrate(xmin, xbg[ixb+1], 0);
+                                              else if (xbg[ixb] < xmax && xbg[ixb+1] > xmax)
+                                                xbintegral += xbIntObj.integrate(xbg[ixb], xmax, 0);
+                                              else if (xbg[ixb] < xmin && xbg[ixb+1] > xmax)
+                                                xbintegral += xbIntObj.integrate(xmin, xmax, 0);
+                                              else
+                                                xbintegral += xbIntObj.integrate(xbg[ixb], xbg[ixb+1], 0);
+                                            }
+                                        else
+                                          xbintegral = xbIntObj.integrand(xbg[alpha]);
 
                                         // Multiply by electric charge and the FF
                                         xbintegral *= apfel::QCh2[std::abs(q)-1] * TabMatchTMDFFs.EvaluatexQ(q, z, bs);
@@ -826,13 +847,18 @@ namespace NangaParbat
                                       }
 
                                     // Return z integrand
-                                    return zgrid.Interpolant(0, beta, z) * pow(_QuarkSudakov(bs, muf, zetaf), 2) * xbintegralq / z / (zb.second - zb.first);
+                                    // If qT integration is not required, multiply by b = csi(0) / qT = csi(0) * z / PhT.
+                                    return zgrid.Interpolant(0, beta, z) * pow(_QuarkSudakov(bs, muf, zetaf), 2) * xbintegralq / z * (IntqT ? 1 : (z * zo[n] / qT));
                                   }
                                 };
+
                                 // Perform the integral in z
                                 double zintegral = 0;
-                                for (int iz = std::max(beta - idz, 0); iz < std::min(beta + 1, nz); iz++)
-                                  zintegral += zIntObj.integrate(zg[iz], zg[iz+1], 0);
+                                if(Intz)
+                                  for (int iz = std::max(beta - idz, 0); iz < std::min(beta + 1, nz); iz++)
+                                    zintegral += zIntObj.integrate(zg[iz], zg[iz+1], 0) / (zb.second - zb.first);
+                                else
+                                  zintegral = zIntObj.integrand(zg[beta]) * (dPhT2 ? 1 / (2 * pow(zg[beta], 2) * qT / zg[beta]) : 1 / zg[beta]);
 
                                 // Return Q integrand
                                 return Qgrid.Interpolant(0, tau, Q) * pow((arun ? _TabAlphaem->Evaluate(Q) : aref), 2) * _HardFactorSIDIS(muf) / pow(Q, 3) * zintegral / (2 * Q);
@@ -840,8 +866,11 @@ namespace NangaParbat
                             };
                             // Perform the integral in Q
                             double Qintegral = 0;
-                            for (int iQ = std::max(tau - idQ, 0); iQ < std::min(tau + 1, nQ); iQ++)
-                              Qintegral += QIntObj.integrate(Qg[iQ], Qg[iQ+1], 0);
+                            if (IntQ)
+                              for (int iQ = std::max(tau - idQ, 0); iQ < std::min(tau + 1, nQ); iQ++)
+                                Qintegral += QIntObj.integrate(Qg[iQ], Qg[iQ+1], 0);
+                            else
+                              Qintegral = QIntObj.integrand(Qg[tau]);
 
                             // Compute the weight by multiplying the
                             // integral by the Ogata weight (note that
@@ -871,5 +900,209 @@ namespace NangaParbat
     std::cout << std::endl;
 
     return Tabs;
+  }
+
+  //_________________________________________________________________________________
+  std::vector<double> FastInterface::NormalisationFactorsSIDIS(std::vector<DataHandler> const& DHVect) const
+  {
+    // Get logarihtmic perturbative order
+    const int pto = _config["PerturbativeOrder"].as<int>();
+
+    // Determine perturbative order according to the logarithmic
+    // accuracy
+    int PerturbativeOrder = 0;
+    if (pto > 1 || pto < 0)
+      PerturbativeOrder++;
+    if (pto > 2 || pto < -1)
+      PerturbativeOrder++;
+
+    // Initialize SIDIS objects (use the PDF grid)
+    //const apfel::SidisObjects so = InitializeSIDIS(*_gpdf, *_gff, _Thresholds);
+    // The following line makes it possible to exclude the so-calle
+    // "mixed" terms in the calculation of the collinear structur
+    // functions
+    const apfel::SidisObjects so = InitializeSIDIS(*_gpdf, *_gff, _Thresholds, {5, 6, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22});
+
+    // Initialise container of vector of normalisation factors
+    std::vector<double> NormFacts(DHVect.size());
+
+    // Loop over the vector of "Kinematics" objects
+    for (int i = 0; i < (int) DHVect.size(); i++)
+      {
+        // Process
+        const DataHandler::Process proc = DHVect[i].GetProcess();
+
+        // Stop the code if the process is not SIDIS
+        if (proc != DataHandler::Process::SIDIS)
+          throw std::runtime_error("[FastInterface::NormalisationFactorsSIDIS]: Only SIDIS data sets can be treated here.");
+
+        // Get target isoscalarity
+        const double targetiso = DHVect[i].GetTargetIsoscalarity();
+
+        // Fractions of protons and neutrons in the target
+        const double frp = std::abs(targetiso);
+        const double frn = 1 - frp;
+
+        // Whether the target is isoscalar of proton or antiproton
+        const int sign = (targetiso >= 0 ? 1 : -1);
+
+        // Retrieve kinematics
+        const DataHandler::Kinematics   kin   = DHVect[i].GetKinematics();
+        const double                    Vs    = kin.Vs;       // C.M.E.
+        const std::pair<double, double> Qb    = kin.var1b;    // Invariant mass interval
+        const std::pair<double, double> xbb   = kin.var2b;    // Bjorken x interval
+        const std::pair<double, double> zb    = kin.var3b;    // z interval
+        const bool                      IntQ  = kin.Intv1;    // Whether the bin in Q is to be integrated over
+        const bool                      Intxb = kin.Intv2;    // Whether the bin in Bjorken x is to be integrated over
+        const bool                      Intz  = kin.Intv3;    // Whether the bin in z is to be integrated over
+
+        // Define function to compute SIDIS fixed-order cross section at O(as)
+        const std::function<apfel::DoubleObject<apfel::Distribution>(double const&)> CrossSectionFO = [=] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
+        {
+          // Functions of x and z that multiplies the structure
+          // functions.
+          const std::function<double(double const&)> y2 = [=] (double const& x) -> double{ return pow(pow(Q / Vs, 2) / x, 2) / x; };
+          const std::function<double(double const&)> yp = [=] (double const& x) -> double{ return ( 1 + pow(1 - pow(Q / Vs, 2) / x, 2) ) / x; };
+          const std::function<double(double const&)> iz = [=] (double const& z) -> double{ return 1 / z; };
+
+          // Compute number of active flavours
+          const int nf = apfel::NF(Q, _Thresholds);
+
+          // Coupling from PDF set
+          const double coup = _TabAlphas->Evaluate(Q) / apfel::FourPi;
+
+          // Get distributions for PDFs and FFs in the physical
+          // basis.
+          const std::map<int, apfel::Distribution> dPDF = apfel::QCDEvToPhys(_TabPDFs->Evaluate(Q).GetObjects());
+          const std::map<int, apfel::Distribution> dFF  = apfel::QCDEvToPhys(_TabFFs->Evaluate(Q).GetObjects());
+
+          // Put together double object
+          apfel::DoubleObject<apfel::Distribution> distqq;
+          apfel::DoubleObject<apfel::Distribution> distgq;
+          apfel::DoubleObject<apfel::Distribution> distqg;
+
+          // Adjust up and down PDFs according to the target isoscalarity
+          const apfel::Distribution dw  = frp * dPDF.at(sign)    + frn * dPDF.at(sign*2);
+          const apfel::Distribution up  = frp * dPDF.at(sign*2)  + frn * dPDF.at(sign);
+          const apfel::Distribution dwb = frp * dPDF.at(-sign)   + frn * dPDF.at(-sign*2);
+          const apfel::Distribution upb = frp * dPDF.at(-sign*2) + frn * dPDF.at(-sign);
+
+          distqq.AddTerm({apfel::QCh2[0], dw,         dFF.at(1)});
+          distgq.AddTerm({apfel::QCh2[0], dw,         dFF.at(0)});
+          distqg.AddTerm({apfel::QCh2[0], dPDF.at(0), dFF.at(1)});
+
+          distqq.AddTerm({apfel::QCh2[0], dwb,        dFF.at(-1)});
+          distgq.AddTerm({apfel::QCh2[0], dwb,        dFF.at(0)});
+          distqg.AddTerm({apfel::QCh2[0], dPDF.at(0), dFF.at(-1)});
+
+          distqq.AddTerm({apfel::QCh2[1], up,         dFF.at(2)});
+          distgq.AddTerm({apfel::QCh2[1], up,         dFF.at(0)});
+          distqg.AddTerm({apfel::QCh2[1], dPDF.at(0), dFF.at(2)});
+
+          distqq.AddTerm({apfel::QCh2[1], upb,        dFF.at(-2)});
+          distgq.AddTerm({apfel::QCh2[1], upb,        dFF.at(0)});
+          distqg.AddTerm({apfel::QCh2[1], dPDF.at(0), dFF.at(-2)});
+
+          // Now run over the other quark flavours
+          for (auto j = 3; j <= nf; j++)
+            {
+              const int jp = j * sign;
+              distqq.AddTerm({apfel::QCh2[j-1], dPDF.at(jp), dFF.at(jp)});
+              distgq.AddTerm({apfel::QCh2[j-1], dPDF.at(jp), dFF.at(0)});
+              distqg.AddTerm({apfel::QCh2[j-1], dPDF.at(0),  dFF.at(jp)});
+
+              distqq.AddTerm({apfel::QCh2[j-1], dPDF.at(-jp), dFF.at(-jp)});
+              distgq.AddTerm({apfel::QCh2[j-1], dPDF.at(-jp), dFF.at(0)});
+              distqg.AddTerm({apfel::QCh2[j-1], dPDF.at(0),   dFF.at(-jp)});
+            }
+
+          // Assemble double distribution for the cross section as
+          // Y^+ F2 - y^2 FL times a constant.
+          return ( 4 * M_PI * pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) )
+                 * ( ( ( so.C20qq + coup * so.C21qq ) * distqq + coup * ( so.C21gq * distgq + so.C21qg * distqg ) ).MultiplyBy(yp, iz)
+                     - ( coup * ( so.CL1qq * distqq + so.CL1gq * distgq + so.CL1qg * distqg ) ).MultiplyBy(y2, iz) );
+        };
+
+        // Tabulate cross section
+        const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabCrossSectionFO{CrossSectionFO, 50, 1, 20, 3, _Thresholds};
+
+        // Define function to compute SIDIS asymptotic cross section at O(as)
+        const std::function<apfel::DoubleObject<apfel::Distribution>(double const&)> CrossSectionAsy = [=] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
+        {
+          // Functions of x and z that multiplies the structure
+          // functions.
+          const std::function<double(double const&)> yp = [=] (double const& x) -> double{ return ( 1 + pow(1 - pow(Q / Vs, 2) / x, 2) ) / x; };
+          const std::function<double(double const&)> iz = [=] (double const& z) -> double{ return 1 / z; };
+
+          // Compute number of active flavours
+          const int nf = apfel::NF(Q, _Thresholds);
+
+          // Get matched PDFs and FFs in the physical basis
+          const double bmin = _config["TMDscales"]["Ci"].as<double>() * 2 * exp(- apfel::emc) / Q;
+          const std::map<int, apfel::Distribution> dPDF = apfel::QCDEvToPhys(_MatchTMDPDFs(bmin).GetObjects());
+          const std::map<int, apfel::Distribution> dFF  = apfel::QCDEvToPhys(_MatchTMDFFs(bmin).GetObjects());
+
+          // Put together double object
+          apfel::DoubleObject<apfel::Distribution> distqq;
+
+          // Adjust up and down PDFs according to the target isoscalarity
+          const apfel::Distribution dw  = frp * dPDF.at(sign)   + frn * dPDF.at(sign*2);
+          const apfel::Distribution up  = frp * dPDF.at(sign*2) + frn * dPDF.at(sign);
+          const apfel::Distribution dwb = frp * dPDF.at(-sign)   + frn * dPDF.at(-sign*2);
+          const apfel::Distribution upb = frp * dPDF.at(-sign*2) + frn * dPDF.at(-sign);
+
+          distqq.AddTerm({apfel::QCh2[0], dw,  dFF.at(1)});
+          distqq.AddTerm({apfel::QCh2[0], dwb, dFF.at(-1)});
+          distqq.AddTerm({apfel::QCh2[1], up,  dFF.at(2)});
+          distqq.AddTerm({apfel::QCh2[1], upb, dFF.at(-2)});
+
+          // Now run over the other quark flavours
+          for (auto j = 3; j <= nf; j++)
+            {
+              const int jp = j * sign;
+              distqq.AddTerm({apfel::QCh2[j-1], dPDF.at(jp),  dFF.at(jp)});
+              distqq.AddTerm({apfel::QCh2[j-1], dPDF.at(-jp), dFF.at(-jp)});
+            }
+
+          return ( 4 * M_PI * pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * _HardFactorSIDIS(Q) ) * distqq.MultiplyBy(yp, iz);
+        };
+
+        // Tabulate cross section
+        const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabCrossSectionAsy{CrossSectionAsy, 50, 1, 20, 3, {}};
+
+        // Put normalisation factor together integrating as
+        // appropriate. If the accuracy is LO set it to one.
+        if (PerturbativeOrder == 0)
+          NormFacts[i] = 1;
+        else if (!IntQ && !Intxb && !Intz)
+          NormFacts[i] = TabCrossSectionFO.Evaluate(( Qb.first + Qb.second ) / 2).Evaluate(( xbb.first + xbb.second ) / 2, ( zb.first + zb.second ) / 2)
+                         / TabCrossSectionAsy.Evaluate(( Qb.first + Qb.second ) / 2).Evaluate(( xbb.first + xbb.second ) / 2, ( zb.first + zb.second ) / 2);
+        else if (!IntQ && !Intxb && Intz)
+          NormFacts[i] = TabCrossSectionFO.Evaluate(( Qb.first + Qb.second ) / 2).Integrate2(zb.first, zb.second ).Evaluate(( xbb.first + xbb.second ) / 2)
+                         / TabCrossSectionAsy.Evaluate(( Qb.first + Qb.second ) / 2).Integrate2(zb.first, zb.second ).Evaluate(( xbb.first + xbb.second ) / 2);
+        else if (!IntQ && Intxb && !Intz)
+          NormFacts[i] = TabCrossSectionFO.Evaluate(( Qb.first + Qb.second ) / 2).Integrate1(xbb.first, xbb.second ).Evaluate(( zb.first + zb.second ) / 2)
+                         / TabCrossSectionAsy.Evaluate(( Qb.first + Qb.second ) / 2).Integrate2(zb.first, zb.second ).Evaluate(( xbb.first + xbb.second ) / 2);
+        else if (!IntQ && Intxb && Intz)
+          NormFacts[i] = TabCrossSectionFO.Evaluate(( Qb.first + Qb.second ) / 2).Integrate(xbb.first, xbb.second, zb.first, zb.second)
+                         / TabCrossSectionAsy.Evaluate(( Qb.first + Qb.second ) / 2).Integrate(xbb.first, xbb.second, zb.first, zb.second);
+        else if (IntQ && !Intxb && !Intz)
+          NormFacts[i] = TabCrossSectionFO.Integrate(Qb.first, Qb.second).Evaluate(( xbb.first + xbb.second ) / 2, ( zb.first + zb.second ) / 2)
+                         / TabCrossSectionAsy.Integrate(Qb.first, Qb.second).Evaluate(( xbb.first + xbb.second ) / 2, ( zb.first + zb.second ) / 2);
+        else if (IntQ && !Intxb && Intz)
+          NormFacts[i] = TabCrossSectionFO.Integrate(Qb.first, Qb.second).Integrate2(zb.first, zb.second ).Evaluate(( xbb.first + xbb.second ) / 2)
+                         / TabCrossSectionAsy.Integrate(Qb.first, Qb.second).Integrate2(zb.first, zb.second ).Evaluate(( xbb.first + xbb.second ) / 2);
+        else if (IntQ && Intxb && !Intz)
+          NormFacts[i] = TabCrossSectionFO.Integrate(Qb.first, Qb.second).Integrate1(xbb.first, xbb.second ).Evaluate(( zb.first + zb.second ) / 2)
+                         / TabCrossSectionAsy.Integrate(Qb.first, Qb.second).Integrate2(zb.first, zb.second ).Evaluate(( xbb.first + xbb.second ) / 2);
+        else
+          NormFacts[i] = TabCrossSectionFO.Integrate(Qb.first, Qb.second).Integrate(xbb.first, xbb.second, zb.first, zb.second)
+                         / TabCrossSectionAsy.Integrate(Qb.first, Qb.second).Integrate(xbb.first, xbb.second, zb.first, zb.second);
+
+        std::cout << "Computing SIDIS normalisation factors..." << std::setw(6) << std::setprecision(4) << 100. * ( i + 1 ) / DHVect.size() << "\% completed\r";
+        std::cout.flush();
+      }
+
+    return NormFacts;
   }
 }

@@ -53,7 +53,7 @@ namespace NangaParbat
       return ( ( 1 - lambda ) / ( 1 + g1 / 4 * b2 ) + lambda * exp( - g1B / 4 * b2 ) ) * NPevol;
     };
 
-    double Derive(double const& x, double const& b, double const& zeta, int const& ifunc, int const& ipar) const
+    double Derive(double const& x, double const& b, double const& zeta, int const&, int const& ipar) const
     {
       // Free parameters
       const double g2     = this->_pars[0];

@@ -6,6 +6,7 @@
 
 #include <gsl/gsl_linalg.h>
 #include <cmath>
+#include <stdexcept>
 
 namespace NangaParbat
 {

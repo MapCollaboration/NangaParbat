@@ -14,7 +14,7 @@ import modules.writemarkdown as writemarkdown
 import modules.utilities as utilities
 import warnings
 
-# Avoid mantissa warnings from the CLoader of YAML
+# Avoid mantissa warnings from the Loader of YAML
 warnings.simplefilter("ignore", yaml.error.MantissaNoDotYAML1_1Warning)
 
 # Print banner
@@ -59,7 +59,7 @@ with open(outfolder + "/tables/config.yaml", "r") as tc:
 
 # Get report of the zero-th replica
 with open(outfolder + "/replica_0/Report.yaml", "r") as rep:
-    report0 = yaml.load(rep, Loader = yaml.CLoader)
+    report0 = yaml.load(rep, Loader = yaml.Loader)
     if int(report0["Status"]) == 0:
         print("- replica_0 did not converge.")
         sys.exit()
@@ -73,7 +73,7 @@ folders = []
 for rf in os.listdir(outfolder):
     try:
         with open(outfolder + "/" + rf + "/Report.yaml", "r") as rep:
-            report = yaml.load(rep, Loader = yaml.CLoader)
+            report = yaml.load(rep, Loader = yaml.Loader)
             if (int(report["Status"]) == 0) or (str(report["Global chi2"])[-2:] == "an"):
                 print("- " + rf + " did not converge.")
                 print(bcolours.WARNING + "  chi2 = " + str(report["Global chi2"]) + bcolours.ENDC)
@@ -109,7 +109,7 @@ os.system(CliFolder + "/../run/ComputeMeanReplica " + outfolder + "/ " + outfold
 
 # Get report of the mean replica
 with open(outfolder + "/mean_replica/Report.yaml", "r") as rep:
-    report_mean = yaml.load(rep, Loader = yaml.CLoader)
+    report_mean = yaml.load(rep, Loader = yaml.Loader)
 
 # Print the chi2 of replica 0
 print(bcolours.REPORT + "\nThe chi2 of the central replica is: " + bcolours.BOLD + str(report0["Global chi2"]) + bcolours.ENDC)
