@@ -47,7 +47,28 @@ namespace NangaParbat
         if (rng !=  NULL && !p["fix"].as<bool>())
           pstart += gsl_ran_gaussian(rng, p["step"].as<double>());
 
-        upar.Add(p["name"].as<std::string>(), pstart, p["step"].as<double>());
+        // If the parameter is fixed search the key file, where is
+        // reported the path to the file containing the values of the
+        // parameters for each replica. Fix that parameter.
+        // Otherwise use the value contained in fitconfig.yaml
+        if (p["fix"].as<bool>())
+          {
+            if (p["file"])
+              {
+                 YAML::Node fixedpars = YAML::LoadFile(p["file"].as<std::string>());
+                 const int replicaID = chi2.GetBlocks().front().first->GetFluctuation();
+
+                 upar.Add(p["name"].as<std::string>(), fixedpars[p["name"].as<std::string>()].as<std::vector<double>>()[replicaID],
+                          p["step"].as<double>());
+              }
+            else
+               {
+                 upar.Add(p["name"].as<std::string>(), pstart, p["step"].as<double>());
+               }
+            upar.Fix(p["name"].as<std::string>());
+          }
+        else
+          upar.Add(p["name"].as<std::string>(), pstart, p["step"].as<double>());
 
         // Set limits if required
         if (p["lower_bound"])
@@ -56,9 +77,6 @@ namespace NangaParbat
         if (p["upper_bound"])
           upar.SetUpperLimit(p["name"].as<std::string>(), p["upper_bound"].as<double>());
 
-        // Fix parameter if required
-        if (p["fix"].as<bool>())
-          upar.Fix(p["name"].as<std::string>());
       }
 
     if (chi2.GetNonPerturbativeFunction()->HasGradient())

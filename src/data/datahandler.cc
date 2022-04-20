@@ -90,6 +90,7 @@ namespace NangaParbat
     _covmat       = DH._covmat;
     _CholL        = DH._CholL;
     _labels       = DH._labels;
+    _fluctuation  = DH._fluctuation;
     _fluctuations = DH._fluctuations;
     _t0           = DH._t0;
     _bins         = DH._bins;
@@ -110,6 +111,7 @@ namespace NangaParbat
     _normalised(true),
     _kin(DataHandler::Kinematics{}),
     _labels({}),
+    _fluctuation(fluctuation),
     _t0(t0)
   {
     // Retrieve kinematics
