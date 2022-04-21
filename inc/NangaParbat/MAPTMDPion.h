@@ -18,90 +18,40 @@ namespace NangaParbat
   {
   public:
 
-<<<<<<< HEAD
     MAPTMDPion():
-      Parameterisation{"MAPTMDPion", 2, std::vector<double> {0.2343, 0.2788, 0.8466, 1.3806, 1.9872, 0.1590, 0.4534, 3.843, 0.0276, 0.00392, 12.551, 4.141, 0.6089}} { };
-=======
-    MAPTMDPion(YAML::Node Parameters, int const& ReplicaID):
-    Parameterisation{"MAPTMDPion", 2, std::vector<double> {0, 0, 0, 0, 0, 0, 0, 0, 0}}
-    {
-      _ProtonPars = Parameters["Parameters"].as<std::vector<std::vector<double>>>()[ReplicaID];
-    };
->>>>>>> 8af7cc4b (Working on pion TMDs)
+    Parameterisation{"MAPTMDPion", 2, std::vector<double> {0, 0, 0, 0, 0, 0, 0}}
+    {};
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
       if (ifunc < 0 || ifunc >= this->_nfuncs)
         throw std::runtime_error("[MAPTMDPion::Evaluate]: function index out of range");
 
-      // If the value of 'x' exceeds one returns zero
-      if (x >= 1)
-        return 0;
+        // If the value of 'x' exceeds one returns zero
+        if (x >= 1)
+          return 0;
 
-<<<<<<< HEAD
-      // Evolution
-      const double g2   = this->_pars[0];
-      const double evol = exp( - pow(g2, 2) * log(zeta / _Q02) * b * b / 4 );
+        // Evolution
+        const double g2   = this->_pars[0];
+        const double evol = exp( - g2 * log(zeta / _Q02) * b * b / 4 );
 
-      if (ifunc == 0)   // TMD PDFs proton MAP22
-        {
-          const double N1      = this->_pars[1];
-          const double sigma1  = this->_pars[2];
-          const double alpha1  = this->_pars[3];
-          const double lambda  = this->_pars[4];
-          const double N1B     = this->_pars[5];
-          const double sigma2  = this->_pars[6];
-          const double alpha2  = this->_pars[7];
-          const double lambda2 = this->_pars[8];
-          const double N1C     = this->_pars[9];
-          const double sigma3  = this->_pars[10];
-          const double alpha3  = this->_pars[11];
-          const double xhat    = 0.1;
-          const double g1      = N1 * pow(x / xhat, sigma1) * pow((1 - x) / (1 - xhat), pow(alpha1, 2));
-          const double g1B     = N1B * pow(x / xhat, sigma2) * pow((1 - x) / (1 - xhat), pow(alpha2, 2));
-          const double g1C     = N1C * pow(x / xhat, sigma3) * pow((1 - x) / (1 - xhat), pow(alpha3, 2));
-          return evol * ( g1 * exp( - g1 * pow(b / 2, 2))
-                          +  pow(lambda, 2)  * pow(g1B, 2) * ( 1 - g1B * pow(b / 2, 2)) * exp( - g1B * pow(b / 2, 2)) + g1C * pow(lambda2, 2) * exp( - g1C * pow(b / 2, 2)))
-                 / ( g1 +  pow(lambda, 2)  * pow(g1B, 2) + g1C * pow(lambda2, 2));
-        }
-      else    // TMD PDFs pion
-        {
-          const double alphapi  = this->_pars[12];
-          return evol  * exp( - alphapi * pow( b / 2, 2) );
-        }
-=======
-      const double g2  = this->_pars[0];
-      const double g2B = this->_pars[8];
-
-      // bT-dependent bits
-      const double b2 = b * b;
-
-      // zeta-dependent bit (i.e. non perturbative evolution)
-      const double NPevol = exp( - ( g2 + g2B * b2 ) * b2 * log(zeta / _Q02) / 4 );
-
-      // TMD proton PDFs
-      if (ifunc == 0)
-        {
-          // Free parameters
-          const double N1     = this->_pars[1];
-          const double alpha  = this->_pars[2];
-          const double sigma  = this->_pars[3];
-          const double lambda = this->_pars[4];
-          const double N1B    = this->_pars[5];
-          const double alphaB = this->_pars[6];
-          const double sigmaB = this->_pars[7];
-
-          // x-dependent bits
-          const double g1  = N1  * exp( - pow(log(x / alpha),  2) / 2 / pow(sigma, 2)  ) / x / sigma;
-          const double g1B = N1B * exp( - pow(log(x / alphaB), 2) / 2 / pow(sigmaB, 2) ) / x / sigmaB;
-
-          return ( ( 1 - lambda ) / ( 1 + g1 / 4 * b2 ) + lambda * exp( - g1B / 4 * b2 ) ) * NPevol;
-        }
+        // TMD PDFs
+        if (ifunc == 0)
+          {
+            const double N1     = this->_pars[1];
+            const double alpha  = this->_pars[2];
+            const double sigma  = this->_pars[3];
+            const double lambda = this->_pars[4];
+            const double xhat   = 0.1;
+            const double g1     = N1 * pow(x / xhat, sigma) * pow((1 - x) / (1 - xhat), alpha);
+            return evol * exp( - g1 * pow(b / 2, 2) ) * ( 1 - lambda * pow(g1 * b / 2, 2) / ( 1 + lambda * g1 ) );
+          }
       else
 	{
-	  return 0;
+    const double N1pi     = this->_pars[5];
+    const double alphapi  = this->_pars[6];
+	  return evol * N1pi * exp( - pow(alphapi * b / 2, 2) );
 	}
->>>>>>> 8af7cc4b (Working on pion TMDs)
 
     };
 
@@ -120,43 +70,19 @@ namespace NangaParbat
     {
       return {R"delimiter($g_2$)delimiter",
               R"delimiter($N_1$)delimiter",
-<<<<<<< HEAD
-              R"delimiter($\sigma1$)delimiter",
-              R"delimiter($\alpha1$)delimiter",
-              R"delimiter($\lambda$)delimiter",
-              R"delimiter($N_1B$)delimiter",
-              R"delimiter($\sigma2$)delimiter",
-              R"delimiter($\alpha2$)delimiter",
-              R"delimiter($\lambda2$)delimiter",
-              R"delimiter($N1C$)delimiter",
-              R"delimiter($\sigma3$)delimiter",
-              R"delimiter($\alpha3$)delimiter",
-              R"delimiter($\alphapi$)delimiter"};
-=======
               R"delimiter($\alpha$)delimiter",
               R"delimiter($\sigma$)delimiter",
               R"delimiter($\lambda$)delimiter",
-              R"delimiter($N_{1B}$)delimiter",
-              R"delimiter($\alpha_B$)delimiter",
-              R"delimiter($\sigma_B$)delimiter",
-              R"delimiter($g_{2B}$)delimiter"};
->>>>>>> 8af7cc4b (Working on pion TMDs)
+              R"delimiter($N_1pi$)delimiter",
+              R"delimiter($\alphapi$)delimiter"};
     };
 
     std::string GetDescription() const
     {
-<<<<<<< HEAD
-      return "Parameterisation used for the Pavia 2022 TMD analysis.";
-=======
       return "Parameterisation used for the Pavia 2019 TMD analysis.";
->>>>>>> 8af7cc4b (Working on pion TMDs)
     };
 
   private:
     double              const _Q02 = 1;
-<<<<<<< HEAD
-=======
-    std::vector<double>       _ProtonPars;
->>>>>>> 8af7cc4b (Working on pion TMDs)
   };
 }

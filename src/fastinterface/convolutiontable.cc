@@ -57,7 +57,6 @@ namespace NangaParbat
     _cutmask.resize(_qTfact.size(), true);
     for (auto const& c : cuts)
       _cutmask *= c->GetMask();
-
     switch (_proc)
       {
       case DataHandler::Process::DY:
@@ -67,7 +66,6 @@ namespace NangaParbat
         // Read the phase-space reduction factors...
         for (auto const& qT : _qTv)
           _PSRed.insert({qT, table["PS_reduction_factor"][qT].as<std::vector<std::vector<double>>>()});
-
         // ... and their derivatives.
         for (auto const& qT : _qTv)
           _dPSRed.insert({qT, table["PS_reduction_factor_derivative"][qT].as<std::vector<std::vector<double>>>()});
@@ -76,7 +74,6 @@ namespace NangaParbat
         for (auto const& qT : _qTv)
           _WDY.insert({qT, table["weights"][qT].as<std::vector<std::vector<std::vector<double>>>>()});
         break;
-
       case DataHandler::Process::SIDIS:
         _xbg = table["xbgrid"].as<std::vector<double>>();
         _zg  = table["zgrid"].as<std::vector<double>>();
