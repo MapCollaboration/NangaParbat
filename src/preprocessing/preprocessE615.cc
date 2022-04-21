@@ -156,7 +156,7 @@ namespace NangaParbat
               {"xlabel", "#it{q}_{T} [GeV]"},
               {"ylabel", "#frac{d2#it{#sigma}}{d#it{Q}#d#it{q}_{T}} [pb*GeV^{-2}"},
               {"title", "E615 at 252 GeV, " + std::to_string(Qb.second.first) + " < Q < " + std::to_string(Qb.second.second)},
-              {"xlabelpy", "$q_T \\rm{[GeV]$"},
+              {"xlabelpy", "$q_T \\rm{[GeV]}$"},
               {"ylabelpy", "$\\frac{d^2\\sigma}{dQ dq_{T}}[\\rm{pb}*{GeV}^{-2}]$"},
               {"titlepy", "E615 at 252 GeV, " + std::to_string(Qb.second.first) + " < Q < " + std::to_string(Qb.second.second)}
             };
