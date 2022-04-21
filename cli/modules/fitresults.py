@@ -254,6 +254,10 @@ class fitresults:
             yaml.dump(param, ofile, Dumper = yaml.RoundTripDumper)
             yaml.dump(tpars, ofile, Dumper = yaml.RoundTripDumper)
 
+        with open(self.reportfolder + "/FixedParameters.yaml", "w") as ofilef:
+            yaml.dump(param, ofilef, Dumper = yaml.RoundTripDumper)
+            yaml.dump(self.parameters, ofilef, Dumper = yaml.RoundTripDumper, default_flow_style=True)
+
         # Now the code ./run/PlotsTMDs is run with the appropriate input
         print(bcolours.ACTREPORT + "\nProducing TMD plots..." + bcolours.ENDC)
         os.system(self.reportfolder + "/../../run/PlotTMDs " + self.reportfolder + "/../tables/config.yaml "

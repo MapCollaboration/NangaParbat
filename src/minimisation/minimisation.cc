@@ -57,7 +57,6 @@ namespace NangaParbat
               {
                  YAML::Node fixedpars = YAML::LoadFile(p["file"].as<std::string>());
                  const int replicaID = chi2.GetBlocks().front().first->GetFluctuation();
-
                  upar.Add(p["name"].as<std::string>(), fixedpars[p["name"].as<std::string>()].as<std::vector<double>>()[replicaID],
                           p["step"].as<double>());
               }
@@ -145,25 +144,45 @@ namespace NangaParbat
 
     // Fill in initial parameter array
     std::vector<double*> initPars;
+    std::cout << "Check 1" << std::endl;
     for (auto const p : parameters)
       {
+        YAML::Node fixedpars = YAML::LoadFile(p["file"].as<std::string>());
+        const int replicaID = chi2.GetBlocks().front().first->GetFluctuation();
         // Add a parameter block for each parameter
         cost_function->AddParameterBlock(1);
-
-        // If the GSL random-number generator object is NULL use the
-        // central value as starting parameters, otherwise fluctuate
-        // them (gaussianly) according to the step.
-        double pstart = p["starting_value"].as<double>();
-        if (rng !=  NULL && !p["fix"].as<bool>())
-          pstart += gsl_ran_gaussian(rng, p["step"].as<double>());
-
-        // Fill in initial parameter array
-        initPars.push_back(new double(pstart));
-      }
-
-    // Add residual block
-    problem.AddResidualBlock(cost_function, NULL, initPars);
-
+        std::cout << "Check 2" << std::endl;
+        if(p["fix"].as<bool>())
+        {
+          std::cout << "Check 3" << std::endl;
+         if(p["file"])
+          {
+            std::cout << "Check 4" << std::endl;
+           initPars.push_back(new double(fixedpars[p["name"].as<std::string>()].as<std::vector<double>>()[replicaID]));
+          }
+          else
+          {
+            std::cout << "Check 5" << std::endl;
+            initPars.push_back(new double(p["starting_value"].as<double>()));
+          }
+        }
+        std::cout << "Check 6" << std::endl;
+           // If the GSL random-number generator object is NULL use the
+           // central value as starting parameters, otherwise fluctuate
+           // them (gaussianly) according to the step.
+           double pstart = p["starting_value"].as<double>();
+           if (rng !=  NULL && !p["fix"].as<bool>())
+           {
+           pstart += gsl_ran_gaussian(rng, p["step"].as<double>());
+           // Fill in initial parameter array with fitconfig value
+           initPars.push_back(new double(pstart));
+           std::cout << "Check 7" << std::endl;
+           }
+           std::cout << "Check 8" << std::endl;
+        }
+        std::cout << "Check 9" << std::endl;
+  // Add residual block
+  problem.AddResidualBlock(cost_function, NULL, initPars);
     // Set upper and lower bounds if required
     int i = 0;
     for (auto const p : parameters)
@@ -171,15 +190,29 @@ namespace NangaParbat
         // Fix parameter if required
         if (p["fix"].as<bool>())
           {
-            // If the parameter is fixed set lower and upper bound
-            // within an epsilon from the starting value. Workaround
-            // to avoid that the code crushes.
-            problem.SetParameterLowerBound(initPars[i], 0, *initPars[i] - 1e-8);
-            problem.SetParameterUpperBound(initPars[i], 0, *initPars[i] + 1e-8);
+            // If the parameter is fixed search the key file, where is
+            // reported the path to the file containing the values of the
+            // parameters for each replica. Fix that parameter.
+            // Otherwise use the value contained in fitconfig.yaml
+            if (p["file"])
+              {
+                 YAML::Node fixedpars = YAML::LoadFile(p["file"].as<std::string>());
+                 const int replicaID = chi2.GetBlocks().front().first->GetFluctuation();
+                 // Fill in initial parameter array with fixedpars value
+                 initPars.push_back(new double(fixedpars[p["name"].as<std::string>()].as<std::vector<double>>()[replicaID]));
 
-            // This is the correct procedure that seems to make the
-            // code crush.
-            //problem.SetParameterBlockConstant(initPars[i]);
+              }
+            else
+              {
+              // If the parameter is fixed set lower and upper bound
+              // within an epsilon from the starting value. Workaround
+              // to avoid that the code crushes.
+              problem.SetParameterLowerBound(initPars[i], 0, *initPars[i] - 1e-8);
+              problem.SetParameterUpperBound(initPars[i], 0, *initPars[i] + 1e-8);
+              }
+              // This is the correct procedure that seems to make the
+              // code crush.
+              //problem.SetParameterBlockConstant(initPars[i]);
           }
         else
           {
@@ -196,7 +229,7 @@ namespace NangaParbat
     ceres::Solver::Options options;
     options.minimizer_progress_to_stdout = true;
     options.max_num_iterations           = 1000;
-    //options.function_tolerance           = 1e-5;
+    options.function_tolerance           = 1e-5;
     //options.minimizer_type               = ceres::LINE_SEARCH;
     //options.trust_region_strategy_type   = ceres::DOGLEG;
 

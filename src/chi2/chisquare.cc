@@ -44,7 +44,7 @@ namespace NangaParbat
     //const double                  qToQMax = DSBlock.second->GetCutqToverQ();
     const DataHandler::Process    proc     = DSBlock.first->GetProcess();
     const std::vector<double>     cutParam = DSBlock.second->GetcutParam();
-    const std::vector<double>     qTv      = kin.qTv;
+    const std::vector<std::pair<double,double>>     qTv      = kin.qTmap;
 
     if (proc == 0) //DY
       {
@@ -55,10 +55,10 @@ namespace NangaParbat
         double qToQMax = std::min(cutParam[0], cutParam[1]);
 
         for (auto const& qT : qTv)
-          if (qT / Qmin < qToQMax)
+          if (qT.second / Qmin < qToQMax)
             idata++;
 
-        _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
+        _ndata.push_back(idata);
 
         // Data the pass all the cuts
         const std::valarray<bool> cm = DSBlock.second->GetCutMask();
@@ -77,10 +77,10 @@ namespace NangaParbat
         // double qToQMax = std::min(cutParam[0] / zmin, cutParam[1]) + cutParam[2] / Qmin / zmin;
 
         for (auto const& qT : qTv)
-          if (qT / Qmin / zmin < qToQMax)
+          if (qT.second / Qmin / zmin < qToQMax)
             idata++;
 
-        _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
+        _ndata.push_back(idata);
 
         // Data the pass all the cuts
         const std::valarray<bool> cm = DSBlock.second->GetCutMask();

@@ -1,0 +1,25 @@
+Description: MAP21 pion TMDs
+Minimiser: minuit
+Seed: 5814
+qToQmax: 0.2
+Percentile cut: 5
+t0prescription: false
+t0parameters:
+  - 0.12506
+  - 0.28000000000000003
+  - 2.9500000000000002
+  - 0.17000000000000001
+  - 0.85999999999999999
+  - 1
+  - 0.35797350873828709
+Parameterisation: MAPTMDPion
+Paramfluct: true
+cutParam: [0.2, 0.5, 0.3]
+Parameters:
+  - {name: $g_2$, starting_value: 0.12506, step: 0.001, fix: true, file: ./FitResults/PV17_NLL/Report/FixedParameters.yaml}
+  - {name: $N_1$, starting_value: 0.28000000000000003, step: 0.003, fix: true, file: ./FitResults/PV17_NLL/Report/FixedParameters.yaml}
+  - {name: $\alpha$, starting_value: 2.9500000000000002, step: 0.030, fix: true, file: ./FitResults/PV17_NLL/Report/FixedParameters.yaml}
+  - {name: $\sigma$, starting_value: 0.17000000000000001, step: 0.002, fix: true, file: ./FitResults/PV17_NLL/Report/FixedParameters.yaml}
+  - {name: $\lambda$, starting_value: 0.85999999999999999, step: 0.005, fix: true, file: ./FitResults/PV17_NLL/Report/FixedParameters.yaml}
+  - {name: $N_1pi$, starting_value: 1, step: 0.003, fix: true}
+  - {name: $\alphapi$, starting_value: 0.35797350873828709, step: 0.030, fix: false}

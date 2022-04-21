@@ -78,7 +78,6 @@ int main(int argc, char* argv[])
       }
   // Report time elapsed
   t.stop();
-
   // Minimise the chi2 using the minimiser indicated in the input card
   t.start();
   bool status;

@@ -32,7 +32,7 @@ namespace NangaParbat
     {"PV19b", new NangaParbat::PV19b{}},
     {"PV19x", new NangaParbat::PV19x{}},
     {"MAP21test", new NangaParbat::MAP21test{}},
-    {"MAPTMDPion", new NangaParbat::MAPTMDPion{YAML::LoadFile("ciao"), 0}}//,
+    {"MAPTMDPion", new NangaParbat::MAPTMDPion{}}//,
     //{"QGG6",  new NangaParbat::QGG6{}},
     //{"QGG13", new NangaParbat::QGG13{}}
   };

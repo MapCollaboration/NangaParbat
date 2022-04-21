@@ -4,7 +4,7 @@ Description: MAP21 pion TMDs
 
 # Minimiser to be used for the fit. Possible options so far are
 # 'minuit', 'ceres', and 'none'.
-Minimiser: none
+Minimiser: minuit
 
 # Seed used with the random-number generator for the generation of the
 # Monte Carlo replicas
@@ -23,26 +23,27 @@ Percentile cut: '5'
 # used to compute the corresponding predictions (used only if the t0
 # prescription is enabled). They have to be as many and ordered as the
 # "Parameters" below.
-t0prescription: true
-t0parameters: [0.02351590841248, 0.9422997060112, 0.2036619541611, 0.326688434032, 0.6715638120608, 0.04591270083373, 0.06702302432024, 0.4193674275496, 0.01624238607691]
+t0prescription: false
+t0parameters: [0.228, 0.285, 2.98, 0.173, 0.39,  1.09332, 0.26065405]
 
 # Parameterisation to be fitted to data. This has to correspond to a
 # derivation of the "Parameterisation" class.
-Parameterisation: PV19x
+Parameterisation: MAPTMDPion
 
 # Fluctuate initial parameters according to their step
-Paramfluct: false
+Paramfluct: true
+
+# Parameters to compute the cut qT / Q as PV17 fit.
+cutParam: [0.2, 0.5, 0.3]
 
 # List of parameters to be fitted to data. This requires that the
 # number and order of parameters matches those expected by the
 # particular parameterisation being used.
 Parameters:
-- {name: g2,      starting_value: 0.02351590841248, step: 0.006586509, fix: false}
-- {name: N1,      starting_value:  0.9422997060112, step: 0.405145610, fix: false}
-- {name: alpha,   starting_value:  0.2036619541611, step: 0.011498155, fix: false}
-- {name: sigma,   starting_value:   0.326688434032, step: 0.060998937, fix: false}
-- {name: lambda,  starting_value:  0.6715638120608, step: 0.111466055, fix: false}
-- {name: N1B,     starting_value: 0.04591270083373, step: 0.011244147, fix: false}
-- {name: alphaB,  starting_value: 0.06702302432024, step: 0.010590214, fix: false}
-- {name: sigmaB,  starting_value:  0.4193674275496, step: 0.113316907, fix: false}
-- {name: g2B,     starting_value: 0.01624238607691, step: 0.002416170, fix: false}
+- {name: $g_2$,      starting_value: 0.228,      step: 0.001, fix: true, file: ./FitResults/PV17_NLL/Report/FixedParameters.yaml}
+- {name: $N_1$,      starting_value: 0.285,      step: 0.003, fix: true, file: ./FitResults/PV17_NLL/Report/FixedParameters.yaml}
+- {name: $\alpha$,   starting_value: 2.98,       step: 0.030, fix: true, file: ./FitResults/PV17_NLL/Report/FixedParameters.yaml}
+- {name: $\sigma$,   starting_value: 0.173,      step: 0.002, fix: true, file: ./FitResults/PV17_NLL/Report/FixedParameters.yaml}
+- {name: $\lambda$,  starting_value: 0.39,       step: 0.005, fix: true, file: ./FitResults/PV17_NLL/Report/FixedParameters.yaml}
+- {name: $N_1pi$,    starting_value: 1.00000,    step: 0.003, fix: true }
+- {name: $\alphapi$, starting_value: 0.26065405, step: 0.030, fix: false}
