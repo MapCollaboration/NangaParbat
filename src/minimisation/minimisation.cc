@@ -144,29 +144,25 @@ namespace NangaParbat
 
     // Fill in initial parameter array
     std::vector<double*> initPars;
-    std::cout << "Check 1" << std::endl;
     for (auto const p : parameters)
       {
-        YAML::Node fixedpars = YAML::LoadFile(p["file"].as<std::string>());
-        const int replicaID = chi2.GetBlocks().front().first->GetFluctuation();
         // Add a parameter block for each parameter
         cost_function->AddParameterBlock(1);
-        std::cout << "Check 2" << std::endl;
         if(p["fix"].as<bool>())
         {
-          std::cout << "Check 3" << std::endl;
          if(p["file"])
           {
-            std::cout << "Check 4" << std::endl;
-           initPars.push_back(new double(fixedpars[p["name"].as<std::string>()].as<std::vector<double>>()[replicaID]));
+            YAML::Node fixedpars = YAML::LoadFile(p["file"].as<std::string>());
+            const int replicaID = chi2.GetBlocks().front().first->GetFluctuation();
+            initPars.push_back(new double(fixedpars[p["name"].as<std::string>()].as<std::vector<double>>()[replicaID]));
           }
-          else
+         else
           {
-            std::cout << "Check 5" << std::endl;
             initPars.push_back(new double(p["starting_value"].as<double>()));
           }
         }
-        std::cout << "Check 6" << std::endl;
+        else
+        {
            // If the GSL random-number generator object is NULL use the
            // central value as starting parameters, otherwise fluctuate
            // them (gaussianly) according to the step.
@@ -176,11 +172,9 @@ namespace NangaParbat
            pstart += gsl_ran_gaussian(rng, p["step"].as<double>());
            // Fill in initial parameter array with fitconfig value
            initPars.push_back(new double(pstart));
-           std::cout << "Check 7" << std::endl;
            }
-           std::cout << "Check 8" << std::endl;
         }
-        std::cout << "Check 9" << std::endl;
+      }
   // Add residual block
   problem.AddResidualBlock(cost_function, NULL, initPars);
     // Set upper and lower bounds if required
