@@ -184,26 +184,11 @@ namespace NangaParbat
         // Fix parameter if required
         if (p["fix"].as<bool>())
           {
-            // If the parameter is fixed search the key file, where is
-            // reported the path to the file containing the values of the
-            // parameters for each replica. Fix that parameter.
-            // Otherwise use the value contained in fitconfig.yaml
-            if (p["file"])
-              {
-                 YAML::Node fixedpars = YAML::LoadFile(p["file"].as<std::string>());
-                 const int replicaID = chi2.GetBlocks().front().first->GetFluctuation();
-                 // Fill in initial parameter array with fixedpars value
-                 initPars.push_back(new double(fixedpars[p["name"].as<std::string>()].as<std::vector<double>>()[replicaID]));
-
-              }
-            else
-              {
               // If the parameter is fixed set lower and upper bound
               // within an epsilon from the starting value. Workaround
               // to avoid that the code crushes.
               problem.SetParameterLowerBound(initPars[i], 0, *initPars[i] - 1e-8);
               problem.SetParameterUpperBound(initPars[i], 0, *initPars[i] + 1e-8);
-              }
               // This is the correct procedure that seems to make the
               // code crush.
               //problem.SetParameterBlockConstant(initPars[i]);
