@@ -284,6 +284,7 @@ class fitresults:
             yaml.dump(param, ofilef, Dumper = yaml.RoundTripDumper)
             yaml.dump(self.parameters, ofilef, Dumper = yaml.RoundTripDumper, default_flow_style=True)
 
+        # Creation of the file containing all the parameters' value    
         with open(self.reportfolder + "/FixedParameters.yaml", "w") as ofilef:
             yaml.dump(param, ofilef, Dumper = yaml.RoundTripDumper)
             yaml.dump(self.parameters, ofilef, Dumper = yaml.RoundTripDumper, default_flow_style=True)
