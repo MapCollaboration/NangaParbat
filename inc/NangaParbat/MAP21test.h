@@ -18,7 +18,7 @@ namespace NangaParbat
   class MAP21test: public NangaParbat::Parameterisation
   {
   public:
-    MAP21test(): Parameterisation{"MAP21test", 4, std::vector<double>{0.12840E+00, 0.28516E+00, 0.29755E+01, 0.17293E+00, 0.39432E+00, 2.12062E-01, 0.21012E+01, 0.93554E-01, 0.25246E+01, 0.52915E+01, 3.37975E-02, 0.0, 0.28516E+00}} { };
+    MAP21test(): Parameterisation{"MAP21test", 2, std::vector<double>{0.12840E+00, 0.28516E+00, 0.29755E+01, 0.17293E+00, 0.39432E+00, 2.12062E-01, 0.21012E+01, 0.93554E-01, 0.25246E+01, 0.52915E+01, 3.37975E-02, 0.0, 0.28516E+00}} { };
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
