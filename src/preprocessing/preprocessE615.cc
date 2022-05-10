@@ -28,8 +28,11 @@ namespace NangaParbat
     // Path to the raw-data folder
     const std::string RawDataFolder = RawDataPath + "/E615/";
 
-    // Path to the PDF-error folder
+    // Path to the proton PDF-error folder
     const std::string PDFErrorFolder = RawDataPath + "/PDFErrors/";
+
+    // Path to the pion PDF-error folder
+    const std::string PDFErrorFolderPi = RawDataPath + "/PDFErrors/PIONS/";
 
     // Vector of tables to process
     const std::vector<std::string> tables = {"dataE615.txt"};
@@ -144,11 +147,18 @@ namespace NangaParbat
             filedata["stat"]  = fdstat;
             filedata["pT"]    = fdpT;
 
-            // Open PDF-error file
+            // Open PDF-error file proton
             std::ifstream pdferr(PDFErrorFolder + ofileQ + ".out");
             std::string line;
             getline(pdferr, line);
             getline(pdferr, line);
+
+            // Open PDF-error file pion
+            std::ifstream pdferrpi(PDFErrorFolderPi + ofileQ + ".out");
+            std::string linepi;
+            getline(pdferrpi, linepi);
+            getline(pdferrpi, linepi);
+
 
             // Plot labels
             std::map<std::string, std::string> labels
@@ -209,18 +219,24 @@ namespace NangaParbat
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << (filedata["stat"][m.first]) * pow(10, 36) << YAML::EndMap;
                 if (PDFError)
                   {
-                    // Now read PDF errors
+                    // Now read proton PDF errors
                     getline(pdferr, line);
                     std::stringstream stream(line);
                     double dum, pe;
-                    stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
+                    stream >> dum >> dum >> dum >> dum >> pe;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::abs(pe) * 0.8 << YAML::EndMap;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::abs(pe) * (m.second) * pow(10, 36) * 0.6 << YAML::EndMap;
 
-                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0 << YAML::EndMap;
-                    /* !! When PDF uncertainties will be available, use the line below instead of the one above !! */
-                    // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                    // Now read pion PDF errors
+                    getline(pdferrpi, linepi);
+                    std::stringstream streampi(linepi);
+                    double dumpi, pepi;
+                    streampi >> dumpi >> dumpi >> dumpi >> dumpi >> pepi;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::abs(pepi) * 0.8 << YAML::EndMap;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::abs(pepi) * (m.second) * pow(10, 36) * 0.6 << YAML::EndMap;
                   }
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.16 << YAML::EndMap;
-                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.05 << YAML::EndMap;
+
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << 0.16 << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::Key << "value" << YAML::Value << (m.second) * pow(10, 36);
                 // emit << YAML::Key << "id"    << YAML::Value << m.first;
@@ -246,8 +262,8 @@ namespace NangaParbat
             for (auto const& p : filedata["pT"])
               {
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << p.second << YAML::Key
-                /* Since Nangaparbat cross section is differential in qT, while this experimental set is differential in qT**2 and Q, we need to correct the value of the predictions by a factor DqT/(DQ * D(qT**2))*/
-                << "factor" << YAML::Value << 1.0 / (Qb.second.second - Qb.second.first)<< YAML::EndMap;
+                     /* Since Nangaparbat cross section is differential in qT, while this experimental set is differential in qT**2 and Q, we need to correct the value of the predictions by a factor DqT/(DQ * D(qT**2))*/
+                     << "factor" << YAML::Value << 1.0 / (Qb.second.second - Qb.second.first)<< YAML::EndMap;
                 // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << p.second << YAML::EndMap;
               }
 

@@ -14,17 +14,17 @@ namespace NangaParbat
    * @brief Parameterisation derived from the "Parameterisation"
    * mother class used to fit the pion TMDs.
    */
-  class MAPTMDPion: public NangaParbat::Parameterisation
+  class MAPTMDPion3: public NangaParbat::Parameterisation
   {
   public:
 
-    MAPTMDPion():
-      Parameterisation{"MAPTMDPion", 2, std::vector<double> {0.2343, 0.2788, 0.8466, 1.3806, 1.9872, 0.1590, 0.4534, 3.843, 0.0276, 0.00392, 12.551, 4.141, 0.6089}} { };
+    MAPTMDPion3():
+      Parameterisation{"MAPTMDPion3", 2, std::vector<double> {0.2343, 0.2788, 0.8466, 1.3806, 1.9872, 0.1590, 0.4534, 3.843, 0.0276, 0.00392, 12.551, 4.141, 0.2343, 0.2788 ,0.6089}} { };
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
       if (ifunc < 0 || ifunc >= this->_nfuncs)
-        throw std::runtime_error("[MAPTMDPion::Evaluate]: function index out of range");
+        throw std::runtime_error("[MAPTMDPion3::Evaluate]: function index out of range");
 
       // If the value of 'x' exceeds one returns zero
       if (x >= 1)
@@ -57,8 +57,12 @@ namespace NangaParbat
         }
       else    // TMD PDFs pion
         {
-          const double alphapi  = this->_pars[12];
-          return evol  * exp( - alphapi * pow( b / 2, 2) );
+          const double N1pi     = this->_pars[12];
+          const double sigmapi  = this->_pars[13];
+          const double alphapi  = this->_pars[14];
+          const double xhat    = 0.1;
+          const double g1pi      = N1pi * pow(x / xhat, sigmapi) * pow((1 - x) / (1 - xhat), pow(alphapi, 2));
+          return evol  * exp( - g1pi * pow( b / 2, 2) );
         }
 
     };
@@ -88,6 +92,8 @@ namespace NangaParbat
               R"delimiter($N1C$)delimiter",
               R"delimiter($\sigma3$)delimiter",
               R"delimiter($\alpha3$)delimiter",
+              R"delimiter($N_1pi$)delimiter",
+              R"delimiter($\sigmapi$)delimiter",
               R"delimiter($\alphapi$)delimiter"};
     };
 
