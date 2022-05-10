@@ -19,7 +19,7 @@ namespace NangaParbat
   public:
 
     PV17Pion():
-    Parameterisation{"PV17Pion", 2, std::vector<double> {0, 0, 0, 0, 0, 0, 0}}
+      Parameterisation{"PV17Pion", 2, std::vector<double> {0, 0, 0, 0, 0, 0, 0}}
     {};
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
@@ -27,31 +27,31 @@ namespace NangaParbat
       if (ifunc < 0 || ifunc >= this->_nfuncs)
         throw std::runtime_error("[MAPTMDPion::Evaluate]: function index out of range");
 
-        // If the value of 'x' exceeds one returns zero
-        if (x >= 1)
-          return 0;
+      // If the value of 'x' exceeds one returns zero
+      if (x >= 1)
+        return 0;
 
-        // Evolution
-        const double g2   = this->_pars[0];
-        const double evol = exp( - g2 * log(zeta / _Q02) * b * b / 4 );
+      // Evolution
+      const double g2   = this->_pars[0];
+      const double evol = exp( - g2 * log(zeta / _Q02) * b * b / 4 );
 
-        // TMD PDFs
-        if (ifunc == 0)
-          {
-            const double N1     = this->_pars[1];
-            const double alpha  = this->_pars[2];
-            const double sigma  = this->_pars[3];
-            const double lambda = this->_pars[4];
-            const double xhat   = 0.1;
-            const double g1     = N1 * pow(x / xhat, sigma) * pow((1 - x) / (1 - xhat), alpha);
-            return evol * exp( - g1 * pow(b / 2, 2) ) * ( 1 - lambda * pow(g1 * b / 2, 2) / ( 1 + lambda * g1 ) );
-          }
+      // TMD PDFs
+      if (ifunc == 0)
+        {
+          const double N1     = this->_pars[1];
+          const double alpha  = this->_pars[2];
+          const double sigma  = this->_pars[3];
+          const double lambda = this->_pars[4];
+          const double xhat   = 0.1;
+          const double g1     = N1 * pow(x / xhat, sigma) * pow((1 - x) / (1 - xhat), alpha);
+          return evol * exp( - g1 * pow(b / 2, 2) ) * ( 1 - lambda * pow(g1 * b / 2, 2) / ( 1 + lambda * g1 ) );
+        }
       else
-	{
-    const double N1pi     = this->_pars[5];
-    const double alphapi  = this->_pars[6];
-	  return evol * N1pi * exp( - pow(alphapi * b / 2, 2) );
-	}
+        {
+          const double N1pi     = this->_pars[5];
+          const double alphapi  = this->_pars[6];
+          return evol * N1pi * exp( - pow(alphapi * b / 2, 2) );
+        }
 
     };
 

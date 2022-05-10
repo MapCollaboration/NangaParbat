@@ -64,15 +64,15 @@ namespace NangaParbat
           {
             if (p["file"])
               {
-                 YAML::Node fixedpars = YAML::LoadFile(p["file"].as<std::string>());
-                 const int replicaID = chi2.GetBlocks().front().first->GetFluctuation();
-                 upar.Add(p["name"].as<std::string>(), fixedpars[p["name"].as<std::string>()].as<std::vector<double>>()[replicaID],
-                          p["step"].as<double>());
+                YAML::Node fixedpars = YAML::LoadFile(p["file"].as<std::string>());
+                const int replicaID = chi2.GetBlocks().front().first->GetFluctuation();
+                upar.Add(p["name"].as<std::string>(), fixedpars[p["name"].as<std::string>()].as<std::vector<double>>()[replicaID],
+                         p["step"].as<double>());
               }
             else
-               {
-                 upar.Add(p["name"].as<std::string>(), pstart, p["step"].as<double>());
-               }
+              {
+                upar.Add(p["name"].as<std::string>(), pstart, p["step"].as<double>());
+              }
             upar.Fix(p["name"].as<std::string>());
           }
         else
@@ -165,34 +165,34 @@ namespace NangaParbat
         // Add a parameter block for each parameter
         cost_function->AddParameterBlock(1);
         if(p["fix"].as<bool>())
-        {
-         if(p["file"])
           {
-            YAML::Node fixedpars = YAML::LoadFile(p["file"].as<std::string>());
-            const int replicaID = chi2.GetBlocks().front().first->GetFluctuation();
-            initPars.push_back(new double(fixedpars[p["name"].as<std::string>()].as<std::vector<double>>()[replicaID]));
+            if(p["file"])
+              {
+                YAML::Node fixedpars = YAML::LoadFile(p["file"].as<std::string>());
+                const int replicaID = chi2.GetBlocks().front().first->GetFluctuation();
+                initPars.push_back(new double(fixedpars[p["name"].as<std::string>()].as<std::vector<double>>()[replicaID]));
+              }
+            else
+              {
+                initPars.push_back(new double(p["starting_value"].as<double>()));
+              }
           }
-         else
-          {
-            initPars.push_back(new double(p["starting_value"].as<double>()));
-          }
-        }
         else
-        {
-           // If the GSL random-number generator object is NULL use the
-           // central value as starting parameters, otherwise fluctuate
-           // them (gaussianly) according to the step.
-           double pstart = p["starting_value"].as<double>();
-           if (rng !=  NULL && !p["fix"].as<bool>())
-           {
-           pstart += gsl_ran_gaussian(rng, p["step"].as<double>());
-           // Fill in initial parameter array with fitconfig value
-           initPars.push_back(new double(pstart));
-           }
-        }
+          {
+            // If the GSL random-number generator object is NULL use the
+            // central value as starting parameters, otherwise fluctuate
+            // them (gaussianly) according to the step.
+            double pstart = p["starting_value"].as<double>();
+            if (rng !=  NULL && !p["fix"].as<bool>())
+              {
+                pstart += gsl_ran_gaussian(rng, p["step"].as<double>());
+              }
+            // Fill in initial parameter array with fitconfig value
+            initPars.push_back(new double(pstart));
+          }
       }
-  // Add residual block
-  problem.AddResidualBlock(cost_function, NULL, initPars);
+    // Add residual block
+    problem.AddResidualBlock(cost_function, NULL, initPars);
     // Set upper and lower bounds if required
     int i = 0;
     for (auto const p : parameters)
@@ -200,14 +200,14 @@ namespace NangaParbat
         // Fix parameter if required
         if (p["fix"].as<bool>())
           {
-              // If the parameter is fixed set lower and upper bound
-              // within an epsilon from the starting value. Workaround
-              // to avoid that the code crushes.
-              problem.SetParameterLowerBound(initPars[i], 0, *initPars[i] - 1e-8);
-              problem.SetParameterUpperBound(initPars[i], 0, *initPars[i] + 1e-8);
-              // This is the correct procedure that seems to make the
-              // code crush.
-              //problem.SetParameterBlockConstant(initPars[i]);
+            // If the parameter is fixed set lower and upper bound
+            // within an epsilon from the starting value. Workaround
+            // to avoid that the code crushes.
+            problem.SetParameterLowerBound(initPars[i], 0, *initPars[i] - 1e-8);
+            problem.SetParameterUpperBound(initPars[i], 0, *initPars[i] + 1e-8);
+            // This is the correct procedure that seems to make the
+            // code crush.
+            //problem.SetParameterBlockConstant(initPars[i]);
           }
         else
           {

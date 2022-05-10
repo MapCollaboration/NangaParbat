@@ -19,7 +19,7 @@ namespace NangaParbat
   public:
 
     MAPTMDPion3():
-      Parameterisation{"MAPTMDPion3", 2, std::vector<double> {0.2343, 0.2788, 0.8466, 1.3806, 1.9872, 0.1590, 0.4534, 3.843, 0.0276, 0.00392, 12.551, 4.141, 0.2343, 0.2788,0.6089}} { };
+      Parameterisation{"MAPTMDPion3", 2, std::vector<double> {0.2343, 0.2788, 0.8466, 1.3806, 1.9872, 0.1590, 0.4534, 3.843, 0.0276, 0.00392, 12.551, 4.141, 0.2343, 0.2788 ,0.6089}} { };
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
@@ -70,10 +70,11 @@ namespace NangaParbat
     std::string LatexFormula() const
     {
       std::string formula;
-      formula  = R"delimiter($$f_{\rm NP}(x,\zeta, b_T)= \exp \left( g_{1\pi}(x) b_T^2 / 4 \right) \exp\left[- g^2_2 \log\left(\frac{\zeta}{Q_0^2}\right) b_T^2/4 \right]$$)delimiter";
-      formula += R"delimiter($$g_{1\pi}(x) = N_{1\pi} \frac{x^{\sigma_{\pi}}(1-x)^{\alpha^2_{\pi}}}{\hat{x}^{\sigma_{\pi}}(1-\hat{x})^{\alpha^2_{\pi}}}$$)delimiter";
+      formula  = R"delimiter($$f_{\rm NP}(x,\zeta, b_T)= \Biggl(
+\frac{1-\lambda}{1 + g_1(x) b_T^2/4} + \lambda \exp \left(-g_{1B}(x) b_T^2 / 4 \right)\Biggr) \exp\left[- g_2 \log\left(\frac{\zeta}{Q_0^2}\right) b_T^2/4 - g_{2B} \log\left(\frac{\zeta}{Q_0^2}\right) b_T^4/4 \right]$$)delimiter";
+      formula += R"delimiter($$g_1(x) = \frac{N_1}{x\sigma} \exp\left[ - \frac{\ln^2\left(\frac{x}{\alpha}\right)}{2 \sigma^2} \right]$$)delimiter";
+      formula += R"delimiter($$g_{1B}(x) = \frac{N_{1B}}{x\sigma_B} \exp\left[ - \frac{\ln^2\left(\frac{x}{\alpha_B}\right)}{2 \sigma_B^2} \right]$$)delimiter";
       formula += R"delimiter($$Q_0^2 = 1\;{\rm GeV}^2$$)delimiter";
-      formula += R"delimiter($$\hat{x} = 0.1$$)delimiter";
       return formula;
     };
 
@@ -91,9 +92,9 @@ namespace NangaParbat
               R"delimiter($N1C$)delimiter",
               R"delimiter($\sigma3$)delimiter",
               R"delimiter($\alpha3$)delimiter",
-              R"delimiter($N_{1\pi}$)delimiter",
-              R"delimiter($\sigma_\pi$)delimiter",
-              R"delimiter($\alpha_\pi$)delimiter"};
+              R"delimiter($N_1pi$)delimiter",
+              R"delimiter($\sigmapi$)delimiter",
+              R"delimiter($\alphapi$)delimiter"};
     };
 
     std::string GetDescription() const

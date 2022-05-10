@@ -19,47 +19,47 @@ namespace NangaParbat
   public:
 
     MAPTMDPion():
-    Parameterisation{"MAPTMDPion", 2, std::vector<double> {0.2343, 0.2788, 1.3806, 0.8466, 1.9872, 0.0051, 10.0594, 0.0106, 1.4513, 0.0871, 0.2053, 0.1589, 0.2513}} { };
+      Parameterisation{"MAPTMDPion", 2, std::vector<double> {0.2343, 0.2788, 0.8466, 1.3806, 1.9872, 0.1590, 0.4534, 3.843, 0.0276, 0.00392, 12.551, 4.141, 0.6089}} { };
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
       if (ifunc < 0 || ifunc >= this->_nfuncs)
         throw std::runtime_error("[MAPTMDPion::Evaluate]: function index out of range");
 
-        // If the value of 'x' exceeds one returns zero
-        if (x >= 1)
-          return 0;
+      // If the value of 'x' exceeds one returns zero
+      if (x >= 1)
+        return 0;
 
-        // Evolution
-        const double g2   = this->_pars[0];
-        const double evol = exp( - g2 * log(zeta / _Q02) * b * b / 4 );
+      // Evolution
+      const double g2   = this->_pars[0];
+      const double evol = exp( - pow(g2, 2) * log(zeta / _Q02) * b * b / 4 );
 
-        if (ifunc == 0)   // TMD PDFs proton MAP22
-          {
-            const double N1      = this->_pars[1];
-            const double sigma1  = this->_pars[2];
-            const double alpha1  = this->_pars[3];
-            const double lambda  = this->_pars[4];
-            const double N1B     = this->_pars[5];
-            const double sigma2  = this->_pars[6];
-            const double alpha2  = this->_pars[7];
-            const double lambda2 = this->_pars[8];
-            const double N1C     = this->_pars[9];
-            const double sigma3  = this->_pars[10];
-            const double alpha3  = this->_pars[11];
-            const double xhat    = 0.1;
-            const double g1      = N1 * pow(x / xhat, sigma1) * pow((1 - x) / (1 - xhat), pow(alpha1, 2));
-  	        const double g1B     = N1B * pow(x / xhat, sigma2) * pow((1 - x) / (1 - xhat), pow(alpha2, 2));
-            const double g1C     = N1C * pow(x / xhat, sigma3) * pow((1 - x) / (1 - xhat), pow(alpha3, 2));
-  	        return evol * ( g1 * exp( - g1 * pow(b / 2, 2))
-                            +  pow(lambda, 2)  * pow(g1B, 2) * ( 1 - g1B * pow(b / 2, 2)) * exp( - g1B * pow(b / 2, 2)) + g1C * pow(lambda2, 2) * exp( - g1C * pow(b / 2, 2)))
-                   / ( g1 +  pow(lambda, 2)  * pow(g1B, 2) + g1C * pow(lambda2, 2));
-          }
-        else    // TMD PDFs pion
-        	{
-            const double alphapi  = this->_pars[12];
-        	  return evol  * exp( - pow(alphapi * b / 2, 2) );
-        	}
+      if (ifunc == 0)   // TMD PDFs proton MAP22
+        {
+          const double N1      = this->_pars[1];
+          const double sigma1  = this->_pars[2];
+          const double alpha1  = this->_pars[3];
+          const double lambda  = this->_pars[4];
+          const double N1B     = this->_pars[5];
+          const double sigma2  = this->_pars[6];
+          const double alpha2  = this->_pars[7];
+          const double lambda2 = this->_pars[8];
+          const double N1C     = this->_pars[9];
+          const double sigma3  = this->_pars[10];
+          const double alpha3  = this->_pars[11];
+          const double xhat    = 0.1;
+          const double g1      = N1 * pow(x / xhat, sigma1) * pow((1 - x) / (1 - xhat), pow(alpha1, 2));
+          const double g1B     = N1B * pow(x / xhat, sigma2) * pow((1 - x) / (1 - xhat), pow(alpha2, 2));
+          const double g1C     = N1C * pow(x / xhat, sigma3) * pow((1 - x) / (1 - xhat), pow(alpha3, 2));
+          return evol * ( g1 * exp( - g1 * pow(b / 2, 2))
+                          +  pow(lambda, 2)  * pow(g1B, 2) * ( 1 - g1B * pow(b / 2, 2)) * exp( - g1B * pow(b / 2, 2)) + g1C * pow(lambda2, 2) * exp( - g1C * pow(b / 2, 2)))
+                 / ( g1 +  pow(lambda, 2)  * pow(g1B, 2) + g1C * pow(lambda2, 2));
+        }
+      else    // TMD PDFs pion
+        {
+          const double alphapi  = this->_pars[12];
+          return evol  * exp( - alphapi * pow( b / 2, 2) );
+        }
 
     };
 
