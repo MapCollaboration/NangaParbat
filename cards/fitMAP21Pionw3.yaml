@@ -1,0 +1,53 @@
+# Short description of the fit that will appear in the report of the
+# fit
+Description: MAP21w3 pion TMDs
+
+# Minimiser to be used for the fit. Possible options so far are
+# 'minuit', 'ceres', and 'none'.
+Minimiser: minuit
+
+# Seed used with the random-number generator for the generation of the
+# Monte Carlo replicas
+Seed: '5814'
+
+# Parameters to compute the cut qT / Q as MAP22 fit.
+cutParam: [0.4, 0.7, 0.5]
+
+# Percentile cut (in percent) on the distribution of chi2's, error
+# functions and parameters used to identify outliers.
+Percentile cut: '5'
+
+# Enable or disable the t0 prescription for the treatment of
+# normalisation uncertantities and define the set of parameters to be
+# used to compute the corresponding predictions (used only if the t0
+# prescription is enabled). They have to be as many and ordered as the
+# "Parameters" below.
+t0prescription: true
+t0parameters: [0.2343, 0.2788, 0.8466, 1.3806, 1.9872, 0.1590, 0.4534, 3.843, 0.0276, 0.00392, 12.551, 4.141, 0.20219476684285301, 0.48314451890748988, 0.82439820409784037]
+
+# Parameterisation to be fitted to data. This has to correspond to a
+# derivation of the "Parameterisation" class.
+Parameterisation: MAPTMDPionw3
+
+# Fluctuate initial parameters according to their step
+Paramfluct: false
+
+# List of parameters to be fitted to data. This requires that the
+# number and order of parameters matches those expected by the
+# particular parameterisation being used.
+Parameters:
+- {name: $g_2$,           starting_value: 0.2343,      step: 0.001, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+- {name: $N_1$,           starting_value: 0.2788,      step: 0.003, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+- {name: $\sigma_1$,      starting_value: 0.8466,      step: 0.030, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+- {name: $\alpha_1$,      starting_value: 1.3806,      step: 0.002, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+- {name: $\lambda$,       starting_value: 1.9872,      step: 0.005, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+- {name: $N_1B$,          starting_value: 0.1590,      step: 0.003, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+- {name: $\sigma_2$,      starting_value: 0.4534,      step: 0.030, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+- {name: $\alpha_2$,      starting_value: 3.843,       step: 0.001, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+- {name: $\lambda_2$,     starting_value: 0.0276,      step: 0.003, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+- {name: $N_1C$,          starting_value: 0.00392,     step: 0.030, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+- {name: $\sigma_3$,      starting_value: 12.551,      step: 0.002, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+- {name: $\alpha_3$,      starting_value: 4.141,       step: 0.005, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+- {name: $N_1\pi$,      starting_value: 0.20219476684285301,      step: 0.003, fix: false }
+- {name: $\lambda_\pi$, starting_value: 0.48314451890748988,      step: 0.030, fix: false }
+- {name: $N_2\pi$,      starting_value: 0.82439820409784037,      step: 0.030, fix: false }
