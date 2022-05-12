@@ -14,17 +14,17 @@ namespace NangaParbat
    * @brief Parameterisation derived from the "Parameterisation"
    * mother class used to fit the pion TMDs.
    */
-  class MAPTMDPionw3: public NangaParbat::Parameterisation
+  class MAPTMDPionwx4: public NangaParbat::Parameterisation
   {
   public:
 
-    MAPTMDPionw3():
-      Parameterisation{"MAPTMDPionw3", 2, std::vector<double> {0.2343, 0.2788, 0.8466, 1.3806, 1.9872, 0.1590, 0.4534, 3.843, 0.0276, 0.00392, 12.551, 4.141, 0.2343, 0.2788 ,0.6089}} { };
+    MAPTMDPionwx4():
+      Parameterisation{"MAPTMDPionwx4", 2, std::vector<double> {0.2343, 0.2788, 0.8466, 1.3806, 1.9872, 0.1590, 0.4534, 3.843, 0.0276, 0.00392, 12.551, 4.141, 0.2343, 0.2788 ,0.6089, 0.1}} { };
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
       if (ifunc < 0 || ifunc >= this->_nfuncs)
-        throw std::runtime_error("[MAPTMDPionw3::Evaluate]: function index out of range");
+        throw std::runtime_error("[MAPTMDPionwx4::Evaluate]: function index out of range");
 
       // If the value of 'x' exceeds one returns zero
       if (x >= 1)
@@ -58,13 +58,13 @@ namespace NangaParbat
       else    // TMD PDFs pion
         {
           const double N1pi     = this->_pars[12];
-          const double lambdapi = this->_pars[13];
-          const double N2pi     = this->_pars[14];
-          const double g1pi     = N1pi;
-          const double g2pi     = N2pi;
+          const double sigmapi  = this->_pars[13];
+          const double alphapi  = this->_pars[14];
+          const double lambdapi = this->_pars[15];
+          const double xhat    = 0.1;
+          const double g1pi      = N1pi * pow(x / xhat, sigmapi) * pow((1 - x) / (1 - xhat), pow(alphapi, 2));
 
-          return evol  * ( g1pi * exp( - g1pi * pow(b / 2, 2) ) +  pow(lambdapi, 2)  * pow(g2pi, 2) * ( 1 - g2pi * pow(b / 2, 2)) * exp( - g2pi * pow(b / 2, 2)) ) / ( g1pi + pow(lambdapi, 2)  * pow(g2pi, 2) );
-
+          return evol  * exp( - g1pi * pow(b / 2, 2) ) * ( 1 - lambdapi * pow(g1pi * b / 2, 2) / ( 1 + lambdapi * g1pi ) );
         }
 
     };
@@ -95,8 +95,9 @@ namespace NangaParbat
               R"delimiter($\sigma3$)delimiter",
               R"delimiter($\alpha3$)delimiter",
               R"delimiter($N_{1\pi}$)delimiter",
-              R"delimiter($\lambda_\pi$)delimiter",
-              R"delimiter($N_{2\pi}$)delimiter"};
+              R"delimiter($\sigma_\pi$)delimiter",
+              R"delimiter($\alpha_\pi$)delimiter",
+              R"delimiter($\lambda_\pi$)delimiter"};
     };
 
     std::string GetDescription() const
