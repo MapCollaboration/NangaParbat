@@ -50,14 +50,14 @@ namespace NangaParbat
       // TMDJets
       else
         {
-          const double g3           = this->_pars[5];
-          const double lambda3      = this->_pars[6];
-          const double g4           = this->_pars[7];
-          //return evol * exp( - g3 * pow(b / 2, 2) ) * ( 1 + lambda * pow(g3 * b / 2, 2) / ( 1 + lambda * g3 ) );
-          //return evol * exp( - g3 * pow(b / 2, 2) ) * pow(g3 * b / 2, 2) / ( 1 + g3 );
-          //return evol * pow(1 + g3* pow( b / 2, 2), -4);
-          // return evol * exp( - g3 * b * b / 4 ); // + 0. * x;
-          return evol  * ( g3 * exp( - g3 * pow(b / 2, 2) ) +  pow(lambda3, 2)  * pow(g4, 2) * ( 1 - g4 * pow(b / 2, 2)) * exp( - g4 * pow(b / 2, 2)) ) / ( g3 + pow(lambda3, 2)  * pow(g4, 2) );
+	  const double g3           = this->_pars[5];
+    const double lambda3      = this->_pars[6];
+    const double g4           = this->_pars[7];
+    //return evol * exp( - g3 * pow(b / 2, 2) ) * ( 1 + lambda * pow(g3 * b / 2, 2) / ( 1 + lambda * g3 ) );
+    //return evol * exp( - g3 * pow(b / 2, 2) ) * pow(g3 * b / 2, 2) / ( 1 + g3 );
+    //return evol * pow(1 + g3* pow( b / 2, 2), -4);
+    // return evol * exp( - g3 * b * b / 4 ); // + 0. * x;
+     return evol  * ( g3 * exp( - g3 * pow(b / 2, 2) ) +  pow(lambda3, 2)  * pow(g4, 2) * ( 1 - g4 * pow(b / 2, 2)) * exp( - g4 * pow(b / 2, 2)) ) / ( g3 + pow(lambda3, 2)  * pow(g4, 2) );
         }
     };
 
