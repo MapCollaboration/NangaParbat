@@ -15,7 +15,7 @@ Seed: '1234'
 qToQmax: '0.8'
 
 # Parameters to compute the cut qT / Q as PV17 fit.
-cutParam: [0.8, 0.7, 0.5]
+cutParam: [0.2, 0.7, 0.5]
 
 # Percentile cut (in percent) on the distribution of chi2's, error
 # functions and parameters used to identify outliers.
@@ -27,11 +27,11 @@ Percentile cut: '5'
 # prescriprion is enabled). They have to be as many and ordered as the
 # "Parameters" below.
 t0prescription: false
-t0parameters: [0.128, 0.285, 2.98, 0.173, 0.39, 0.3]
+t0parameters: [0.128, 0.285, 2.98, 0.173, 0.39, 0.300,0.300,0.0500]
 
 # Parameterisation to be fitted to data. This has to correspond to a
 # derivarion of the "Parameterisation" class.
-Parameterisation: PV17jet
+Parameterisation: PV17jet3w
 
 # Fluctuate initial parameters according to their step
 Paramfluct: false
@@ -45,4 +45,6 @@ Parameters:
   - {name: "alpha",    starting_value: 2.98,  step: 0.030, fix: false}
   - {name: "sigma",    starting_value: 0.173, step: 0.002, fix: false}
   - {name: "lambda",   starting_value: 0.39,  step: 0.005, fix: false}
-  - {name: "g3",       starting_value: 0.300,  step: 0.001, fix: false}
+  - {name: "g3",       starting_value: 0.300, step: 0.001, fix: false}
+  - {name: "lambda3",  starting_value: 0.300, step: 0.001, fix: false}
+  - {name: "g4",       starting_value: 0.0500, step: 0.001, fix: false}

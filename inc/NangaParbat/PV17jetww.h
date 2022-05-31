@@ -14,13 +14,13 @@ namespace NangaParbat
    * @brief Pavia 2017 parameterisation derived from the
    * "Parameterisation" mother class.
    */
-  class PV17jet: public NangaParbat::Parameterisation
+  class PV17jetww: public NangaParbat::Parameterisation
   {
   public:
     // The default parameters correspond to those of replica 105 of
     // the PV17 fit. See Tabs. X and XI of
     // https://arxiv.org/pdf/1703.10157.pdf.
-    PV17jet(): Parameterisation{"PV17jet", 2, std::vector<double>{0.12840E+00, 0.28516E+00, 0.29755E+01, 0.17293E+00, 0.39432E+00, 0.300E+00}} { };
+    PV17jetww(): Parameterisation{"PV17jetww", 2, std::vector<double>{0.12840E+00, 0.28516E+00, 0.29755E+01, 0.17293E+00, 0.39432E+00, 0.05E+00}} { };
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
@@ -51,11 +51,12 @@ namespace NangaParbat
       else
         {
 	  const double g3           = this->_pars[5];
-    return evol * exp( - g3 * pow(b / 2, 2) ); // * ( 1 + lambda * pow(g3 * b / 2, 2) / ( 1 + lambda * g3 ) );
+    //return evol * exp( - g3 * pow(b / 2, 2) ) * ( 1 + lambda * pow(g3 * b / 2, 2) / ( 1 + lambda * g3 ) );
     //return evol * exp( - g3 * pow(b / 2, 2) ) * pow(g3 * b / 2, 2) / ( 1 + g3 );
-    //return evol * pow(1 + g3* pow( b / 2, 2), -2);
-    // return 1;
-       }
+    //return evol * pow(1 + g3* pow( b / 2, 2), -4);
+    // return evol * exp( - g3 * b * b / 4 ); // + 0. * x;
+     return evol  * ((1 - g3 * pow( b /2, 2)) * exp(- g3 * pow(b / 2, 2) ) );
+        }
     };
 
     std::string LatexFormula() const
@@ -76,7 +77,8 @@ namespace NangaParbat
               R"delimiter($\alpha$)delimiter",
               R"delimiter($\sigma$)delimiter",
               R"delimiter($\lambda$)delimiter",
-              R"delimiter($g_3$)delimiter"};
+              R"delimiter($g_3$)delimiter",
+              };
     };
 
     std::string GetDescription() const
