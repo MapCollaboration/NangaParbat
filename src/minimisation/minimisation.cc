@@ -204,16 +204,16 @@ namespace NangaParbat
     std::vector<double> initPars;
     for (auto const p : parameters)
     {
-      if(p["fix"].as<bool>())
-      {
-      YAML::Node fixedpars = YAML::LoadFile(p["file"].as<std::string>());
-      const int replicaID = chi2.GetBlocks().front().first->GetFluctuation();
-      initPars.push_back(fixedpars[p["name"].as<std::string>()].as<std::vector<double>>()[replicaID]);
-      }
-      else
-      {
-      initPars.push_back(p["starting_value"].as<double>());
-      }
+      if(p["file"])
+              {
+                YAML::Node fixedpars = YAML::LoadFile(p["file"].as<std::string>());
+                const int replicaID = chi2.GetBlocks().front().first->GetFluctuation();
+                initPars.push_back(fixedpars[p["name"].as<std::string>()].as<std::vector<double>>()[replicaID]);
+	      }
+            else
+              {
+                initPars.push_back(p["starting_value"].as<double>());
+              }
     }
     // Set the parameters of the parameterisation
     NangaParbat::FcnMinuit fcn{chi2};
