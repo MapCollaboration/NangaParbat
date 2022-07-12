@@ -143,6 +143,9 @@ int main(int argc, char* argv[])
   const double bTmin = 0.000005;
   const double bTmax = 1000;
 
+  std::vector<double> meanqT2s;
+  const double epsilon = 0.0000001;
+
   apfel::Timer t;
   // Loop over sets of parameters
   std::vector<std::vector<double>> tmds(pars.size(), std::vector<double>(qTv.size()));
@@ -154,21 +157,24 @@ int main(int argc, char* argv[])
       // bT-space TMD
       const auto xFb = [&] (double const& bT) -> double { return bT * QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1)); };
       const apfel::TabulateObject<double> TabxFb{xFb, 300, bTmin, bTmax, 3, bThresholds, [] (double const& x)->double{ return log(x); }, [] (double const& x)->double{ return exp(x); }};
+
       const std::function<double(double const&)> txFb = [&] (double const& bT) -> double{ return TabxFb.Evaluate(bT); };
 
       const std::function<double(double const&)> fnp = [&] (double const& bT) -> double { return bT * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1));};
 
-      // const std::function<double(double const&)> fpert = [&] (double const& bT) -> double { return QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x);};
-      //
-      // std::cout << " " << fpert(1.0) << std::endl;
+      const auto xF2b = [&] (double const& bT) -> double { return QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1)); };
+
+
+      // Mean k_\perp^2: related to TMD PDFs
+      const auto meanqT2 = [&] (double const& bT) -> double { return -2 * (xF2b(bT + epsilon) - xF2b(bT)) / (bT * epsilon * xF2b(bT)); };
+
+      meanqT2s.push_back(meanqT2(1.123));
+
 
       // Compute TMDs in qT space
       for (int iqT = 0; iqT < (int) qTv.size(); iqT++)
         {
-          // tmds[ip][iqT] = DEObj.transform(txFb, qTv[iqT], 200);
           tmds[ip][iqT] = DEObj.transform(txFb, qTv[iqT]);
-          // tmds[ip][iqT] = DEObj.transform(fnp, qTv[iqT]);
-          // std::cout << qTv[iqT] << " " << DEObj.transform(fnp, qTv[iqT]) << std::endl;
         }
     }
   t.stop();
@@ -185,6 +191,7 @@ int main(int argc, char* argv[])
   out << YAML::Key << "bTmax" << YAML::Value << bTmax;
   out << YAML::Key << "qT" << YAML::Value << YAML::Flow << qTv;
   out << YAML::Key << "TMD" << YAML::Value << YAML::Flow << tmds;
+  out << YAML::Key << "meanqT2" << YAML::Value << YAML::Flow << meanqT2s;
   out << YAML::EndMap;
 
   // Dump result to file
