@@ -35,9 +35,13 @@ int main(int argc, char* argv[])
   // Reading fit  parameters from an input card
   YAML::Node fitconfig = YAML::LoadFile(argv[2]);
 
+  std::cout << "check1" << std::endl;
+
   // Allocate "Parameterisation" derived object
   NangaParbat::Parameterisation *NPFunc = new NangaParbat::MeanReplica{std::string(argv[1]), std::string(argv[2]), discard};
   //NangaParbat::Parameterisation *NPFunc = new NangaParbat::DWS{};
+
+  std::cout << "check2" << std::endl;
 
   // Create replica folder
   const std::string OutputFolder = std::string(argv[1]) + "/mean_replica";

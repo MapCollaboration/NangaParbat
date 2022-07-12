@@ -22,14 +22,8 @@ namespace NangaParbat
     // Open LHAPDF PDF set
     LHAPDF::PDF* distpdf = LHAPDF::mkPDF(_config["pdfset"]["name"].as<std::string>(), _config["pdfset"]["member"].as<int>());
 
-    // Open LHAPDF PDF2 set
-    LHAPDF::PDF* distpdf2 = LHAPDF::mkPDF(_config["pdfset2"]["name"].as<std::string>(), _config["pdfset2"]["member"].as<int>());
-
     // Rotate PDF set into the QCD evolution basis
     const auto RotPDFs = [&] (double const& x, double const& mu) -> std::map<int,double> { return apfel::PhysToQCDEv(distpdf->xfxQ(x, mu)); };
-
-    // Rotate PDF2 set into the QCD evolution basis
-    const auto RotPDFs2 = [&] (double const& x, double const& mu) -> std::map<int,double> { return apfel::PhysToQCDEv(distpdf2->xfxQ(x, mu)); };
 
     // Heavy-quark thresholds (from PDFs)
     for (auto const& v : distpdf->flavors())
@@ -38,14 +32,14 @@ namespace NangaParbat
 
     // Alpha_s (from PDFs). Get it from the LHAPDF set and tabulate it.
     _TabAlphas = std::unique_ptr<apfel::TabulateObject<double>>(new apfel::TabulateObject<double> {[&] (double const& mu) -> double{return distpdf->alphasQ(mu); },
-                                                                                                   100, distpdf->qMin() - 0.1, distpdf->qMax(), 3, _Thresholds
+                                                                                                   100, distpdf->qMin() * 0.9, distpdf->qMax(), 3, _Thresholds
                                                                                                   });
 
     // Open LHAPDF FF set
     LHAPDF::PDF* distff = LHAPDF::mkPDF(_config["ffset"]["name"].as<std::string>(), _config["ffset"]["member"].as<int>());
 
     // Open LHAPDF FF2 set
-    LHAPDF::PDF* distff2 = LHAPDF::mkPDF(_config["ffset2"]["name"].as<std::string>(), _config["ffset2"]["member"].as<int>());
+    LHAPDF::PDF* distff2 = (_config["ffset2"] ? LHAPDF::mkPDF(_config["ffset2"]["name"].as<std::string>(), _config["ffset2"]["member"].as<int>()) : distff);
 
     // Rotate FF set into the QCD evolution basis
     const auto RotFFs = [&] (double const& x, double const& mu) -> std::map<int,double> { return apfel::PhysToQCDEv(distff->xfxQ(x, mu)); };
@@ -59,12 +53,6 @@ namespace NangaParbat
       vsgpdf.push_back({sg[0].as<int>(), sg[1].as<double>(), sg[2].as<int>()});
     _gpdf = std::unique_ptr<const apfel::Grid>(new apfel::Grid({vsgpdf}));
 
-    // Define x-space grid for PDF2
-    std::vector<apfel::SubGrid> vsgpdf2;
-    for (auto const& sg : _config["xgridpdf"])
-      vsgpdf2.push_back({sg[0].as<int>(), sg[1].as<double>(), sg[2].as<int>()});
-    _gpdf2 = std::unique_ptr<const apfel::Grid>(new apfel::Grid({vsgpdf2}));
-
     // Construct set of distributions as a function of the scale to be
     // tabulated for PDFs
     const auto EvolvedPDFs = [=] (double const& mu) -> apfel::Set<apfel::Distribution>
@@ -72,20 +60,9 @@ namespace NangaParbat
       return apfel::Set<apfel::Distribution>{apfel::EvolutionBasisQCD{apfel::NF(mu, _Thresholds)}, DistributionMap(*_gpdf, RotPDFs, mu)};
     };
 
-    // Construct set of distributions as a function of the scale to be
-    // tabulated for PDF2
-    const auto EvolvedPDFs2 = [=] (double const& mu) -> apfel::Set<apfel::Distribution>
-    {
-      return apfel::Set<apfel::Distribution>{apfel::EvolutionBasisQCD{apfel::NF(mu, _Thresholds)}, DistributionMap(*_gpdf2, RotPDFs2, mu)};
-    };
-
     // Tabulate collinear PDFs
     _TabPDFs = std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>
-               (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedPDFs, 100, distpdf->qMin() - 0.1, distpdf->qMax(), 3, _Thresholds});
-
-    // Tabulate collinear PDF2
-    _TabPDFs2 = std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>
-              (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedPDFs2, 100, distpdf2->qMin() - 0.1, distpdf2->qMax(), 3, _Thresholds});
+               (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedPDFs, 100, distpdf->qMin() * 0.9, distpdf->qMax(), 3, _Thresholds});
 
     // Define x-space grid for FFs
     std::vector<apfel::SubGrid> vsgff;
@@ -115,11 +92,11 @@ namespace NangaParbat
 
     // Tabulate collinear FFs
     _TabFFs = std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>
-              (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedFFs, 100, distff->qMin() - 0.1, distff->qMax(), 3, _Thresholds});
+              (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedFFs, 100, distff->qMin() * 0.9, distff->qMax(), 3, _Thresholds});
 
     // Tabulate collinear FFs2
     _TabFFs2 = std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>
-              (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedFFs2, 100, distff2->qMin() - 0.1, distff2->qMax(), 3, _Thresholds});
+              (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedFFs2, 100, distff2->qMin() * 0.9, distff2->qMax(), 3, _Thresholds});
 
     // Initialise TMD objects for PDFs
     _TmdPdfObjs = apfel::InitializeTmdObjects(*_gpdf, _Thresholds);
@@ -127,7 +104,7 @@ namespace NangaParbat
     // Initialise TMD objects for FFs
     _TmdFfObjs = apfel::InitializeTmdObjects(*_gff, _Thresholds);
 
-    // Initialise TMD objects for FFs
+    // Initialise TMD objects for FF2s
     _TmdFfObjs2 = apfel::InitializeTmdObjects(*_gff2, _Thresholds);
 
     // Build evolved TMD PDFs and FFs
@@ -155,9 +132,9 @@ namespace NangaParbat
 
     // Delete LHAPDF sets
     delete distpdf;
-    delete distpdf2;
     delete distff;
-    delete distff2;
+    if (_config["distff2"])
+      delete distff2;
 
     // b* presciption
     _bstar = bstarMap.at(_config["bstar"].as<std::string>());
@@ -509,9 +486,7 @@ namespace NangaParbat
     const int    idz    = _config["zgrid"]["InterDegree"].as<int>();
     //const double epsz   = _config["zgrid"]["eps"].as<double>();
     // const double qToQ   = _config["qToverQmax"].as<double>();
-    const double param1   = _config["param1"].as<double>();
-    const double param2   = _config["param2"].as<double>();
-    const double param3   = _config["param3"].as<double>();
+    const std::vector<double> cutParams = _config["cutParams"].as<std::vector<double>>();
     const double Cf     = _config["TMDscales"]["Cf"].as<double>();
     const double aref   = _config["alphaem"]["aref"].as<double>();
     const bool   arun   = _config["alphaem"]["run"].as<bool>();
@@ -730,8 +705,9 @@ namespace NangaParbat
         const int nze  = zg.size();
 
         //Value of the cut qToverQmax as same as PV17
-        double qToQ = std::min(param1 / zb.first, param2) + param3 / Qb.first / zb.first;
-        // double qToQ = std::min(std::max( param2 , param3 / zb.first / Qb.first ) , 1 )
+        // double qToQ = std::min(param1 / zb.first, param2) + param3 / Qb.first / zb.first;
+        double qToQ = std::min(cutParams[0] / zb.first, cutParams[1]) + cutParams[2] / Qb.first / zb.first;
+        // double qToQ = std::min(std::min(cutParams[0] / zb.first, cutParams[1]) + cutParams[2] / Qb.first / zb.first, 1.0);
 
         // Write kinematics on the YAML emitter
         Tabs[i].SetFloatPrecision(8);
@@ -876,7 +852,7 @@ namespace NangaParbat
                                           xbintegral = xbIntObj.integrand(xbg[alpha]);
 
                                         // Multiply by electric charge and the FF
-                                        xbintegral *= apfel::QCh2[std::abs(q)-1] * (TabMatchTMDFFs.EvaluatexQ(q, z, bs) + TabMatchTMDFFs2.EvaluatexQ(q, z, bs));
+                                        xbintegral *= apfel::QCh2[std::abs(q)-1] * (dPhT2 ? TabMatchTMDFFs.EvaluatexQ(q, z, bs) + TabMatchTMDFFs2.EvaluatexQ(q, z, bs) : TabMatchTMDFFs.EvaluatexQ(q, z, bs));
 
                                         // Include current term
                                         xbintegralq += xbintegral;
@@ -955,9 +931,9 @@ namespace NangaParbat
     // Initialize SIDIS objects (use the PDF grid)
     //const apfel::SidisObjects so = InitializeSIDIS(*_gpdf, *_gff);
     // The following line makes it possible to exclude the so-called "mixed" terms in the calculation of the collinear structure functions
-    const apfel::SidisObjects so = InitializeSIDIS(*_gpdf2, *_gff, {5, 6, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22});
+    const apfel::SidisObjects so = InitializeSIDIS(*_gpdf, *_gff, {5, 6, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22});
 
-    const apfel::SidisObjects so2 = InitializeSIDIS(*_gpdf2, *_gff2, {5, 6, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22});
+    const apfel::SidisObjects so2 = InitializeSIDIS(*_gpdf, *_gff2, {5, 6, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22});
 
     // Initialise container of vector of normalisation factors
     std::vector<double> NormFacts(DHVect.size());
@@ -1009,7 +985,7 @@ namespace NangaParbat
 
           // Get distributions for PDFs and FFs in the physical
           // basis.
-          const std::map<int, apfel::Distribution> dPDF = apfel::QCDEvToPhys(_TabPDFs2->Evaluate(Q).GetObjects());
+          const std::map<int, apfel::Distribution> dPDF = apfel::QCDEvToPhys(_TabPDFs->Evaluate(Q).GetObjects());
           const std::map<int, apfel::Distribution> dFF  = apfel::QCDEvToPhys(_TabFFs->Evaluate(Q).GetObjects());
           const std::map<int, apfel::Distribution> dFF2 = apfel::QCDEvToPhys(_TabFFs2->Evaluate(Q).GetObjects());
 
@@ -1086,7 +1062,6 @@ namespace NangaParbat
 
             }
 
-          std::cout << "debug1" << std::endl;
 
           // Assemble double distribution for the cross section as
           // Y^+ F2 - y^2 FL times a constant.
@@ -1099,11 +1074,9 @@ namespace NangaParbat
         };
 
 
-        std::cout << "debug2" << std::endl;
-        std::cout << "debug2.111" << std::endl;
         // Tabulate cross section
         const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabCrossSectionFO{CrossSectionFO, 50, 1, 20, 3, _Thresholds};
-        std::cout << "debug2.11" << std::endl;
+
         // Define function to compute SIDIS asymptotic cross section at O(as)
         const std::function<apfel::DoubleObject<apfel::Distribution>(double const&)> CrossSectionAsy = [=] (double const& Q) -> apfel::DoubleObject<apfel::Distribution>
         {
@@ -1156,10 +1129,10 @@ namespace NangaParbat
               distqq2.AddTerm({apfel::QCh2[j-1], dPDF.at(jp),  dFF2.at(jp)});
               distqq2.AddTerm({apfel::QCh2[j-1], dPDF.at(-jp), dFF2.at(-jp)});
             }
-          std::cout << "debug3" << std::endl;
+
           return ( 4 * M_PI * pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * _HardFactorSIDIS(Q) ) * distqq.MultiplyBy(yp, iz) + ( 4 * M_PI * pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) * _HardFactorSIDIS(Q) ) * distqq2.MultiplyBy(yp, iz);
         };
-        std::cout << "debug4" << std::endl;
+
         // Tabulate cross section
         const apfel::TabulateObject<apfel::DoubleObject<apfel::Distribution>> TabCrossSectionAsy{CrossSectionAsy, 50, 1, 20, 3, {}};
 

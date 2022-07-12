@@ -1,14 +1,7 @@
 # Collinear PDF set and member to be used for the generation of the
 # tables. They are assumed to be in the LHAPDF format.
 pdfset:
-  name: "MMHT2014nlo68cl"
-  member: 0
-
-# Collinear PDF set and member to be used for the generation of the
-# collinear cross section for the SIDIS normalization factors.
-# They are assumed to be in the LHAPDF format.
-pdfset2:
-  name: "MMHT2014nlo68cl"
+  name: "MMHT2014nnlo68cl"
   member: 0
 
 # Collinear FF set and member to be used for the generation of the
@@ -29,7 +22,7 @@ bstar: bstarmin
 
 # Perturbative order of the computation. 0: LL, 1: NLL, 2: NNLL, 3:
 # NNNLL, -1: NLL', -2: NNLL'
-PerturbativeOrder: 1
+PerturbativeOrder: 3
 
 # Initial and final scale-variation factors around mub = 2e^{-gamma_E}
 # / b and Q, respectively.
@@ -98,6 +91,4 @@ zgrid:
 qToverQmax: 0.5
 
 #Parameters needed to compute the correct cut in PhT for SIDIS data
-param1: 0.5
-param2: 0.7
-param3: 0.5
+cutParams: [0.2, 0.7, 0.5]
