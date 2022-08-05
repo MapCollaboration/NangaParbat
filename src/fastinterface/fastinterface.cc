@@ -96,7 +96,7 @@ namespace NangaParbat
 
     // Tabulate collinear FFs2
     _TabFFs2 = std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>
-              (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedFFs2, 100, distff2->qMin() * 0.9, distff2->qMax(), 3, _Thresholds});
+               (new apfel::TabulateObject<apfel::Set<apfel::Distribution>> {EvolvedFFs2, 100, distff2->qMin() * 0.9, distff2->qMax(), 3, _Thresholds});
 
     // Initialise TMD objects for PDFs
     _TmdPdfObjs = apfel::InitializeTmdObjects(*_gpdf, _Thresholds);
@@ -570,8 +570,8 @@ namespace NangaParbat
           return apfel::Set<apfel::Distribution>{QCDEvToPhys(_MatchTMDFFs2(b).GetObjects())};
         };
         const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabMatchTMDFFs2{isTMDFFs2, 200, 1e-2, 2, 1, {},
-                                                                                    [] (double const& x) -> double{ return log(x); },
-                                                                                    [] (double const& y) -> double{ return exp(y); }};
+                                                                                     [] (double const& x) -> double{ return log(x); },
+                                                                                     [] (double const& y) -> double{ return exp(y); }};
 
 
 

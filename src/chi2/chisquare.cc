@@ -41,7 +41,7 @@ namespace NangaParbat
 
     // Determine number of data points that pass the cut qT / Q.
     const DataHandler::Kinematics kin      = DSBlock.first->GetKinematics();
-    //const double                  qToQMax = DSBlock.second->GetCutqToverQ();
+    //const double                  qToQMax  = DSBlock.second->GetCutqToverQ();
     const DataHandler::Process    proc     = DSBlock.first->GetProcess();
     const std::vector<double>     cutParam = DSBlock.second->GetcutParam();
     const std::vector<double>     qTv      = kin.qTv;
@@ -419,9 +419,9 @@ namespace NangaParbat
             const bool                                   Intz   = kin.Intv3;    // Whether the bin in z is to be integrated over
 
             if (IntQ)
-                os << YAML::Key << "Q" << YAML::Value << YAML::Flow << YAML::BeginSeq << Qb.first << Qb.second << YAML::EndSeq;
+              os << YAML::Key << "Q" << YAML::Value << YAML::Flow << YAML::BeginSeq << Qb.first << Qb.second << YAML::EndSeq;
             else
-                os << YAML::Key << "Q" << YAML::Value << Qb.first;
+              os << YAML::Key << "Q" << YAML::Value << Qb.first;
             if (Intxb)
               os << YAML::Key << "x" << YAML::Value << YAML::Flow << YAML::BeginSeq << xbb.first << xbb.second << YAML::EndSeq;
             else
@@ -446,9 +446,9 @@ namespace NangaParbat
             const bool                                   Intyb  = kin.Intv2;    // Whether the bin in Bjorken x is to be integrated over
 
             if (IntQ)
-                os << YAML::Key << "Q" << YAML::Value << YAML::Flow << YAML::BeginSeq << Qb.first << Qb.second << YAML::EndSeq;
+              os << YAML::Key << "Q" << YAML::Value << YAML::Flow << YAML::BeginSeq << Qb.first << Qb.second << YAML::EndSeq;
             else
-                os << YAML::Key << "Q" << YAML::Value << Qb.first;
+              os << YAML::Key << "Q" << YAML::Value << Qb.first;
             if (Intyb)
               os << YAML::Key << "y" << YAML::Value << YAML::Flow << YAML::BeginSeq << yb.first << yb.second << YAML::EndSeq;
             else

@@ -159,7 +159,7 @@ namespace NangaParbat
                          << YAML::Value << v["errors"][0]["symerror"].as<double>() / 1000 << YAML::EndMap;
                     if (PDFError)
                       emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * 0.8 << YAML::EndMap;
-                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe * v["value"].as<double>() / 1000 * 0.6 << YAML::EndMap;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe * v["value"].as<double>() / 1000 * 0.6 << YAML::EndMap;
                     emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.25 << YAML::EndMap;
                     //[TEMPORARY] introduction of 5 per mil of error
                     // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.005 * v["value"].as<double>() / 1000 << YAML::EndMap;

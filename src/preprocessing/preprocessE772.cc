@@ -163,7 +163,7 @@ namespace NangaParbat
                     emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.1 * val << YAML::EndMap;
                     if (PDFError)
                       emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * 0.8 << YAML::EndMap;
-                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * val * 0.6 << YAML::EndMap;
+                    emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * val * 0.6 << YAML::EndMap;
                     // [TEMPORARY] Simulation of the correlated error associated to collinear PDFs
                     // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.10 << YAML::EndMap;
                     //[TEMPORARY] trial of introduction of new theoretical error

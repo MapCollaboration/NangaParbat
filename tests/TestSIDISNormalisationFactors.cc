@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 
   // Dump table to file
   std::ofstream fout ("Normalization_factors_binned.dat");
-  
+
   fout << "Normalisation factors:" << std::endl;
 
   for (int i = 0; i < (int) Facts.size(); i++)
@@ -56,13 +56,13 @@ int main(int argc, char* argv[])
       const std::pair<double, double> xbb = kin.var2b;    // Bjorken x interval
       const std::pair<double, double> zb  = kin.var3b;    // z interval
       fout << std::scientific << i << "\t"
-                << " [" << Qb.first << ":" << Qb.second << "]"
-                << " [" << xbb.first << ":" << xbb.second << "]"
-                << " [" << zb.first << ":" << zb.second << "]"
-	   << "  " << Facts[i] << std::endl;
+           << " [" << Qb.first << ":" << Qb.second << "]"
+           << " [" << xbb.first << ":" << xbb.second << "]"
+           << " [" << zb.first << ":" << zb.second << "]"
+           << "  " << Facts[i] << std::endl;
     }
 
   fout.close();
-    
+
   return 0;
 }

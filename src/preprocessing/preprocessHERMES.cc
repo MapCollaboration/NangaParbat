@@ -346,19 +346,19 @@ namespace NangaParbat
                         emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe * 0.8 << YAML::EndMap;
                         emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe * m.second * 0.6 << YAML::EndMap;
                       }
-                      if (FFError)
-                        {
-                          // Now read FF errors
-                          getline(fferr, linef);
-                          std::stringstream stream(linef);
-                          double dum, pe;
-                          stream >> dum >> dum >> dum >> dum >> pe >> dum;
+                    if (FFError)
+                      {
+                        // Now read FF errors
+                        getline(fferr, linef);
+                        std::stringstream stream(linef);
+                        double dum, pe;
+                        stream >> dum >> dum >> dum >> dum >> pe >> dum;
 
-                          emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe * 0.8 << YAML::EndMap;
-                          emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe * m.second * 0.6 << YAML::EndMap;
-                        }
-                      //[TEMPORARY] introduction of 5 per mil of error
-                      // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.005 * m.second << YAML::EndMap;
+                        emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << pe * 0.8 << YAML::EndMap;
+                        emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe * m.second * 0.6 << YAML::EndMap;
+                      }
+                    //[TEMPORARY] introduction of 5 per mil of error
+                    // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.005 * m.second << YAML::EndMap;
                     // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
                     // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "0.05" << YAML::EndMap;
                     emit << YAML::EndSeq;
