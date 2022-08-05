@@ -288,17 +288,17 @@ namespace NangaParbat
                       emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * 0.8 << YAML::EndMap;
                       emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * m["value"].as<double>() * 0.6 << YAML::EndMap;
                     }
-                    if (FFError)
-                      {
-                        // Now read FF errors
-                        getline(fferr, linef);
-                        std::stringstream stream(linef);
-                        double dum, pe;
-                        stream >> dum >> dum >> dum >> dum >> pe >> dum;
+                  if (FFError)
+                    {
+                      // Now read FF errors
+                      getline(fferr, linef);
+                      std::stringstream stream(linef);
+                      double dum, pe;
+                      stream >> dum >> dum >> dum >> dum >> pe >> dum;
 
-                        emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * 0.8 << YAML::EndMap;
-                        emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * m["value"].as<double>() * 0.6 << YAML::EndMap;
-                      }
+                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * 0.8 << YAML::EndMap;
+                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * m["value"].as<double>() * 0.6 << YAML::EndMap;
+                    }
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << m["errors"][1]["symerror"] << YAML::EndMap; // read systematic errors from HEPdata file
                   // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "0.05" << YAML::EndMap;
                   // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << m["errors"][1]["symerror"].as<double>() / m["value"].as<double>() << YAML::EndMap;

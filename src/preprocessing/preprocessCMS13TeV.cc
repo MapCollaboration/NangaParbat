@@ -139,9 +139,9 @@ namespace NangaParbat
                 // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.01 << YAML::EndMap; //[TEMPORARY] trial of introduction of hessian error
                 if (PDFError)
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * 0.8 << YAML::EndMap;
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * v["value"].as<double>() * 0.6 << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * v["value"].as<double>() * 0.6 << YAML::EndMap;
                 // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value"
-                     // << YAML::Value << addart[it] << YAML::EndMap;
+                // << YAML::Value << addart[it] << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::Key << "value" << YAML::Value << v["value"].as<double>();
                 // std::cout <<  v["value"].as<double>() << std::endl;

@@ -143,13 +143,13 @@ namespace NangaParbat
    */
   std::string PreprocessCMS8TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = true);
 
-    /**
-     * @brief Preprocessing of the CMS dataset at 13 TeV
-     * @param RawDataPath: the path to the raw-data folder
-     * @param ProcessedDataPath: the path to the folder where the processed data will be stored
-     * @param PDFError: whether PDF uncertainties have to be included in the processed datafiles (default: true)
-     * @return the coordinate string
-     */
+  /**
+   * @brief Preprocessing of the CMS dataset at 13 TeV
+   * @param RawDataPath: the path to the raw-data folder
+   * @param ProcessedDataPath: the path to the folder where the processed data will be stored
+   * @param PDFError: whether PDF uncertainties have to be included in the processed datafiles (default: true)
+   * @return the coordinate string
+   */
   std::string PreprocessCMS13TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError = true);
 
   /**
