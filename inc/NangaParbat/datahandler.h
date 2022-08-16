@@ -168,7 +168,15 @@ namespace NangaParbat
     double GetPrefactor() const { return _prefact; };
 
     /**
-     * @brief Function that returns the kinematic object
+     * @brief Function that returns true or false according to whether
+     * the data set is normalised to some integrated cross section or
+     * not. The normalisation, if present, is assumed to be provided
+     * by the code.
+     */
+    bool GetNormalised() const { return _normalised; };
+
+    /**
+     * @Brief Function that returns the kinematic object
      */
     Kinematics GetKinematics() const { return _kin; };
 
@@ -252,6 +260,7 @@ namespace NangaParbat
     double                             _charge;       //!< Charge of the identified final state
     std::vector<apfel::QuarkFlavour>   _tagging;      //!< Possible quark-tagged components
     double                             _prefact;      //!< Possible overall prefactor to multiply the theoretical predictions
+    bool                               _normalised;   //!< Whether the measurements are normalised to some "integrated" cross sections
     Kinematics                         _kin;          //!< Kinematics block
     std::vector<double>                _means;        //!< Vector of central values
     std::vector<double>                _uncor;        //!< Vector of uncorrelated uncertainties
