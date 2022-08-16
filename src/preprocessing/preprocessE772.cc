@@ -190,7 +190,7 @@ namespace NangaParbat
             emit << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "PT" << YAML::Key << "units" << YAML::Value << "GEV" << YAML::EndMap;
             emit << YAML::Key << "values" << YAML::Value;
             emit << YAML::BeginSeq;
-            for (int j =0; j < bins.size(); j++)
+            for (int j =0; j < (int) bins.size(); j++)
               if (bins[j] == 1)
                 {
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "value" << YAML::Value << qTb[j].second
