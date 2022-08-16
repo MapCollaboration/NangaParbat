@@ -61,8 +61,8 @@ namespace NangaParbat
         // Dummy variables to read columns
         std::string line;
         int vindex;
-        double vxFmin, vxFmax, vpT, vcross, vstat, vsyst;
-        vsyst = 0.16;
+        double vxFmin, vxFmax, vpT, vcross, vstat;//, vsyst;
+        //vsyst = 0.16;
 
         // Create map to store the data
         std::map<std::string, std::map<int, double>> data;
