@@ -20,6 +20,8 @@ namespace NangaParbat
       return std::shared_ptr<NangaParbat::Cut> {new NangaParbat::XZCut{dataset, min, max, params[0]}};
     else if (name == "xzcutQuad")
       return std::shared_ptr<NangaParbat::Cut> {new NangaParbat::XZCutQuadratic{dataset, min, max}};
+    else if (name == "xzcutLog")
+      return std::shared_ptr<NangaParbat::Cut> {new NangaParbat::XZCutLog{dataset, min, max, params[0]}};
     else
       throw std::runtime_error("[CutFactory::GetInstance]: Unknown cut.");
   }
