@@ -129,6 +129,10 @@ namespace NangaParbat
                   _proc = SIDIS;
                 else if (ql["value"].as<std::string>() == "SIA")
                   _proc = SIA;
+                else if (ql["value"].as<std::string>() == "DIA")
+                  _proc = DIA;
+                else if (ql["value"].as<std::string>() == "polarised DIS")
+                  _proc = DIA;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown process.");
               }
@@ -193,18 +197,18 @@ namespace NangaParbat
             if (ql["name"].as<std::string>() == "normalised")
               _normalised = ql["value"].as<bool>();
 
-            // Center of mass energy
+            // Center-of-mass energy
             if (ql["name"].as<std::string>() == "Vs")
               _kin.Vs = ql["value"].as<double>();
 
-            // Invariant-mass (DY) or virtuality (SIDIS) interval
+            // Boson virtuality (absolute value)
             if (ql["name"].as<std::string>() == "Q")
               {
                 _kin.var1b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
                 _kin.Intv1 = ql["integrate"].as<bool>();
               }
 
-            // Rapidity (DY) or Bjorken-x (SIDIS) interval
+            // Rapidity (DY) or Bjorken-x (SIDIS and DIS) interval
             if (ql["name"].as<std::string>() == "y" || ql["name"].as<std::string>() == "x")
               {
                 _kin.var2b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
@@ -590,7 +594,13 @@ namespace NangaParbat
     if (DH._proc == DataHandler::Process::DY)
       os << "- Process: Drell-Yan\n";
     else if (DH._proc == DataHandler::Process::SIDIS)
-      os << "- Process: SIDIS\n";
+      os << "- Process: semi-inclusive DIS\n";
+    else if (DH._proc == DataHandler::Process::SIA)
+      os << "- Process: single-inclusive annihilation\n";
+    else if (DH._proc == DataHandler::Process::DIA)
+      os << "- Process: double-inclusive annihilation\n";
+    else if (DH._proc == DataHandler::Process::DISpol)
+      os << "- Process: polarised DIS\n";
     else
       os << "- Process: Unknown\n";
 
