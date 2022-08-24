@@ -26,7 +26,7 @@ namespace NangaParbat
     /**
      * @brief The process enumerator
      */
-    enum Process: int {UnknownProcess = -1, DY = 0, SIDIS = 1, SIA = 2, DIA = 3, JetSIDIS = 4};
+    enum Process: int {UnknownProcess = -1, DY = 0, SIDIS = 1, SIA = 2, DIA = 3, DISpol = 4};
 
     /**
      * @brief The observable enumerator
@@ -190,11 +190,6 @@ namespace NangaParbat
      */
     std::vector<double> GetFluctutatedData() const { return _fluctuations; };
 
-    // /**
-    //  * @brief Function that returns the fluctuation number
-    //  */
-    double GetFluctuation() const { return _fluctuation; };
-
     /**
      * @brief Function that returns the sum in quadrature of the
      * uncorrelated uncertainties.
@@ -271,7 +266,6 @@ namespace NangaParbat
     apfel::matrix<double>              _CholL;        //!< Cholesky decomposition of the covariance matrix
     std::map<std::string, std::string> _labels;       //!< Labels used for plotting
     std::vector<double>                _fluctuations; //!< Vector of fluctuated data
-    double                             _fluctuation;  //!< Number of replicaID
     std::vector<double>                _t0;           //!< Vector of t0-predictions
     std::vector<Binning>               _bins;         //!< Vector of bins (currently used only for the FF_SIDIS project)
 
