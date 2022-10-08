@@ -93,10 +93,9 @@ namespace NangaParbat
           // Run over the qTv vector, count how many data points pass
           // the cut and push the number into the "_ndata" vector.
           int idata = 0;
-	  double qToQMax = std::min(std::min(cutParam[0], cutParam[1]) + cutParam[2] / Qmin, 1.0);
-          //double qToQMax = 0.8;
+
+          double qToQMax = std::min(std::min(cutParam[0], cutParam[1]) + cutParam[2] / Qmin, 1.0);
           //double qToQMax = std::min(cutParam[0] / zmin, cutParam[1]) + cutParam[2] / Qmin / zmin;
-          //std::cout << "qToQMax from chisquare.cc = " << qToQMax << std::endl;
           //std::cout << "param1 from chisquare.cc = " << cutParam[0] << std::endl;
           //std::cout << "param2 from chisquare.cc = " << cutParam[1] << std::endl;
           //std::cout << "param3 from chisquare.cc = " << cutParam[2] << std::endl;

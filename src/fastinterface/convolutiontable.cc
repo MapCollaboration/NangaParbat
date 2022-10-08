@@ -212,7 +212,7 @@ namespace NangaParbat
                                                             std::function<double(double const&, double const&, double const&)> const& DNP) const
   {
     // Choice of the qT cut
-    double JetSIDISqToQmax = 0.8;
+    double JetSIDISqToQmax = std::min(std::min(_cutParam[0], _cutParam[1]) + _cutParam[2] / _Qg.front(), 1.0);
 
     // Compute predictions
     std::map<double, double> pred;
