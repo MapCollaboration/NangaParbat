@@ -27,14 +27,14 @@ Percentile cut: '5'
 # prescriprion is enabled). They have to be as many and ordered as the
 # "Parameters" below.
 t0prescription: false
-t0parameters: [0.128, 0.285, 2.98, 0.173, 0.39, 0.3]
+t0parameters: [0.128, 0.285, 2.98, 0.173, 0.39, 0.2]
 
 # Parameterisation to be fitted to data. This has to correspond to a
 # derivarion of the "Parameterisation" class.
 Parameterisation: PV17jet
 
 # Fluctuate initial parameters according to their step
-Paramfluct: true
+Paramfluct: false
 
 # List of parameters to be fitted to data. This requires that the
 # number and order of parameters matches those expected by the
@@ -45,4 +45,4 @@ Parameters:
   - {name: "alpha",    starting_value: 2.98,  step: 0.030, fix: false}
   - {name: "sigma",    starting_value: 0.173, step: 0.002, fix: false}
   - {name: "lambda",   starting_value: 0.39,  step: 0.005, fix: false}
-  - {name: "g3",       starting_value: 0.300,  step: 0.001, fix: false}
+  - {name: "g3",       starting_value: 0.2,  step: 0.001, fix: false}

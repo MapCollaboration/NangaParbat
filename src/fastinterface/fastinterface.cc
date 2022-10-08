@@ -891,7 +891,7 @@ namespace NangaParbat
     const int    idxb   = _config["xbgrid"]["InterDegree"].as<int>();
     //const double epsxb  = _config["xbgrid"]["eps"].as<double>();
     //const double epsz   = _config["zgrid"]["eps"].as<double>();
-    // const double qToQ   = _config["qToverQmax"].as<double>();
+     const double qToQ   = _config["qToverQmax"].as<double>();
     // const double param1   = _config["param1"].as<double>();
     // const double param2   = _config["param2"].as<double>();
     // const double param3   = _config["param3"].as<double>();
@@ -1039,8 +1039,8 @@ namespace NangaParbat
 
         // Choice of the value of the cut qToverQmax
         // double qToQ = std::min(param1 , param2) + param3 / Qb.first;
-        // double qToQ = std::min(std::max( param2 , param3 / zb.first / Qb.first ) , 1 )
-        const  double qToQ = 0.8;
+        //double qToQ = std::min(std::max( param2 , param3 / Qb.first ) , 1 )
+        //const  double qToQ = 0.8;
 
         // Write kinematics on the YAML emitter
         Tabs[i].SetFloatPrecision(8);
