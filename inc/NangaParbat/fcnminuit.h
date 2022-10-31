@@ -6,8 +6,14 @@
 
 #include "NangaParbat/chisquare.h"
 
+#if MINUIT2_NOT_BUNDLED_WITH_ROOT
+#include <Minuit2/FCNBase.h>
+#include <Minuit2/FCNGradientBase.h>
+#else
 #include <root/Minuit2/FCNBase.h>
 #include <root/Minuit2/FCNGradientBase.h>
+#endif
+
 
 namespace NangaParbat
 {
