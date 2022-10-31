@@ -14,8 +14,8 @@
 namespace NangaParbat
 {
   //_________________________________________________________________________________
-  //std::string PreprocessCMS13TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError)
-  std::string PreprocessCMS13TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const&)
+  std::string PreprocessCMS13TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError)
+  //std::string PreprocessCMS13TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const&)
   {
     std::cout << "Processing CMS 13 TeV data ..." << std::endl;
 
