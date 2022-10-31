@@ -43,7 +43,7 @@ namespace NangaParbat
      * met within the tabulated points.
      */
     //ConvolutionTable(YAML::Node const& table, double const& qToQmax = 100, std::vector<std::shared_ptr<Cut>> const& cuts = {}, double const& acc = 1e-7);
-    ConvolutionTable(YAML::Node const& table, std::vector<double> const& cutParam = {}, std::vector<std::shared_ptr<Cut>> const& cuts = {}, double const& acc = 1e-7);
+    ConvolutionTable(YAML::Node const& table, std::vector<double> const& cutParam = {10000, 10000, 10000}, std::vector<std::shared_ptr<Cut>> const& cuts = {}, double const& acc = 1e-7);
 
     /**
      * @brief The "ConvolutionTable" constructor.
@@ -56,7 +56,7 @@ namespace NangaParbat
      * met within the tabulated points.
      */
     //ConvolutionTable(std::string const& infile, double const& qToQmax = 100, std::vector<std::shared_ptr<Cut>> const& cuts = {}, double const& acc = 1e-7);
-    ConvolutionTable(std::string const& infile, std::vector<double> const& cutParam = {}, std::vector<std::shared_ptr<Cut>> const& cuts = {}, double const& acc = 1e-7);
+    ConvolutionTable(std::string const& infile, std::vector<double> const& cutParam = {10000, 10000, 10000}, std::vector<std::shared_ptr<Cut>> const& cuts = {}, double const& acc = 1e-7);
 
     /**
      * @brief This function convolutes a Drell-Yan input convolution
@@ -147,8 +147,8 @@ namespace NangaParbat
     std::vector<double>                                                   const _zOgata;   //!< Unscaled Ogata coordinate
     std::vector<double>                                                   const _Qg;       //!< Grid in Q
     std::vector<double>                                                         _xig;      //!< Grid in xi;
-    std::vector<double>                                                         _xbg;      //!< Grid in xi;
-    std::vector<double>                                                         _zg;       //!< Grid in xi;
+    std::vector<double>                                                         _xbg;      //!< Grid in x;
+    std::vector<double>                                                         _zg;       //!< Grid in z;
     std::map<double,std::vector<std::vector<double>>>                           _PSRed;    //!< The phase-space reduction factors
     std::map<double,std::vector<std::vector<double>>>                           _dPSRed;   //!< The derivative of the phase-space reduction factors
     std::map<double,std::vector<std::vector<std::vector<double>>>>              _WDY;      //!< The weights for Drell-Yan

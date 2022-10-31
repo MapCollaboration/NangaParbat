@@ -18,7 +18,7 @@ namespace NangaParbat
 {
 
   //_________________________________________________________________________________
-  std::string PreprocessCOMPASS(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError)
+  std::string PreprocessCOMPASS(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError, bool const& FFError)
   {
     std::cout << "Processing COMPASS data ..." << std::endl;
 
@@ -26,7 +26,10 @@ namespace NangaParbat
     const std::string RawDataFolder = RawDataPath + "/HEPData-ins1624692-v1-yaml/";
 
     // Path to the PDF-error folder
-    const std::string PDFErrorFolder = RawDataPath + "/PDFErrors/";
+    const std::string PDFErrorFolder = RawDataPath + "/PDFErrors/SIDIS/N3LL/COMPASS/";
+
+    // Path to the FF-error folder
+    const std::string FFErrorFolder = RawDataPath + "/FFErrors/N3LL/COMPASS/";
 
     // Vector of tables to process:
     // get all the files in RawDataFolder and remove 'submission.yaml' from the list
@@ -194,6 +197,9 @@ namespace NangaParbat
               // Map for hadron names (output files)
               std::map<std::string, std::string> hadrons = {{"M^{h^{+}}", "Pp_Kp"}, {"M^{h^{-}}", "Pm_Km"}};
 
+              // Map for hadron names (pytitle)
+              std::map<std::string, std::string> pyhadrons = {{"M^{h^{+}}", "PpKp"}, {"M^{h^{-}}", "PmKm"}};
+
               // Map for hadron names (plot titles)
               std::map<std::string, std::string> hadtitle = {{"M^{h^{+}}", "$M^{h^{+}}$"}, {"M^{h^{-}}", "$M^{h^{-}}$"}};
 
@@ -210,17 +216,23 @@ namespace NangaParbat
               std::ifstream pdferr(PDFErrorFolder + ofile + ".out");
               std::string line;
               getline(pdferr, line);
-              getline(pdferr, line);
+              // getline(pdferr, line);
+
+              // Open FF-error file
+              std::ifstream fferr(FFErrorFolder + ofile + ".out");
+              std::string linef;
+              getline(fferr, linef);
+              // getline(fferr, linef);
 
               // Plot labels
               std::map<std::string, std::string> labels
               {
                 {"xlabel", "#it{P}_{hT} [GeV]"},
                 {"ylabel", hcharge + "#left(x, z, |{P}_{hT}|^2, Q^2 #right)"},
-                {"title", "COMPASS, Deu  -  " + hadtitle[hcharge] + "   " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < |#it{z}| < " + std::to_string(zbin.second)},
+                {"title", "COMPASS, Deu  -  " + pyhadrons[hcharge] + "   " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < |#it{z}| < " + std::to_string(zbin.second)},
                 {"xlabelpy", "$P_{hT} \\rm{ [GeV]}$"},
                 {"ylabelpy", "$" + hcharge + "\\left(x, z, |{P}_{hT}|^2, Q^2 \\right)$"},
-                {"titlepy", "COMPASS, Deu - " + hadtitle[hcharge] + " \\\\ " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < z < " + std::to_string(zbin.second)}
+                {"titlepy", "COMPASS, Deu - " + pyhadrons[hcharge] + " \\\\ " + std::to_string(xbin.first) + " < x < " + std::to_string(xbin.second) + " , " + std::to_string(zbin.first) + " < z < " + std::to_string(zbin.second)}
               };
 
               // Allocate emitter
@@ -271,12 +283,28 @@ namespace NangaParbat
                       getline(pdferr, line);
                       std::stringstream stream(line);
                       double dum, pe;
-                      stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
+                      stream >> dum >> dum >> dum >> dum >> pe >> dum;
 
-                      // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * 0.8 << YAML::EndMap;
+                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * m["value"].as<double>() * 0.6 << YAML::EndMap;
+                    }
+                  if (FFError)
+                    {
+                      // Now read FF errors
+                      getline(fferr, linef);
+                      std::stringstream stream(linef);
+                      double dum, pe;
+                      stream >> dum >> dum >> dum >> dum >> pe >> dum;
+
+                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * 0.8 << YAML::EndMap;
+                      emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * m["value"].as<double>() * 0.6 << YAML::EndMap;
                     }
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << m["errors"][1]["symerror"] << YAML::EndMap; // read systematic errors from HEPdata file
-                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.05 << YAML::EndMap;
+                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "0.05" << YAML::EndMap;
+                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << m["errors"][1]["symerror"].as<double>() / m["value"].as<double>() << YAML::EndMap;
+                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "0.05" << YAML::EndMap;
+                  //[TEMPORARY] introduction of 5 per mil of error
+                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.005 * m["value"].as<double>() << YAML::EndMap;
                   emit << YAML::EndSeq;
                   emit << YAML::Key << "value" << YAML::Value << m["value"].as<double>();
                   emit << YAML::EndMap;
@@ -293,6 +321,10 @@ namespace NangaParbat
               emit << YAML::BeginSeq;
               for (auto const& iv : exp["independent_variables"])
                 for (auto const& vl : iv["values"])
+                  // The value "factor" is needed only when the integral in PhT is performed
+                  // it is the factor used to correct the division for the bin width performed in convolutiontable.cc
+                  // which is PhTmax - PhTmin, whereas it should be PhT2max - PhT2min for COMPASS datasets.
+                  // Hence, factor is needed to replace the denominator.
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << sqrt(vl["high"].as<double>()) << YAML::Key << "low" << YAML::Value << std::max(sqrt(vl["low"].as<double>()), 1e-5) << YAML::Key << "value" << YAML::Value << sqrt(vl["value"].as<double>()) << YAML::Key << "factor" << YAML::Value << (sqrt(vl["high"].as<double>()) - std::max(sqrt(vl["low"].as<double>()), 1e-5)) / (vl["high"].as<double>() - pow(std::max(sqrt(vl["low"].as<double>()), 1e-5), 2)) << YAML::EndMap;
               emit << YAML::EndSeq;
               emit << YAML::EndMap;
@@ -333,6 +365,9 @@ namespace NangaParbat
 
               // Close PDF-error file
               pdferr.close();
+
+              // Close FF-error file
+              fferr.close();
 
               // Dump table to file
               std::ofstream fout(opath + "/" + ofile + ".yaml");

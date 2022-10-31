@@ -14,6 +14,6 @@ namespace NangaParbat
   class CutFactory
   {
   public:
-    static std::shared_ptr<Cut> GetInstance(DataHandler const& dataset, std::string const& name, double const& min, double const& max);
+    static std::shared_ptr<Cut> GetInstance(DataHandler const& dataset, std::string const& name, double const& min, double const& max, std::vector<double> const& params = {});
   };
 }

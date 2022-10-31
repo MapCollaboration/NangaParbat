@@ -1,0 +1,38 @@
+dependent_variables:
+- header: {name: Measured cross-section, units: PB}
+  values:
+  - errors:
+    - {label: stat, symerror: 0.2}
+    - {label: syst, symerror: 7.7}
+    - {label: lumi, symerror: 15.5}
+    value: 738.3
+  - errors:
+    - {label: stat, symerror: 0.2}
+    - {label: syst, symerror: 11.3}
+    - {label: lumi, symerror: 15.3}
+    value: 731.7
+  - errors:
+    - {label: stat, symerror: 0.2}
+    - {label: syst, symerror: 6.4}
+    - {label: lumi, symerror: 15.5}
+    value: 736.2
+- header: {name: Predicted cross-section, units: PB}
+  values:
+  - {value: ''}
+  - {value: ''}
+  - errors:
+    - asymerror: {minus: -24, plus: 19}
+      label: PDF
+    - asymerror: {minus: -8, plus: 6}
+      label: $\alpha_{s}$
+    - asymerror: {minus: -6, plus: 4}
+      label: scale
+    - asymerror: {minus: -5, plus: 5}
+      label: intristic
+    value: 703
+independent_variables:
+- header: {name: Channel}
+  values:
+  - {value: '$Z/\gamma^{*}\rightarrow ee$'}
+  - {value: '$Z/\gamma^{*}\rightarrow \mu\mu$'}
+  - {value: '$Z/\gamma^{*}\rightarrow ll$'}
