@@ -26,12 +26,12 @@ namespace NangaParbat
     /**
      * @brief The process enumerator
      */
-    enum Process: int {UnknownProcess = -1, DY = 0, SIDIS = 1, SIA = 2, DIA = 3, DISpol = 4};
+    enum Process: int {UnknownProcess = -1, DY = 0, SIDIS = 1, SIA = 2, DIA = 3, pDIS = 4};
 
     /**
      * @brief The observable enumerator
      */
-    enum Observable: int {UnknownObservable = -1, dsigma_dxdydz = 0, dsigma_dxdQdz = 1, multiplicity = 2, F_uut = 3, opposite_sign_ratio = 4};
+    enum Observable: int {UnknownObservable = -1, dsigma_dxdydz = 0, dsigma_dxdQdz = 1, multiplicity = 2, F_uut = 3, opposite_sign_ratio = 4, g1 = 5};
 
     /**
      * @brief Structure containing the kinematic information of one

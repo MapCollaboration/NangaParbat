@@ -131,8 +131,8 @@ namespace NangaParbat
                   _proc = SIA;
                 else if (ql["value"].as<std::string>() == "DIA")
                   _proc = DIA;
-                else if (ql["value"].as<std::string>() == "polarised DIS")
-                  _proc = DIA;
+                else if (ql["value"].as<std::string>() == "pDIS")
+                  _proc = pDIS;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown process.");
               }
@@ -152,6 +152,8 @@ namespace NangaParbat
                   _obs = F_uut;
                 else if (ql["value"].as<std::string>() == "opposite_sign_ratio")
                   _obs = opposite_sign_ratio;
+                else if (ql["value"].as<std::string>() == "g1")
+                  _obs = g1;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown observable.");
               }
@@ -599,7 +601,7 @@ namespace NangaParbat
       os << "- Process: single-inclusive annihilation\n";
     else if (DH._proc == DataHandler::Process::DIA)
       os << "- Process: double-inclusive annihilation\n";
-    else if (DH._proc == DataHandler::Process::DISpol)
+    else if (DH._proc == DataHandler::Process::pDIS)
       os << "- Process: polarised DIS\n";
     else
       os << "- Process: Unknown\n";
