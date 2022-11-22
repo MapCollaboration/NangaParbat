@@ -1,0 +1,48 @@
+# Short descrition of the fit that will appear in the report of the
+# fit
+Description: "Test fit with the Pavia 17 parameterisation (Jet)."
+
+# Minimiser to be used for the fit. Possible options so far are
+# 'minuit', 'ceres', and 'none'.
+Minimiser: none
+
+# Seed used with the random-number generator for the generation of the
+# Monte Carlo replicas
+Seed: '1234'
+
+# Cut on qT / Q. This has to be smaller than the production cut used
+# to produce the tables (now it is not used).
+qToQmax: '0.8'
+
+# Parameters to compute the cut qT / Q as PV17 fit.
+cutParam: [0.2, 0.7, 0.5]
+
+# Percentile cut (in percent) on the distribution of chi2's, error
+# functions and parameters used to identify outliers.
+Percentile cut: '5'
+
+# Enable or disable the t0 prescription for the treatment of
+# normalisation uncertantities and define the set of parameters to be
+# used to compute the corresponding predictions (used only if the t0
+# prescriprion is enabled). They have to be as many and ordered as the
+# "Parameters" below.
+t0prescription: false
+t0parameters: [0.128, 0.285, 2.98, 0.173, 0.39, 0.05]
+
+# Parameterisation to be fitted to data. This has to correspond to a
+# derivarion of the "Parameterisation" class.
+Parameterisation: PV17jetww
+
+# Fluctuate initial parameters according to their step
+Paramfluct: false
+
+# List of parameters to be fitted to data. This requires that the
+# number and order of parameters matches those expected by the
+# particular parameterisation being used.
+Parameters:
+  - {name: "g2",       starting_value: 0.128, step: 0.001, fix: false}
+  - {name: "N1",       starting_value: 0.285, step: 0.003, fix: false}
+  - {name: "alpha",    starting_value: 2.98,  step: 0.030, fix: false}
+  - {name: "sigma",    starting_value: 0.173, step: 0.002, fix: false}
+  - {name: "lambda",   starting_value: 0.39,  step: 0.005, fix: false}
+  - {name: "g3",       starting_value: 0.05, step: 0.001, fix: false}

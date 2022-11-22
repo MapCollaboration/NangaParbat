@@ -72,6 +72,16 @@ namespace NangaParbat
      * @return a vector of "double" containing as many normalisation
      * factors as elements of "DHVect".
      */
+     std::vector<YAML::Emitter> ComputeTablesJetSIDIS(std::vector<DataHandler> const& DHVect) const;
+
+     /**
+      * @brief Function that computes the normalisation factors to be
+      * applied to SIDIS to normalise the integral of the qT
+      * distribution to the integrated fixed-order cross section.
+      * @param DHVect: vector of "DataHandler" objects.
+      * @return a vector of "double" containing as many normalisation
+      * factors as elements of "DHVect".
+      */
     std::vector<double> NormalisationFactorsSIDIS(std::vector<DataHandler> const& DHVect) const;
 
   private:
@@ -98,5 +108,7 @@ namespace NangaParbat
     std::function<double(double const&)>                                                        _HardFactorDY;    //!< Hard factor for Drell-Yan
     std::function<double(double const&)>                                                        _HardFactorSIDIS; //!< Hard factor for SIDIS
     std::function<double(double const&, double const&)>                                         _bstar;           //!< b* prescription
+    // JetTMD
+    std::function<double(double const&, double const&, double const&)>                          _EvTMDJet;        //!< TMD Jet
   };
 }

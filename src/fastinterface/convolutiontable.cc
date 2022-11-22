@@ -3,6 +3,7 @@
 //
 
 #include "NangaParbat/convolutiontable.h"
+#include "NangaParbat/bstar.h"
 
 #include <cmath>
 #include <iostream>
@@ -43,7 +44,8 @@ namespace NangaParbat
     _qTv(table["qT_bounds"].as<std::vector<double>>()),
     _qTmap(table["qT_map"].as<std::vector<std::vector<double>>>()),
     _qTfact(table["bin_factors"].as<std::vector<double>>()),
-    _prefact(table["prefactor"].as<double>()),
+    // _prefact(table["prefactor"].as<double>()),
+    _prefact(table["prefactor"] ? table["prefactor"].as<double>() : 1),
     _prefact2(table["prefactor2"] ? table["prefactor2"].as<double>() : 1),
     _zOgata(table["Ogata_coordinates"].as<std::vector<double>>()),
     _Qg(table["Qgrid"].as<std::vector<double>>()),
@@ -82,6 +84,14 @@ namespace NangaParbat
         // Read weights
         for (auto const& qT : _qTv)
           _WSIDIS.insert({qT, table["weights"][qT].as<std::vector<std::vector<std::vector<std::vector<double>>>>>()});
+        break;
+
+      case DataHandler::Process::JetSIDIS:
+        _xbg = table["xbgrid"].as<std::vector<double>>();
+
+        // Read weights
+        for (auto const& qT : _qTv)
+          _WJetSIDIS.insert({qT, table["weights"][qT].as<std::vector<std::vector<std::vector<double>>>>()});
         break;
 
       default:
@@ -198,6 +208,53 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
+  std::map<double, double> ConvolutionTable::ConvoluteJetSIDIS(std::function<double(double const&, double const&, double const&)> const& fNP,
+                                                            std::function<double(double const&, double const&, double const&)> const& DNP) const
+  {
+    // Choice of the qT cut
+    double JetSIDISqToQmax = std::min(std::min(_cutParam[0], _cutParam[1]) + _cutParam[2] / _Qg.front(), 1.0);
+
+    // Compute predictions
+    std::map<double, double> pred;
+    for (int iqT = 0; iqT < (int) _qTv.size(); iqT++)
+      {
+        if (_qTv[iqT] / _Qg.front() > JetSIDISqToQmax)
+          {
+            pred.insert({_qTv[iqT],  0});
+            continue;
+          }
+        const auto wgt = _WJetSIDIS.at(_qTv[iqT]);
+        double cs  = 0;
+        for (int n = 0; n < (int) _zOgata.size(); n++)
+          {
+            double csn  = 0;
+            for (int tau = 0; tau < (int) _Qg.size(); tau++)
+              {
+                const double Q    = _Qg[tau];
+                const double zeta = Q * Q;
+                const double b =  _zOgata[n] / _qTv[iqT];
+                const double jetR = 1;
+                const double tR = tan(jetR/2);
+                for (int alpha = 0; alpha < (int) _xbg.size(); alpha++)
+                    {
+                      double zetaj = pow(tR * 2 * exp(- apfel::emc) / NangaParbat::bstarmin(b,Q), 2);
+                      csn += wgt[n][tau][alpha] * fNP(_xbg[alpha], b, zeta) * DNP(_xbg[alpha], b, zetaj);
+                      // csn += wgt[n][tau][alpha] * fNP(_xbg[alpha], b, zeta) * DNP(_xbg[alpha], b, zeta);
+                    }
+              }
+            cs += csn;
+            // Break the loop if the accuracy is satisfied (assuming
+            // convergence).
+            if (std::abs(csn/cs) < _acc)
+              break;
+          }
+        pred.insert({_qTv[iqT], cs});
+      }
+    return pred;
+  }
+
+
+  //_________________________________________________________________________________
   std::vector<double> ConvolutionTable::GetPredictions(std::function<double(double const&, double const&, double const&)> const& fNP1,
                                                        std::function<double(double const&, double const&, double const&)> const& fNP2) const
   {
@@ -233,6 +290,18 @@ namespace NangaParbat
             vpred[i] = _prefact * _prefact2 * _qTfact[i] * pred.at(_qTmap[i][1]);
         break;
 
+      // JetSIDIS: one PDF and one JetTMD
+      case DataHandler::Process::JetSIDIS:
+        pred = ConvoluteJetSIDIS(fNP1, fNP2);
+        if (_IntqT)
+          for (int i = 0; i < npred; i++)
+            vpred[i] = _prefact * _prefact2 * _qTfact[i] * (pred.at(_qTmap[i][1]) - pred.at(_qTmap[i][0])) / ( _qTmap[i][1] - _qTmap[i][0]);
+        else
+          for (int i = 0; i < npred; i++)
+              vpred[i] = _prefact * _prefact2 * _qTfact[i] * pred.at(_qTmap[i][1]);
+
+        break;
+
       // e+e- annihilation into two hadrons: two FFs (Not present
       // yet)
       case DataHandler::Process::DIA:
@@ -254,6 +323,10 @@ namespace NangaParbat
 
       // SIDIS: one PDF and one FF
       case DataHandler::Process::SIDIS:
+        return GetPredictions(fNP1, fNP2);
+
+      // JetSIDIS: one PDF and one JetTMD
+      case DataHandler::Process::JetSIDIS:
         return GetPredictions(fNP1, fNP2);
 
       // e+e- annihilation into two hadrons: two FFs (Not present
@@ -289,6 +362,13 @@ namespace NangaParbat
         p1 = GetPredictions(fNP1, dNP2);
         p2 = GetPredictions(dNP1, fNP2);
         break;
+
+      // JetSIDIS: one PDF and one JetTMD
+      case DataHandler::Process::JetSIDIS:
+        p1 = GetPredictions(fNP1, dNP2);
+        p2 = GetPredictions(dNP1, fNP2);
+        break;
+
 
       // e+e- annihilation into two hadrons: two FFs (Not present
       // yet)

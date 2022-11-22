@@ -89,6 +89,7 @@ namespace NangaParbat
     _covmat       = DH._covmat;
     _CholL        = DH._CholL;
     _labels       = DH._labels;
+    _fluctuation  = DH._fluctuation;
     _fluctuations = DH._fluctuations;
     _t0           = DH._t0;
     _bins         = DH._bins;
@@ -108,6 +109,7 @@ namespace NangaParbat
     _normalised(true),
     _kin(DataHandler::Kinematics{}),
     _labels({}),
+    _fluctuation(fluctuation),
     _t0(t0)
   {
     // Retrieve kinematics
@@ -129,6 +131,8 @@ namespace NangaParbat
                   _proc = SIDIS;
                 else if (ql["value"].as<std::string>() == "SIA")
                   _proc = SIA;
+                else if (ql["value"].as<std::string>() == "JetSIDIS")
+                  _proc = JetSIDIS;
                 else if (ql["value"].as<std::string>() == "DIA")
                   _proc = DIA;
                 else if (ql["value"].as<std::string>() == "pDIS")
@@ -597,6 +601,8 @@ namespace NangaParbat
       os << "- Process: Drell-Yan\n";
     else if (DH._proc == DataHandler::Process::SIDIS)
       os << "- Process: semi-inclusive DIS\n";
+    else if (DH._proc == DataHandler::Process::JetSIDIS)
+      os << "- Process: JetSIDIS\n";
     else if (DH._proc == DataHandler::Process::SIA)
       os << "- Process: single-inclusive annihilation\n";
     else if (DH._proc == DataHandler::Process::DIA)
@@ -643,6 +649,13 @@ namespace NangaParbat
         else
           os << "- Value of the third kinematic variable: " << ( DH._kin.var3b.first + DH._kin.var3b.second ) / 2 << "\n";
       }
+          if (DH._proc == DataHandler::Process::JetSIDIS)
+      {
+              if (DH._kin.Intv3)
+                os << "- Integration bounds of the third kinematic variable: [" << DH._kin.var3b.first << ": " << DH._kin.var3b.second << "]\n";
+              else
+                os << "- Value of the third kinematic variable: " << ( DH._kin.var3b.first + DH._kin.var3b.second ) / 2 << "\n";
+      }
 
     if (DH._kin.PSRed)
       {
@@ -656,7 +669,11 @@ namespace NangaParbat
             os << "- Minimum W: " << DH._kin.pTMin << " GeV \n";
             os << "- Range in y: [" << DH._kin.etaRange.first << ": " << DH._kin.etaRange.second << "]\n";
           }
-
+        else if (DH._proc == DataHandler::Process::JetSIDIS)
+          {
+            os << "- Minimum W: " << DH._kin.pTMin << " GeV \n";
+            os << "- Range in y: [" << DH._kin.etaRange.first << ": " << DH._kin.etaRange.second << "]\n";
+          }
       }
     os << "\n";
 

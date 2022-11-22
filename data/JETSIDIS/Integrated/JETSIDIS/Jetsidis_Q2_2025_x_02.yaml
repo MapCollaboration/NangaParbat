@@ -1,0 +1,243 @@
+dependent_variables:
+  - header: {title: "JetSIDIS", titlepy: "JetSIDIS \\\\ 0.15 < x < 0.25", xlabel: "#it{P}_{T} [GeV]", xlabelpy: "$P_{T} \\rm{ [GeV]}$", ylabel: "M^{h^{-}}#left(x, z, |{P}_{T}|^2, Q^2} #right)", ylabelpy: "$M^{h^{-}}\\left(x, z, |{P}_{hT}|^2, Q^2 \\right)$"}
+    qualifiers:
+      - {name: process, value: JetSIDIS}
+      - {name: observable, value: multiplicity}
+      - {name: target_isoscalarity, value: 1}
+      - {name: hadron, value: HD}
+      - {name: charge, value: -1}
+      - {name: prefactor, value: 1}
+      - {name: Vs, value: 130}
+      - {name: Q, low: 40 , high: 50, integrate: true}
+      - {name: x, low: 0.15, high: 0.25, integrate: true}
+      - {name: PS_reduction, W: 5, ymin: 0.01, ymax: 0.9}
+    values:
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+      - errors:
+          - {label: unc, value: 0.1}
+        value: 0
+
+independent_variables:
+  - header: {name: PhT, units: GeV}
+    values:
+      - {value: 0.25, high: 0.5, low: 0.01}
+      - {value: 0.75, high: 1.0, low: 0.5}
+      - {value: 1.25, high: 1.5, low: 1.0}
+      - {value: 1.75, high: 2.0, low: 1.5}
+      - {value: 2.25, high: 2.5, low: 2.0}
+      - {value: 2.75, high: 3.0, low: 2.5}
+      - {value: 3.25, high: 3.5, low: 3.0}
+      - {value: 3.75, high: 4.0, low: 3.5}
+      - {value: 4.25, high: 4.5, low: 4.0}
+      - {value: 4.75, high: 5.0, low: 4.5}
+      - {value: 5.25, high: 5.5, low: 5.0}
+      - {value: 5.75, high: 6.0, low: 5.5}
+      - {value: 6.25, high: 6.5, low: 6.0}
+      - {value: 6.75, high: 7.0, low: 6.5}
+      - {value: 7.25, high: 7.5, low: 7.0}
+      - {value: 7.75, high: 8.0, low: 7.5}
+      - {value: 8.25, high: 8.5, low: 8.0}
+      - {value: 8.75, high: 9.0, low: 8.5}
+      - {value: 9.25, high: 9.5, low: 9.0}
+      - {value: 9.75, high: 10.0, low: 9.5}
+      - {value: 10.25, high: 10.5, low: 10.0}
+      - {value: 10.75, high: 11.0, low: 10.5}
+      - {value: 11.25, high: 11.5, low: 11.0}
+      - {value: 11.75, high: 12.0, low: 11.5}
+      - {value: 12.25, high: 12.5, low: 12.0}
+      - {value: 12.75, high: 13.0, low: 12.5}
+      - {value: 13.25, high: 13.5, low: 13.0}
+      - {value: 13.75, high: 14.0, low: 13.5}
+      - {value: 14.25, high: 14.5, low: 14.0}
+      - {value: 14.75, high: 15.0, low: 14.5}
+
+
+  - header: {name: x}
+    values:
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+      - {high: 0.25, low: 0.15, value: 0.2}
+
+
+
+  - header: {name: y}
+    values:
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+      - {high: 0.9, low: 0.01, value: 0.69}
+
+
+
+
+  - header: {name: Q2}
+    values:
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
+      - {high: 2500, low: 1600, value: 2025}
