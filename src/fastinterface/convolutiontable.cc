@@ -18,19 +18,19 @@ namespace NangaParbat
     _Vs(-1),
     _IntqT(false),
     _qTv({}),
-    _qTmap({{}}),
-    _qTfact({}),
-    _prefact(1),
-    _prefact2(1),
-    _zOgata({}),
-    _Qg({}),
-    _xig({}),
-    _xbg({}),
-    _zg({}),
-    _cutParam({}),
-    _acc(1e-7),
-    _cuts({}),
-    _cutmask({})
+  _qTmap({{}}),
+  _qTfact({}),
+  _prefact(1),
+  _prefact2(1),
+  _zOgata({}),
+  _Qg({}),
+  _xig({}),
+  _xbg({}),
+  _zg({}),
+  _cutParam({}),
+  _acc(1e-7),
+  _cuts({}),
+  _cutmask({})
   {
   }
 
@@ -209,7 +209,7 @@ namespace NangaParbat
 
   //_________________________________________________________________________________
   std::map<double, double> ConvolutionTable::ConvoluteJetSIDIS(std::function<double(double const&, double const&, double const&)> const& fNP,
-                                                            std::function<double(double const&, double const&, double const&)> const& DNP) const
+                                                               std::function<double(double const&, double const&, double const&)> const& DNP) const
   {
     // Choice of the qT cut
     double JetSIDISqToQmax = std::min(std::min(_cutParam[0], _cutParam[1]) + _cutParam[2] / _Qg.front(), 1.0);
@@ -236,11 +236,11 @@ namespace NangaParbat
                 const double jetR = 1;
                 const double tR = tan(jetR/2);
                 for (int alpha = 0; alpha < (int) _xbg.size(); alpha++)
-                    {
-                      double zetaj = pow(tR * 2 * exp(- apfel::emc) / NangaParbat::bstarmin(b,Q), 2);
-                      csn += wgt[n][tau][alpha] * fNP(_xbg[alpha], b, zeta) * DNP(_xbg[alpha], b, zetaj);
-                      // csn += wgt[n][tau][alpha] * fNP(_xbg[alpha], b, zeta) * DNP(_xbg[alpha], b, zeta);
-                    }
+                  {
+                    double zetaj = pow(tR * 2 * exp(- apfel::emc) / NangaParbat::bstarmin(b,Q), 2);
+                    csn += wgt[n][tau][alpha] * fNP(_xbg[alpha], b, zeta) * DNP(_xbg[alpha], b, zetaj);
+                    // csn += wgt[n][tau][alpha] * fNP(_xbg[alpha], b, zeta) * DNP(_xbg[alpha], b, zeta);
+                  }
               }
             cs += csn;
             // Break the loop if the accuracy is satisfied (assuming
@@ -298,7 +298,7 @@ namespace NangaParbat
             vpred[i] = _prefact * _prefact2 * _qTfact[i] * (pred.at(_qTmap[i][1]) - pred.at(_qTmap[i][0])) / ( _qTmap[i][1] - _qTmap[i][0]);
         else
           for (int i = 0; i < npred; i++)
-              vpred[i] = _prefact * _prefact2 * _qTfact[i] * pred.at(_qTmap[i][1]);
+            vpred[i] = _prefact * _prefact2 * _qTfact[i] * pred.at(_qTmap[i][1]);
 
         break;
 

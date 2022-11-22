@@ -50,12 +50,12 @@ namespace NangaParbat
       // TMDJets
       else
         {
-	  const double g3           = this->_pars[5];
-    return evol * exp( - g3 * pow(b / 2, 2) ); // * ( 1 + lambda * pow(g3 * b / 2, 2) / ( 1 + lambda * g3 ) );
-    //return evol * exp( - g3 * pow(b / 2, 2) ) * pow(g3 * b / 2, 2) / ( 1 + g3 );
-    //return evol * pow(1 + g3* pow( b / 2, 2), -2);
-    // return 1;
-       }
+          const double g3           = this->_pars[5];
+          return evol * exp( - g3 * pow(b / 2, 2) ); // * ( 1 + lambda * pow(g3 * b / 2, 2) / ( 1 + lambda * g3 ) );
+          //return evol * exp( - g3 * pow(b / 2, 2) ) * pow(g3 * b / 2, 2) / ( 1 + g3 );
+          //return evol * pow(1 + g3* pow( b / 2, 2), -2);
+          // return 1;
+        }
     };
 
     std::string LatexFormula() const

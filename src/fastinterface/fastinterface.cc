@@ -941,7 +941,7 @@ namespace NangaParbat
     const int    idxb   = _config["xbgrid"]["InterDegree"].as<int>();
     //const double epsxb  = _config["xbgrid"]["eps"].as<double>();
     //const double epsz   = _config["zgrid"]["eps"].as<double>();
-     const double qToQ   = _config["qToverQmax"].as<double>();
+    const double qToQ   = _config["qToverQmax"].as<double>();
     // const double param1   = _config["param1"].as<double>();
     // const double param2   = _config["param2"].as<double>();
     // const double param3   = _config["param3"].as<double>();
@@ -1159,109 +1159,109 @@ namespace NangaParbat
                     // Loop over the grid in xb
                     for (int alpha = 0; alpha < nxbe; alpha++)
                       {
-                            // Function to be integrated in Q
-                            const apfel::Integrator QIntObj
-                            {
-                              [&] (double const& Q) -> double
+                        // Function to be integrated in Q
+                        const apfel::Integrator QIntObj
+                        {
+                          [&] (double const& Q) -> double
+                          {
+
+                            // bstar at the relevant point
+                            const double bs = _bstar( zo[n] / qT, Q);
+
+                            // Renormalisation and rapidity scales
+                            const double muf   = Cf * Q;
+                            const double zetaf = Q * Q;
+                            const double muj   = Cf * Q;
+                            const double tR = tan(JetR/2);
+                            //std::cout << "tan(R/2)= " << tR << std::endl;
+                            const double zetaj = pow(tR * 2 * exp(- apfel::emc) / bs, 2);
+                            //const double zetaj = pow(2 * exp(- apfel::emc) / bs, 2);
+
+                            // Partonic fractional energy
+                            const double TauP = pow(Q / Vs, 2);
+
+
+                            // Sum up contribution from the
+                            // active flavours.
+                            double xbintegralq = 0;
+                            for (int q = -nf; q <= nf; q++)
                               {
+                                // Skip the gluon
+                                if (q == 0)
+                                  continue;
 
-                                // bstar at the relevant point
-                                 const double bs = _bstar( zo[n] / qT, Q);
+                                // Function to be integrated in xb
+                                const apfel::Integrator xbIntObj
+                                {
+                                  [&] (double const& xb) -> double
+                                  {
+                                    // Return x integrand
+                                    const double Yp = 1 + pow(1 - TauP / xb, 2);
+                                    return xbgrid.Interpolant(0, alpha, xb) * Yp * TabMatchTMDPDFs.EvaluatexQ(q, xb, bs) / xb;
+                                    // return xbgrid.Interpolant(0, alpha, xb) * Yp / xb;
+                                  }
+                                };
+                                // Reduce the x-space integral
+                                // phase space according to
+                                // the fiducal cuts if
+                                // necessary.
+                                double xmin = 0;
+                                double xmax = 1;
+                                if (PSRed)
+                                  {
+                                    xmin = pow(Q / Vs, 2) / yRange.second;
+                                    xmax = std::min(pow(Q / Vs, 2) / yRange.first, 1 / ( 1 + pow(Wmin / Q, 2)));
+                                  }
+                                // Perform the integral in x
+                                double xbintegral = 0;
+                                if (Intxb)
+                                  for (int ixb = std::max(alpha - idxb, 0); ixb < std::min(alpha + 1, nxb); ixb++)
+                                    {
+                                      if (xbg[ixb+1] < xmin || xbg[ixb] > xmax)
+                                        continue;
+                                      else if (xbg[ixb] < xmin && xbg[ixb+1] > xmin)
+                                        xbintegral += xbIntObj.integrate(xmin, xbg[ixb+1], 0);
+                                      else if (xbg[ixb] < xmax && xbg[ixb+1] > xmax)
+                                        xbintegral += xbIntObj.integrate(xbg[ixb], xmax, 0);
+                                      else if (xbg[ixb] < xmin && xbg[ixb+1] > xmax)
+                                        xbintegral += xbIntObj.integrate(xmin, xmax, 0);
+                                      else
+                                        xbintegral += xbIntObj.integrate(xbg[ixb], xbg[ixb+1], 0);
+                                    }
+                                else
+                                  xbintegral = xbIntObj.integrand(xbg[alpha]);
 
-                                // Renormalisation and rapidity scales
-                                const double muf   = Cf * Q;
-                                const double zetaf = Q * Q;
-                                const double muj   = Cf * Q;
-                                const double tR = tan(JetR/2);
-                                //std::cout << "tan(R/2)= " << tR << std::endl;
-                                const double zetaj = pow(tR * 2 * exp(- apfel::emc) / bs, 2);
-                                //const double zetaj = pow(2 * exp(- apfel::emc) / bs, 2);
-
-                                    // Partonic fractional energy
-                                    const double TauP = pow(Q / Vs, 2);
-
-
-                                    // Sum up contribution from the
-                                    // active flavours.
-                                    double xbintegralq = 0;
-                                    for (int q = -nf; q <= nf; q++)
-                                      {
-                                        // Skip the gluon
-                                        if (q == 0)
-                                          continue;
-
-                                        // Function to be integrated in xb
-                                        const apfel::Integrator xbIntObj
-                                        {
-                                          [&] (double const& xb) -> double
-                                          {
-                                            // Return x integrand
-                                            const double Yp = 1 + pow(1 - TauP / xb, 2);
-                                             return xbgrid.Interpolant(0, alpha, xb) * Yp * TabMatchTMDPDFs.EvaluatexQ(q, xb, bs) / xb;
-                                            // return xbgrid.Interpolant(0, alpha, xb) * Yp / xb;
-                                          }
-                                        };
-                                        // Reduce the x-space integral
-                                        // phase space according to
-                                        // the fiducal cuts if
-                                        // necessary.
-                                        double xmin = 0;
-                                        double xmax = 1;
-                                        if (PSRed)
-                                          {
-                                            xmin = pow(Q / Vs, 2) / yRange.second;
-                                            xmax = std::min(pow(Q / Vs, 2) / yRange.first, 1 / ( 1 + pow(Wmin / Q, 2)));
-                                          }
-                                        // Perform the integral in x
-                                        double xbintegral = 0;
-                                        if (Intxb)
-                                          for (int ixb = std::max(alpha - idxb, 0); ixb < std::min(alpha + 1, nxb); ixb++)
-                                            {
-                                              if (xbg[ixb+1] < xmin || xbg[ixb] > xmax)
-                                                continue;
-                                              else if (xbg[ixb] < xmin && xbg[ixb+1] > xmin)
-                                                xbintegral += xbIntObj.integrate(xmin, xbg[ixb+1], 0);
-                                              else if (xbg[ixb] < xmax && xbg[ixb+1] > xmax)
-                                                xbintegral += xbIntObj.integrate(xbg[ixb], xmax, 0);
-                                              else if (xbg[ixb] < xmin && xbg[ixb+1] > xmax)
-                                                xbintegral += xbIntObj.integrate(xmin, xmax, 0);
-                                              else
-                                                xbintegral += xbIntObj.integrate(xbg[ixb], xbg[ixb+1], 0);
-                                            }
-                                        else
-                                          xbintegral = xbIntObj.integrand(xbg[alpha]);
-
-                                        // Multiply by electric charge, the JetTMD and the bT
-                                         xbintegral *= apfel::QCh2[std::abs(q)-1] * _EvTMDJet(bs, muj, zetaj) * pow(_QuarkSudakov(bs, muf, zetaf), 1) * (IntqT ? 1 : ( zo[n] / qT));
-                                        // Include current term
-                                        xbintegralq += xbintegral;
-                                      }
-
-                                // Return Q integrand
-                                 return Qgrid.Interpolant(0, tau, Q) * pow((arun ? _TabAlphaem->Evaluate(Q) : aref), 2) * _HardFactorSIDIS(muf) * xbintegralq / pow(Q, 3) / (2 * Q) ;
+                                // Multiply by electric charge, the JetTMD and the bT
+                                xbintegral *= apfel::QCh2[std::abs(q)-1] * _EvTMDJet(bs, muj, zetaj) * pow(_QuarkSudakov(bs, muf, zetaf), 1) * (IntqT ? 1 : ( zo[n] / qT));
+                                // Include current term
+                                xbintegralq += xbintegral;
                               }
-                            };
 
-                            // Perform the integral in Q
-                            double Qintegral = 0;
-                            if (IntQ)
-                              for (int iQ = std::max(tau - idQ, 0); iQ < std::min(tau + 1, nQ); iQ++)
-                                Qintegral += QIntObj.integrate(Qg[iQ], Qg[iQ+1], 0);
-                            else
-                              Qintegral = QIntObj.integrand(Qg[tau]);
+                            // Return Q integrand
+                            return Qgrid.Interpolant(0, tau, Q) * pow((arun ? _TabAlphaem->Evaluate(Q) : aref), 2) * _HardFactorSIDIS(muf) * xbintegralq / pow(Q, 3) / (2 * Q) ;
+                          }
+                        };
 
-                            // Compute the weight by multiplying the
-                            // integral by the Ogata weight (note that
-                            // a factor 4 * pi is missing because it
-                            // cancels against the inclusive cross
-                            // section in the denominator).
-                            W[n][tau][alpha] = wo[n] * Qintegral;
+                        // Perform the integral in Q
+                        double Qintegral = 0;
+                        if (IntQ)
+                          for (int iQ = std::max(tau - idQ, 0); iQ < std::min(tau + 1, nQ); iQ++)
+                            Qintegral += QIntObj.integrate(Qg[iQ], Qg[iQ+1], 0);
+                        else
+                          Qintegral = QIntObj.integrand(Qg[tau]);
 
-                            // Report progress
-                            istep++;
-                            const double perc = 100. * istep / nsteps;
-                            std::cout << "Status report for table '" << name << "': "<< std::setw(6) << std::setprecision(4) << perc << "\% completed...\r";
-                            std::cout.flush();
+                        // Compute the weight by multiplying the
+                        // integral by the Ogata weight (note that
+                        // a factor 4 * pi is missing because it
+                        // cancels against the inclusive cross
+                        // section in the denominator).
+                        W[n][tau][alpha] = wo[n] * Qintegral;
+
+                        // Report progress
+                        istep++;
+                        const double perc = 100. * istep / nsteps;
+                        std::cout << "Status report for table '" << name << "': "<< std::setw(6) << std::setprecision(4) << perc << "\% completed...\r";
+                        std::cout.flush();
 
                       }
                   }

@@ -19,18 +19,18 @@ namespace NangaParbat
     ndata(0),
     Vs(0),
     qTv({}),
-    qTmap({}),
-    qTfact({}),
-    var1b({0, 0}),
-    var2b({0, 0}),
-    var3b({0, 0}),
-    IntqT(false),
-    Intv1(false),
-    Intv2(false),
-    Intv3(false),
-    PSRed(false),
-    pTMin(0),
-    etaRange({-10, 10})
+      qTmap({}),
+      qTfact({}),
+      var1b({0, 0}),
+      var2b({0, 0}),
+      var3b({0, 0}),
+      IntqT(false),
+      Intv1(false),
+      Intv2(false),
+      Intv3(false),
+      PSRed(false),
+      pTMin(0),
+      etaRange({-10, 10})
   {
   }
 
@@ -105,12 +105,12 @@ namespace NangaParbat
     _hadron("NONE"),
     _charge(0),
     _tagging({apfel::QuarkFlavour::TOTAL}),
-    _prefact(1),
-    _normalised(true),
-    _kin(DataHandler::Kinematics{}),
-    _labels({}),
-    _fluctuation(fluctuation),
-    _t0(t0)
+  _prefact(1),
+  _normalised(true),
+  _kin(DataHandler::Kinematics{}),
+  _labels({}),
+  _fluctuation(fluctuation),
+  _t0(t0)
   {
     // Retrieve kinematics
     for (auto const& dv : datafile["dependent_variables"])
@@ -649,12 +649,12 @@ namespace NangaParbat
         else
           os << "- Value of the third kinematic variable: " << ( DH._kin.var3b.first + DH._kin.var3b.second ) / 2 << "\n";
       }
-          if (DH._proc == DataHandler::Process::JetSIDIS)
+    if (DH._proc == DataHandler::Process::JetSIDIS)
       {
-              if (DH._kin.Intv3)
-                os << "- Integration bounds of the third kinematic variable: [" << DH._kin.var3b.first << ": " << DH._kin.var3b.second << "]\n";
-              else
-                os << "- Value of the third kinematic variable: " << ( DH._kin.var3b.first + DH._kin.var3b.second ) / 2 << "\n";
+        if (DH._kin.Intv3)
+          os << "- Integration bounds of the third kinematic variable: [" << DH._kin.var3b.first << ": " << DH._kin.var3b.second << "]\n";
+        else
+          os << "- Value of the third kinematic variable: " << ( DH._kin.var3b.first + DH._kin.var3b.second ) / 2 << "\n";
       }
 
     if (DH._kin.PSRed)

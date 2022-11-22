@@ -92,13 +92,13 @@ int main(int argc, char* argv[])
     EvTMDs = BuildTmdFFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);
   else if (pf == "ff4")
     EvTMDs = BuildTmdFFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);
-  else if (pf == "jet") {
-    EvTMDs = BuildTmdFFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);}
+  else if (pf == "jet")
+    EvTMDs = BuildTmdFFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);
   else
     throw std::runtime_error("[PlotTMDs]: Unknown distribution prefix");
 
   std::function<double(double const&, double const&, double const&)> EvTMDJet;
-  EvTMDJet = BuildTmdJet(apfel::InitializeTmdObjects(g, Thresholds), JetAlgo,  JetR, Alphas, pto, Ci, 1, 1e-7);
+  EvTMDJet = BuildTmdJet(apfel::InitializeTmdObjects(g, Thresholds), JetAlgo, JetR, Alphas, pto, Ci, 1, 1e-7);
   // b* prescription
   const std::function<double(double const&, double const&)> bs = NangaParbat::bstarMap.at(config["bstar"].as<std::string>());
 
@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
       NPFunc->SetParameters(pars[ip]);
 
       // Zeta Jet Definition
-      double tR = tan(JetR/2);
+      // double tR = tan(JetR/2);
       // double zetaJ = pow(tR * 2 * exp(- apfel::emc) / bs(bT,Q), 2);
 
       // bT-space TMD
