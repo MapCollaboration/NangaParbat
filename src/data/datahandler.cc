@@ -154,8 +154,6 @@ namespace NangaParbat
                   _obs = multiplicity;
                 else if (ql["value"].as<std::string>() == "FUUT")
                   _obs = F_uut;
-                else if (ql["value"].as<std::string>() == "opposite_sign_ratio")
-                  _obs = opposite_sign_ratio;
                 else if (ql["value"].as<std::string>() == "g1")
                   _obs = g1;
                 else

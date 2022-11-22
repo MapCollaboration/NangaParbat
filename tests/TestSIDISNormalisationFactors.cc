@@ -46,9 +46,7 @@ int main(int argc, char* argv[])
 
   // Dump table to file
   std::ofstream fout ("Normalization_factors_binned.dat");
-
   fout << "Normalisation factors:" << std::endl;
-
   for (int i = 0; i < (int) Facts.size(); i++)
     {
       const NangaParbat::DataHandler::Kinematics kin = DHVect[i].GetKinematics();
@@ -61,7 +59,6 @@ int main(int argc, char* argv[])
            << " [" << zb.first << ":" << zb.second << "]"
            << "  " << Facts[i] << std::endl;
     }
-
   fout.close();
 
   return 0;

@@ -359,8 +359,7 @@ namespace NangaParbat
             mdPS.insert({qT, dPS});
           }
 
-        // Output phase-space reduction factor and its
-        // derivative.
+        // Output phase-space reduction factor and its derivative
         Tabs[i] << YAML::Newline << YAML::Newline;
         Tabs[i] << YAML::Comment("Phase-space cuts");
         Tabs[i] << YAML::Key << "PS_reduction_factor" << YAML::Value << YAML::Flow << mPS;
@@ -373,7 +372,7 @@ namespace NangaParbat
         Tabs[i] << YAML::Key << "weights" << YAML::Value << YAML::BeginMap;
 
         // Total number of steps for this particular table. Used to
-        // report the percent progress of the computation.
+        // report the percent progress of the computation
         int nqT = 0;
         for (auto const& qT : qTv)
           if (qT / Qb.first <= qToQ)
@@ -497,7 +496,7 @@ namespace NangaParbat
     const int    nz     = _config["zgrid"]["n"].as<int>();
     const int    idz    = _config["zgrid"]["InterDegree"].as<int>();
     //const double epsz   = _config["zgrid"]["eps"].as<double>();
-    // const double qToQ   = _config["qToverQmax"].as<double>();
+    //const double qToQ   = _config["qToverQmax"].as<double>();
     const std::vector<double> cutParams = _config["cutParams"].as<std::vector<double>>();
     const double Cf     = _config["TMDscales"]["Cf"].as<double>();
     const double aref   = _config["alphaem"]["aref"].as<double>();
@@ -584,8 +583,6 @@ namespace NangaParbat
         const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabMatchTMDFFs2{isTMDFFs2, 200, 1e-2, 2, 1, {},
                                                                                      [] (double const& x) -> double{ return log(x); },
                                                                                      [] (double const& y) -> double{ return exp(y); }};
-
-
 
         // Target isoscalarity
         const double targetiso = DHVect[i].GetTargetIsoscalarity();
@@ -929,8 +926,6 @@ namespace NangaParbat
   //_________________________________________________________________________________
   std::vector<YAML::Emitter> FastInterface::ComputeTablesJetSIDIS(std::vector<DataHandler> const& DHVect) const
   {
-
-
     // Retrieve relevant parameters for the numerical integration from
     // the configuration file
     const int    nOgata = _config["nOgata"].as<int>();
@@ -1064,7 +1059,6 @@ namespace NangaParbat
         if (pto > 2 || pto < -1)
           PerturbativeOrder++;
 
-
         // Ogata-quadrature object of degree one or zero according to
         // whether the cross sections have to be integrated over the
         // bins in qT or not.
@@ -1088,7 +1082,7 @@ namespace NangaParbat
         const int nxbe = xbg.size();
 
         // Choice of the value of the cut qToverQmax
-        // double qToQ = std::min(param1 , param2) + param3 / Qb.first;
+        //double qToQ = std::min(param1 , param2) + param3 / Qb.first;
         //double qToQ = std::min(std::max( param2 , param3 / Qb.first ) , 1 )
         //const  double qToQ = 0.8;
 
@@ -1201,10 +1195,9 @@ namespace NangaParbat
                                     // return xbgrid.Interpolant(0, alpha, xb) * Yp / xb;
                                   }
                                 };
-                                // Reduce the x-space integral
-                                // phase space according to
-                                // the fiducal cuts if
-                                // necessary.
+                                // Reduce the x-space integral phase
+                                // space according to the fiducal cuts
+                                // if necessary.
                                 double xmin = 0;
                                 double xmax = 1;
                                 if (PSRed)
@@ -1233,6 +1226,7 @@ namespace NangaParbat
 
                                 // Multiply by electric charge, the JetTMD and the bT
                                 xbintegral *= apfel::QCh2[std::abs(q)-1] * _EvTMDJet(bs, muj, zetaj) * pow(_QuarkSudakov(bs, muf, zetaf), 1) * (IntqT ? 1 : ( zo[n] / qT));
+
                                 // Include current term
                                 xbintegralq += xbintegral;
                               }
@@ -1280,8 +1274,6 @@ namespace NangaParbat
     return Tabs;
   }
 
-
-
   //_________________________________________________________________________________
   std::vector<double> FastInterface::NormalisationFactorsSIDIS(std::vector<DataHandler> const& DHVect) const
   {
@@ -1298,11 +1290,11 @@ namespace NangaParbat
 
     // Initialize SIDIS objects (use the PDF grid)
     //const apfel::SidisObjects so = InitializeSIDIS(*_gpdf, *_gff, _Thresholds);
+
     // The following line makes it possible to exclude the so-calle
     // "mixed" terms in the calculation of the collinear structur
     // functions
-    const apfel::SidisObjects so = InitializeSIDIS(*_gpdf, *_gff, _Thresholds, {5, 6, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22});
-
+    const apfel::SidisObjects so  = InitializeSIDIS(*_gpdf, *_gff,  _Thresholds, {5, 6, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22});
     const apfel::SidisObjects so2 = InitializeSIDIS(*_gpdf, *_gff2, _Thresholds, {5, 6, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22});
 
     // Initialise container of vector of normalisation factors
@@ -1391,7 +1383,6 @@ namespace NangaParbat
           distqg.AddTerm({apfel::QCh2[1], dPDF.at(0), dFF.at(-2)});
 
           // second FF
-
           distqq2.AddTerm({apfel::QCh2[0], dw,         dFF2.at(1)});
           distgq2.AddTerm({apfel::QCh2[0], dw,         dFF2.at(0)});
           distqg2.AddTerm({apfel::QCh2[0], dPDF.at(0), dFF2.at(1)});
@@ -1432,7 +1423,6 @@ namespace NangaParbat
 
             }
 
-
           // Assemble double distribution for the cross section as
           // Y^+ F2 - y^2 FL times a constant.
           return ( 4 * M_PI * pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) )
@@ -1468,7 +1458,6 @@ namespace NangaParbat
           apfel::DoubleObject<apfel::Distribution> distqq;
           apfel::DoubleObject<apfel::Distribution> distqq2;
 
-
           // Adjust up and down PDFs according to the target isoscalarity
           const apfel::Distribution dw  = frp * dPDF.at(sign)   + frn * dPDF.at(sign*2);
           const apfel::Distribution up  = frp * dPDF.at(sign*2) + frn * dPDF.at(sign);
@@ -1481,7 +1470,6 @@ namespace NangaParbat
           distqq.AddTerm({apfel::QCh2[1], upb, dFF.at(-2)});
 
           // second FF
-
           distqq2.AddTerm({apfel::QCh2[0], dw,  dFF2.at(1)});
           distqq2.AddTerm({apfel::QCh2[0], dwb, dFF2.at(-1)});
           distqq2.AddTerm({apfel::QCh2[1], up,  dFF2.at(2)});
