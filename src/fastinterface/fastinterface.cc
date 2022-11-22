@@ -127,6 +127,15 @@ namespace NangaParbat
 
     _QuarkSudakov = QuarkEvolutionFactor(_TmdPdfObjs, Alphas, pto, Ci, 1e5);
 
+    // Build Evolved Jet TMD
+    const double JetR = _config["JetR"].as<double>();
+
+    // Choice of the Jet Algorithm
+    //const apfel::JetAlgorithm JetAlgo = apfel::JetAlgorithm::KT;
+    const apfel::JetAlgorithm JetAlgo = apfel::JetAlgorithm::CONE;
+
+    _EvTMDJet  = BuildTmdJet(_TmdPdfObjs, JetAlgo,  JetR, Alphas, pto, Ci, Ci, 1e-7);
+
     _HardFactorDY    = apfel::HardFactor("DY",    _TmdPdfObjs, Alphas, pto, Cf);
     _HardFactorSIDIS = apfel::HardFactor("SIDIS", _TmdPdfObjs, Alphas, pto, Cf);
 
@@ -205,6 +214,9 @@ namespace NangaParbat
             break;
           case DataHandler::Process::SIDIS:
             Tabs.push_back(ComputeTablesSIDIS({dh})[0].c_str());
+            break;
+          case DataHandler::Process::JetSIDIS:
+            Tabs.push_back(ComputeTablesJetSIDIS({dh})[0].c_str());
             break;
           default:
             throw std::runtime_error("[FastInterface::ComputeTables]: Unsupported process.");
@@ -915,6 +927,362 @@ namespace NangaParbat
   }
 
   //_________________________________________________________________________________
+  std::vector<YAML::Emitter> FastInterface::ComputeTablesJetSIDIS(std::vector<DataHandler> const& DHVect) const
+  {
+
+
+    // Retrieve relevant parameters for the numerical integration from
+    // the configuration file
+    const int    nOgata = _config["nOgata"].as<int>();
+    const int    nQ     = _config["Qgrid"]["n"].as<int>();
+    const int    idQ    = _config["Qgrid"]["InterDegree"].as<int>();
+    //const double epsQ   = _config["Qgrid"]["eps"].as<double>();
+    const int    nxb    = _config["xbgrid"]["n"].as<int>();
+    const int    idxb   = _config["xbgrid"]["InterDegree"].as<int>();
+    //const double epsxb  = _config["xbgrid"]["eps"].as<double>();
+    //const double epsz   = _config["zgrid"]["eps"].as<double>();
+    const double qToQ   = _config["qToverQmax"].as<double>();
+    // const double param1   = _config["param1"].as<double>();
+    // const double param2   = _config["param2"].as<double>();
+    // const double param3   = _config["param3"].as<double>();
+    const double Cf     = _config["TMDscales"]["Cf"].as<double>();
+    const double aref   = _config["alphaem"]["aref"].as<double>();
+    const bool   arun   = _config["alphaem"]["run"].as<bool>();
+    const int    pto    = _config["PerturbativeOrder"].as<int>();
+    const double JetR   = _config["JetR"].as<double>();
+
+    // Initialise container of YAML::Emitter objects.
+    std::vector<YAML::Emitter> Tabs(DHVect.size());
+
+    // Loop over the vector of "Kinematics" objects
+    std::cout << std::endl;
+    for (int i = 0; i < (int) DHVect.size(); i++)
+      {
+        // Timer
+        apfel::Timer t;
+
+        // Report kinematic details of the dataset
+        std::cout << DHVect[i] << std::endl;
+
+        // Name of the dataset
+        const std::string name = DHVect[i].GetName();
+
+        // Process
+        const DataHandler::Process proc = DHVect[i].GetProcess();
+
+        // Stop the code if the process is not JetSIDIS
+        if (proc != DataHandler::Process::JetSIDIS)
+          throw std::runtime_error("[FastInterface::ComputeTablesJetSIDIS]: Only JetSIDIS data sets can be treated here.");
+
+        // Retrieve kinematics
+        const DataHandler::Kinematics                kin    = DHVect[i].GetKinematics();
+        const double                                 Vs     = kin.Vs;       // C.M.E.
+        const std::vector<double>                    qTv    = kin.qTv;      // Transverse momentum bin bounds
+        const std::vector<std::pair<double, double>> qTmap  = kin.qTmap;    // Map of PT bounds to associate to the single bins
+        const std::vector<double>                    qTfact = kin.qTfact;   // Possible bin-by-bin prefactors to multiply the theoretical predictions
+        const std::pair<double, double>              Qb     = kin.var1b;    // Invariant mass interval
+        const std::pair<double, double>              xbb    = kin.var2b;    // Bjorken x interval
+        const bool                                   IntqT  = kin.IntqT;    // Whether the bins in qTv are to be integrated over
+        const bool                                   IntQ   = kin.Intv1;    // Whether the bin in Q is to be integrated over
+        const bool                                   Intxb  = kin.Intv2;    // Whether the bin in Bjorken x is to be integrated over
+        const bool                                   PSRed  = kin.PSRed;    // Whether there is a final-state PS reduction
+        const double                                 Wmin   = kin.pTMin;    // Minimum W of the final-state lepton
+        const std::pair<double, double>              yRange = kin.etaRange; // Allowed y of the final-state lepton
+
+        // Get average Q as average value in the bin
+        std::vector<double> Qv(DHVect[i].GetKinematics().ndata);
+        for (int j = 0; j < DHVect[i].GetKinematics().ndata; j++)
+          Qv[j] = DHVect[i].GetBinning()[j].Qav;
+        const double Qav = std::accumulate(Qv.begin(), Qv.end(), 0.) / Qv.size();
+
+        // Get average x as average value in the bin
+        std::vector<double> xv(DHVect[i].GetKinematics().ndata);
+        for (int j = 0; j < DHVect[i].GetKinematics().ndata; j++)
+          xv[j] = DHVect[i].GetBinning()[j].xav;
+        const double xav = std::accumulate(xv.begin(), xv.end(), 0.) / xv.size();
+
+        // Target isoscalarity
+        const double targetiso = DHVect[i].GetTargetIsoscalarity();
+
+        // Tabulate initial scale TMD PDFs in b in the physical basis
+        // taking into account the isoscalarity of the target
+        const int sign = (targetiso >= 0 ? 1 : -1);
+        const double frp = std::abs(targetiso);
+        const double frn = 1 - frp;
+        std::function<apfel::Set<apfel::Distribution>(double const&)> isTMDPDFs =
+          [&] (double const& b) -> apfel::Set<apfel::Distribution>
+        {
+          const apfel::Set<apfel::Distribution> xF = QCDEvToPhys(_MatchTMDPDFs(b).GetObjects());
+          std::map<int, apfel::Distribution> xFiso;
+
+          // Treat down and up separately to take isoscalarity of
+          // the target into account.
+          xFiso.insert({1,  frp * xF.at(sign) + frn * xF.at(sign*2)});
+          xFiso.insert({-1, frp * xF.at(-sign) + frn * xF.at(-sign*2)});
+          xFiso.insert({2,  frp * xF.at(sign*2) + frn * xF.at(sign)});
+          xFiso.insert({-2, frp * xF.at(-sign*2) + frn * xF.at(-sign)});
+          // Now run over the remaining flavours
+          for (int i = 3; i <= 6; i++)
+            {
+              const int ip = i * sign;
+              xFiso.insert({i, xF.at(ip)});
+              xFiso.insert({-i, xF.at(-ip)});
+            }
+          return apfel::Set<apfel::Distribution>{xFiso};
+        };
+        const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabMatchTMDPDFs{isTMDPDFs, 200, 1e-2, 2, 1, {},
+                                                                                     [] (double const& x) -> double{ return log(x); },
+                                                                                     [] (double const& y) -> double{ return exp(y); }};
+
+        // Compute inclusive cross section. First adjust PDFs to
+        // account for the isoscalarity.
+        const std::function<std::map<int, double>(double const&, double const&)> tPDFs = [&] (double const& x, double const& Q) -> std::map<int, double>
+        {
+          // Get PDFs in the physical basis
+          const std::map<int, double> pr = apfel::QCDEvToPhys(_TabPDFs->EvaluateMapxQ(x, Q));
+          std::map<int, double> tg = pr;
+          // Apply isoscalarity
+          tg.at(1)  = frp * pr.at(1)  + frn * pr.at(2);
+          tg.at(2)  = frp * pr.at(2)  + frn * pr.at(1);
+          tg.at(-1) = frp * pr.at(-1) + frn * pr.at(-2);
+          tg.at(-2) = frp * pr.at(-2) + frn * pr.at(-1);
+          return tg;
+        };
+
+        // Rotate input PDF set back into the QCD evolution basis
+        const auto RotPDFs = [=] (double const& x, double const& mu) -> std::map<int, double> { return apfel::PhysToQCDEv(tPDFs(x, mu)); };
+
+        // EW charges (only photon contribution, i.e. only electric
+        // charges squared).
+        std::function<std::vector<double>(double const&)> fBq = [] (double const&) -> std::vector<double> { return apfel::QCh2; };
+
+        // Determine perturbative order according to the logarithmic
+        // accuracy
+        int PerturbativeOrder = 0;
+        if (pto > 1 || pto < 0)
+          PerturbativeOrder++;
+        if (pto > 2 || pto < -1)
+          PerturbativeOrder++;
+
+
+        // Ogata-quadrature object of degree one or zero according to
+        // whether the cross sections have to be integrated over the
+        // bins in qT or not.
+        apfel::OgataQuadrature OgataObj{IntqT ? 1 : 0};
+
+        // Unscaled coordinates and weights of the Ogata quadrature.
+        std::vector<double> zo = OgataObj.GetCoordinates();
+        std::vector<double> wo = OgataObj.GetWeights();
+
+        // Construct QGrid-like grids for the integration in Q
+        const std::vector<double> Qg = (IntQ ? GenerateGrid(nQ, Qb.first, Qb.second, idQ - 1) : std::vector<double> {Qav});
+        const apfel::QGrid<double> Qgrid{Qg, idQ};
+
+        // Construct QGrid-like grids for the integration in Bjorken x
+        const std::vector<double> xbg = (Intxb ? GenerateGrid(nxb, xbb.first, xbb.second, idxb - 1, true) : std::vector<double> {xav});
+        const apfel::QGrid<double> xbgrid{xbg, idxb};
+
+        // Number of points of the grids
+        const int nO   = std::min(nOgata, (int) zo.size());
+        const int nQe  = Qg.size();
+        const int nxbe = xbg.size();
+
+        // Choice of the value of the cut qToverQmax
+        // double qToQ = std::min(param1 , param2) + param3 / Qb.first;
+        //double qToQ = std::min(std::max( param2 , param3 / Qb.first ) , 1 )
+        //const  double qToQ = 0.8;
+
+        // Write kinematics on the YAML emitter
+        Tabs[i].SetFloatPrecision(8);
+        Tabs[i].SetDoublePrecision(8);
+        Tabs[i] << YAML::BeginMap;
+        Tabs[i] << YAML::Comment("Kinematics and grid information");
+        Tabs[i] << YAML::Key << "name"         << YAML::Value << name;
+        Tabs[i] << YAML::Key << "process"      << YAML::Value << proc;
+        Tabs[i] << YAML::Key << "CME"          << YAML::Value << Vs;
+        Tabs[i] << YAML::Key << "qTintegrated" << YAML::Value << IntqT;
+        Tabs[i] << YAML::Key << "qT_bounds"    << YAML::Value << YAML::Flow << qTv;
+        Tabs[i] << YAML::Key << "qT_map"       << YAML::Value << YAML::Flow << YAML::BeginSeq;
+        for (auto const& qTp : qTmap)
+          Tabs[i] << YAML::Flow << YAML::BeginSeq << qTp.first << qTp.second << YAML::EndSeq;
+        Tabs[i] << YAML::EndSeq;
+        Tabs[i] << YAML::Key << "bin_factors"       << YAML::Value << YAML::Flow << qTfact;
+        Tabs[i] << YAML::Key << "Ogata_coordinates" << YAML::Value << YAML::Flow << std::vector<double>(zo.begin(), zo.begin() + nO);
+        Tabs[i] << YAML::Key << "Qgrid"             << YAML::Value << YAML::Flow << Qg;
+        Tabs[i] << YAML::Key << "xbgrid"            << YAML::Value << YAML::Flow << xbg;
+
+        // Compute and write the weights
+        Tabs[i] << YAML::Newline << YAML::Newline;
+        Tabs[i] << YAML::Comment("Weights");
+        Tabs[i] << YAML::Key << "weights" << YAML::Value << YAML::BeginMap;
+
+        // Total number of steps for this particular table. Used to
+        // report the percent progress of the computation.
+        int nqT = 0;
+        for (auto const& qT : qTv)
+          if (qT / Qb.first  <= qToQ)
+            nqT++;
+        const int nsteps = nqT * nO * nQe * nxbe;
+
+        std::cout << "ComputeTables report:" << std::endl;
+        std::cout << "- Cut qT/Q: " << qToQ << std::endl;
+        std::cout << "- Number of points that pass the cut: " << nqT << "\n" << std::endl;
+
+        // Counter for the status report
+        int istep = 0;
+
+        // Maximum number of active flavours
+        const int nf = apfel::NF(Qb.second, _Thresholds);
+
+        // Loop over the qT-bin bounds. IMPORTANT: In the JetSIDIS case,
+        // the vector "qTv" contains the values of of the whole jet
+        // (= qT).
+        for (auto const& qT : qTv)
+          {
+            // Allocate container for the weights
+            std::vector<std::vector<std::vector<double>>> W(nO, std::vector<std::vector<double>>(nQe, std::vector<double>(nxbe, 0.)));
+
+            // If the value of qT / Qmin is above that allowed print
+            // all zero's and continue with the next value of qT
+            if (qT / Qb.first > qToQ)
+              {
+                Tabs[i] << YAML::Key << qT << YAML::Value << YAML::Flow << W;
+                continue;
+              }
+
+            // Loop over the Ogata-quadrature points
+            for (int n = 0; n < nO; n++)
+              {
+                // Loop over the grids in Q
+                for (int tau = 0; tau < nQe; tau++)
+                  {
+                    // Loop over the grid in xb
+                    for (int alpha = 0; alpha < nxbe; alpha++)
+                      {
+                        // Function to be integrated in Q
+                        const apfel::Integrator QIntObj
+                        {
+                          [&] (double const& Q) -> double
+                          {
+
+                            // bstar at the relevant point
+                            const double bs = _bstar( zo[n] / qT, Q);
+
+                            // Renormalisation and rapidity scales
+                            const double muf   = Cf * Q;
+                            const double zetaf = Q * Q;
+                            const double muj   = Cf * Q;
+                            const double tR = tan(JetR/2);
+                            //std::cout << "tan(R/2)= " << tR << std::endl;
+                            const double zetaj = pow(tR * 2 * exp(- apfel::emc) / bs, 2);
+                            //const double zetaj = pow(2 * exp(- apfel::emc) / bs, 2);
+
+                            // Partonic fractional energy
+                            const double TauP = pow(Q / Vs, 2);
+
+
+                            // Sum up contribution from the
+                            // active flavours.
+                            double xbintegralq = 0;
+                            for (int q = -nf; q <= nf; q++)
+                              {
+                                // Skip the gluon
+                                if (q == 0)
+                                  continue;
+
+                                // Function to be integrated in xb
+                                const apfel::Integrator xbIntObj
+                                {
+                                  [&] (double const& xb) -> double
+                                  {
+                                    // Return x integrand
+                                    const double Yp = 1 + pow(1 - TauP / xb, 2);
+                                    return xbgrid.Interpolant(0, alpha, xb) * Yp * TabMatchTMDPDFs.EvaluatexQ(q, xb, bs) / xb;
+                                    // return xbgrid.Interpolant(0, alpha, xb) * Yp / xb;
+                                  }
+                                };
+                                // Reduce the x-space integral
+                                // phase space according to
+                                // the fiducal cuts if
+                                // necessary.
+                                double xmin = 0;
+                                double xmax = 1;
+                                if (PSRed)
+                                  {
+                                    xmin = pow(Q / Vs, 2) / yRange.second;
+                                    xmax = std::min(pow(Q / Vs, 2) / yRange.first, 1 / ( 1 + pow(Wmin / Q, 2)));
+                                  }
+                                // Perform the integral in x
+                                double xbintegral = 0;
+                                if (Intxb)
+                                  for (int ixb = std::max(alpha - idxb, 0); ixb < std::min(alpha + 1, nxb); ixb++)
+                                    {
+                                      if (xbg[ixb+1] < xmin || xbg[ixb] > xmax)
+                                        continue;
+                                      else if (xbg[ixb] < xmin && xbg[ixb+1] > xmin)
+                                        xbintegral += xbIntObj.integrate(xmin, xbg[ixb+1], 0);
+                                      else if (xbg[ixb] < xmax && xbg[ixb+1] > xmax)
+                                        xbintegral += xbIntObj.integrate(xbg[ixb], xmax, 0);
+                                      else if (xbg[ixb] < xmin && xbg[ixb+1] > xmax)
+                                        xbintegral += xbIntObj.integrate(xmin, xmax, 0);
+                                      else
+                                        xbintegral += xbIntObj.integrate(xbg[ixb], xbg[ixb+1], 0);
+                                    }
+                                else
+                                  xbintegral = xbIntObj.integrand(xbg[alpha]);
+
+                                // Multiply by electric charge, the JetTMD and the bT
+                                xbintegral *= apfel::QCh2[std::abs(q)-1] * _EvTMDJet(bs, muj, zetaj) * pow(_QuarkSudakov(bs, muf, zetaf), 1) * (IntqT ? 1 : ( zo[n] / qT));
+                                // Include current term
+                                xbintegralq += xbintegral;
+                              }
+
+                            // Return Q integrand
+                            return Qgrid.Interpolant(0, tau, Q) * pow((arun ? _TabAlphaem->Evaluate(Q) : aref), 2) * _HardFactorSIDIS(muf) * xbintegralq / pow(Q, 3) / (2 * Q) ;
+                          }
+                        };
+
+                        // Perform the integral in Q
+                        double Qintegral = 0;
+                        if (IntQ)
+                          for (int iQ = std::max(tau - idQ, 0); iQ < std::min(tau + 1, nQ); iQ++)
+                            Qintegral += QIntObj.integrate(Qg[iQ], Qg[iQ+1], 0);
+                        else
+                          Qintegral = QIntObj.integrand(Qg[tau]);
+
+                        // Compute the weight by multiplying the
+                        // integral by the Ogata weight (note that
+                        // a factor 4 * pi is missing because it
+                        // cancels against the inclusive cross
+                        // section in the denominator).
+                        W[n][tau][alpha] = wo[n] * Qintegral;
+
+                        // Report progress
+                        istep++;
+                        const double perc = 100. * istep / nsteps;
+                        std::cout << "Status report for table '" << name << "': "<< std::setw(6) << std::setprecision(4) << perc << "\% completed...\r";
+                        std::cout.flush();
+
+                      }
+                  }
+              }
+            Tabs[i] << YAML::Key << qT << YAML::Value << YAML::Flow << W;
+          }
+        Tabs[i] << YAML::EndMap;
+        Tabs[i] << YAML::EndMap;
+
+        // Stop timer and force to display the time elapsed
+        std::cout << std::endl;
+        t.stop(true);
+      }
+    std::cout << std::endl;
+
+    return Tabs;
+  }
+
+
+
+  //_________________________________________________________________________________
   std::vector<double> FastInterface::NormalisationFactorsSIDIS(std::vector<DataHandler> const& DHVect) const
   {
     // Get logarihtmic perturbative order
@@ -929,9 +1297,11 @@ namespace NangaParbat
       PerturbativeOrder++;
 
     // Initialize SIDIS objects (use the PDF grid)
-    //const apfel::SidisObjects so = InitializeSIDIS(*_gpdf, *_gff);
-    // The following line makes it possible to exclude the so-called "mixed" terms in the calculation of the collinear structure functions
-    const apfel::SidisObjects so = InitializeSIDIS(*_gpdf, *_gff, {5, 6, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22});
+    //const apfel::SidisObjects so = InitializeSIDIS(*_gpdf, *_gff, _Thresholds);
+    // The following line makes it possible to exclude the so-calle
+    // "mixed" terms in the calculation of the collinear structur
+    // functions
+    const apfel::SidisObjects so = InitializeSIDIS(*_gpdf, *_gff, _Thresholds, {5, 6, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22});
 
     const apfel::SidisObjects so2 = InitializeSIDIS(*_gpdf, *_gff2, _Thresholds, {5, 6, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22});
 

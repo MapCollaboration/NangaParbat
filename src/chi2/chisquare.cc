@@ -84,31 +84,31 @@ namespace NangaParbat
         const std::valarray<bool> cm = DSBlock.second->GetCutMask();
         _ndatac.push_back(std::count(std::begin(cm), std::end(cm), true));
       }
-      else if (proc == 4) //JetSIDIS
-        {
-          const double Qmin  = (kin.Intv1 ? kin.var1b.first : DSBlock.first->GetBinning()[0].Qav);
+    else if (proc == 4) //JetSIDIS
+      {
+        const double Qmin  = (kin.Intv1 ? kin.var1b.first : DSBlock.first->GetBinning()[0].Qav);
 
-          // Run over the qTv vector, count how many data points pass
-          // the cut and push the number into the "_ndata" vector.
-          int idata = 0;
+        // Run over the qTv vector, count how many data points pass
+        // the cut and push the number into the "_ndata" vector.
+        int idata = 0;
 
-          double qToQMax = std::min(std::min(cutParam[0], cutParam[1]) + cutParam[2] / Qmin, 1.0);
-          //double qToQMax = std::min(cutParam[0] / zmin, cutParam[1]) + cutParam[2] / Qmin / zmin;
-          //std::cout << "param1 from chisquare.cc = " << cutParam[0] << std::endl;
-          //std::cout << "param2 from chisquare.cc = " << cutParam[1] << std::endl;
-          //std::cout << "param3 from chisquare.cc = " << cutParam[2] << std::endl;
-          //std::cout << "Qmin from chisquare.cc = " << Qmin << std::endl;
-                    //std::cout << "len(qT)" << qTv.size() << std::endl;
-          for (auto const& qT : qTv)
-            if (qT / Qmin < qToQMax)
-              idata++;
+        double qToQMax = std::min(std::min(cutParam[0], cutParam[1]) + cutParam[2] / Qmin, 1.0);
+        //double qToQMax = std::min(cutParam[0] / zmin, cutParam[1]) + cutParam[2] / Qmin / zmin;
+        //std::cout << "param1 from chisquare.cc = " << cutParam[0] << std::endl;
+        //std::cout << "param2 from chisquare.cc = " << cutParam[1] << std::endl;
+        //std::cout << "param3 from chisquare.cc = " << cutParam[2] << std::endl;
+        //std::cout << "Qmin from chisquare.cc = " << Qmin << std::endl;
+        //std::cout << "len(qT)" << qTv.size() << std::endl;
+        for (auto const& qT : qTv)
+          if (qT / Qmin < qToQMax)
+            idata++;
 
-          _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
-          //std::cout << "len(qT)" << idata << std::endl;
-          // Data the pass all the cuts
-          const std::valarray<bool> cm = DSBlock.second->GetCutMask();
-          _ndatac.push_back(std::count(std::begin(cm), std::end(cm), true));
-        }
+        _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
+        //std::cout << "len(qT)" << idata << std::endl;
+        // Data the pass all the cuts
+        const std::valarray<bool> cm = DSBlock.second->GetCutMask();
+        _ndatac.push_back(std::count(std::begin(cm), std::end(cm), true));
+      }
     else
       {
         throw std::runtime_error("[Chisquare::AddBlock]: Only SIDIS, DY or JetSIDIS data sets can be treated here.");

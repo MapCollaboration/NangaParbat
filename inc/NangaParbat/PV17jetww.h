@@ -50,12 +50,12 @@ namespace NangaParbat
       // TMDJets
       else
         {
-	  const double g3           = this->_pars[5];
-    //return evol * exp( - g3 * pow(b / 2, 2) ) * ( 1 + lambda * pow(g3 * b / 2, 2) / ( 1 + lambda * g3 ) );
-    //return evol * exp( - g3 * pow(b / 2, 2) ) * pow(g3 * b / 2, 2) / ( 1 + g3 );
-    //return evol * pow(1 + g3* pow( b / 2, 2), -4);
-    // return evol * exp( - g3 * b * b / 4 ); // + 0. * x;
-     return evol  * ((1 - g3 * pow( b /2, 2)) * exp(- g3 * pow(b / 2, 2) ) );
+          const double g3           = this->_pars[5];
+          //return evol * exp( - g3 * pow(b / 2, 2) ) * ( 1 + lambda * pow(g3 * b / 2, 2) / ( 1 + lambda * g3 ) );
+          //return evol * exp( - g3 * pow(b / 2, 2) ) * pow(g3 * b / 2, 2) / ( 1 + g3 );
+          //return evol * pow(1 + g3* pow( b / 2, 2), -4);
+          // return evol * exp( - g3 * b * b / 4 ); // + 0. * x;
+          return evol  * ((1 - g3 * pow( b /2, 2)) * exp(- g3 * pow(b / 2, 2) ) );
         }
     };
 
@@ -78,7 +78,7 @@ namespace NangaParbat
               R"delimiter($\sigma$)delimiter",
               R"delimiter($\lambda$)delimiter",
               R"delimiter($g_3$)delimiter",
-              };
+             };
     };
 
     std::string GetDescription() const
