@@ -7,7 +7,13 @@ pdfset:
 # Collinear FF set and member to be used for the generation of the
 # tables. They are assumed to be in the LHAPDF format.
 ffset:
-  name: "DSS14_NLO_PiSum"
+  name: "DSS17_NLO_KaonPlus"
+  member: 0
+
+# Collinear FF set and member to be used for the generation of the
+# tables. They are assumed to be in the LHAPDF format.
+ffset2:
+  name: "DSS14_NLO_Pip"
   member: 0
 
 # Name of the b* prescription. This name has to correspond to a
@@ -51,29 +57,29 @@ nOgata: 200
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in Q.
 Qgrid:
-  n: 10
+  n: 4
   InterDegree: 3
   eps: 1e-3
 
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in xi = exp(y) (used for the Drell-Yan tables).
 xigrid:
-  n: 10
-  InterDegree: 3
+  n: 3
+  InterDegree: 2
   eps: 1e-3
 
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in Bjorken x (used for the SIDIS tables).
 xbgrid:
-  n: 10
-  InterDegree: 3
+  n: 3
+  InterDegree: 2
   eps: 1e-3
 
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in z Bjorken (used for the SIDIS tables).
 zgrid:
-  n: 10
-  InterDegree: 3
+  n: 3
+  InterDegree: 2
   eps: 1e-3
 
 # Maximum value allowed for the ratio qT / Q. This has to be intended

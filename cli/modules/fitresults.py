@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.font_manager
 import modules.bcolours as bcolours
 import modules.writemarkdown as writemarkdown
 import modules.utilities as utilities
@@ -50,6 +51,7 @@ class fitresults:
         self.mdout.write(" ")
         self.mdout.write("$\chi_{mean}^2$ = " + str(round(self.report_mean["Global chi2"], 4)) + "  \n")
         self.mdout.write(" ")
+        # print(self.chi2s)
         self.mdout.write(r"$\langle\chi^2\rangle \pm \sigma_{\chi^2}$ = " + str(round(np.mean(self.chi2s), 4)) + " $\pm$ " + str(round(np.std(self.chi2s), 4)) + "  \n")
         self.mdout.write(" ")
         self.mdout.write(r"$\langle E \rangle \pm \sigma_{E}$ = " + str(round(np.mean(self.Efcns), 4)) + " $\pm$ " + str(round(np.std(self.Efcns), 4)) + "  \n")
@@ -83,17 +85,18 @@ class fitresults:
         np.fill_diagonal(corr, 1)
 
         # Plot covariance matrix
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize = (22,15), constrained_layout=True)
         im = ax.imshow(corr, vmin = -1, vmax = 1, cmap=cm.coolwarm)
         labels = list(self.report0["Parameters"].keys())
+        # labels = [r"$g_2$", r"$N_1$", r"$\alpha_1$", r"$\sigma_1$", r"$\lambda$", r"$N_3$", r"$\beta_1$", r"$\delta_1$", r"$\gamma_1$", r"$\lambda_F$", r"$N_{\scriptscriptstyle{3B}}$", r"$N_{\scriptscriptstyle{1B}}$", r"$N_{\scriptscriptstyle{1C}}$", r"$\lambda_2$", r"$\alpha_2$", r"$\alpha_3$", r"$\sigma_2$", r"$\sigma_3$", r"$\beta_2$", r"$\delta_2$", r"$\gamma_2$"]
         ax.set_xticks(np.arange(len(labels)))
         ax.set_yticks(np.arange(len(labels)))
-        ax.set_xticklabels(labels)
-        ax.set_yticklabels(labels)
+        ax.set_xticklabels(labels, fontsize = 30)
+        ax.set_yticklabels(labels, fontsize = 30)
         cbar = fig.colorbar(im, ticks=[-1, -0.5, 0, 0.5, 1])
-        cbar.ax.set_yticklabels(["$-1$", "$-0.5$", "$0$", "$0.5$", "$1$"])
+        cbar.ax.set_yticklabels(["$-1$", "$-0.5$", "$0$", "$0.5$", "$1$"], fontsize = 30)
         ax.set_title(r"\textbf{Correlation matrix}")
-        fig.tight_layout()
+        # fig.tight_layout()
         plt.savefig(self.pdffolder + "CorrelationMatrix.pdf")
         plt.savefig(self.pngfolder + "CorrelationMatrix.png")
         plt.close()
@@ -177,15 +180,27 @@ class fitresults:
             # Parameter histogram
             fig = plt.figure()
             ax0 = fig.add_subplot(1, 1, 1)
-            #ax0.hist(p, bins = nbins, facecolor = bcolours.tangerineyellow, alpha = 0.8, label = pk)
+            nbins = 15
+            # ax0.hist(p, bins = nbins, facecolor = bcolours.tangerineyellow, alpha = 0.8, label = pk)
             ax0.hist(p, bins = 15, facecolor = bcolours.meadow, alpha = 0.8, label = pk)
+            # if pk == "$\lambdaF2$":
+            #     ax0.hist(p, bins = 15, facecolor = bcolours.meadow, alpha = 0.8, label = "$\lambda_{F2}$")
+            # elif pk == "$\g2B$":
+            #     ax0.hist(p, bins = 15, facecolor = bcolours.meadow, alpha = 0.8, label = "$g_{2B}$")
+            # else:
+            #     ax0.hist(p, bins = 15, facecolor = bcolours.meadow, alpha = 0.8, label = pk)
             ax0.legend()
 
             # Set ticks and labels
             #ax0.set_xticks(majorticks)
             #ax0.set_xticks(minorticks, minor = True)
             # ax0.grid(which = 'both', linestyle = "dashdot")
-            ax0.set_xlabel(pk)
+            if pk == "$\lambdaF2$":
+                ax0.set_xlabel("$\lambda_{F2}$")
+            elif pk == "$\g2B$":
+                ax0.set_xlabel("$g_{2B}$")
+            else:
+                ax0.set_xlabel(pk)
             ax0.set_ylabel(r"\textbf{Counts}")
             #ax0.set_title(r"\textbf{" + pk + r" distribution}")
 
@@ -224,6 +239,18 @@ class fitresults:
         par.append(("Total", self.ntot, totunc, totcor, round(self.report_mean["Global chi2"], 3)))
         writemarkdown.table(self.mdout, par, headings)
 
+        # Comparison mean replica with central replica
+        headings = ["Experiment", "Number of points", "$\chi_{0D}^2$", "$\chi_{0\lambda}^2$", "$\chi^2_0$", "$\chi_{m,D}^2$", "$\chi_{m,\lambda}^2$", "$\chi^2_m$"]
+        self.mdout.write("Table: Comparison Central-replica with Mean-replica $\chi^2$'s:\n")
+        par = [(e["Name"], len(e["qT"]), round(e["partial chi2"] - e["penalty chi2"], 3), round(e["penalty chi2"], 3), round(e["partial chi2"], 3), round(f["partial chi2"] - f["penalty chi2"], 3), round(f["penalty chi2"], 3), round(f["partial chi2"], 3))
+                for e,f in zip(self.report0["Experiments"],self.report_mean["Experiments"])]
+        totunc0 = round(sum([len(e["qT"]) * ( e["partial chi2"] - e["penalty chi2"] ) for e in self.report0["Experiments"]]) / self.ntot, 3)
+        totcor0 = round(sum([len(e["qT"]) * e["penalty chi2"] for e in self.report0["Experiments"]]) / self.ntot, 3)
+        totuncm = round(sum([len(e["qT"]) * ( e["partial chi2"] - e["penalty chi2"] ) for e in self.report_mean["Experiments"]]) / self.ntot, 3)
+        totcorm = round(sum([len(e["qT"]) * e["penalty chi2"] for e in self.report_mean["Experiments"]]) / self.ntot, 3)
+        par.append(("Total", self.ntot, totunc0, totcor0, round(self.report0["Global chi2"], 3), totuncm, totcorm, round(self.report_mean["Global chi2"], 3)))
+        writemarkdown.table(self.mdout, par, headings)
+
         # Average over replicas
         headings = ["Experiment", "Number of points", "$\chi^2$"]
         self.mdout.write("Table: Average-over-replicas $\chi^2$'s:\n")
@@ -253,21 +280,58 @@ class fitresults:
         with open(self.reportfolder + "/Parameters.yaml", "w") as ofile:
             yaml.dump(param, ofile, Dumper = yaml.RoundTripDumper)
             yaml.dump(tpars, ofile, Dumper = yaml.RoundTripDumper)
+        with open(self.reportfolder + "/FixedParameters.yaml", "w") as ofilef:
+            yaml.dump(param, ofilef, Dumper = yaml.RoundTripDumper)
+            yaml.dump(self.parameters, ofilef, Dumper = yaml.RoundTripDumper, default_flow_style=True)
 
         # Now the code ./run/PlotsTMDs is run with the appropriate input
         print(bcolours.ACTREPORT + "\nProducing TMD plots..." + bcolours.ENDC)
-        os.system(self.reportfolder + "/../../run/PlotTMDs " + self.reportfolder + "/../tables/config.yaml "
-                  + self.reportfolder + "/tmds_Q" + str(Q) + "_x" + str(x) + ".yaml " + dist + " " + str(ifl) + " " + str(Q) + " " + str(x)
+        os.system(self.reportfolder + "/../../build/run/PlotTMDs " + self.reportfolder + "/../tables/configreport.yaml "
+                  + self.reportfolder + "/tmds" + dist + "_Q_" + str(Q) + "_x_" + str(x) + ".yaml " + dist + " " + str(ifl) + " " + str(Q) + " " + str(x)
                   + " " + self.reportfolder + "/Parameters.yaml")
 
         # Finally the plot is produced and included in the report
-        with open(self.reportfolder + "/tmds_Q" + str(Q) + "_x" + str(x) + ".yaml", "r") as fc:
+        with open(self.reportfolder + "/tmds" + dist + "_Q_" + str(Q) + "_x_" + str(x) + ".yaml", "r") as fc:
             tmds = yaml.load(fc, Loader = yaml.RoundTripLoader)
 
         fig = plt.figure()
         ax0 = fig.add_subplot(1, 1, 1)
+        # (ax1, ax2) = fig.subplots(nrows = 2, ncols = 1, figsize = (16, 9), sharex = "all", gridspec_kw = dict(width_ratios = [1], height_ratios = [4, 1]))
+        # if Q == 100:
+        #     ax2.set_xlim(0, 10)
+        # elif Q == 10:
+        #     ax2.set_xlim(0, 4)
+        # else:
+        #     ax2.set_xlim(0, Q)
+        #
+        # # plot single replicas
+        # for p in tmds["TMD"]:
+        #     ax1.plot(tmds["qT"], p, linewidth = 0.5, color = "b", alpha = 0.3)
+        #     ax2.plot(tmds["qT"], (np.mean(tmds["TMD"], axis = 0) - p) / np.mean(tmds["TMD"], axis = 0), linewidth = 0.5, color = "b", alpha = 0.3)
+        #
+        # # Plot mean replica
+        # ax1.plot(tmds["qT"], np.mean(tmds["TMD"], axis = 0), label = r"\textbf{Central replica}", color = "r")
+        # ax2.plot(tmds["qT"], (np.mean(tmds["TMD"], axis = 0) - np.mean(tmds["TMD"], axis = 0)) / np.mean(tmds["TMD"], axis = 0), color = "r")
+        #
+        # # ax0.set_xlabel(r"\textbf{$k_T$ [GeV]}")
+        # if dist != "pdf":
+        #     ax2.set_xlabel(r"\textbf{$P_\perp$ [GeV]}")
+        #     ax1.set_ylabel(r"$zD_1(z, P^2_\perp, Q, Q^2)$")
+        # else:
+        #     ax2.set_xlabel(r"\textbf{$k_\perp$ [GeV]}")
+        #     ax1.set_ylabel(r"$xf_1(x, k^2_\perp, Q, Q^2)$")
+        # ax1.set_title(r"\textbf{TMD distribution}")
+        # ax1.legend()
+
         #ax0.set_yscale("log")
-        ax0.set_xlim(0, Q)
+        # ax0.set_xlim(0, Q)
+
+        if Q == 100:
+            ax0.set_xlim(0, 10)
+        elif Q == 10:
+            ax0.set_xlim(0, 4)
+        else:
+            ax0.set_xlim(0, Q)
 
         # plot single replicas
         for p in tmds["TMD"]:
@@ -276,13 +340,18 @@ class fitresults:
         # Plot mean replica
         ax0.plot(tmds["qT"], np.mean(tmds["TMD"], axis = 0), label = r"\textbf{Mean replica}", color = "r")
 
-        ax0.set_xlabel(r"\textbf{$k_T$ [GeV]}")
-        ax0.set_ylabel(r"$xf(x, k_T, Q, Q^2)$")
+        # ax0.set_xlabel(r"\textbf{$k_T$ [GeV]}")
+        if dist != "pdf":
+            ax0.set_xlabel(r"\textbf{$P_\perp$ [GeV]}")
+            ax0.set_ylabel(r"$zD_1(z, P^2_\perp, Q, Q^2)$")
+        else:
+            ax0.set_xlabel(r"\textbf{$k_\perp$ [GeV]}")
+            ax0.set_ylabel(r"$xf_1(x, k^2_\perp, Q, Q^2)$")
         ax0.set_title(r"\textbf{TMD distribution}")
         ax0.legend()
 
         # Save plot
-        tmdplot = "tmd_" + str(ifl) + "_" + str(Q) + "_" + str(x)
+        tmdplot = "tmd_" + dist + str(ifl) + "_" + str(Q) + "_" + str(x)
         fig.savefig(self.pdffolder + "/" + tmdplot + ".pdf")
         fig.savefig(self.pngfolder + "/" + tmdplot + ".png")
         plt.close()
@@ -290,8 +359,16 @@ class fitresults:
         # Include plot in the report
         flmap = {-6: "$\overline{t}$", -5: "$\overline{b}$", -4: "$\overline{c}$", -3: "$\overline{s}$", -2: "$\overline{u}$", -1: "$\overline{d}$",
                  0: "$g$", 1: "$d$", 2: "$u$", 3: "$s$", 4: "$c$", 5: "$b$", 6: "$t$"}
-        writemarkdown.mdincludefig(self.mdout, "pngplots/" + tmdplot + ".png", "TMD " + dist.upper()
-                                   + " of the " + flmap[ifl] + " at $Q = " + str(Q) + "$ GeV and $x = " + str(x) + "$")
+        if dist == "pdf":
+            writemarkdown.mdincludefig(self.mdout, "pngplots/" + tmdplot + ".png", "TMD " + dist.upper() + " of the " + flmap[ifl] + " at $Q = " + str(Q) + "$ GeV and $x = " + str(x) + "$")
+        elif dist == "ff":
+            writemarkdown.mdincludefig(self.mdout, "pngplots/" + tmdplot + ".png", "TMD " + "FF" + " of " + flmap[ifl] + " -> $\pi^+$"+ " at $Q = " + str(Q) + "$ GeV and $z = " + str(x) + "$")
+        elif dist == "ff2":
+            writemarkdown.mdincludefig(self.mdout, "pngplots/" + tmdplot + ".png", "TMD " + "FF" + " of " + flmap[ifl] + " -> $\pi^-$"+ " at $Q = " + str(Q) + "$ GeV and $z = " + str(x) + "$")
+        elif dist == "ff3":
+            writemarkdown.mdincludefig(self.mdout, "pngplots/" + tmdplot + ".png", "TMD " + "FF" + " of " + flmap[ifl] + " -> $K^+$"+ " at $Q = " + str(Q) + "$ GeV and $z = " + str(x) + "$")
+        elif dist == "ff4":
+            writemarkdown.mdincludefig(self.mdout, "pngplots/" + tmdplot + ".png", "TMD " + "FF" + " of " + flmap[ifl] + " -> $K^-$"+ " at $Q = " + str(Q) + "$ GeV and $z = " + str(x) + "$")
 
 
     def PlotExpResults(self):
@@ -333,8 +410,15 @@ class fitresults:
 
             # Set title and labels
             plt.suptitle(plottitle)
-            ax1.set_xlabel(xlabel)
-            ax1.set_ylabel(ylabel)
+            if (e["Plot title python"][:7] == "COMPASS"):
+                ax1.set_xlabel(r"$P_{hT}^2 \rm{ [GeV^2]}$")
+            else:
+                ax1.set_xlabel(xlabel)
+            if (e["Name"][:9] == "CMS_13TeV"):
+                ax1.set_ylabel(r"$\frac{d\sigma}{dq_{T}}[\rm{GeV}^{-1}]$")
+            else:
+                ax1.set_ylabel(xlabel)
+            # ax1.set_ylabel(ylabel)
 
             # Loop over replicas
             partialchi2 = []
@@ -349,14 +433,31 @@ class fitresults:
                 predictions = [sum(x) for x in zip(exp["Predictions"], exp["Systematic shifts"])]
 
                 # Draw the plot
-                ax1.plot(qT, predictions, linewidth = 0.5, color = "b", alpha = 0.2)
+                if (e["Plot title python"][:7] == "COMPASS"):
+                    ax1.plot(np.array(qT)*np.array(qT), predictions, linewidth = 0.5, color = "b", alpha = 0.2)
+                else:
+                    if len(qT) == 1:
+                        ax1.plot(qT, predictions, linewidth = 0.5, color = "b", alpha = 0.2, linestyle = "None", marker = "_", markersize = 10, mew = '2')
+                    else:
+                        ax1.plot(qT, predictions, linewidth = 0.5, color = "b", alpha = 0.2)
 
             # Draw plot of the central and mean replica
-            ax1.plot(qT, pred0, label = r"\textbf{Central replica}", color = "k")
-            ax1.plot(qT, pred_mean, label = r"\textbf{Mean replica}", color = "r")
+            if (e["Plot title python"][:7] == "COMPASS"):
+                ax1.plot(np.array(qT)*np.array(qT), pred0, label = r"\textbf{Central replica}", color = "k")
+                ax1.plot(np.array(qT)*np.array(qT), pred_mean, label = r"\textbf{Mean replica}", color = "r")
+            else:
+                if len(qT) == 1:
+                    ax1.plot(qT, pred0, label = r"\textbf{Central replica}", color = "k", linestyle = "None", marker = "_", markersize = 10, mew = '2')
+                    ax1.plot(qT, pred_mean, label = r"\textbf{Mean replica}", color = "r", linestyle = "None", marker = "_", markersize = 10, mew = '2')
+                else:
+                    ax1.plot(qT, pred0, label = r"\textbf{Central replica}", color = "k")
+                    ax1.plot(qT, pred_mean, label = r"\textbf{Mean replica}", color = "r")
 
             # Plot data with experimental errors
-            ax1.errorbar(qT, centralval, yerr = uncunc, color = "black", linestyle = "None", label = r"\textbf{Data}", marker = 'o', markersize = 7, capsize = 5, linewidth = 2)
+            if (e["Plot title python"][:7] == "COMPASS"):
+                ax1.errorbar(np.array(qT)*np.array(qT), centralval, yerr = uncunc, color = "black", linestyle = "None", label = r"\textbf{Data}", marker = 'o', markersize = 7, capsize = 5, linewidth = 2)
+            else:
+                ax1.errorbar(qT, centralval, yerr = uncunc, color = "black", linestyle = "None", label = r"\textbf{Data}", marker = 'o', markersize = 7, capsize = 5, linewidth = 2)
             ax1.legend()
 
             # Define equally spaced bins and ticks for the histogram

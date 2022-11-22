@@ -110,8 +110,8 @@ namespace NangaParbat
   //_________________________________________________________________________________
   std::map<double, double> ConvolutionTable::ConvoluteDY(std::function<double(double const&, double const&, double const&)> const& fNP) const
   {
-    // Compute cut qT / Q as same as PV17
-    double DYqToQmax = std::min(_cutParam[0], _cutParam[1]);
+    // Define cut qT / Q < 0.2
+    double DYqToQmax = _cutParam[0];
 
     // Compute predictions
     std::map<double, double> pred;
@@ -167,7 +167,7 @@ namespace NangaParbat
   std::map<double, double> ConvolutionTable::ConvoluteSIDIS(std::function<double(double const&, double const&, double const&)> const& fNP,
                                                             std::function<double(double const&, double const&, double const&)> const& DNP) const
   {
-    // Compute cut qT / Q as in PV17
+    // Compute cut qT / Q
     double SIDISqToQmax = std::min(std::min(_cutParam[0] / _zg.front(), _cutParam[1]) + _cutParam[2] / _Qg.front() / _zg.front(), 1.0);
     // double SIDISqToQmax = std::min(_cutParam[0] / _zg.front(), _cutParam[1]) + _cutParam[2] / _Qg.front() / _zg.front();
 

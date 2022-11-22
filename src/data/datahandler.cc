@@ -79,6 +79,7 @@ namespace NangaParbat
     _charge       = DH._charge;
     _tagging      = DH._tagging;
     _prefact      = DH._prefact;
+    _normalised   = DH._normalised;
     _kin          = DH._kin;
     _means        = DH._means;
     _uncor        = DH._uncor;
@@ -105,6 +106,7 @@ namespace NangaParbat
     _charge(0),
     _tagging({apfel::QuarkFlavour::TOTAL}),
     _prefact(1),
+    _normalised(true),
     _kin(DataHandler::Kinematics{}),
     _labels({}),
     _fluctuation(fluctuation),
@@ -131,6 +133,10 @@ namespace NangaParbat
                   _proc = SIA;
                 else if (ql["value"].as<std::string>() == "JetSIDIS")
                   _proc = JetSIDIS;
+                else if (ql["value"].as<std::string>() == "DIA")
+                  _proc = DIA;
+                else if (ql["value"].as<std::string>() == "pDIS")
+                  _proc = pDIS;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown process.");
               }
@@ -150,6 +156,8 @@ namespace NangaParbat
                   _obs = F_uut;
                 else if (ql["value"].as<std::string>() == "opposite_sign_ratio")
                   _obs = opposite_sign_ratio;
+                else if (ql["value"].as<std::string>() == "g1")
+                  _obs = g1;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown observable.");
               }
@@ -191,18 +199,22 @@ namespace NangaParbat
             if (ql["name"].as<std::string>() == "prefactor")
               _prefact = ql["value"].as<double>();
 
-            // Center of mass energy
+            // Whether the cross section is normalised
+            if (ql["name"].as<std::string>() == "normalised")
+              _normalised = ql["value"].as<bool>();
+
+            // Center-of-mass energy
             if (ql["name"].as<std::string>() == "Vs")
               _kin.Vs = ql["value"].as<double>();
 
-            // Invariant-mass (DY) or virtuality (SIDIS) interval
+            // Boson virtuality (absolute value)
             if (ql["name"].as<std::string>() == "Q")
               {
                 _kin.var1b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
                 _kin.Intv1 = ql["integrate"].as<bool>();
               }
 
-            // Rapidity (DY) or Bjorken-x (SIDIS) interval
+            // Rapidity (DY) or Bjorken-x (SIDIS and DIS) interval
             if (ql["name"].as<std::string>() == "y" || ql["name"].as<std::string>() == "x")
               {
                 _kin.var2b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
@@ -588,9 +600,15 @@ namespace NangaParbat
     if (DH._proc == DataHandler::Process::DY)
       os << "- Process: Drell-Yan\n";
     else if (DH._proc == DataHandler::Process::SIDIS)
-      os << "- Process: SIDIS\n";
+      os << "- Process: semi-inclusive DIS\n";
     else if (DH._proc == DataHandler::Process::JetSIDIS)
       os << "- Process: JetSIDIS\n";
+    else if (DH._proc == DataHandler::Process::SIA)
+      os << "- Process: single-inclusive annihilation\n";
+    else if (DH._proc == DataHandler::Process::DIA)
+      os << "- Process: double-inclusive annihilation\n";
+    else if (DH._proc == DataHandler::Process::pDIS)
+      os << "- Process: polarised DIS\n";
     else
       os << "- Process: Unknown\n";
 
