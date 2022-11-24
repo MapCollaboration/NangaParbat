@@ -30,7 +30,8 @@ namespace NangaParbat
   _cutParam({}),
   _acc(1e-7),
   _cuts({}),
-  _cutmask({})
+  _cutmask({}),
+  _Hbeam("PR")
   {
   }
 
@@ -51,7 +52,8 @@ namespace NangaParbat
     _Qg(table["Qgrid"].as<std::vector<double>>()),
     _cutParam(cutParam),
     _acc(acc),
-    _cuts(cuts)
+    _cuts(cuts),
+    _Hbeam(table["hadron_beam"].as<std::string>())
   {
     // Compute total cut mask as a product of single masks
     _cutmask.resize(_qTfact.size(), true);
@@ -107,8 +109,20 @@ namespace NangaParbat
   //_________________________________________________________________________________
   std::map<double, double> ConvolutionTable::ConvoluteDY(std::function<double(double const&, double const&, double const&)> const& fNP1, std::function<double(double const&, double const&, double const&)> const& fNP2) const
   {
+<<<<<<< HEAD
     // Define cut qT / Q < 0.2
     double DYqToQmax = _cutParam[0];
+=======
+
+    double DYqToQmax = 0;
+
+    // Compute cut qT / Q as same as MAP22
+    if (_Hbeam == "PR")
+       DYqToQmax = std::min(_cutParam[0], _cutParam[1]);
+    // Compute cut qT / Q as same as MAP22Pion
+    if (_Hbeam == "PI")
+       DYqToQmax =_cutParam[0] + _cutParam[1] /  _Qg.front();
+>>>>>>> f6bf6446 (Updating branch Pion)
 
     // Compute predictions
     std::map<double, double> pred;

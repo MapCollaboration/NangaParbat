@@ -40,19 +40,27 @@ namespace NangaParbat
     _DSVect.push_back(DSBlock);
 
     // Determine number of data points that pass the cut qT / Q.
-    const DataHandler::Kinematics kin      = DSBlock.first->GetKinematics();
+    const DataHandler::Kinematics               kin      = DSBlock.first->GetKinematics();
     //const double                  qToQMax = DSBlock.second->GetCutqToverQ();
-    const DataHandler::Process    proc     = DSBlock.first->GetProcess();
-    const std::vector<double>     cutParam = DSBlock.second->GetcutParam();
-    const std::vector<std::pair<double,double>>     qTv      = kin.qTmap;
-
+    const DataHandler::Process                  proc     = DSBlock.first->GetProcess();
+    const std::vector<double>                   cutParam = DSBlock.second->GetcutParam();
+    const std::vector<std::pair<double,double>> qTv      = kin.qTmap;
+    const std::string                           beam     = DSBlock.second->GetBeam();
     if (proc == 0) //DY
       {
         int idata = 0;
 
         const double Qmin = (kin.Intv1 ? kin.var1b.first : ( kin.var1b.first + kin.var1b.second ) / 2);
 
-        double qToQMax = std::min(cutParam[0], cutParam[1]);
+        double qToQMax = 0;
+
+        // Cut on transverse momentum MAPTMD22-like
+        if (beam == "PR")
+           qToQMax = std::min(cutParam[0], cutParam[1]);
+
+        // Cut on transverse momentum MAPTMD22Pion-like
+        if (beam == "PI")
+           qToQMax = cutParam[0] + cutParam[1] / Qmin;
 
         for (auto const& qT : qTv)
           if (qT.second / Qmin < qToQMax)

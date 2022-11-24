@@ -65,14 +65,14 @@ nOgata: 200
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in Q.
 Qgrid:
-  n: 10
+  n: 4
   InterDegree: 3
   eps: 1e-3
 
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in xi = exp(y) (used for the Drell-Yan tables).
 xigrid:
-  n: 10
+  n: 4
   InterDegree: 3
   eps: 1e-3
 
@@ -96,4 +96,4 @@ zgrid:
 # zero. However, a more restrictive cut can still be applied at the
 # fit level. This avoids computing predictions for points whose
 # kinematics is such that TMD factorisation is not valid.
-qToverQmax: 0.3
+qToverQmax: 0.8

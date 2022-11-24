@@ -9,18 +9,9 @@
 #include "NangaParbat/PV19.h"
 #include "NangaParbat/PV19b.h"
 #include "NangaParbat/PV19x.h"
-#include "NangaParbat/MAP21test.h"
 #include "NangaParbat/QGG6.h"
 #include "NangaParbat/QGG13.h"
-#include "NangaParbat/MAPTMDPion.h"
-#include "NangaParbat/PV17Pion.h"
 #include "NangaParbat/MAPTMDPion3.h"
-#include "NangaParbat/MAPTMDPionw3.h"
-#include "NangaParbat/MAPTMDPionwx4.h"
-// #include "NangaParbat/MAPTMDPionw2x4.h"
-// #include "NangaParbat/MAPTMDPionwx5.h"
-// #include "NangaParbat/MAPTMDPionwx7.h"
-
 #include <map>
 #include <memory>
 
@@ -38,15 +29,7 @@ namespace NangaParbat
     //{"PV19",  new NangaParbat::PV19{}},
     {"PV19b", new NangaParbat::PV19b{}},
     {"PV19x", new NangaParbat::PV19x{}},
-    {"MAP21test", new NangaParbat::MAP21test{}},
-    {"PV17Pion",  new NangaParbat::PV17Pion{}},
-    {"MAPTMDPion", new NangaParbat::MAPTMDPion{}},
-    {"MAPTMDPion3", new NangaParbat::MAPTMDPion3{}},
-    {"MAPTMDPionw3", new NangaParbat::MAPTMDPionw3{}},
-    {"MAPTMDPionwx4", new NangaParbat::MAPTMDPionwx4{}}//,
-    // {"MAPTMDPionw2x4", new NangaParbat::MAPTMDPionw2x4{}},
-    // {"MAPTMDPionwx5", new NangaParbat::MAPTMDPionwx5{}},
-    // {"MAPTMDPionwx7", new NangaParbat::MAPTMDPionwx7{}}
+    {"MAPTMDPion3", new NangaParbat::MAPTMDPion3{}}
     //{"QGG6",  new NangaParbat::QGG6{}},
     //{"QGG13", new NangaParbat::QGG13{}}
   };
