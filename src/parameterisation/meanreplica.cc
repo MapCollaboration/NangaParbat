@@ -149,7 +149,7 @@ namespace NangaParbat
             _xg->Interpolant(std::get<0>(xbounds), ix, x) *
             _bTg->Interpolant(std::get<0>(bTbounds), ibT, bT) *
             _zetag->Interpolant(std::get<0>(zetabounds), izeta, zeta) *
-            _fNP1g[ix][ibT][izeta];
+            (ifunc == 0 ? _fNP1g[ix][ibT][izeta] : _fNP2g[ix][ibT][izeta]);
 
     return result;
   }

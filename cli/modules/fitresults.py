@@ -254,14 +254,14 @@ class fitresults:
             yaml.dump(param, ofile, Dumper = yaml.RoundTripDumper)
             yaml.dump(tpars, ofile, Dumper = yaml.RoundTripDumper)
 
-        # Creation of the file containing all the parameters' value    
+        # Creation of the file containing all the parameters' value
         with open(self.reportfolder + "/FixedParameters.yaml", "w") as ofilef:
             yaml.dump(param, ofilef, Dumper = yaml.RoundTripDumper)
             yaml.dump(self.parameters, ofilef, Dumper = yaml.RoundTripDumper, default_flow_style=True)
 
         # Now the code ./run/PlotsTMDs is run with the appropriate input
         print(bcolours.ACTREPORT + "\nProducing TMD plots..." + bcolours.ENDC)
-        os.system(self.reportfolder + "/../../run/PlotTMDs " + self.reportfolder + "/../tables/config.yaml "
+        os.system(self.reportfolder + "/../../../build/run/PlotTMDs " + self.reportfolder + "/../tables/config.yaml "
                   + self.reportfolder + "/tmds_Q" + str(Q) + "_x" + str(x) + ".yaml " + dist + " " + str(ifl) + " " + str(Q) + " " + str(x)
                   + " " + self.reportfolder + "/Parameters.yaml")
 

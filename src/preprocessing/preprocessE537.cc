@@ -108,10 +108,10 @@ namespace NangaParbat
             std::map<std::string, std::string> labels
             {
               {"xlabel", "#it{q}_{T} [GeV]"},
-              {"ylabel", "#frac{d2#it{#sigma}}{d#it{Q}d#it{p}_{T}^2}  [GeV^{-3}]"},
+              {"ylabel", "#frac{d^2#it{#sigma}}{d#it{Q}d#it{q}_{T}^2}  [pb GeV^{-3}]"},
               {"title", "E537 at 125 GeV, " + Qlims.first + " GeV < Q < " + Qlims.second + " GeV," + std::to_string(y_min) + "< |#it{y}| < " +std::to_string(y_max)},
-              {"xlabelpy", "$q_T \\rm{ [GeV]}$"},
-              {"ylabelpy", "$\\frac{d2\\sigma}{dQdp_{T}^2}[\\rm{GeV}^{-3}]$"},
+              {"xlabelpy", "$q^2_T \\rm{ [GeV^2]}$"},
+              {"ylabelpy", "$\\frac{d^2\\sigma}{dQdq_{T}^2}[\\rm{pb GeV}^{-3}]$"},
               {"titlepy", "E537 at 125 GeV, " + Qlims.first + " GeV < Q <" + Qlims.second + "GeV, " + std::to_string(y_min) + " < $|y|$ < " +std::to_string(y_max)}
             };
 

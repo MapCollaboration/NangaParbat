@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
   if (argc < 8 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./PlotTMDs <configuration file> <output file> <pdf/ff> <flavour ID> <Scale in GeV> <value of x> <parameters file>\n" << std::endl;
+      std::cout << "Syntax: ./PlotTMDs <configuration file> <output file> <pdf/ff/pdfbeam> <flavour ID> <Scale in GeV> <value of x> <parameters file>\n" << std::endl;
       exit(-10);
     }
 
@@ -34,7 +34,6 @@ int main(int argc, char* argv[])
 
   // Open LHAPDF set
   LHAPDF::PDF* dist = LHAPDF::mkPDF(config[pf + "set"]["name"].as<std::string>(), config[pf + "set"]["member"].as<int>());
-
   // Rotate sets into the QCD evolution basis
   const auto RotDists = [&] (double const& x, double const& mu) -> std::map<int,double> { return apfel::PhysToQCDEv(dist->xfxQ(x, mu)); };
 
@@ -52,7 +51,6 @@ int main(int argc, char* argv[])
 
   // Set verbosity level of APFEL++ to the minimum
   apfel::SetVerbosityLevel(0);
-
   // Define x-space grid
   std::vector<apfel::SubGrid> vsg;
   for (auto const& sg : config["xgrid" + pf])
@@ -76,6 +74,8 @@ int main(int argc, char* argv[])
 
   std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> EvTMDs;
   if (pf == "pdf")
+    EvTMDs = BuildTmdPDFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);
+  else if (pf == "pdfbeam")
     EvTMDs = BuildTmdPDFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);
   else if (pf == "ff")
     EvTMDs = BuildTmdFFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas, pto, Ci);

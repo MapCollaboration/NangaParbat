@@ -105,7 +105,7 @@ print(bcolours.REPORT + "\n" + "The number of usable replicas is: " + bcolours.B
 
 # Now run "ComputeMeanReplica" to generate the central replica
 print(bcolours.ACTREPORT + "\nGenerating mean replica...\n" + bcolours.ENDC)
-os.system(CliFolder + "/../run/ComputeMeanReplica " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables " + " ".join(discard))
+os.system(CliFolder + "/../build/run/ComputeMeanReplica " + outfolder + "/ " + outfolder + "/fitconfig.yaml " + outfolder + "/data " + outfolder + "/tables ")
 
 # Get report of the mean replica
 with open(outfolder + "/mean_replica/Report.yaml", "r") as rep:
