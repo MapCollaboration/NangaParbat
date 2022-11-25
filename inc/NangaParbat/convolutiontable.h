@@ -61,10 +61,12 @@ namespace NangaParbat
     /**
      * @brief This function convolutes a Drell-Yan input convolution
      * table with a user-defined non-perturbative function.
-     * @param fNP: the non-perturbative input function associated to PDFs
+     * @param fNP1: the non-perturbative input function associated to the first set of PDFs
+     * @param fNP2: the non-perturbative input function associated to the second set of PDFs
      * @return a map that associates each value of qT to a prediction.
      */
-    std::map<double, double> ConvoluteDY(std::function<double(double const&, double const&, double const&)> const& fNP) const;
+    std::map<double, double> ConvoluteDY(std::function<double(double const&, double const&, double const&)> const& fNP1,
+                                         std::function<double(double const&, double const&, double const&)> const& fNP2) const;
 
     /**
      * @brief This function convolutes a SIDIS input convolution
@@ -136,6 +138,7 @@ namespace NangaParbat
     std::vector<std::vector<double>> GetqTBins()     const { return _qTmap; }
     //double                           GetCutqToverQ() const { return _qToQmax; }
     std::vector<double>              GetcutParam()   const { return _cutParam; }
+    std::string 		     GetBeam()       const { return _Hbeam; }
     ///@}
 
     /**
@@ -169,6 +172,7 @@ namespace NangaParbat
     double                                                                      _acc;      //!< The Ogata-quadrature accuracy
     std::vector<std::shared_ptr<Cut>>                                           _cuts;     //!< Cut objects
     std::valarray<bool>                                                         _cutmask;  //!< Mask of points that pass the cuts
+    std::string 							 const  _Hbeam;    //!< Tag of hadron beam for DY
 
     /**
      * @name FF_SIDIS

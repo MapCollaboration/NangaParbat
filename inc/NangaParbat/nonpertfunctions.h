@@ -19,7 +19,7 @@
 #include "NangaParbat/QGG13.h"
 #include "NangaParbat/PV17jet3w.h"
 #include "NangaParbat/PV17jetww.h"
-
+#include "NangaParbat/MAPTMDPion3.h"
 #include <map>
 #include <memory>
 
@@ -45,6 +45,7 @@ namespace NangaParbat
     {"MAP22g5", new NangaParbat::MAP22g5{}},
     {"MAP22g52", new NangaParbat::MAP22g52{}},
     {"MAP22g4", new NangaParbat::MAP22g4{}}//,
+    {"MAPTMDPion3", new NangaParbat::MAPTMDPion3{}}
     //{"QGG6",  new NangaParbat::QGG6{}},
     //{"QGG13", new NangaParbat::QGG13{}}
   };

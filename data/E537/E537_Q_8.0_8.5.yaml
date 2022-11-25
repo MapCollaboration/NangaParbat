@@ -1,0 +1,32 @@
+dependent_variables:
+  - header: {title: "E537 at 125 GeV, 8 GeV < Q < 8.5 GeV,-0.089879< |#it{y}| < 0.850097", titlepy: "E537 at 125 GeV, 8 GeV < Q <8.5GeV, -0.089879 < $|y|$ < 0.850097", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q^2_T \\rm{ [GeV^2]}$", ylabel: "#frac{d^2#it{#sigma}}{d#it{Q}d#it{q}_{T}^2}  [pb GeV^{-3}]", ylabelpy: "$\\frac{d^2\\sigma}{dQdq_{T}^2}[\\rm{pb GeV}^{-3}]$"}
+    qualifiers:
+      - {name: process, value: DY}
+      - {name: target_isoscalarity, value: 0.4025}
+      - {name: beam, value: PI}
+      - {name: prefactor, value: 1}
+      - {name: Vs, value: 15.3}
+      - {name: Q, low: 8, high: 8.5, integrate: true}
+      - {name: y, low: -0.089878941, high: 0.85009688, integrate: true}
+    values:
+      - errors:
+          - {label: unc, value: 0.776}
+          - {label: mult, value: 0.09107656}
+          - {label: unc, value: 0.088799646}
+          - {label: mult, value: 0.0060013944}
+          - {label: unc, value: 0.0058513595}
+          - {label: add, value: 0.08}
+        value: 1.3
+      - errors:
+          - {label: unc, value: 0.409}
+          - {label: mult, value: 0.11404864}
+          - {label: unc, value: 0.033872446}
+          - {label: mult, value: 0.0072724304}
+          - {label: unc, value: 0.0021599118}
+          - {label: add, value: 0.08}
+        value: 0.396
+independent_variables:
+  - header: {name: PT, units: GEV}
+    values:
+      - {high: 0.70710678, low: 1e-05, factor: 2.8284271}
+      - {high: 1.4142136, low: 1.2247449, factor: 0.75787476}

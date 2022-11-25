@@ -1,3 +1,6 @@
+pdfsetbeam:
+  name: "xFitterPI_NLO_EIG"   #pion
+  member: 0
 # Collinear PDF set and member to be used for the generation of the
 # tables. They are assumed to be in the LHAPDF format.
 pdfset:
@@ -64,22 +67,22 @@ Qgrid:
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in xi = exp(y) (used for the Drell-Yan tables).
 xigrid:
-  n: 3
-  InterDegree: 2
+  n: 4
+  InterDegree: 3
   eps: 1e-3
 
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in Bjorken x (used for the SIDIS tables).
 xbgrid:
-  n: 3
-  InterDegree: 2
+  n: 4
+  InterDegree: 3
   eps: 1e-3
 
 # Number of points, interpolation degree, and integration accuracy of
 # the grid in z Bjorken (used for the SIDIS tables).
 zgrid:
-  n: 3
-  InterDegree: 2
+  n: 4
+  InterDegree: 3
   eps: 1e-3
 
 # Maximum value allowed for the ratio qT / Q. This has to be intended
@@ -90,6 +93,11 @@ zgrid:
 # kinematics is such that TMD factorisation is not valid.
 qToverQmax: 0.8
 
+cutParam: [0.8, 0.7, 0.5]
+
 # Jets
 #JetR: 1.5707963
 JetR: 1
+
+
+

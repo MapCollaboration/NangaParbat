@@ -36,6 +36,7 @@ int main(int argc, char* argv[])
   const bool pdferr = true;
   const bool fferr = true;
 
+  /*
   fout << "E605:\n";
   fout << NangaParbat::PreprocessE605(RawDataPath, ProcessedDataPath, pdferr);
 

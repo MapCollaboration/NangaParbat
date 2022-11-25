@@ -4,7 +4,7 @@ Description: "Test fit with the MAP 2021 parameterisation."
 
 # Minimiser to be used for the fit. Possible options so far are
 # 'minuit', 'ceres', and 'none'.
-Minimiser: none
+Minimiser: minuit
 
 # Seed used with the random-number generator for the generation of the
 # Monte Carlo replicas
@@ -14,8 +14,8 @@ Seed: '1234'
 # to produce the tables.
 qToQmax: '4'
 
-# Parameters to compute the cut qT / Q as PV17 fit.
-cutParam: [0.2, 0.5, 0.3]
+# Parameters to compute the cut qT / Q as MAP22 fit.
+cutParam: [0.2, 0.7, 0.5]
 
 # Percentile cut (in percent) on the distribution of chi2's, error
 # functions and parameters used to identify outliers.

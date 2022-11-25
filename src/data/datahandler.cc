@@ -76,6 +76,7 @@ namespace NangaParbat
     _obs          = DH._obs;
     _targetiso    = DH._targetiso;
     _hadron       = DH._hadron;
+    _beam         = DH._beam;
     _charge       = DH._charge;
     _tagging      = DH._tagging;
     _prefact      = DH._prefact;
@@ -103,6 +104,7 @@ namespace NangaParbat
     _obs(UnknownObservable),
     _targetiso(1),
     _hadron("NONE"),
+    _beam("PR"),
     _charge(0),
     _tagging({apfel::QuarkFlavour::TOTAL}),
   _prefact(1),
@@ -167,6 +169,17 @@ namespace NangaParbat
             // Hadron species
             if (ql["name"].as<std::string>() == "hadron")
               _hadron = ql["value"].as<std::string>();
+
+            // Beam hadron species. If beam not specified, assume protons (default)
+            if (ql["name"].as<std::string>() == "beam")
+              {
+                if (ql["value"].as<std::string>() == "PI")
+                  _beam = ql["value"].as<std::string>();
+                else if (ql["value"].as<std::string>() == "PR")
+                  _beam = ql["value"].as<std::string>();
+                else
+                  throw std::runtime_error("[DataHandler::DataHandler]: Unknown beam.");
+              }
 
             // Final state charge
             if (ql["name"].as<std::string>() == "charge")
@@ -611,6 +624,8 @@ namespace NangaParbat
       os << "- Process: Unknown\n";
 
     os << "- Target isoscalarity: "   << DH._targetiso << "\n";
+    if (DH._proc == DataHandler::Process::DY)
+      os << "- Beam: " << DH.BeamMap.at(DH._beam) << "\n";
     os << "- Overall prefactor: "     << DH._prefact   << "\n";
     os << "- Number of points: "      << DH._kin.ndata << "\n";
     os << "- Center-of-mass energy: " << DH._kin.Vs    << " GeV\n";

@@ -383,7 +383,7 @@ namespace NangaParbat
                 emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "x" << YAML::EndMap;
                 emit << YAML::Key << "values" << YAML::Value;
                 emit << YAML::BeginSeq;
-                for (int i = 0; i < (int) indexesZ.size(); i++ )
+                for (int i = 0; i < (int) data.size(); i++ )
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << xb.second.second << YAML::Key << "low" << YAML::Value << xb.second.first << YAML::Key << "value" << YAML::Value << xvalue << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::EndMap;

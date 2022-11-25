@@ -40,11 +40,12 @@ namespace NangaParbat
     _DSVect.push_back(DSBlock);
 
     // Determine number of data points that pass the cut qT / Q.
-    const DataHandler::Kinematics kin      = DSBlock.first->GetKinematics();
-    //const double                  qToQMax  = DSBlock.second->GetCutqToverQ();
-    const DataHandler::Process    proc     = DSBlock.first->GetProcess();
-    const std::vector<double>     cutParam = DSBlock.second->GetcutParam();
-    const std::vector<double>     qTv      = kin.qTv;
+    const DataHandler::Kinematics               kin      = DSBlock.first->GetKinematics();
+    //const double                                qToQMax = DSBlock.second->GetCutqToverQ();
+    const DataHandler::Process                  proc     = DSBlock.first->GetProcess();
+    const std::vector<double>                   cutParam = DSBlock.second->GetcutParam();
+    const std::vector<std::pair<double,double>> qTv      = kin.qTmap;
+    const std::string                           beam     = DSBlock.second->GetBeam();
 
     if (proc == 0) //DY
       {
@@ -52,13 +53,21 @@ namespace NangaParbat
 
         const double Qmin = (kin.Intv1 ? kin.var1b.first : ( kin.var1b.first + kin.var1b.second ) / 2);
 
-        double qToQMax = std::min(cutParam[0], cutParam[1]);
+        double qToQMax = 0;
+
+        // Cut on transverse momentum MAPTMD22-like
+        if (beam == "PR")
+           qToQMax = std::min(cutParam[0], cutParam[1]);
+
+        // Cut on transverse momentum MAPTMD22Pion-like
+        if (beam == "PI")
+           qToQMax = cutParam[0] + cutParam[1] / Qmin;
 
         for (auto const& qT : qTv)
-          if (qT / Qmin < qToQMax)
+          if (qT.second / Qmin < qToQMax)
             idata++;
 
-        _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
+        _ndata.push_back(idata);
 
         // Data the pass all the cuts
         const std::valarray<bool> cm = DSBlock.second->GetCutMask();
@@ -76,7 +85,7 @@ namespace NangaParbat
         double qToQMax = std::min(std::min(cutParam[0] / zmin, cutParam[1]) + cutParam[2] / Qmin / zmin, 1.0);
 
         for (auto const& qT : qTv)
-          if (qT / Qmin / zmin < qToQMax)
+          if (qT.second / Qmin / zmin < qToQMax)
             idata++;
 
         _ndata.push_back(idata - (kin.IntqT ? 1 : 0));

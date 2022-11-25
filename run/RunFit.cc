@@ -49,10 +49,32 @@ int main(int argc, char* argv[])
 
   // Set parameters for the t0 predictions using "t0parameters" in the
   // configuration card only if the the t0 has been enabled and the
-  // central replica is not being computed.
+  // central replica is not being computed. Moreover for the fixed Parameters,
+  // which come from other fits we put the t0 parameters for them equal to the
+  // values of the replica of those fits.
   if (fitconfig["t0prescription"].as<bool>())
-    NPFunc->SetParameters(fitconfig["t0parameters"].as<std::vector<double>>());
-
+    {
+      int i = 0;
+      std::vector<double> t0parameters;
+      for (auto const p : fitconfig["Parameters"])
+        {
+          if(p["file"])
+            {
+              YAML::Node fixedpars = YAML::LoadFile(p["file"].as<std::string>());
+              t0parameters.push_back(fixedpars[p["name"].as<std::string>()].as<std::vector<double>>()[ReplicaID]);
+            }
+          else
+            {
+              t0parameters.push_back(fitconfig["t0parameters"].as<std::vector<double>>().at(i));
+            }
+          i++;
+        }
+      // for(int j=0; j< t0parameters.size(); j++)
+      // {
+      //   std::cout << "Parametro "<< j << "\t" << t0parameters[j] << '\n';
+      // }
+      NPFunc->SetParameters(t0parameters);
+    }
   // Open datasets.yaml file that contains the list of datasets to be
   // fitted and push the corresponding pairs of "DataHandler" and
   // "ConvolutionTable" objects into the a vector.
@@ -78,7 +100,6 @@ int main(int argc, char* argv[])
       }
   // Report time elapsed
   t.stop();
-
   // Minimise the chi2 using the minimiser indicated in the input card
   t.start();
   bool status;

@@ -56,7 +56,27 @@ namespace NangaParbat
         if (rng !=  NULL && !p["fix"].as<bool>())
           pstart += gsl_ran_gaussian(rng, p["step"].as<double>());
 
-        upar.Add(p["name"].as<std::string>(), pstart, p["step"].as<double>());
+        // If the parameter is fixed search the key file, where is
+        // reported the path to the file containing the values of the
+        // parameters for each replica. Fix that parameter.
+        // Otherwise use the value contained in fitconfig.yaml
+        if (p["fix"].as<bool>())
+          {
+            if (p["file"])
+              {
+                YAML::Node fixedpars = YAML::LoadFile(p["file"].as<std::string>());
+                const int replicaID = chi2.GetBlocks().front().first->GetFluctuation();
+                upar.Add(p["name"].as<std::string>(), fixedpars[p["name"].as<std::string>()].as<std::vector<double>>()[replicaID],
+                         p["step"].as<double>());
+              }
+            else
+              {
+                upar.Add(p["name"].as<std::string>(), pstart, p["step"].as<double>());
+              }
+            upar.Fix(p["name"].as<std::string>());
+          }
+        else
+          upar.Add(p["name"].as<std::string>(), pstart, p["step"].as<double>());
 
         // Set limits if required
         if (p["lower_bound"])
@@ -65,9 +85,6 @@ namespace NangaParbat
         if (p["upper_bound"])
           upar.SetUpperLimit(p["name"].as<std::string>(), p["upper_bound"].as<double>());
 
-        // Fix parameter if required
-        if (p["fix"].as<bool>())
-          upar.Fix(p["name"].as<std::string>());
       }
 
     if (chi2.GetNonPerturbativeFunction()->HasGradient())
@@ -147,21 +164,35 @@ namespace NangaParbat
       {
         // Add a parameter block for each parameter
         cost_function->AddParameterBlock(1);
-
-        // If the GSL random-number generator object is NULL use the
-        // central value as starting parameters, otherwise fluctuate
-        // them (gaussianly) according to the step.
-        double pstart = p["starting_value"].as<double>();
-        if (rng !=  NULL && !p["fix"].as<bool>())
-          pstart += gsl_ran_gaussian(rng, p["step"].as<double>());
-
-        // Fill in initial parameter array
-        initPars.push_back(new double(pstart));
+        if(p["fix"].as<bool>())
+          {
+            if(p["file"])
+              {
+                YAML::Node fixedpars = YAML::LoadFile(p["file"].as<std::string>());
+                const int replicaID = chi2.GetBlocks().front().first->GetFluctuation();
+                initPars.push_back(new double(fixedpars[p["name"].as<std::string>()].as<std::vector<double>>()[replicaID]));
+              }
+            else
+              {
+                initPars.push_back(new double(p["starting_value"].as<double>()));
+              }
+          }
+        else
+          {
+            // If the GSL random-number generator object is NULL use the
+            // central value as starting parameters, otherwise fluctuate
+            // them (gaussianly) according to the step.
+            double pstart = p["starting_value"].as<double>();
+            if (rng !=  NULL && !p["fix"].as<bool>())
+              {
+                pstart += gsl_ran_gaussian(rng, p["step"].as<double>());
+              }
+            // Fill in initial parameter array with fitconfig value
+            initPars.push_back(new double(pstart));
+          }
       }
-
     // Add residual block
     problem.AddResidualBlock(cost_function, NULL, initPars);
-
     // Set upper and lower bounds if required
     int i = 0;
     for (auto const p : parameters)
@@ -174,7 +205,6 @@ namespace NangaParbat
             // to avoid that the code crushes.
             problem.SetParameterLowerBound(initPars[i], 0, *initPars[i] - 1e-8);
             problem.SetParameterUpperBound(initPars[i], 0, *initPars[i] + 1e-8);
-
             // This is the correct procedure that seems to make the
             // code crush.
             //problem.SetParameterBlockConstant(initPars[i]);
@@ -194,7 +224,7 @@ namespace NangaParbat
     ceres::Solver::Options options;
     options.minimizer_progress_to_stdout = true;
     options.max_num_iterations           = 1000;
-    //options.function_tolerance           = 1e-5;
+    options.function_tolerance           = 1e-5;
     //options.minimizer_type               = ceres::LINE_SEARCH;
     //options.trust_region_strategy_type   = ceres::DOGLEG;
 
@@ -238,7 +268,6 @@ namespace NangaParbat
     // Return minimisation status
     return true;
   }
-
   //_________________________________________________________________________________
   bool MinuitScan(ChiSquare const& chi2, YAML::Node const& parameters, std::string const& outfolder)
   {

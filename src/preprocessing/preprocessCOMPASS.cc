@@ -250,6 +250,7 @@ namespace NangaParbat
               emit << YAML::BeginSeq;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "SIDIS" << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "observable" << YAML::Key << "value" << YAML::Value << "(dsigma/dxdzdQ2dPhT2)/dsigmaDIS" << YAML::EndMap;
+              // "multiplicity" << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << 0.5 << YAML::EndMap;
               emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "hadron" << YAML::Key << "value" << YAML::Value << "HD" << YAML::EndMap;
               // (hcharge == "M^{h^{+}}" ? "Pp + Kp" : "Pm + Km") << YAML::EndMap;
@@ -276,7 +277,7 @@ namespace NangaParbat
               for (auto const& m : str["values"])
                 {
                   emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
-                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << m["errors"][0]["symerror"].as<double>() << YAML::EndMap; // statistical uncertainties from HEPdata file
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << m["errors"][0]["symerror"].as<double>() << YAML::EndMap;
                   if (PDFError)
                     {
                       // Now read PDF errors
@@ -300,11 +301,7 @@ namespace NangaParbat
                       emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * m["value"].as<double>() * 0.6 << YAML::EndMap;
                     }
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << m["errors"][1]["symerror"] << YAML::EndMap; // read systematic errors from HEPdata file
-                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "0.05" << YAML::EndMap;
-                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << m["errors"][1]["symerror"].as<double>() / m["value"].as<double>() << YAML::EndMap;
-                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "0.05" << YAML::EndMap;
-                  //[TEMPORARY] introduction of 5 per mil of error
-                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.005 * m["value"].as<double>() << YAML::EndMap;
+                  // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << "###" << YAML::EndMap;
                   emit << YAML::EndSeq;
                   emit << YAML::Key << "value" << YAML::Value << m["value"].as<double>();
                   emit << YAML::EndMap;
