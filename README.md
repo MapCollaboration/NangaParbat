@@ -89,7 +89,7 @@ The reports linked below have been generated using the CLI ``cli/report.py``.
 
 ### PV19 fit
 
-Fit of the TMD PDFs of the proton to Drell-Yan data as published in [[JHEP 07 (2020) 117](https://arxiv.org/pdf/1912.07550.pdf)] can be found at the following links:
+Fit of the TMD PDFs of the proton to Drell-Yan data as published in [[JHEP 07 (2020) 117](https://arxiv.org/pdf/1912.07550.pdf)]:
 
 - fit at [N3LL](https://vbertone.github.io/NangaParbat/results/PV19/N3LL/index.html),
 - fit at [NNLL'](https://vbertone.github.io/NangaParbat/results/PV19/NNLLp/index.html),
@@ -98,13 +98,13 @@ Fit of the TMD PDFs of the proton to Drell-Yan data as published in [[JHEP 07 (2
 
 ### MAPTMD22 fit
 
-Simultaneous fit of the TMD PDFs of the proton and of the TMD FFs of ligh hadrons to Drell-Yan and SIDIS data as published in [[JHEP 10 (2022) 127](https://arxiv.org/pdf/2206.07598.pdf)] can be found at the following links:
+Simultaneous fit of the TMD PDFs of the proton and of the TMD FFs of ligh hadrons to Drell-Yan and SIDIS data as published in [[JHEP 10 (2022) 127](https://arxiv.org/pdf/2206.07598.pdf)]:
 
 - fit at [N3LL](https://vbertone.github.io/NangaParbat/results/MAPTMD22/N3LL/index.html).
 
 ### MAPTMD22Pion fit
 
-Fit of the TMD PDFs of the pion to Drell-Yan data as published in [[arXiv:2210.01733](https://arxiv.org/pdf/2210.01733.pdf)] can be found at the following links:
+Fit of the TMD PDFs of the pion to Drell-Yan data as published in [[arXiv:2210.01733](https://arxiv.org/pdf/2210.01733.pdf)]:
 
 - fit at [N3LL](https://vbertone.github.io/NangaParbat/results/MAPTMD22Pion/N3LL/index.html).
 
