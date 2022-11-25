@@ -109,20 +109,14 @@ namespace NangaParbat
   //_________________________________________________________________________________
   std::map<double, double> ConvolutionTable::ConvoluteDY(std::function<double(double const&, double const&, double const&)> const& fNP1, std::function<double(double const&, double const&, double const&)> const& fNP2) const
   {
-<<<<<<< HEAD
-    // Define cut qT / Q < 0.2
-    double DYqToQmax = _cutParam[0];
-=======
-
     double DYqToQmax = 0;
 
     // Compute cut qT / Q as same as MAP22
     if (_Hbeam == "PR")
-       DYqToQmax = std::min(_cutParam[0], _cutParam[1]);
+      DYqToQmax = std::min(_cutParam[0], _cutParam[1]);
     // Compute cut qT / Q as same as MAP22Pion
     if (_Hbeam == "PI")
-       DYqToQmax =_cutParam[0] + _cutParam[1] /  _Qg.front();
->>>>>>> f6bf6446 (Updating branch Pion)
+      DYqToQmax =_cutParam[0] + _cutParam[1] /  _Qg.front();
 
     // Compute predictions
     std::map<double, double> pred;
@@ -379,14 +373,13 @@ namespace NangaParbat
         p1 = GetPredictions([=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); }, [=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 2); });
         p2 = GetPredictions([=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 0); }, [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 2); });
         break;
-
+/*
       // JetSIDIS: one PDF and one JetTMD
       case DataHandler::Process::JetSIDIS:
         p1 = GetPredictions(fNP1, dNP2);
         p2 = GetPredictions(dNP1, fNP2);
         break;
-
-
+*/
       // e+e- annihilation into two hadrons: two FFs (Not present
       // yet)
       case DataHandler::Process::DIA:

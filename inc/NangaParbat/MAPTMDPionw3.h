@@ -19,7 +19,7 @@ namespace NangaParbat
   public:
 
     MAPTMDPionw3():
-      Parameterisation{"MAPTMDPionw3", 2, std::vector<double> {0.2343, 0.2788, 0.8466, 1.3806, 1.9872, 0.1590, 0.4534, 3.843, 0.0276, 0.00392, 12.551, 4.141, 0.2343, 0.2788 ,0.6089}} { };
+      Parameterisation{"MAPTMDPionw3", 2, std::vector<double> {0.2343, 0.2788, 0.8466, 1.3806, 1.9872, 0.1590, 0.4534, 3.843, 0.0276, 0.00392, 12.551, 4.141, 0.2343, 0.2788, 0.6089}} { };
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {

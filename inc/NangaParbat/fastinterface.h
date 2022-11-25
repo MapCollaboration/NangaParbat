@@ -29,7 +29,7 @@ namespace NangaParbat
     /**
      * @brief Function returns the luminosity for the Drell-Yan
      * process as a "DoubleObject" for a fixed values of "b" and "Q".
-     * @param b: value of the impact parameter
+     * @param bT: value of the impact parameter
      * @param Q: value of the hard scale
      * @param targetiso: the isoscalarity of the target
      * @param beam: type of hadrons in the beam
@@ -65,30 +65,55 @@ namespace NangaParbat
      */
     std::vector<YAML::Emitter> ComputeTablesSIDIS(std::vector<DataHandler> const& DHVect) const;
 
-  private:
-    YAML::Node                                                                                  _config;            //!< Configuration YAML::Node
-    std::vector<double>                                                                         _Thresholds;        //!< Heavy-quark thresholds
-    std::unique_ptr<apfel::TabulateObject<double>>                                              _TabAlphas;         //!< Strong coupling
-    std::unique_ptr<apfel::TabulateObject<double>>                                              _TabAlphaem;        //!< Fine-structure coupling
-    std::map<int,apfel::TmdObjects>                                                             _TmdPdfObjs;        //!< Space-like TMD objects
-    std::map<int,apfel::TmdObjects>                                                             _TmdFfObjs;         //!< Time-like TMD objects
-    std::unique_ptr<const apfel::Grid>                                                          _gpdf;              //!< APFEL x-space grid for PDFs
-    std::unique_ptr<const apfel::Grid>                                                          _gff;               //!< APFEL x-space grid for FFs
-    std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>                     _TabPDFs;           //!< Collinear PDFs
-    std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>                     _TabFFs;            //!< Collinear FFs
-    std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> _EvTMDPDFs;         //!< TMD PDFs
-    std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> _EvTMDFFs;          //!< TMD FFs
-    std::function<apfel::Set<apfel::Distribution>(double const&)>                               _MatchTMDPDFs;      //!< TMD PDFs w/o/ Sudakov evolution
-    std::function<apfel::Set<apfel::Distribution>(double const&)>                               _MatchTMDFFs;       //!< TMD FFs w/o/ Sudakov evolution
-    std::function<double(double const&, double const&, double const&)>                          _QuarkSudakov;      //!< Quark evolution factor
-    std::function<double(double const&)>                                                        _HardFactorDY;      //!< Hard factor for Drell-Yan
-    std::function<double(double const&)>                                                        _HardFactorSIDIS;   //!< Hard factor for SIDIS
-    std::function<double(double const&, double const&)>                                         _bstar;             //!< b* prescription
+    /**
+     * @brief Function that computes the normalisation factors to be
+     * applied to SIDIS to normalise the integral of the qT
+     * distribution to the integrated fixed-order cross section.
+     * @param DHVect: vector of "DataHandler" objects.
+     * @return a vector of "double" containing as many normalisation
+     * factors as elements of "DHVect".
+     */
+    std::vector<YAML::Emitter> ComputeTablesJetSIDIS(std::vector<DataHandler> const& DHVect) const;
 
-    std::map<int,apfel::TmdObjects>                                                             _BeamTmdPdfObjs;    //!< Space-like beam TMD objects
-    std::unique_ptr<const apfel::Grid>                                                          _gpdfbeam;          //!< APFEL x-space grid for beam PDFs
-    std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>                     _TabBeamPDFs;       //!< Collinear beam PDFs
-    std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> _EvBeamTMDPDFs;     //!< Beam TMD PDFs
-    std::function<apfel::Set<apfel::Distribution>(double const&)>                               _MatchBeamTMDPDFs;  //!< Beam TMD PDFs w/o/ Sudakov evolution
+    /**
+     * @brief Function that computes the normalisation factors to be
+     * applied to SIDIS to normalise the integral of the qT
+     * distribution to the integrated fixed-order cross section.
+     * @param DHVect: vector of "DataHandler" objects.
+     * @return a vector of "double" containing as many normalisation
+     * factors as elements of "DHVect".
+     */
+    std::vector<double> NormalisationFactorsSIDIS(std::vector<DataHandler> const& DHVect) const;
+
+  private:
+    YAML::Node                                                                                  _config;          //!< Configuration YAML::Node
+    std::vector<double>                                                                         _Thresholds;      //!< Heavy-quark thresholds
+    std::unique_ptr<apfel::TabulateObject<double>>                                              _TabAlphas;       //!< Strong coupling
+    std::unique_ptr<apfel::TabulateObject<double>>                                              _TabAlphaem;      //!< Fine-structure coupling
+    std::map<int, apfel::TmdObjects>                                                            _TmdPdfObjs;      //!< Space-like TMD objects
+    std::map<int, apfel::TmdObjects>                                                            _TmdFfObjs;       //!< Time-like TMD objects
+    std::map<int, apfel::TmdObjects>                                                            _TmdFfObjs2;      //!< Time-like TMD objects
+    std::unique_ptr<const apfel::Grid>                                                          _gpdf;            //!< APFEL x-space grid for PDFs
+    std::unique_ptr<const apfel::Grid>                                                          _gff;             //!< APFEL x-space grid for FFs
+    std::unique_ptr<const apfel::Grid>                                                          _gff2;            //!< APFEL x-space grid for second set of FFs
+    std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>                     _TabPDFs;         //!< Collinear PDFs
+    std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>                     _TabFFs;          //!< Collinear FFs
+    std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>                     _TabFFs2;         //!< Collinear FFs2
+    std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> _EvTMDPDFs;       //!< TMD PDFs
+    std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> _EvTMDFFs;        //!< TMD FFs
+    std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> _EvTMDFFs2;       //!< TMD FFs2
+    std::function<apfel::Set<apfel::Distribution>(double const&)>                               _MatchTMDPDFs;    //!< TMD PDFs w/o/ Sudakov evolution
+    std::function<apfel::Set<apfel::Distribution>(double const&)>                               _MatchTMDFFs;     //!< TMD FFs w/o/ Sudakov evolution
+    std::function<apfel::Set<apfel::Distribution>(double const&)>                               _MatchTMDFFs2;    //!< TMD FFs2 w/o/ Sudakov evolution
+    std::function<double(double const&, double const&, double const&)>                          _QuarkSudakov;    //!< Quark evolution factor
+    std::function<double(double const&)>                                                        _HardFactorDY;    //!< Hard factor for Drell-Yan
+    std::function<double(double const&)>                                                        _HardFactorSIDIS; //!< Hard factor for SIDIS
+    std::function<double(double const&, double const&)>                                         _bstar;           //!< b* prescription
+    std::map<int,apfel::TmdObjects>                                                             _BeamTmdPdfObjs;  //!< Space-like beam TMD objects
+    std::unique_ptr<const apfel::Grid>                                                          _gpdfbeam;        //!< APFEL x-space grid for beam PDFs
+    std::unique_ptr<apfel::TabulateObject<apfel::Set<apfel::Distribution>>>                     _TabBeamPDFs;     //!< Collinear beam PDFs
+    std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> _EvBeamTMDPDFs;   //!< Beam TMD PDFs
+    std::function<apfel::Set<apfel::Distribution>(double const&)>                               _MatchBeamTMDPDFs;//!< Beam TMD PDFs w/o/ Sudakov evolution
+    std::function<double(double const&, double const&, double const&)>                          _EvTMDJet;        //!< TMD Jet
   };
 }
