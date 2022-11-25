@@ -85,14 +85,28 @@ Code documentation generated with Doxygen can be found [here](https://vbertone.g
 
 ## Public results
 
-The results obtained with NangaParbat for the fit of TMD PDFs to Drell-Yan data can be found at the following links:
+The reports linked below have been generated using the CLI ``cli/report.py``.
+
+### PV19 fit
+
+Fit of the TMD PDFs of the proton to Drell-Yan data as published in [[JHEP 07 (2020) 117](https://arxiv.org/pdf/1912.07550.pdf)] can be found at the following links:
 
 - fit at [N3LL](https://vbertone.github.io/NangaParbat/results/PV19/N3LL/index.html),
 - fit at [NNLL'](https://vbertone.github.io/NangaParbat/results/PV19/NNLLp/index.html),
 - fit at [NNLL](https://vbertone.github.io/NangaParbat/results/PV19/NNLL/index.html),
 - fit at [NLL'](https://vbertone.github.io/NangaParbat/results/PV19/NLLp/index.html).
 
-The reports above have been generated using the CLI ``cli/report.py``.
+### MAPTMD22 fit
+
+Simultaneous fit of the TMD PDFs of the proton and of the TMD FFs of ligh hadrons to Drell-Yan and SIDIS data as published in [[JHEP 10 (2022) 127](https://arxiv.org/pdf/2206.07598.pdf)] can be found at the following links:
+
+- fit at [N3LL](https://vbertone.github.io/NangaParbat/results/PV19/MAP22/index.html).
+
+### MAPTMD22Pion fit
+
+Fit of the TMD PDFs of the pion to Drell-Yan data as published in [[arXiv:2210.01733](https://arxiv.org/pdf/2210.01733.pdf)] can be found at the following links:
+
+- fit at [N3LL](https://vbertone.github.io/NangaParbat/results/MAP22Pion/N3LL/index.html).
 
 ## TMD grids
 
@@ -120,7 +134,7 @@ kinematical points for the interpolation and the convolution, are in
 
 ## References
 
-- *Transverse-momentum-dependent parton distributions up to N3LL from Drell-Yan data*; Alessandro Bacchetta, Valerio Bertone, Chiara Bissolotti, Giuseppe Bozzi, Filippo Delcarro, Fulvio Piacenza, Marco Radici [[arXiv:1912.07550](https://arxiv.org/pdf/1912.07550.pdf)]
+- *Transverse-momentum-dependent parton distributions up to N3LL from Drell-Yan data*; Alessandro Bacchetta, Valerio Bertone, Chiara Bissolotti, Giuseppe Bozzi, Filippo Delcarro, Fulvio Piacenza, Marco Radici [[JHEP 07 (2020) 117](https://arxiv.org/pdf/1912.07550.pdf)]
 
 ## Contacts
 
