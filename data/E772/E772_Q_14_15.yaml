@@ -1,0 +1,55 @@
+dependent_variables:
+  - header: {title: "E772, 14 GeV < Q < 15 GeV, 0.1 < #it{x}_{F} < 0.3", titlepy: "E772, 14 GeV < Q < 15 GeV, 0.1 < $x_{F}$ < 0.3", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q_T \\rm{ [GeV]}$", ylabel: "#it{E} #frac{d^{3}#it{#sigma}}{d^{3}#it{q}}  [pb GeV^{-2}]", ylabelpy: "$\\rm{E }\\frac{d^{3}\\sigma}{d^{3}q}{[\\rm{pb GeV}^{-2}]}$"}
+    qualifiers:
+      - {name: process, value: DY}
+      - {name: target_isoscalarity, value: 0.5}
+      - {name: prefactor, value: 0.6161642}
+      - {name: Vs, value: 38.746355}
+      - {name: Q, low: 14, high: 15, integrate: true}
+      - {name: y, low: 0.26200719, high: 0.26200719, integrate: false}
+    values:
+      - errors:
+          - {label: unc, value: 0.0207}
+          - {label: unc, value: 0.00153}
+          - {label: mult, value: 0.08869808}
+          - {label: unc, value: 0.0010178105}
+        value: 0.0153
+      - errors:
+          - {label: unc, value: 0.00509}
+          - {label: unc, value: 0.000793}
+          - {label: mult, value: 0.08798488}
+          - {label: unc, value: 0.00052329007}
+        value: 0.00793
+      - errors:
+          - {label: unc, value: 0.00388}
+          - {label: unc, value: 0.000756}
+          - {label: mult, value: 0.08391512}
+          - {label: unc, value: 0.00047579873}
+        value: 0.00756
+      - errors:
+          - {label: unc, value: 0.00172}
+          - {label: unc, value: 0.000292}
+          - {label: mult, value: 0.080102}
+          - {label: unc, value: 0.00017542338}
+        value: 0.00292
+      - errors:
+          - {label: unc, value: 0.0071}
+          - {label: unc, value: 0.000698}
+          - {label: mult, value: 0.074708176}
+          - {label: unc, value: 0.0003910973}
+        value: 0.00698
+      - errors:
+          - {label: unc, value: 0.00183}
+          - {label: unc, value: 0.000273}
+          - {label: mult, value: 0.067564376}
+          - {label: unc, value: 0.00013833806}
+        value: 0.00273
+independent_variables:
+  - header: {name: PT, units: GEV}
+    values:
+      - {value: 0.125, factor: 8}
+      - {value: 0.375, factor: 2.6666667}
+      - {value: 0.875, factor: 1.1428571}
+      - {value: 1.125, factor: 0.88888889}
+      - {value: 1.375, factor: 0.72727273}
+      - {value: 1.625, factor: 0.61538462}

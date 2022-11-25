@@ -1,0 +1,122 @@
+dependent_variables:
+  - header: {title: "CMS at 7 TeV, 60 GeV < Q < 120 GeV, |#it{y}| < 2.1", titlepy: "CMS at 7 TeV, 60 GeV < Q < 120 GeV, $|y|$ < 2.1", xlabel: "#it{q}_{T} [GeV]", xlabelpy: "$q_T \\rm{ [GeV]}$", ylabel: "#frac{1}{#it{#sigma}}  #frac{d#it{#sigma}}{d#it{q}_{T}}  [GeV^{-1}]", ylabelpy: "$\\frac{1}{\\sigma}\\frac{d\\sigma}{dq_{T}}[\\rm{GeV}^{-1}]$"}
+    qualifiers:
+      - {name: process, value: DY}
+      - {name: target_isoscalarity, value: 1}
+      - {name: prefactor, value: 1}
+      - {name: Vs, value: 7000}
+      - {name: Q, low: 60, high: 120, integrate: true}
+      - {name: y, low: 0, high: 2.1, integrate: true}
+      - {name: PS_reduction, pTmin: 20, etamin: -2.1, etamax: 2.1}
+    values:
+      - errors:
+          - {label: unc, value: 0.0013}
+          - {label: mult, value: 0.012007256}
+          - {label: unc, value: 0.00028997523}
+        value: 0.0322
+      - errors:
+          - {label: unc, value: 0.0017}
+          - {label: mult, value: 0.0076216032}
+          - {label: unc, value: 0.00033839918}
+        value: 0.0592
+      - errors:
+          - {label: unc, value: 0.0016}
+          - {label: mult, value: 0.00505274}
+          - {label: unc, value: 0.00020842553}
+        value: 0.055
+      - errors:
+          - {label: unc, value: 0.0014}
+          - {label: mult, value: 0.004367188}
+          - {label: unc, value: 0.00012970548}
+        value: 0.0396
+      - errors:
+          - {label: unc, value: 0.0012}
+          - {label: mult, value: 0.004494796}
+          - {label: unc, value: 0.00011899972}
+        value: 0.0353
+      - errors:
+          - {label: unc, value: 0.0012}
+          - {label: mult, value: 0.0050925376}
+          - {label: unc, value: 0.00010388777}
+        value: 0.0272
+      - errors:
+          - {label: unc, value: 0.001}
+          - {label: mult, value: 0.0056160256}
+          - {label: unc, value: 9.0979615e-05}
+        value: 0.0216
+      - errors:
+          - {label: unc, value: 0.0009}
+          - {label: mult, value: 0.0061562584}
+          - {label: unc, value: 7.6183698e-05}
+        value: 0.0165
+      - errors:
+          - {label: unc, value: 0.0004}
+          - {label: mult, value: 0.0074782584}
+          - {label: unc, value: 6.5060848e-05}
+        value: 0.0116
+      - errors:
+          - {label: unc, value: 0.00027}
+          - {label: mult, value: 0.009575512}
+          - {label: unc, value: 4.2946171e-05}
+        value: 0.00598
+      - errors:
+          - {label: unc, value: 0.00018}
+          - {label: mult, value: 0.013610496}
+          - {label: unc, value: 3.4502607e-05}
+        value: 0.00338
+      - errors:
+          - {label: unc, value: 9e-05}
+          - {label: mult, value: 0.01826444}
+          - {label: unc, value: 2.4793977e-05}
+        value: 0.00181
+      - errors:
+          - {label: unc, value: 5.4e-05}
+          - {label: mult, value: 0}
+          - {label: unc, value: 0}
+        value: 0.000779
+      - errors:
+          - {label: unc, value: 4.2e-05}
+          - {label: mult, value: 0}
+          - {label: unc, value: 0}
+        value: 0.000475
+      - errors:
+          - {label: unc, value: 1.7e-05}
+          - {label: mult, value: 0}
+          - {label: unc, value: 0}
+        value: 0.000193
+      - errors:
+          - {label: unc, value: 9.9e-06}
+          - {label: mult, value: 0}
+          - {label: unc, value: 0}
+        value: 6e-05
+      - errors:
+          - {label: unc, value: 4.3e-06}
+          - {label: mult, value: 0}
+          - {label: unc, value: 0}
+        value: 1.51e-05
+      - errors:
+          - {label: unc, value: 4.4e-07}
+          - {label: mult, value: 0}
+          - {label: unc, value: 0}
+        value: 1.29e-06
+independent_variables:
+  - header: {name: PT, units: GEV}
+    values:
+      - {high: 2.5, low: 1e-05}
+      - {high: 5, low: 2.5}
+      - {high: 7.5, low: 5}
+      - {high: 10, low: 7.5}
+      - {high: 12.5, low: 10}
+      - {high: 15, low: 12.5}
+      - {high: 17.5, low: 15}
+      - {high: 20, low: 17.5}
+      - {high: 30, low: 20}
+      - {high: 40, low: 30}
+      - {high: 50, low: 40}
+      - {high: 70, low: 50}
+      - {high: 90, low: 70}
+      - {high: 110, low: 90}
+      - {high: 150, low: 110}
+      - {high: 190, low: 150}
+      - {high: 250, low: 190}
+      - {high: 600, low: 250}
