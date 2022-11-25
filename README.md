@@ -140,7 +140,9 @@ kinematical points for the interpolation and the convolution, are in
 
 - Valerio Bertone: valerio.bertone@cern.ch
 - Alessandro Bacchetta: alessandro.bacchetta@unipv.it
-- Chiara Bissolotti: chiara.bissolotti01@universitadipavia.it
+- Chiara Bissolotti: cbissolotti@anl.gov
+- Matteo Cerutti: matteo.cerutti@pv.infn.it
+- Lorenzo Rossi: lorenzo.rossi@pv.infn.it
 
 ## Credits
 
