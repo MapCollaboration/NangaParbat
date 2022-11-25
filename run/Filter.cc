@@ -36,7 +36,6 @@ int main(int argc, char* argv[])
   const bool pdferr = true;
   const bool fferr = true;
 
-  /*
   fout << "E605:\n";
   fout << NangaParbat::PreprocessE605(RawDataPath, ProcessedDataPath, pdferr);
 
@@ -82,13 +81,13 @@ int main(int argc, char* argv[])
   fout << "COMPASS:\n";
   fout << NangaParbat::PreprocessCOMPASS(RawDataPath, ProcessedDataPath, pdferr, fferr);
 
-  // fout << "E537:\n";
-  // fout << NangaParbat::PreprocessE537(RawDataPath, ProcessedDataPath, pdferr);
-  // fout << NangaParbat::PreprocessE537_xF(RawDataPath, ProcessedDataPath, pdferr);
+  fout << "E537:\n";
+  fout << NangaParbat::PreprocessE537(RawDataPath, ProcessedDataPath, pdferr);
+  //fout << NangaParbat::PreprocessE537_xF(RawDataPath, ProcessedDataPath, pdferr);
 
-  // fout << "E615:\n";
-  // fout << NangaParbat::PreprocessE615(RawDataPath, ProcessedDataPath, pdferr);
-  // fout << NangaParbat::PreprocessE615_xF(RawDataPath, ProcessedDataPath, pdferr);
+  fout << "E615:\n";
+  fout << NangaParbat::PreprocessE615(RawDataPath, ProcessedDataPath, pdferr);
+  //fout << NangaParbat::PreprocessE615_xF(RawDataPath, ProcessedDataPath, pdferr);
 
   fout.close();
 

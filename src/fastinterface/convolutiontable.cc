@@ -113,10 +113,10 @@ namespace NangaParbat
 
     // Compute cut qT / Q as same as MAP22
     if (_Hbeam == "PR")
-       DYqToQmax = std::min(_cutParam[0], _cutParam[1]);
+      DYqToQmax = std::min(_cutParam[0], _cutParam[1]);
     // Compute cut qT / Q as same as MAP22Pion
     if (_Hbeam == "PI")
-       DYqToQmax =_cutParam[0] + _cutParam[1] /  _Qg.front();
+      DYqToQmax =_cutParam[0] + _cutParam[1] /  _Qg.front();
 
     // Compute predictions
     std::map<double, double> pred;
@@ -373,14 +373,13 @@ namespace NangaParbat
         p1 = GetPredictions([=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); }, [=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 2); });
         p2 = GetPredictions([=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 0); }, [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 2); });
         break;
-
+/*
       // JetSIDIS: one PDF and one JetTMD
       case DataHandler::Process::JetSIDIS:
         p1 = GetPredictions(fNP1, dNP2);
         p2 = GetPredictions(dNP1, fNP2);
         break;
-
-
+*/
       // e+e- annihilation into two hadrons: two FFs (Not present
       // yet)
       case DataHandler::Process::DIA:

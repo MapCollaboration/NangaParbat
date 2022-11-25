@@ -256,7 +256,7 @@ namespace NangaParbat
                 // Now read PDF errors
                 getline(pdferr, line);
                 std::stringstream stream(line);
-                double dum, pe;
+                double dum = p.first, pe;
                 stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
 
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.16 << YAML::EndMap;
@@ -280,7 +280,6 @@ namespace NangaParbat
             fout.close();
 
             filenames.push_back(ofilexF);
-
           }
 
       }

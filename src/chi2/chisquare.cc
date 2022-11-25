@@ -57,11 +57,11 @@ namespace NangaParbat
 
         // Cut on transverse momentum MAPTMD22-like
         if (beam == "PR")
-           qToQMax = std::min(cutParam[0], cutParam[1]);
+          qToQMax = std::min(cutParam[0], cutParam[1]);
 
         // Cut on transverse momentum MAPTMD22Pion-like
         if (beam == "PI")
-           qToQMax = cutParam[0] + cutParam[1] / Qmin;
+          qToQMax = cutParam[0] + cutParam[1] / Qmin;
 
         for (auto const& qT : qTv)
           if (qT.second / Qmin < qToQMax)
@@ -109,7 +109,7 @@ namespace NangaParbat
         //std::cout << "Qmin from chisquare.cc = " << Qmin << std::endl;
         //std::cout << "len(qT)" << qTv.size() << std::endl;
         for (auto const& qT : qTv)
-          if (qT / Qmin < qToQMax)
+          if (qT.second / Qmin < qToQMax)
             idata++;
 
         _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
