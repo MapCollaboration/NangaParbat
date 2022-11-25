@@ -1,0 +1,91 @@
+dependent_variables:
+  - header: {title: "STAR at 510 GeV, 73 GeV < Q < 114 GeV, |#it{y}| < 1", xlabel: "#it{q}_{T} [GeV]", ylabel: "#frac{d#it{#sigma}}{d#it{q}_{T}}  [pb GeV^{-1}]", titlepy: "STAR at 510 GeV, 73 GeV < Q < 114 GeV, $|y|$ < 1", xlabelpy: "$q_T\\rm{ [GeV]}$", ylabelpy: "$\\frac{d\\sigma}{dq_{T}}[\\ rm{pb GeV}^{-1}]$"}
+    qualifiers:
+      - {name: process, value: DY}
+      - {name: target_isoscalarity, value: 1}
+      - {name: prefactor, value: 1}
+      - {name: Vs, value: 510}
+      - {name: Q, low: 73, high: 114, integrate: true}
+      - {name: y, low: -1, high: 1, integrate: true}
+      - {name: PS_reduction, pTmin: 25, etamin: -1, etamax: 1}
+    values:
+      - errors:
+          - {label: unc, value: 0.0548531}
+          - {label: mult, value: 4.55173e-02}
+          - {label: mult, value: 0.085}
+          - {label: unc, value: 0.00741415}
+        value: 0.217182
+      - errors:
+          - {label: unc, value: 0.0848668}
+          - {label: mult, value: 4.35535e-02}
+          - {label: mult, value: 0.085}
+          - {label: unc, value: 0.016709}
+        value: 0.511523
+      - errors:
+          - {label: unc, value: 0.0791696}
+          - {label: mult, value: 4.12668e-02}
+          - {label: mult, value: 0.085}
+          - {label: unc, value: 0.0214395}
+        value: 0.692712
+      - errors:
+          - {label: unc, value: 0.0603038}
+          - {label: mult, value: 4.4195931e-02}
+          - {label: mult, value: 0.085}
+          - {label: unc, value: 0.012955079594145}
+        value: 0.527631
+      - errors:
+          - {label: unc, value: 0.0403826}
+          - {label: mult, value: 3.92853e-02}
+          - {label: mult, value: 0.085}
+          - {label: unc, value: 0.00827913}
+        value: 0.302337
+      - errors:
+          - {label: unc, value: 0.0317007}
+          - {label: mult, value: 3.46982e-02}
+          - {label: mult, value: 0.085}
+          - {label: unc, value: 0.00501435}
+        value: 0.192684
+      - errors:
+          - {label: unc, value: 0.0279459}
+          - {label: mult, value: 3.33887e-02}
+          - {label: mult, value: 0.085}
+          - {label: unc, value: 0.00389999}
+        value: 0.155741
+      - errors:
+          - {label: unc, value: 0.0191780}
+          - {label: mult, value: 3.898895e-02}
+          - {label: mult, value: 0.085}
+          - {label: unc, value: 0.000357417}
+        value: 0.0714833
+      - errors:
+          - {label: unc, value: 0.0179411}
+          - {label: mult, value: 3.935448e-02}
+          - {label: mult, value: 0.085}
+          - {label: unc, value: 0.000245023}
+        value: 0.0490046
+      - errors:
+          - {label: unc, value: 0.0236700}
+          - {label: mult, value: 4.520193e-02}
+          - {label: mult, value: 0.085}
+          - {label: unc, value: 0.000379807}
+        value: 0.0759614
+      - errors:
+          - {label: unc, value: 0.0127398}
+          - {label: mult, value: 9.548082e-01}
+          - {label: mult, value: 0.085}
+          - {label: unc, value: 0.000173169}
+        value: 0.0346337
+independent_variables:
+  - header: {name: PT, units: GEV}
+    values:
+      - {high:  1.25, low:  0.00}
+      - {high:  2.50, low:  1.25}
+      - {high:  3.75, low:  2.50}
+      - {high:  5.00, low:  3.75}
+      - {high:  7.50, low:  5.00}
+      - {high: 10.00, low:  7.50}
+      - {high: 12.50, low: 10.00}
+      - {high: 15.00, low: 12.50}
+      - {high: 17.50, low: 15.00}
+      - {high: 20.00, low: 17.50}
+      - {high: 25.00, low: 20.00}
