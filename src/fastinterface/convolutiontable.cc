@@ -53,7 +53,7 @@ namespace NangaParbat
     _cutParam(cutParam),
     _acc(acc),
     _cuts(cuts),
-    _Hbeam(table["hadron_beam"].as<std::string>())
+    _Hbeam(table["hadron_beam"] ? table["hadron_beam"].as<std::string>() : "PR")
   {
     // Compute total cut mask as a product of single masks
     _cutmask.resize(_qTfact.size(), true);
