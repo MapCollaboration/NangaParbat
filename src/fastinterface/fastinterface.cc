@@ -161,7 +161,7 @@ namespace NangaParbat
     _QuarkSudakov = QuarkEvolutionFactor(_TmdPdfObjs, Alphas, pto, Ci, 1e5);
 
     // Build Evolved Jet TMD
-    const double JetR = _config["JetR"].as<double>();
+    const double JetR = (_config["JetR"] ? _config["JetR"].as<double>() : 1);
 
     // Choice of the Jet Algorithm
     //const apfel::JetAlgorithm JetAlgo = apfel::JetAlgorithm::KT;
