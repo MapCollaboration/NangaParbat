@@ -357,7 +357,7 @@ namespace NangaParbat
         Tabs[i] << YAML::Key << "name"         << YAML::Value << name;
         Tabs[i] << YAML::Key << "process"      << YAML::Value << proc;
         Tabs[i] << YAML::Key << "CME"          << YAML::Value << Vs;
-        //Tabs[i] << YAML::Key << "hadron_beam"  << YAML::Value << beam;
+        Tabs[i] << YAML::Key << "hadron_beam"  << YAML::Value << beam;
         Tabs[i] << YAML::Key << "qTintegrated" << YAML::Value << IntqT;
         Tabs[i] << YAML::Key << "qT_bounds"    << YAML::Value << YAML::Flow << qTv;
         Tabs[i] << YAML::Key << "qT_map"       << YAML::Value << YAML::Flow << YAML::BeginSeq;
