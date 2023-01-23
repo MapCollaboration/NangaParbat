@@ -110,12 +110,9 @@ Fit of the TMD PDFs of the pion to Drell-Yan data as published in [[Phys.Rev.D 1
 
 ## TMD grids
 
-Below you can find a list of TMD and structure functions grids that
-are compatible with NangaParbat specifications and can be used with
-the Nanga Parbat interpolation routines. The grids will be made
-available also through the TMDlib library.
-
-- PV17 fit [[JHEP 06 (2017) 081](https://arxiv.org/pdf/1703.10157.pdf)]: here https://drive.google.com/drive/folders/1cXHZKS0OmY7woUBR2zw_Nf6RmAQYimjl?usp=sharing you can find the grids of the TMD PDFs and FFs, and the SIDIS F_UUT structure functions
+TMD and structure functions grids compatible with the NangaParbat specifications are made
+available through the [TMDlib](https://syncandshare.desy.de/index.php/s/GjjcwKQC93M979e?path=%2FTMD%20grid%20files) library.
+Grids of the TMD PDFs and FFs, and the SIDIS F_UUT structure functions from the PV17 fit can also be found [here](https://drive.google.com/drive/folders/1cXHZKS0OmY7woUBR2zw_Nf6RmAQYimjl?usp=sharing).
 
 ## Use of TMD grids
 
