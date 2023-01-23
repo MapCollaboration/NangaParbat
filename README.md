@@ -134,7 +134,7 @@ kinematical points for the interpolation and the convolution, are in
 
 ## References
 
-- *Extraction of Pion Transverse Momentum Distributions from Drell-Yan data*; Matteo Cerutti, Lorenzo Rossi, Simone Venturini, Alessandro Bacchetta, Valerio Bertone, Chiara Bissolotti, and Marco Radici [[arXiv:2210.01733](https://arxiv.org/pdf/2210.01733.pdf)].
+- *Extraction of Pion Transverse Momentum Distributions from Drell-Yan data*; Matteo Cerutti, Lorenzo Rossi, Simone Venturini, Alessandro Bacchetta, Valerio Bertone, Chiara Bissolotti, and Marco Radici [[Phys.Rev.D 107 (2023) 1, 014014](https://arxiv.org/pdf/2210.01733.pdf)].
 - *Unpolarized transverse momentum distributions from a global fit of Drell-Yan and semi-inclusive deep-inelastic scattering data*; Alessandro Bacchetta, Valerio Bertone, Chiara Bissolotti, Giuseppe Bozzi, Matteo Cerutti, Fulvio Piacenza, Marco Radici, Andrea Signori [[JHEP 10 (2022) 127](https://arxiv.org/pdf/2206.07598.pdf)].
 - *Transverse-momentum-dependent parton distributions up to N3LL from Drell-Yan data*; Alessandro Bacchetta, Valerio Bertone, Chiara Bissolotti, Giuseppe Bozzi, Filippo Delcarro, Fulvio Piacenza, Marco Radici [[JHEP 07 (2020) 117](https://arxiv.org/pdf/1912.07550.pdf)].
 
