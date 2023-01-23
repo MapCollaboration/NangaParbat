@@ -115,13 +115,13 @@ namespace NangaParbat
 
                 // Construct maps of index and values.
                 // This is done so that the separation between values in bins can be done by index.
-                imult[vindex]  = vmult;
-                istat[vindex]  = vstat;
-                isyst[vindex]  = vsyst;
-                iQ2[vindex]    = vQ2;
-                ix[vindex]     = vx;
-                iz[vindex]     = vz;
-                iPhp[vindex]   = vPhp;
+                imult[vindex] = vmult;
+                istat[vindex] = vstat;
+                isyst[vindex] = vsyst;
+                iQ2[vindex]   = vQ2;
+                ix[vindex]    = vx;
+                iz[vindex]    = vz;
+                iPhp[vindex]  = vPhp;
               }
           }
 
@@ -271,7 +271,6 @@ namespace NangaParbat
                     filedata["mult"].erase(n);
                   }
 
-
                 // Open PDF-error file
                 std::ifstream pdferr(PDFErrorFolder + ofileXZ + ".out");
                 std::string line;
@@ -383,7 +382,7 @@ namespace NangaParbat
                 emit << YAML::Key << "header" << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "x" << YAML::EndMap;
                 emit << YAML::Key << "values" << YAML::Value;
                 emit << YAML::BeginSeq;
-                for (int i = 0; i < (int) data.size(); i++ )
+                for (int i = 0; i < (int) filedata["z"].size(); i++)
                   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "high" << YAML::Value << xb.second.second << YAML::Key << "low" << YAML::Value << xb.second.first << YAML::Key << "value" << YAML::Value << xvalue << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::EndMap;
