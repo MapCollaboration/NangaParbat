@@ -104,7 +104,7 @@ Simultaneous fit of the TMD PDFs of the proton and of the TMD FFs of ligh hadron
 
 ### MAPTMD22Pion fit
 
-Fit of the TMD PDFs of the pion to Drell-Yan data as published in [[arXiv:2210.01733](https://arxiv.org/pdf/2210.01733.pdf)]:
+Fit of the TMD PDFs of the pion to Drell-Yan data as published in [[Phys.Rev.D 107 (2023) 1, 014014](https://arxiv.org/pdf/2210.01733.pdf)]:
 
 - fit at [N3LL](https://vbertone.github.io/NangaParbat/results/MAPTMD22Pion/N3LL/index.html).
 
@@ -115,7 +115,7 @@ are compatible with NangaParbat specifications and can be used with
 the Nanga Parbat interpolation routines. The grids will be made
 available also through the TMDlib library.
 
-- PV17 fit [Reference: [arXiv:1703.10157](https://arxiv.org/pdf/1703.10157.pdf)]: here https://drive.google.com/drive/folders/1cXHZKS0OmY7woUBR2zw_Nf6RmAQYimjl?usp=sharing you can find the grids of the TMD PDFs and FFs, and the SIDIS F_UUT structure functions
+- PV17 fit [[JHEP 06 (2017) 081](https://arxiv.org/pdf/1703.10157.pdf)]: here https://drive.google.com/drive/folders/1cXHZKS0OmY7woUBR2zw_Nf6RmAQYimjl?usp=sharing you can find the grids of the TMD PDFs and FFs, and the SIDIS F_UUT structure functions
 
 ## Use of TMD grids
 

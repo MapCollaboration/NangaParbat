@@ -53,7 +53,7 @@ namespace NangaParbat
     _cutParam(cutParam),
     _acc(acc),
     _cuts(cuts),
-    _Hbeam(table["hadron_beam"].as<std::string>())
+    _Hbeam(table["hadron_beam"] ? table["hadron_beam"].as<std::string>() : "PR")
   {
     // Compute total cut mask as a product of single masks
     _cutmask.resize(_qTfact.size(), true);
@@ -373,13 +373,13 @@ namespace NangaParbat
         p1 = GetPredictions([=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 0); }, [=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 2); });
         p2 = GetPredictions([=] (double const& x, double const& b, double const& zeta) -> double{ return dNP(x, b, zeta, 0); }, [=] (double const& x, double const& b, double const& zeta) -> double{ return fNP(x, b, zeta, 2); });
         break;
-/*
-      // JetSIDIS: one PDF and one JetTMD
-      case DataHandler::Process::JetSIDIS:
-        p1 = GetPredictions(fNP1, dNP2);
-        p2 = GetPredictions(dNP1, fNP2);
-        break;
-*/
+      /*
+            // JetSIDIS: one PDF and one JetTMD
+            case DataHandler::Process::JetSIDIS:
+              p1 = GetPredictions(fNP1, dNP2);
+              p2 = GetPredictions(dNP1, fNP2);
+              break;
+      */
       // e+e- annihilation into two hadrons: two FFs (Not present
       // yet)
       case DataHandler::Process::DIA:

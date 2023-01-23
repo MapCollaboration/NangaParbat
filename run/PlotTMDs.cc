@@ -38,6 +38,7 @@ int main(int argc, char* argv[])
 
   // Open LHAPDF set
   LHAPDF::PDF* dist = LHAPDF::mkPDF(config[pf + "set"]["name"].as<std::string>(), config[pf + "set"]["member"].as<int>());
+
   // Rotate sets into the QCD evolution basis
   const auto RotDists = [&] (double const& x, double const& mu) -> std::map<int,double> { return apfel::PhysToQCDEv(dist->xfxQ(x, mu)); };
 
@@ -55,6 +56,7 @@ int main(int argc, char* argv[])
 
   // Set verbosity level of APFEL++ to the minimum
   apfel::SetVerbosityLevel(0);
+
   // Define x-space grid
   std::vector<apfel::SubGrid> vsg;
   for (auto const& sg : config["xgrid" + pf])
@@ -71,9 +73,8 @@ int main(int argc, char* argv[])
   // Tabulate collinear distributions
   const apfel::TabulateObject<apfel::Set<apfel::Distribution>> TabDists{EvolvedDists, 100, dist->qMin()*0.9, dist->qMax(), 3, Thresholds};
 
-
   // Definition of the Jet Radius and the Jet Algorithm
-  double JetR = config["JetR"].as<double>();
+  double JetR = (config["JetR"] ? config["JetR"].as<double>() : 1);
   const apfel::JetAlgorithm JetAlgo = apfel::JetAlgorithm::KT;
 
   // Build evolved TMD distributions
@@ -100,6 +101,7 @@ int main(int argc, char* argv[])
 
   std::function<double(double const&, double const&, double const&)> EvTMDJet;
   EvTMDJet = BuildTmdJet(apfel::InitializeTmdObjects(g, Thresholds), JetAlgo, JetR, Alphas, pto, Ci, 1, 1e-7);
+
   // b* prescription
   const std::function<double(double const&, double const&)> bs = NangaParbat::bstarMap.at(config["bstar"].as<std::string>());
 
@@ -144,7 +146,6 @@ int main(int argc, char* argv[])
       0.2000*Q, 0.2250*Q, 0.2500*Q, 0.2750*Q, 0.3000*Q, 0.3500*Q, 0.4000*Q, 0.4500*Q, 0.5000*Q,
       0.5500*Q, 0.6000*Q, 0.6500*Q, 0.7000*Q, 0.8000*Q, 0.9000*Q, 1*Q
     };
-
   */
 
   // Read file of parameters
@@ -168,31 +169,20 @@ int main(int argc, char* argv[])
       // Set vector of parameters
       NPFunc->SetParameters(pars[ip]);
 
-      // Zeta Jet Definition
-      // double tR = tan(JetR/2);
-      // double zetaJ = pow(tR * 2 * exp(- apfel::emc) / bs(bT,Q), 2);
-
       // bT-space TMD
-      const auto xFb = [&] (double const& bT) -> double { return bT * QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1)); };
+      const auto xFb = [&] (double const& bT) -> double { return bT * QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1)) / 2 / M_PI; };
       const apfel::TabulateObject<double> TabxFb{xFb, 300, bTmin, bTmax, 3, bThresholds, [] (double const& x)->double{ return log(x); }, [] (double const& x)->double{ return exp(x); }};
       const std::function<double(double const&)> txFb = [&] (double const& bT) -> double{ return TabxFb.Evaluate(bT); };
-
       const std::function<double(double const&)> fnp = [&] (double const& bT) -> double { return bT * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1));};
-
       const auto xF2b = [&] (double const& bT) -> double { return QCDEvToPhys(EvTMDs(bs(bT, Q), Q, Q2).GetObjects()).at(ifl).Evaluate(x) * NPFunc->Evaluate(x, bT, Q2, (pf == "pdf" ? 0 : 1)); };
-
 
       // Mean k_\perp^2: related to TMD PDFs
       const auto meanqT2 = [&] (double const& bT) -> double { return -2 * (xF2b(bT + epsilon) - xF2b(bT)) / (bT * epsilon * xF2b(bT)); };
-
       meanqT2s.push_back(meanqT2(1.123));
-
 
       // Compute TMDs in qT space
       for (int iqT = 0; iqT < (int) qTv.size(); iqT++)
-        {
-          tmds[ip][iqT] = DEObj.transform(txFb, qTv[iqT]);
-        }
+        tmds[ip][iqT] = DEObj.transform(txFb, qTv[iqT]);
     }
   t.stop();
 
