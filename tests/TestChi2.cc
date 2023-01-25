@@ -27,7 +27,8 @@ int main(int argc, char *argv[])
 
   // Convolution table
   apfel::Timer t;
-  NangaParbat::ConvolutionTable CTable{YAML::LoadFile(argv[2]), 0.1};
+  //NangaParbat::ConvolutionTable CTable{YAML::LoadFile(argv[2]), 0.1;
+  NangaParbat::ConvolutionTable CTable{YAML::LoadFile(argv[2]), {0.2, 0.7, 0.5}};
   t.stop();
 
   // Define "ChiSquare" object

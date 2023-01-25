@@ -85,23 +85,34 @@ Code documentation generated with Doxygen can be found [here](https://vbertone.g
 
 ## Public results
 
-The results obtained with NangaParbat for the fit of TMD PDFs to Drell-Yan data can be found at the following links:
+The reports linked below have been generated using the CLI ``cli/report.py``.
+
+### PV19 fit
+
+Fit of the TMD PDFs of the proton to Drell-Yan data as published in [[JHEP 07 (2020) 117](https://arxiv.org/pdf/1912.07550.pdf)]:
 
 - fit at [N3LL](https://vbertone.github.io/NangaParbat/results/PV19/N3LL/index.html),
 - fit at [NNLL'](https://vbertone.github.io/NangaParbat/results/PV19/NNLLp/index.html),
 - fit at [NNLL](https://vbertone.github.io/NangaParbat/results/PV19/NNLL/index.html),
 - fit at [NLL'](https://vbertone.github.io/NangaParbat/results/PV19/NLLp/index.html).
 
-The reports above have been generated using the CLI ``cli/report.py``.
+### MAPTMD22 fit
+
+Simultaneous fit of the TMD PDFs of the proton and of the TMD FFs of ligh hadrons to Drell-Yan and SIDIS data as published in [[JHEP 10 (2022) 127](https://arxiv.org/pdf/2206.07598.pdf)]:
+
+- fit at [N3LL](https://vbertone.github.io/NangaParbat/results/MAPTMD22/N3LL/index.html).
+
+### MAPTMD22Pion fit
+
+Fit of the TMD PDFs of the pion to Drell-Yan data as published in [[Phys.Rev.D 107 (2023) 1, 014014](https://arxiv.org/pdf/2210.01733.pdf)]:
+
+- fit at [N3LL](https://vbertone.github.io/NangaParbat/results/MAPTMD22Pion/N3LL/index.html).
 
 ## TMD grids
 
-Below you can find a list of TMD and structure functions grids that
-are compatible with NangaParbat specifications and can be used with
-the Nanga Parbat interpolation routines. The grids will be made
-available also through the TMDlib library.
-
-- PV17 fit [Reference: [arXiv:1703.10157](https://arxiv.org/pdf/1703.10157.pdf)]: here https://drive.google.com/drive/folders/1cXHZKS0OmY7woUBR2zw_Nf6RmAQYimjl?usp=sharing you can find the grids of the TMD PDFs and FFs, and the SIDIS F_UUT structure functions
+TMD and structure functions grids compatible with the NangaParbat specifications are made
+available through the [TMDlib](https://syncandshare.desy.de/index.php/s/GjjcwKQC93M979e?path=%2FTMD%20grid%20files) library.
+Grids of the TMD PDFs and FFs, and the SIDIS F_UUT structure functions from the PV17 fit can also be found [here](https://drive.google.com/drive/folders/1cXHZKS0OmY7woUBR2zw_Nf6RmAQYimjl?usp=sharing).
 
 ## Use of TMD grids
 
@@ -120,13 +131,17 @@ kinematical points for the interpolation and the convolution, are in
 
 ## References
 
-- *Transverse-momentum-dependent parton distributions up to N3LL from Drell-Yan data*; Alessandro Bacchetta, Valerio Bertone, Chiara Bissolotti, Giuseppe Bozzi, Filippo Delcarro, Fulvio Piacenza, Marco Radici [[arXiv:1912.07550](https://arxiv.org/pdf/1912.07550.pdf)]
+- *Extraction of Pion Transverse Momentum Distributions from Drell-Yan data*; Matteo Cerutti, Lorenzo Rossi, Simone Venturini, Alessandro Bacchetta, Valerio Bertone, Chiara Bissolotti, and Marco Radici [[Phys.Rev.D 107 (2023) 1, 014014](https://arxiv.org/pdf/2210.01733.pdf)].
+- *Unpolarized transverse momentum distributions from a global fit of Drell-Yan and semi-inclusive deep-inelastic scattering data*; Alessandro Bacchetta, Valerio Bertone, Chiara Bissolotti, Giuseppe Bozzi, Matteo Cerutti, Fulvio Piacenza, Marco Radici, Andrea Signori [[JHEP 10 (2022) 127](https://arxiv.org/pdf/2206.07598.pdf)].
+- *Transverse-momentum-dependent parton distributions up to N3LL from Drell-Yan data*; Alessandro Bacchetta, Valerio Bertone, Chiara Bissolotti, Giuseppe Bozzi, Filippo Delcarro, Fulvio Piacenza, Marco Radici [[JHEP 07 (2020) 117](https://arxiv.org/pdf/1912.07550.pdf)].
 
 ## Contacts
 
 - Valerio Bertone: valerio.bertone@cern.ch
 - Alessandro Bacchetta: alessandro.bacchetta@unipv.it
-- Chiara Bissolotti: chiara.bissolotti01@universitadipavia.it
+- Chiara Bissolotti: cbissolotti@anl.gov
+- Matteo Cerutti: matteo.cerutti@pv.infn.it
+- Lorenzo Rossi: lorenzo.rossi@pv.infn.it
 
 ## Credits
 

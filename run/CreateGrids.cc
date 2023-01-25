@@ -14,12 +14,12 @@ int main(int argc, char* argv[])
   if (argc < 4 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./CreateGrids <report folder> <pdf/ff> <output>\n" << std::endl;
+      std::cout << "Syntax: ./CreateGrids <report folder> <output> <pdf/ff>\n" << std::endl;
       exit(-10);
     }
 
   // Produce the folder with the grids
-  NangaParbat::ProduceTMDGrid(argv[1], argv[3], argv[2]);
+  NangaParbat::ProduceTMDGrid(argv[1], argv[2], argv[3]);
 
   return 0;
 }

@@ -26,6 +26,7 @@ namespace NangaParbat
   /**
    * @brief Function that returns ThreeDGrid object better tuned for
    * PDFs or FFs, according to the input string.
+   * @param pf: whether PDFs ("pdf") of FFs ("ff")
    */
   ThreeDGrid Inter3DGrid(std::string const& pf)
   {
@@ -121,7 +122,7 @@ namespace NangaParbat
    * NangaParbat fit.
    * @param ReportFolder: path to the report folder
    * @param Output: name of the output grid
-   * @param pf: whether PDFs ("pdf") of FFs ("ff")
+   * @param distype: whether PDFs ("pdf") of FFs ("ff")
    */
   void ProduceTMDGrid(std::string const& ReportFolder, std::string const& Output, std::string const& distype = "pdf");
 
@@ -133,6 +134,7 @@ namespace NangaParbat
    * @param parameterisation: the parameterisation type
    * @param params: the vector of parameters to be used for the tabulation
    * @param pf: whether PDFs ("pdf") of FFs ("ff")
+   * @param tdg: 3D grid used
    * @return a YAML emitter
    */
   std::unique_ptr<YAML::Emitter> EmitTMDGrid(YAML::Node          const& config,
@@ -146,7 +148,19 @@ namespace NangaParbat
    * is suppose to resamble an LHAPDF info file for the TMDs. We use
    * plain YAML format.
    * @param config: the YAML not with the theory settings
+   * @param NumMembers: number of members
    * @param pf: whether PDFs ("pdf") of FFs ("ff")
+   * @param tdg: 3D grid used
+   * @param Flavors: vector of flavours
+   * @param SetDesc: grid description
+   * @param Authors: list of authors
+   * @param Reference: reference
+   * @param SetIndex: ID index of the set
+   * @param SetName: name of the set
+   * @param Format: TMDlib format
+   * @param DataVersion: version of the grid
+   * @param ErrorType: error-type descriptor
+   * @param FlavorScheme: flavour scheme
    * @return a YAML emitter
    */
   std::unique_ptr<YAML::Emitter> EmitTMDInfo(YAML::Node       const& config,

@@ -1,0 +1,63 @@
+# Short descrition of the fit that will appear in the report of the
+# fit
+Description: "Fit with the MAP 2022 parameterisation."
+
+# Minimiser to be used for the fit. Possible options so far are
+# 'minuit', 'ceres', and 'none'.
+Minimiser: none
+
+# Seed used with the random-number generator for the generation of the
+# Monte Carlo replicas
+Seed: '1234'
+
+# Cut on qT / Q. This has to be smaller than the production cut used
+# to produce the tables.
+qToQmax: '4'
+
+# Parameters to compute the cut qT / Q as PV17 fit.
+cutParam: [0.2, 0.5, 0.3]
+
+# Percentile cut (in percent) on the distribution of chi2's, error
+# functions and parameters used to identify outliers.
+Percentile cut: '5'
+
+# Enable or disable the t0 prescription for the treatment of
+# normalisation uncertantities and define the set of parameters to be
+# used to compute the corresponding predictions (used only if the t0
+# prescriprion is enabled). They have to be as many and ordered as the
+# "Parameters" below.
+t0prescription: true
+t0parameters: [0.2482420850967863, 0.31560484357030422, 1.1349706417780698, 0.51541879126481949, 1.8893385924128125, 0.0043928548895256119, 10.843398922979528, 0.0070355513246244906, 1.5397221152343268, 0.061287263131035774, 0.21739975134899683, 0.12887993135476603, 0.016302544233918744, 0.019602747712729469, 4.2653349811775403, 4.3239264662485306, 0.41795806310999201, 12.673323632665454, 4.2619417231812013, 0.16186674192264386, 0.00058920379789313454]
+
+# Parameterisation to be fitted to data. This has to correspond to a
+# derivarion of the "Parameterisation" class.
+Parameterisation: MAP22g52
+
+# Fluctuate initial parameters according to their step
+Paramfluct: false
+
+# List of parameters to be fitted to data. This requires that the
+# number and order of parameters matches those expected by the
+# particular parameterisation being used.
+Parameters:
+  - {name: g2, starting_value: 0.2482420850967863, step: 0.0006, fix: false}
+  - {name: N1, starting_value: 0.31560484357030422, step: 0.003, fix: false}
+  - {name: alpha1, starting_value: 1.1349706417780698, step: 0.01, fix: false}
+  - {name: sigma1, starting_value: 0.51541879126481949, step: 0.006, fix: false}
+  - {name: lambda, starting_value: 1.8893385924128125, step: 0.1, fix: false}
+  - {name: N3, starting_value: 0.0043928548895256119, step: 0.00006, fix: false}
+  - {name: beta1, starting_value: 10.843398922979528, step: 0.04, fix: false}
+  - {name: delta1, starting_value: 0.0070355513246244906, step: 0.0002, fix: false}
+  - {name: gamma1, starting_value: 1.5397221152343268, step: 0.01, fix: false}
+  - {name: lambdaF, starting_value: 0.061287263131035774, step: 0.002, fix: false}
+  - {name: N3b, starting_value: 0.21739975134899683, step: 0.0005, fix: false}
+  - {name: N1b, starting_value: 0.12887993135476603, step: 0.001, fix: false}
+  - {name: N1c, starting_value: 0.016302544233918744, step: 0.0002, fix: false}
+  - {name: lambda2, starting_value: 0.019602747712729469, step: 0.0006, fix: false}
+  - {name: alpha2, starting_value: 4.2653349811775403, step: 0.02, fix: false}
+  - {name: alpha3, starting_value: 4.3239264662485306, step: 0.02, fix: false}
+  - {name: sigma2, starting_value: 0.41795806310999201, step: 0.006, fix: false}
+  - {name: sigma3, starting_value: 12.673323632665454, step: 0.02, fix: false}
+  - {name: beta2, starting_value: 4.2619417231812013, step: 0.02, fix: false}
+  - {name: delta2, starting_value: 0.16186674192264386, step: 0.0008, fix: false}
+  - {name: gamma2, starting_value: 0.00058920379789313454, step: 0.002, fix: false}
