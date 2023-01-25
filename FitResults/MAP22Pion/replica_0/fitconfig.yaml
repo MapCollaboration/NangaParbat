@@ -1,0 +1,40 @@
+Description: MAP21 pion TMDs3
+Minimiser: minuit
+Seed: 5814
+cutParam: [0.3, 0.6, 0.5, 0.38]
+Percentile cut: 5
+t0prescription: false
+t0parameters:
+  - 0.2482420850967863
+  - 0.3156048435703042
+  - 0.5154187912648195
+  - 1.13497064177807
+  - 1.889338592412813
+  - 0.128879931354766
+  - 0.417958063109992
+  - 4.26533498117754
+  - 0.01960274771272947
+  - 0.01630254423391874
+  - 12.67332363266545
+  - 4.323926466248531
+  - 0.4691391493919952
+  - 4.037839600624123
+  - 4.368883413905381
+Parameterisation: MAPTMDPion3
+Paramfluct: true
+Parameters:
+  - {name: $g_2$, starting_value: 0.2482420850967863, step: 0.001, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+  - {name: $N_1$, starting_value: 0.3156048435703042, step: 0.003, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+  - {name: $\sigma_1$, starting_value: 0.5154187912648195, step: 0.030, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+  - {name: $\alpha_1$, starting_value: 1.13497064177807, step: 0.002, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+  - {name: $\lambda$, starting_value: 1.889338592412813, step: 0.005, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+  - {name: $N_1B$, starting_value: 0.128879931354766, step: 0.003, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+  - {name: $\sigma_2$, starting_value: 0.417958063109992, step: 0.030, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+  - {name: $\alpha_2$, starting_value: 4.26533498117754, step: 0.001, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+  - {name: $\lambda_2$, starting_value: 0.01960274771272947, step: 0.003, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+  - {name: $N_1C$, starting_value: 0.01630254423391874, step: 0.030, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+  - {name: $\sigma_3$, starting_value: 12.67332363266545, step: 0.002, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+  - {name: $\alpha_3$, starting_value: 4.323926466248531, step: 0.005, fix: true, file: ./FitResults/MAP22/Report/FixedParameters.yaml}
+  - {name: $N_1\pi$, starting_value: 0.4691391493919952, step: 0.03, fix: false}
+  - {name: $\sigma_\pi$, starting_value: 4.037839600624123, step: 0.030, fix: false}
+  - {name: $\alpha_\pi$, starting_value: 4.368883413905381, step: 0.030, fix: false}

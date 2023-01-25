@@ -2,6 +2,7 @@ set(cuts_source
   cut.cc
   zcut.cc
   qcut.cc
+  xzcut.cc
   Trainingcut.cc
   cutfactory.cc
   )

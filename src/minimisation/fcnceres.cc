@@ -18,8 +18,10 @@ namespace NangaParbat
     // Put parameters into a vector.
     const int Np = _chi2.GetNumberOfParameters();
 
+    // Fill parameters vector and impose positivity (for all parameters)
     std::vector<double> vpars(Np);
     for (int ip = 0; ip < Np; ip++)
+      // vpars[ip] = abs(parameters[0][ip]);
       vpars[ip] = parameters[0][ip];
 
     // Set the parameters of the parameterisation

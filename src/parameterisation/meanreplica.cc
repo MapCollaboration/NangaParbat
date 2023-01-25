@@ -35,6 +35,7 @@ namespace NangaParbat
     // Select replicas according to whether the fit converged (status
     // = 1) and the global error function per data point is less than
     // a user-given cut.
+
     for (auto const& folder : NangaParbat::list_dir(InputFolder))
       if (folder.substr(0, 8) == "replica_" && folder != "replica_0")
         {
@@ -87,7 +88,7 @@ namespace NangaParbat
 
     // Generate interpolation grid in zeta-space (logarithmic)
     const int nzeta = 50;
-    const double zetamin = 4;
+    const double zetamin = 1;
     const double zetamax = 40000;
     const double zetastep = exp( log( zetamax / zetamin ) / ( nzeta - 1 ) );
     std::vector<double> zetav;
@@ -149,7 +150,7 @@ namespace NangaParbat
             _xg->Interpolant(std::get<0>(xbounds), ix, x) *
             _bTg->Interpolant(std::get<0>(bTbounds), ibT, bT) *
             _zetag->Interpolant(std::get<0>(zetabounds), izeta, zeta) *
-            _fNP1g[ix][ibT][izeta];
+            (ifunc == 0 ? _fNP1g[ix][ibT][izeta] : _fNP2g[ix][ibT][izeta]);
 
     return result;
   }

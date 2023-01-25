@@ -15,6 +15,10 @@ if (GSL_CONFIG AND ROOT_CONFIG AND Ceres_FOUND)
   add_executable(TestChi2 TestChi2.cc)
   target_link_libraries(TestChi2 NangaParbat)
   add_test(TestChi2 TestChi2)
+
+  add_executable(TestSIDISNormalisationFactors TestSIDISNormalisationFactors.cc)
+  target_link_libraries(TestSIDISNormalisationFactors NangaParbat)
+  add_test(TestSIDISNormalisationFactors TestSIDISNormalisationFactors)
 endif ()
 
 add_executable(GridProduction GridProduction.cc)

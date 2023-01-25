@@ -31,7 +31,7 @@ namespace NangaParbat
       return exp( - ( g1 + g2 * log(zeta / _Q02) / 2 ) * pow(b, 2) / 2 );
     };
 
-    double Derive(double const&, double const& b, double const& zeta, int const& ifunc, int const& ipar) const
+    double Derive(double const&, double const& b, double const& zeta, int const&, int const& ipar) const
     {
       const double g1 = this->_pars[0];
       const double g2 = this->_pars[1];

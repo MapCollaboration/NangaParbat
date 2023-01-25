@@ -40,23 +40,88 @@ namespace NangaParbat
     _DSVect.push_back(DSBlock);
 
     // Determine number of data points that pass the cut qT / Q.
-    const DataHandler::Kinematics kin     = DSBlock.first->GetKinematics();
-    const double                  qToQMax = DSBlock.second->GetCutqToverQ();
-    const std::vector<double>     qTv     = kin.qTv;
-    const double                  Qmin    = (kin.Intv1 ? kin.var1b.first : ( kin.var1b.first + kin.var1b.second ) / 2);
+    const DataHandler::Kinematics               kin      = DSBlock.first->GetKinematics();
+    //const double                                qToQMax = DSBlock.second->GetCutqToverQ();
+    const DataHandler::Process                  proc     = DSBlock.first->GetProcess();
+    const std::vector<double>                   cutParam = DSBlock.second->GetcutParam();
+    const std::vector<std::pair<double,double>> qTv      = kin.qTmap;
+    const std::string                           beam     = DSBlock.second->GetBeam();
 
-    // Run over the qTv vector, count how many data points pass
-    // the cut and push the number into the "_ndata" vector.
-    int idata = 0;
-    for (auto const& qT : qTv)
-      if (qT / Qmin < qToQMax)
-        idata++;
+    if (proc == 0) //DY
+      {
+        int idata = 0;
 
-    _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
+        const double Qmin = (kin.Intv1 ? kin.var1b.first : ( kin.var1b.first + kin.var1b.second ) / 2);
 
-    // Data the pass all the cuts
-    const std::valarray<bool> cm = DSBlock.second->GetCutMask();
-    _ndatac.push_back(std::count(std::begin(cm), std::end(cm), true));
+        double qToQMax = 0;
+
+        // Cut on transverse momentum MAPTMD22-like
+        if (beam == "PR")
+          qToQMax = std::min(cutParam[0], cutParam[1]);
+
+        // Cut on transverse momentum MAPTMD22Pion-like
+        if (beam == "PI")
+          qToQMax = cutParam[0] + cutParam[1] / Qmin;
+
+        for (auto const& qT : qTv)
+          if (qT.second / Qmin < qToQMax)
+            idata++;
+
+        _ndata.push_back(idata);
+
+        // Data the pass all the cuts
+        const std::valarray<bool> cm = DSBlock.second->GetCutMask();
+        _ndatac.push_back(std::count(std::begin(cm), std::end(cm), true));
+      }
+    else if (proc == 1) //SIDIS
+      {
+        const double Qmin  = (kin.Intv1 ? kin.var1b.first : DSBlock.first->GetBinning()[0].Qav);
+        const double zmin  = (kin.Intv3 ? kin.var3b.first : DSBlock.first->GetBinning()[0].zav);
+
+        // Run over the qTv vector, count how many data points pass
+        // the cut and push the number into the "_ndata" vector.
+        int idata = 0;
+
+        double qToQMax = std::min(std::min(cutParam[0] / zmin, cutParam[1]) + cutParam[2] / Qmin / zmin, 1.0);
+
+        for (auto const& qT : qTv)
+          if (qT.second / Qmin / zmin < qToQMax)
+            idata++;
+
+        _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
+        // Data the pass all the cuts
+        const std::valarray<bool> cm = DSBlock.second->GetCutMask();
+        _ndatac.push_back(std::count(std::begin(cm), std::end(cm), true));
+      }
+    else if (proc == 4) //JetSIDIS
+      {
+        const double Qmin  = (kin.Intv1 ? kin.var1b.first : DSBlock.first->GetBinning()[0].Qav);
+
+        // Run over the qTv vector, count how many data points pass
+        // the cut and push the number into the "_ndata" vector.
+        int idata = 0;
+
+        double qToQMax = std::min(std::min(cutParam[0], cutParam[1]) + cutParam[2] / Qmin, 1.0);
+        //double qToQMax = std::min(cutParam[0] / zmin, cutParam[1]) + cutParam[2] / Qmin / zmin;
+        //std::cout << "param1 from chisquare.cc = " << cutParam[0] << std::endl;
+        //std::cout << "param2 from chisquare.cc = " << cutParam[1] << std::endl;
+        //std::cout << "param3 from chisquare.cc = " << cutParam[2] << std::endl;
+        //std::cout << "Qmin from chisquare.cc = " << Qmin << std::endl;
+        //std::cout << "len(qT)" << qTv.size() << std::endl;
+        for (auto const& qT : qTv)
+          if (qT.second / Qmin < qToQMax)
+            idata++;
+
+        _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
+        //std::cout << "len(qT)" << idata << std::endl;
+        // Data the pass all the cuts
+        const std::valarray<bool> cm = DSBlock.second->GetCutMask();
+        _ndatac.push_back(std::count(std::begin(cm), std::end(cm), true));
+      }
+    else
+      {
+        throw std::runtime_error("[Chisquare::AddBlock]: Only SIDIS, DY or JetSIDIS data sets can be treated here.");
+      }
   };
 
   //_________________________________________________________________________________
@@ -305,12 +370,18 @@ namespace NangaParbat
       os << YAML::Key << chi2.GetNonPerturbativeFunction()->GetParameterNames()[i] << YAML::Value << chi2.GetParameters()[i];
     os << YAML::EndMap;
 
+    // Initialise counter for total number of data points
+    int tnd = 0;
+
     // Loop over the blocks
     os << YAML::Key << "Experiments" << YAML::Value << YAML::BeginSeq;
     for (int i = 0; i < (int) chi2._DSVect.size(); i++)
       {
         // Number of data points
         const int nd = chi2._ndata[i];
+
+        // Total number of data points
+        tnd = nd + tnd;
 
         // Get "DataHandler" and "ConvolutionTable" objects
         DataHandler      * dh = chi2._DSVect[i].first;
@@ -322,6 +393,10 @@ namespace NangaParbat
         // Get systematic shifts and associated penalty
         const std::pair<std::vector<double>, double> sp = chi2.GetSystematicShifts(i);
         const std::vector<double> shifts = sp.first;
+        // for(int i=0; i<shifts.size(); ++i)
+        //   std::cout  << shifts[i] << ' ';
+        // std::cout << "shifts from chisquare.cc = " << sp.first << std::endl;
+
 
         // Get experimental central values and uncorrelated
         // uncertainties.
@@ -345,6 +420,9 @@ namespace NangaParbat
         // Get values of qT
         const std::vector<double> qT = dh->GetKinematics().qTv;
 
+        // Process
+        const DataHandler::Process proc = dh->GetProcess();
+
         // Get plotting labels
         const std::map<std::string, std::string> labels = dh->GetLabels();
 
@@ -352,19 +430,69 @@ namespace NangaParbat
         // uncertainty and systemetic shift.
         os << YAML::BeginMap;
         os << YAML::Key << "Name" << YAML::Value << dh->GetName();
-        os << YAML::Key << "Plot title" << YAML::Value << labels.at("title");
-        os << YAML::Key << "xlabel" << YAML::Value << labels.at("xlabel");
-        os << YAML::Key << "ylabel" << YAML::Value << labels.at("ylabel");
+        // os << YAML::Key << "Plot title" << YAML::Value << labels.at("title");
+        // os << YAML::Key << "xlabel" << YAML::Value << labels.at("xlabel");
+        // os << YAML::Key << "ylabel" << YAML::Value << labels.at("ylabel");
         os << YAML::Key << "Plot title python" << YAML::Value << labels.at("titlepy");
         os << YAML::Key << "xlabelpy" << YAML::Value << labels.at("xlabelpy");
         os << YAML::Key << "ylabelpy" << YAML::Value << labels.at("ylabelpy");
         os << YAML::Key << "partial error function" << YAML::Value << chi2c;
         os << YAML::Key << "partial chi2" << YAML::Value << chi2.Evaluate(i, true);
         os << YAML::Key << "penalty chi2" << YAML::Value << sp.second / nd;
-        os << YAML::Key << "qT" << YAML::Value << YAML::Flow << YAML::BeginSeq;
-        for (int j = 0; j < nd; j++)
-          os << (dh->GetKinematics().IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]);
-        os << YAML::EndSeq;
+
+        if (proc == DataHandler::Process::SIDIS)
+          {
+            // Retrieve kinematics
+            const DataHandler::Kinematics                kin    = dh->GetKinematics();
+            const std::pair<double, double>              Qb     = kin.var1b;    // Invariant mass interval
+            const std::pair<double, double>              xbb    = kin.var2b;    // Bjorken x interval
+            const std::pair<double, double>              zb     = kin.var3b;    // z interval
+            const bool                                   IntqT  = kin.IntqT;    // Whether the bins in qTv are to be integrated over
+            const bool                                   IntQ   = kin.Intv1;    // Whether the bin in Q is to be integrated over
+            const bool                                   Intxb  = kin.Intv2;    // Whether the bin in Bjorken x is to be integrated over
+            const bool                                   Intz   = kin.Intv3;    // Whether the bin in z is to be integrated over
+
+            if (IntQ)
+              os << YAML::Key << "Q" << YAML::Value << YAML::Flow << YAML::BeginSeq << Qb.first << Qb.second << YAML::EndSeq;
+            else
+              os << YAML::Key << "Q" << YAML::Value << Qb.first;
+            if (Intxb)
+              os << YAML::Key << "x" << YAML::Value << YAML::Flow << YAML::BeginSeq << xbb.first << xbb.second << YAML::EndSeq;
+            else
+              os << YAML::Key << "x" << YAML::Value << xbb.first;
+            if (Intz)
+              os << YAML::Key << "z" << YAML::Value << YAML::Flow << YAML::BeginSeq << zb.first << zb.second << YAML::EndSeq;
+            else
+              os << YAML::Key << "z" << YAML::Value << zb.first;
+            os << YAML::Key << "qT" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+            for (int j = 0; j < nd; j++)
+              os << (IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]);
+            os << YAML::EndSeq;
+          }
+        else
+          {
+            // Retrieve kinematics
+            const DataHandler::Kinematics                kin    = dh->GetKinematics();
+            const std::pair<double, double>              Qb     = kin.var1b;    // Invariant mass interval
+            const std::pair<double, double>              yb     = kin.var2b;    // Bjorken x interval
+            const bool                                   IntqT  = kin.IntqT;    // Whether the bins in qTv are to be integrated over
+            const bool                                   IntQ   = kin.Intv1;    // Whether the bin in Q is to be integrated over
+            const bool                                   Intyb  = kin.Intv2;    // Whether the bin in Bjorken x is to be integrated over
+
+            if (IntQ)
+              os << YAML::Key << "Q" << YAML::Value << YAML::Flow << YAML::BeginSeq << Qb.first << Qb.second << YAML::EndSeq;
+            else
+              os << YAML::Key << "Q" << YAML::Value << Qb.first;
+            if (Intyb)
+              os << YAML::Key << "y" << YAML::Value << YAML::Flow << YAML::BeginSeq << yb.first << yb.second << YAML::EndSeq;
+            else
+              os << YAML::Key << "y" << YAML::Value << yb.first;
+            os << YAML::Key << "qT" << YAML::Value << YAML::Flow << YAML::BeginSeq;
+            for (int j = 0; j < nd; j++)
+              os << (IntqT ? ( qT[j] + qT[j+1] ) / 2 : qT[j]);
+            os << YAML::EndSeq;
+          }
+
         os << YAML::Key << "Predictions" << YAML::Value << YAML::Flow << YAML::BeginSeq;
         for (int j = 0; j < nd; j++)
           os << pred[j];
@@ -389,6 +517,9 @@ namespace NangaParbat
       }
     os << YAML::EndSeq;
     os << YAML::EndMap;
+
+    std::cout << "\033[1;32mTotal number of data points: " << tnd << "\033[0m\n" << std::endl;
+
     return os;
   }
 }

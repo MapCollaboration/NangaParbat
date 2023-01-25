@@ -28,8 +28,9 @@ namespace NangaParbat
   /**
    * @brief Function that returns FourDGrid object better tuned for
    * F_UUT, according to the input string.
+   * @param pf: whether F_UUT or others (not implemented yet)
    */
-  FourDGrid Inter4DGrid(std::string const& pf)
+  FourDGrid Inter4DGrid(std::string const&)
   {
     FourDGrid grid{};
     grid.Qg = std::vector<double>
@@ -112,16 +113,16 @@ namespace NangaParbat
    * @param GridTMDPDFfolder: name of TMDPDF grids (subfolder of main folder)
    * @param GridTMDFFfolder: name of TMDFF grids (subfolder of main folder)
    * @param repnumber: replica number
-   * @param fdg: 4D grid used
-   * @param qToQcut: cut for the convolution integral
    * @param pf: whether F_UUT or others (not implemented yet)
+   * @param fdg: 4D grid used
+   * @param qToQcut: cut for the convolution integral (default: 5)
    * @return a YAML emitter
    */
   std::unique_ptr<YAML::Emitter> EmitStructGrid(std::string const& GridsDirectory,
                                                 std::string const& GridTMDPDFfolder,
                                                 std::string const& GridTMDFFfolder,
                                                 int         const& repnumber,
-                                                std::string const& pf,
+                                                std::string const&,
                                                 FourDGrid   const& fdg,
                                                 int         const& qToQcut = 5);
 
@@ -131,9 +132,9 @@ namespace NangaParbat
    * We use plain YAML format.
    * @param FitDirectory: path to main folder, output of NangaParbat fit
    * @param repnumber: replica number
+   * @param pf: whether F_UUT or others (not implemented yet)
    * @param fdg: 4D grid used
    * @param qToQcut: cut for the convolution integral
-   * @param pf: whether F_UUT or others (not implemented yet)
    * @return a YAML emitter
    */
   std::unique_ptr<YAML::Emitter> EmitStructGridDirect(std::string const& FitDirectory,
@@ -146,8 +147,23 @@ namespace NangaParbat
    * @brief Function that produces the info file of the TMD set. This
    * is suppose to resamble an LHAPDF info file for the TMDs. We use
    * plain YAML format.
-   * @param config: the YAML not with the theory settings
-   * @param pf: whether PDFs ("pdf") of FFs ("ff")
+   * @param GridsDirectory: path to main folder
+   * @param GridTMDPDFfolder: name of TMDPDF grids (subfolder of main folder)
+   * @param GridTMDFFfolder: name of TMDFF grids (subfolder of main folder)
+   * @param config: the YAML node with the theory settings
+   * @param NumMembers: number of members
+   * @param pf: whether F_UUT or others (not implemented yet)
+   * @param fdg: 4D grid used
+   * @param Flavors: vector of flavours
+   * @param SetDesc: grid description
+   * @param Target: target type
+   * @param Hadron: hadron type
+   * @param Authors: list of authors
+   * @param Reference: reference
+   * @param SetIndex: ID index of the set
+   * @param Format: TMDlib format
+   * @param DataVersion: version of the grid
+   * @param ErrorType: error-type descriptor
    * @return a YAML emitter
    */
   std::unique_ptr<YAML::Emitter> EmitStructInfo(std::string      const& GridsDirectory,

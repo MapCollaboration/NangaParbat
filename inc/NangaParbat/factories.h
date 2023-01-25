@@ -19,7 +19,7 @@ namespace NangaParbat
   /**
    * @brief Factory that returns a "TMDGrid" object.
    * @param name: name of the TMD set
-   * @param name: name of the folder where the TMD set is
+   * @param folder: name of the folder where the TMD set is
    * @param mem: member to be read (defaul: 0, i.e. central member)
    */
   TMDGrid* mkTMD(std::string const& name, std::string const& folder, int const& mem = 0);
@@ -40,7 +40,7 @@ namespace NangaParbat
   /**
    * @brief Factory that returns a "StructGrid" object.
    * @param name: name of the structure function set
-   * @param name: name of the folder where the structure function set is
+   * @param folder: name of the folder where the structure function set is
    * @param mem: member to be read (defaul: 0, i.e. central member)
    */
   StructGrid* mkSF(std::string const& name, std::string const& folder, int const& mem = 0);
@@ -72,6 +72,8 @@ namespace NangaParbat
    * distributions are equal.
    * @param TMD: distribution
    * @param Charges: to be used as weights of the partonic combinations
+   * @param kTCutOff: cutoff on the integration in kT relative to Q (default: 1)
+   * @param IntEps: integration relative accuracy (default: 1e-5)
    */
   std::function<double(double const&, double const&, double const&, double const&)> Convolution(TMDGrid                                           const* TMD,
                                                                                                 std::function<std::vector<double>(double const&)> const& Charges,

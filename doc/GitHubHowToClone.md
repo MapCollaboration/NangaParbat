@@ -1,13 +1,15 @@
-# GitHubWiP
+# GitHub - Work in Progress
 author: Chiara Bissolotti
-## Procedure followed
 
-The aim of the procedure described here is to obtain a private repository (to become NangaParbatPrivate) that can communicate with the public NangaParbat to ``push`` and ``pull`` changes.
+## How to set up a private copy (mirror) of a public repository
+
+The aim of the procedure described here is to obtain a private repository (to become NangaParbatPrivate) that can ``push`` and ``pull`` changes to and from the public NangaParbat.
 
 From:  https://stackoverflow.com/questions/10065526/github-how-to-make-a-fork-of-public-repository-private or
 https://medium.com/@bilalbayasut/github-how-to-make-a-fork-of-public-repository-private-6ee8cacaf9d3
 
-Create a new repo (let’s call it private-repo) via the Github UI. Then:
+Create a new repo (let’s call it private-repo) via the Github UI.
+Then:
 ```
 git clone --bare https://github.com/exampleuser/public-repo.git
 cd public-repo.git
@@ -146,7 +148,7 @@ Any user or organization on GitHub can fork a repository. Forking a repository i
 2. You can bring changes from the upstream repository to your local fork by synchronizing your fork with the upstream repository.
 
 ## Reset
-To eset to a particular point in time:
+To reset to a particular point in time:
 ```
 git reset --hard master@{"10 minutes ago"}
 ```

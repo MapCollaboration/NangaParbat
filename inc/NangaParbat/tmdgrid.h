@@ -17,6 +17,7 @@ namespace NangaParbat
   public:
     /**
      * @brief The "TMDGrid" constructor
+     * @param info: information node
      * @param grid: the YAML node containing the grid
      */
     TMDGrid(YAML::Node const& info, YAML::Node const& grid);

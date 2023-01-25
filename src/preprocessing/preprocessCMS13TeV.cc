@@ -1,5 +1,5 @@
 /*
- * Author: Chiara Bissolotti
+ * Author: Matteo Cerutti
  */
 
 #include "NangaParbat/preprocessing.h"
@@ -15,24 +15,30 @@ namespace NangaParbat
 {
   //_________________________________________________________________________________
   std::string PreprocessCMS13TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const& PDFError)
+  //std::string PreprocessCMS13TeV(std::string const& RawDataPath, std::string const& ProcessedDataPath, bool const&)
   {
     std::cout << "Processing CMS 13 TeV data ..." << std::endl;
 
     // Path to the raw-data folder
-    const std::string RawDataFolder = RawDataPath + "/HEPData-ins1753680-v1-yaml/";
+    const std::string RawDataFolder = RawDataPath + "/HEPData-ins1753680-v2-yaml/";
 
     // Path to the PDF-error folder
     const std::string PDFErrorFolder = RawDataPath + "/PDFErrors/";
 
     // Vector of tables to process
-    const std::vector<std::string> tables = {"HEPData-ins1753680-v1-Auxiliary_Figures_16_to_20.yaml"};
+    const std::vector<std::string> tables = {"figures_9_to_13.yaml"}; //differential cross section
+    // const std::vector<std::string> tables = {"figures_15_to_19.yaml"}; //norm. differential cross section
 
     // Output folder
-    const std::string ofolder = "CMS";
+    const std::string ofolder = "CMS"; //diff. cross section
+    // const std::string ofolder = "CMS_norm"; //norm. diff. cross section
 
     // Initialize naming map for the y-integration ranges
-    std::map<std::string, std::string> yranges = {{"0 < |y(Z)| < 0.4", "_y_0_0.4"}, {"0.4 < |y(Z)| < 0.8", "_y_0.4_0.8"}, {"0.8 < |y(Z)| < 1.2", "_y_0.8_1.2"}, {"1.2 < |y(Z)| < 1.6", "_y_1.2_1.6"}, {"1.6 < |y(Z)| < 2.4", "_y_1.6_2.4"}};
-    std::map<std::string, std::pair<std::string, std::string>> yrangelims = {{"0 < |y(Z)| < 0.4", {"0", "0.4"}}, {"0.4 < |y(Z)| < 0.8", {"0.4", "0.8"}}, {"0.8 < |y(Z)| < 1.2", {"0.8", "1.2"}}, {"1.2 < |y(Z)| < 1.6", {"1.2", "1.6"}}, {"1.6 < |y(Z)| < 2.4", {"1.6", "2.4"}}};
+    std::map<std::string, std::string> yranges = {{"0 < |y(Z)| < 0.4 bin", "_y_0_0.4"}, {"0.4 < |y(Z)| < 0.8 bin", "_y_0.4_0.8"}, {"0.8 < |y(Z)| < 1.2 bin", "_y_0.8_1.2"}, {"1.2 < |y(Z)| < 1.6 bin", "_y_1.2_1.6"}, {"1.6 < |y(Z)| < 2.4 bin", "_y_1.6_2.4"}};
+    std::map<std::string, std::pair<std::string, std::string>> yrangelims = {{"0 < |y(Z)| < 0.4 bin", {"0", "0.4"}}, {"0.4 < |y(Z)| < 0.8 bin", {"0.4", "0.8"}}, {"0.8 < |y(Z)| < 1.2 bin", {"0.8", "1.2"}}, {"1.2 < |y(Z)| < 1.6 bin", {"1.2", "1.6"}}, {"1.6 < |y(Z)| < 2.4 bin", {"1.6", "2.4"}}}; //diff
+
+    // std::map<std::string, std::string> yranges = {{"0 < |y(Z)| < 0.4", "_y_0_0.4"}, {"0.4 < |y(Z)| < 0.8", "_y_0.4_0.8"}, {"0.8 < |y(Z)| < 1.2", "_y_0.8_1.2"}, {"1.2 < |y(Z)| < 1.6", "_y_1.2_1.6"}, {"1.6 < |y(Z)| < 2.4", "_y_1.6_2.4"}};
+    // std::map<std::string, std::pair<std::string, std::string>> yrangelims = {{"0 < |y(Z)| < 0.4", {"0", "0.4"}}, {"0.4 < |y(Z)| < 0.8", {"0.4", "0.8"}}, {"0.8 < |y(Z)| < 1.2", {"0.8", "1.2"}}, {"1.2 < |y(Z)| < 1.6", {"1.2", "1.6"}}, {"1.6 < |y(Z)| < 2.4", {"1.6", "2.4"}}}; //norm. diff.
 
     // Create directory
     std::string opath = ProcessedDataPath + "/" + ofolder;
@@ -44,30 +50,28 @@ namespace NangaParbat
         // Reading table with YAML
         const YAML::Node exp = YAML::LoadFile(RawDataFolder + tab);
 
-        // Get qT bin bounds
+        // Get qT bin bounds new
         std::vector<std::pair<double,double>> qTb;
-        double qTc  = 0;
-        double hbin = 0;
-        double low  = 1; // the first bin of CMS 13 TeV starts from 1
         for (auto const& iv : exp["independent_variables"])
           for (auto const& vl : iv["values"])
-            {
-              qTc  = vl["value"].as<double>();
-              hbin = (qTc - low);
-              qTb.push_back(std::make_pair(qTc - hbin, qTc + hbin));
-              low  = qTc + hbin;
-            }
-        /*
-        for (auto const& qT : qTb)
-          std::cout << qT.first << "   " << qT.second << std::endl;
-        */
+            qTb.push_back(std::make_pair(vl["low"].as<double>(), vl["high"].as<double>()));
+
+        // for (auto const& qT : qTb)
+        //   std::cout << qT.first << "   " << qT.second << std::endl;
+        // */
 
         // Run over the energy ranges
         for (auto const& yb : exp["dependent_variables"])
           {
-            std::string ofile = ofolder + "_13TeV" + yranges[yb["header"]["name"].as<std::string>().substr(37)];
+            // std::cout << "output:" << yb["header"]["name"].as<std::string>().substr(37) << std::endl; // ok
+            std::string ofile = ofolder + "_13TeV" + yranges[yb["header"]["name"].as<std::string>().substr(31)]; //diff
+            // std::string ofile = ofolder + "_13TeV" + yranges[yb["header"]["name"].as<std::string>().substr(37)]; //norm
+            // std::cout << "output: " << yb["header"]["name"].as<std::string>().substr(37, 42) << std::endl;
+            // std::cout << "yrangestrial: " << yranges["0 < |y(Z)| < 0.4"] << std::endl;
+            // std::cout << "yranges: " << yranges[yb["header"]["name"].as<std::string>().substr(37,42)] << std::endl;
+            // std::cout << "ofile: " << ofile << std::endl;
             // y limits for plots
-            std::pair<std::string, std::string> ylims = yrangelims[yb["header"]["name"].as<std::string>().substr(37)];
+            std::pair<std::string, std::string> ylims = yrangelims[yb["header"]["name"].as<std::string>().substr(31)];
 
             // Open PDF-error file
             std::ifstream pdferr(PDFErrorFolder + ofile + ".out");
@@ -103,7 +107,7 @@ namespace NangaParbat
             emit << YAML::BeginSeq;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "process" << YAML::Key << "value" << YAML::Value << "DY" << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "target_isoscalarity" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
-            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1 << YAML::EndMap;
+            emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "prefactor" << YAML::Key << "value" << YAML::Value << 1  << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Vs" << YAML::Key << "value" << YAML::Value << 13000 << YAML::EndMap;
             emit << YAML::Flow << YAML::BeginMap << YAML::Key << "name" << YAML::Value << "Q" << YAML::Key
                  << "low" << YAML::Value << 76.1876 << YAML::Key << "high" << YAML::Value << 106.1876 << YAML::Key << "integrate" << YAML::Value << "true" << YAML::EndMap;
@@ -121,22 +125,26 @@ namespace NangaParbat
                 getline(pdferr, line);
                 std::stringstream stream(line);
                 double dum, pe;
-                stream >> dum >> dum >> dum >> dum >> dum >> dum >> pe;
+                // stream >> dum >> dum >> dum >> dum >> dum >> pe >> dum;
+                stream >> dum >> dum >> dum >> dum >> pe >> dum;
 
                 // Vectors of uncorrelated and correlated errors
                 // from article https://arxiv.org/pdf/1606.05864.pdf Tab.4
-                std::vector<double> addart = {0.0274, 0.0138, 0.005, 0.0134, 0.0274, 0.0233, 0.0130, 0.0165, 0.0041, 0.067, 0.0129, 0.0156, 0.0272, 0.0357, 0.0372, 0.0201, 0.1166, 0.0209};
+                // std::vector<double> addart = {0.0274, 0.0138, 0.005, 0.0134, 0.0274, 0.0233, 0.0130, 0.0165, 0.0041, 0.067, 0.0129, 0.0156, 0.0272, 0.0357, 0.0372, 0.0201, 0.1166, 0.0209}; NO OTHERS ERRORS
 
                 emit << YAML::BeginMap << YAML::Key << "errors" << YAML::Value << YAML::BeginSeq;
                 emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value"
                      << YAML::Value << v["errors"][0]["symerror"].as<double>() << YAML::EndMap; // read unc errors from HEPData file
-                // if (PDFError)
-                //   emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << pe << YAML::EndMap;
+                // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << 0.005 * v["value"].as<double>() << YAML::EndMap; //[TEMPORARY] trial of introduction of new theoretical error
+                // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << 0.01 << YAML::EndMap; //[TEMPORARY] trial of introduction of hessian error
+                if (PDFError)
+                  emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "mult" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * 0.8 << YAML::EndMap;
+                emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "unc" << YAML::Key << "value" << YAML::Value << std::max(pe, 0.0) * v["value"].as<double>() * 0.6 << YAML::EndMap;
                 // emit << YAML::Flow << YAML::BeginMap << YAML::Key << "label" << YAML::Value << "add" << YAML::Key << "value"
-                //      << YAML::Value << addart[it] << YAML::EndMap;
+                // << YAML::Value << addart[it] << YAML::EndMap;
                 emit << YAML::EndSeq;
                 emit << YAML::Key << "value" << YAML::Value << v["value"].as<double>();
-                std::cout <<  v["value"].as<double>() << std::endl;
+                // std::cout <<  v["value"].as<double>() << std::endl;
                 emit << YAML::EndMap;
                 it++;
               }
