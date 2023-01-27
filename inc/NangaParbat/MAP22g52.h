@@ -21,7 +21,7 @@ namespace NangaParbat
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
-      if (ifunc < 0 || ifunc >= this->_nfuncs)
+      if (ifunc < 0)
         throw std::runtime_error("[MAP22g5::Evaluate]: function index out of range");
 
       // If the value of 'x' exceeds one returns zero
@@ -35,7 +35,7 @@ namespace NangaParbat
       const double NPevol = exp( - ( pow(g2, 2) * b2 ) * lnz / 4 );
 
       // TMD PDFs
-      if (ifunc == 0)
+      if (ifunc < 2)
         {
           const double N1      = this->_pars[1];
           const double alpha1  = this->_pars[2];

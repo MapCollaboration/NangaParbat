@@ -24,7 +24,7 @@ namespace NangaParbat
 
     double Evaluate(double const& x, double const& b, double const& zeta, int const& ifunc) const
     {
-      if (ifunc < 0 || ifunc >= this->_nfuncs)
+      if (ifunc < 0)
         throw std::runtime_error("[PV17::Evaluate]: function index out of range");
 
       // If the value of 'x' exceeds one returns zero
@@ -37,7 +37,7 @@ namespace NangaParbat
       const double evol = exp( - g2 * log(zeta / Q02) * b * b / 4 );
 
       // TMD PDFs
-      if (ifunc == 0)
+      if (ifunc < 2)
         {
           const double N1     = this->_pars[1];
           const double alpha  = this->_pars[2];
