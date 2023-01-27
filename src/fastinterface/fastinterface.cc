@@ -1382,6 +1382,11 @@ namespace NangaParbat
 
           // Coupling from PDF set
           const double coup = _TabAlphas->Evaluate(Q) / apfel::FourPi;
+	  // Here we have the difference between NLO and N2LO
+	  double coup2 = 0;
+          if (PerturbativeOrder > 1)
+            coup2 += coup * coup;
+
 
           // Get distributions for PDFs and FFs in the physical
           // basis.
@@ -1464,10 +1469,10 @@ namespace NangaParbat
           // Assemble double distribution for the cross section as
           // Y^+ F2 - y^2 FL times a constant.
           return ( 4 * M_PI * pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) )
-                 * ( ( ( so.C20qq + coup * so.C21qq ) * distqq + coup * ( so.C21gq * distgq + so.C21qg * distqg ) ).MultiplyBy(yp, iz)
+                 * ( ( ( so.C20qq + coup * so.C21qq + coup2 * so.C22qq.at(nf)) * distqq + coup * ( so.C21gq * distgq + so.C21qg * distqg ) ).MultiplyBy(yp, iz)
                      - ( coup * ( so.CL1qq * distqq + so.CL1gq * distgq + so.CL1qg * distqg ) ).MultiplyBy(y2, iz) ) +
                  ( 4 * M_PI * pow(_TabAlphaem->Evaluate(Q), 2) / pow(Q, 3) )
-                 * ( ( ( so2.C20qq + coup * so2.C21qq ) * distqq2 + coup * ( so2.C21gq * distgq2 + so2.C21qg * distqg2 ) ).MultiplyBy(yp, iz)
+                 * ( ( ( so2.C20qq + coup * so2.C21qq + coup2 * so2.C22qq.at(nf)) * distqq2 + coup * ( so2.C21gq * distgq2 + so2.C21qg * distqg2 ) ).MultiplyBy(yp, iz)
                      - ( coup * ( so2.CL1qq * distqq2 + so2.CL1gq * distgq2 + so2.CL1qg * distqg2 ) ).MultiplyBy(y2, iz) );
         };
 
