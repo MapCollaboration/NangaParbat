@@ -231,8 +231,8 @@ namespace NangaParbat
     for (int i = 3; i <= nf; i++)
       {
         const int ip = i * sign;
-        Lumi.AddTerm({factor * Bq[i-1], xF.at(ip),  (beam == "PR" ? xF.at(-i) : xFBeam.at(-i))});
-        Lumi.AddTerm({factor * Bq[i-1], xF.at(-ip), (beam == "PR" ? xF.at(i)  : xFBeam.at(i)) });
+        Lumi.AddTerm({factor * Bq[i-1], xF.at(ip),  (beam == "PR" ? xF.at(-ip) : xFBeam.at(-ip))});
+        Lumi.AddTerm({factor * Bq[i-1], xF.at(-ip), (beam == "PR" ? xF.at(ip)  : xFBeam.at(ip)) });
       }
     return Lumi;
   }
