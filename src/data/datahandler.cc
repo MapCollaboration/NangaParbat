@@ -107,12 +107,12 @@ namespace NangaParbat
     _beam("PR"),
     _charge(0),
     _tagging({apfel::QuarkFlavour::TOTAL}),
-  _prefact(1),
-  _normalised(true),
-  _kin(DataHandler::Kinematics{}),
-  _labels({}),
-  _fluctuation(fluctuation),
-  _t0(t0)
+    _prefact(1),
+    _normalised(true),
+    _kin(DataHandler::Kinematics{}),
+    _labels({}),
+    _fluctuation(fluctuation),
+    _t0(t0)
   {
     // Retrieve kinematics
     for (auto const& dv : datafile["dependent_variables"])
@@ -133,6 +133,14 @@ namespace NangaParbat
                   _proc = SIDIS;
                 else if (ql["value"].as<std::string>() == "SIA")
                   _proc = SIA;
+                else if (ql["value"].as<std::string>() == "JetSIDIS")
+                  _proc = JetSIDIS;
+                else if (ql["value"].as<std::string>() == "DIA")
+                  _proc = DIA;
+                else if (ql["value"].as<std::string>() == "pDIS")
+                  _proc = pDIS;
+                else if (ql["value"].as<std::string>() == "DIS")
+                  _proc = DIS;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown process.");
               }
@@ -150,8 +158,12 @@ namespace NangaParbat
                   _obs = multiplicity;
                 else if (ql["value"].as<std::string>() == "FUUT")
                   _obs = F_uut;
-                else if (ql["value"].as<std::string>() == "opposite_sign_ratio")
-                  _obs = opposite_sign_ratio;
+                else if (ql["value"].as<std::string>() == "g1")
+                  _obs = g1;
+                else if (ql["value"].as<std::string>() == "CC Reduced Cross Section")
+                  _obs = CC_red_cs;
+                else if (ql["value"].as<std::string>() == "NC Reduced Cross Section")
+                  _obs = NC_red_cs;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown observable.");
               }
@@ -175,7 +187,7 @@ namespace NangaParbat
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown beam.");
               }
 
-            // Final state charge
+            // Final state charge (or charge of the lepton beam for DIS).
             if (ql["name"].as<std::string>() == "charge")
               _charge = ql["value"].as<int>();
 
@@ -208,18 +220,18 @@ namespace NangaParbat
             if (ql["name"].as<std::string>() == "normalised")
               _normalised = ql["value"].as<bool>();
 
-            // Center of mass energy
+            // Center-of-mass energy
             if (ql["name"].as<std::string>() == "Vs")
               _kin.Vs = ql["value"].as<double>();
 
-            // Invariant-mass (DY) or virtuality (SIDIS) interval
+            // Boson virtuality (absolute value)
             if (ql["name"].as<std::string>() == "Q")
               {
                 _kin.var1b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
                 _kin.Intv1 = ql["integrate"].as<bool>();
               }
 
-            // Rapidity (DY) or Bjorken-x (SIDIS) interval
+            // Rapidity (DY) or Bjorken-x (SIDIS and DIS) interval
             if (ql["name"].as<std::string>() == "y" || ql["name"].as<std::string>() == "x")
               {
                 _kin.var2b = std::make_pair(ql["low"].as<double>(), ql["high"].as<double>());
@@ -335,9 +347,14 @@ namespace NangaParbat
           _kin.qTfact.push_back(1);
       }
 
+    // Check that the "Kinematics" has been properly filled in
+    if (_kin.empty())
+      throw std::runtime_error("[DataHandler::DataHandler]: _kin is empty. Probably one or more required keys are missing");
+
     // Check that the "DataHandler" has been properly filled in
     if (_proc == UnknownProcess || _kin.empty())
       throw std::runtime_error("[DataHandler::DataHandler]: Object not properly filled in. Probably one or more required keys are missing");
+
 
     // Check that the t0 vector is either empty or contains exactly
     // "_kin.ndata" elements.
@@ -605,7 +622,17 @@ namespace NangaParbat
     if (DH._proc == DataHandler::Process::DY)
       os << "- Process: Drell-Yan\n";
     else if (DH._proc == DataHandler::Process::SIDIS)
-      os << "- Process: SIDIS\n";
+      os << "- Process: semi-inclusive DIS\n";
+    else if (DH._proc == DataHandler::Process::JetSIDIS)
+      os << "- Process: JetSIDIS\n";
+    else if (DH._proc == DataHandler::Process::SIA)
+      os << "- Process: single-inclusive annihilation\n";
+    else if (DH._proc == DataHandler::Process::DIA)
+      os << "- Process: double-inclusive annihilation\n";
+    else if (DH._proc == DataHandler::Process::pDIS)
+      os << "- Process: polarised DIS\n";
+    else if (DH._proc == DataHandler::Process::DIS)
+      os << "- Process: DIS\n";
     else
       os << "- Process: Unknown\n";
 
@@ -648,6 +675,13 @@ namespace NangaParbat
         else
           os << "- Value of the third kinematic variable: " << ( DH._kin.var3b.first + DH._kin.var3b.second ) / 2 << "\n";
       }
+    if (DH._proc == DataHandler::Process::JetSIDIS)
+      {
+        if (DH._kin.Intv3)
+          os << "- Integration bounds of the third kinematic variable: [" << DH._kin.var3b.first << ": " << DH._kin.var3b.second << "]\n";
+        else
+          os << "- Value of the third kinematic variable: " << ( DH._kin.var3b.first + DH._kin.var3b.second ) / 2 << "\n";
+      }
 
     if (DH._kin.PSRed)
       {
@@ -661,7 +695,11 @@ namespace NangaParbat
             os << "- Minimum W: " << DH._kin.pTMin << " GeV \n";
             os << "- Range in y: [" << DH._kin.etaRange.first << ": " << DH._kin.etaRange.second << "]\n";
           }
-
+        else if (DH._proc == DataHandler::Process::JetSIDIS)
+          {
+            os << "- Minimum W: " << DH._kin.pTMin << " GeV \n";
+            os << "- Range in y: [" << DH._kin.etaRange.first << ": " << DH._kin.etaRange.second << "]\n";
+          }
       }
     os << "\n";
 
