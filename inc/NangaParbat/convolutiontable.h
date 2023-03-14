@@ -182,6 +182,8 @@ namespace NangaParbat
   public:
     virtual void SetInputFFs(std::function<std::map<int, double>(double const &, double const &)> const&) {};
     virtual void SetInputFFs(std::function<apfel::Set<apfel::Distribution>(double const&)> const&) {};
+    virtual void SetInputPDFs(std::function<std::map<int, double>(double const &, double const &)> const&) {};
+    virtual void SetInputPDFs(std::function<apfel::Set<apfel::Distribution>(double const&)> const&) {};
     virtual std::vector<double> GetPredictions(std::function<double(double const&, double const&, double const&)> const&) const { return {}; };
     ///@}
   };
