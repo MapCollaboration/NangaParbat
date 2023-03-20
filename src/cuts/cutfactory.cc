@@ -4,6 +4,7 @@
 
 #include "NangaParbat/cutfactory.h"
 #include "NangaParbat/zcut.h"
+#include "NangaParbat/xcut.h"
 #include "NangaParbat/qcut.h"
 #include "NangaParbat/xzcut.h"
 
@@ -14,6 +15,8 @@ namespace NangaParbat
   {
     if (name == "zcut")
       return std::shared_ptr<NangaParbat::Cut> {new NangaParbat::ZCut{dataset, min, max}};
+    else if (name == "xcut")
+      return std::shared_ptr<NangaParbat::Cut> {new NangaParbat::XCut{dataset, min, max}};
     else if (name == "Qcut")
       return std::shared_ptr<NangaParbat::Cut> {new NangaParbat::QCut{dataset, min, max}};
     else if (name == "xzcut")
