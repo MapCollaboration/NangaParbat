@@ -32,7 +32,7 @@ namespace NangaParbat
     /**
      * @brief The observable enumerator
      */
-    enum Observable: int {UnknownObservable = -1, dsigma_dxdydz = 0, dsigma_dxdQdz = 1, multiplicity = 2, F_uut = 3, g1 = 4, CC_red_cs = 5, NC_red_cs = 6};
+    enum Observable: int {UnknownObservable = -1, dsigma_dxdydz = 0, dsigma_dxdQdz = 1, multiplicity = 2, F_uut = 3, g1 = 4, CC_red_cs = 5, NC_red_cs = 6, g1_F1 = 7};
 
     /**
      * @brief Structure containing the kinematic information of one

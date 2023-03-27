@@ -160,6 +160,8 @@ namespace NangaParbat
                   _obs = F_uut;
                 else if (ql["value"].as<std::string>() == "g1")
                   _obs = g1;
+                else if (ql["value"].as<std::string>() == "g1_F1")
+                  _obs = g1_F1;
                 else if (ql["value"].as<std::string>() == "CC Reduced Cross Section")
                   _obs = CC_red_cs;
                 else if (ql["value"].as<std::string>() == "NC Reduced Cross Section")
