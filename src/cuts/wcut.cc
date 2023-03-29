@@ -32,13 +32,13 @@ namespace NangaParbat
             }
           else
             {
-              W += pow(bins[i].Qmin,2) * (1/bins[i].xav - 1);
+              W += pow(bins[i].Qav,2) * (1/bins[i].xmax - 1);
               W = sqrt(W);
               _mask[i] = ( W - _min > 0 && W - _max < 0 ? true : false);
             }
         else if (bins[i].IntQ)
           {
-            W += pow(bins[i].Qav, 2) * (1/bins[i].xmax - 1);
+            W += pow(bins[i].Qmin, 2) * (1/bins[i].xav - 1);
             W = sqrt(W);
             _mask[i] = ( W - _min > 0 && W - _max < 0 ? true : false);
           }
