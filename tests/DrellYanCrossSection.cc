@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
   const double aem2 = pow((config["alphaem"]["run"].as<bool>() ? alphaem.Evaluate(Qb) : config["alphaem"]["ref"].as<double>()), 2);
 
   // Compute the hard factor
-  const double hcs = apfel::HardFactorDY(config["PerturbativeOrder"].as<int>(), Alphas(muf), nf, Cf);
+  const double hcs = apfel::HardFactor("DY", TmdObj, Alphas, config["PerturbativeOrder"].as<int>(), Cf)(muf);
 
   // Construct the TMD luminosity in b space to be fed to be
   // trasformed in qT space.

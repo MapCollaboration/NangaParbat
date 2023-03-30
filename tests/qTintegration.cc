@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
 
   // Compute hard coefficient, including the other kinematic
   // factors.
-  const double hcs = apfel::HardFactorDY(PerturbativeOrder, Alphas(muf), apfel::NF(muf, Thresholds), Cf);
+  const double hcs = apfel::HardFactor("DY", TmdObj, Alphas, PerturbativeOrder, Cf)(muf);
 
   // Electromagnetic coupling squared
   const double aem2 = pow((config["alphaem"]["run"].as<bool>() ? alphaem.Evaluate(Q) : config["alphaem"]["ref"].as<double>()), 2);
