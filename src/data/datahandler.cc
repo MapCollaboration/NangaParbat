@@ -143,6 +143,8 @@ namespace NangaParbat
                   _proc = DIS;
                 else if (ql["value"].as<std::string>() == "Sum_rules")
                   _proc = Sum_rules;
+                else if (ql["value"].as<std::string>() == "pSIDIS")
+                  _proc = pSIDIS;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown process.");
               }
@@ -172,6 +174,8 @@ namespace NangaParbat
                   _obs = a3;
                 else if (ql["value"].as<std::string>() == "a8")
                   _obs = a8;
+                else if (ql["value"].as<std::string>() == "A1H")
+                  _obs = A1H;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown observable.");
               }
