@@ -981,7 +981,7 @@ namespace NangaParbat
     const double Cf     = _config["TMDscales"]["Cf"].as<double>();
     const double aref   = _config["alphaem"]["aref"].as<double>();
     const bool   arun   = _config["alphaem"]["run"].as<bool>();
-    const int    pto    = _config["PerturbativeOrder"].as<int>();
+    //const int    pto    = _config["PerturbativeOrder"].as<int>();
     const double JetR   = _config["JetR"].as<double>();
 
     // Initialise container of YAML::Emitter objects.
@@ -1091,11 +1091,11 @@ namespace NangaParbat
 
         // Determine perturbative order according to the logarithmic
         // accuracy
-        int PerturbativeOrder = 0;
-        if (pto > 1 || pto < 0)
-          PerturbativeOrder++;
-        if (pto > 2 || pto < -1)
-          PerturbativeOrder++;
+        //int PerturbativeOrder = 0;
+        //if (pto > 1 || pto < 0)
+        //  PerturbativeOrder++;
+        //if (pto > 2 || pto < -1)
+        //  PerturbativeOrder++;
 
         // Ogata-quadrature object of degree one or zero according to
         // whether the cross sections have to be integrated over the
