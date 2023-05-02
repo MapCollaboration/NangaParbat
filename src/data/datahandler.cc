@@ -176,6 +176,14 @@ namespace NangaParbat
                   _obs = a8;
                 else if (ql["value"].as<std::string>() == "A1H")
                   _obs = A1H;
+                else if (ql["value"].as<std::string>() == "aSigma")
+                  _obs = aSigma;
+                else if (ql["value"].as<std::string>() == "aV")
+                  _obs = aV;
+                else if (ql["value"].as<std::string>() == "aV3")
+                  _obs = aV3;
+                else if (ql["value"].as<std::string>() == "aV8")
+                  _obs = aV8;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown observable.");
               }
