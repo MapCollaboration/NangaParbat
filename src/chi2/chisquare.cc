@@ -44,7 +44,7 @@ namespace NangaParbat
     //const double                                qToQMax = DSBlock.second->GetCutqToverQ();
     const DataHandler::Process                  proc     = DSBlock.first->GetProcess();
     const std::vector<double>                   cutParam = DSBlock.second->GetcutParam();
-    const std::vector<std::pair<double,double>> qTv      = kin.qTmap;
+    const std::vector<std::pair<double,double>> qTv    = kin.qTmap;
     const std::string                           beam     = DSBlock.second->GetBeam();
 
     if (proc == 0) //DY
@@ -64,10 +64,10 @@ namespace NangaParbat
           qToQMax = cutParam[0] + cutParam[1] / Qmin;
 
         for (auto const& qT : qTv)
-          if (qT.second / Qmin < qToQMax)
+          if (( kin.IntqT ? qT.first : qT.second) / Qmin < qToQMax)
             idata++;
 
-        _ndata.push_back(idata);
+        _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
 
         // Data the pass all the cuts
         const std::valarray<bool> cm = DSBlock.second->GetCutMask();
@@ -85,7 +85,7 @@ namespace NangaParbat
         double qToQMax = std::min(std::min(cutParam[0] / zmin, cutParam[1]) + cutParam[2] / Qmin / zmin, 1.0);
 
         for (auto const& qT : qTv)
-          if (qT.second / Qmin / zmin < qToQMax)
+          if (( kin.IntqT ? qT.first : qT.second) / Qmin / zmin < qToQMax)
             idata++;
 
         _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
@@ -102,18 +102,13 @@ namespace NangaParbat
         int idata = 0;
 
         double qToQMax = std::min(std::min(cutParam[0], cutParam[1]) + cutParam[2] / Qmin, 1.0);
-        //double qToQMax = std::min(cutParam[0] / zmin, cutParam[1]) + cutParam[2] / Qmin / zmin;
-        //std::cout << "param1 from chisquare.cc = " << cutParam[0] << std::endl;
-        //std::cout << "param2 from chisquare.cc = " << cutParam[1] << std::endl;
-        //std::cout << "param3 from chisquare.cc = " << cutParam[2] << std::endl;
-        //std::cout << "Qmin from chisquare.cc = " << Qmin << std::endl;
-        //std::cout << "len(qT)" << qTv.size() << std::endl;
+
         for (auto const& qT : qTv)
-          if (qT.second / Qmin < qToQMax)
+          if (( kin.IntqT ? qT.first : qT.second) / Qmin < qToQMax)
             idata++;
 
         _ndata.push_back(idata - (kin.IntqT ? 1 : 0));
-        //std::cout << "len(qT)" << idata << std::endl;
+
         // Data the pass all the cuts
         const std::valarray<bool> cm = DSBlock.second->GetCutMask();
         _ndatac.push_back(std::count(std::begin(cm), std::end(cm), true));
