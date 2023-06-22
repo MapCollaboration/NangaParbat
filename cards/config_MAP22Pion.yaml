@@ -4,7 +4,7 @@ pdfsetbeam:
 # Collinear PDF set and member to be used for the generation of the
 # tables. They are assumed to be in the LHAPDF format.
 pdfset:
-  name: "MMHT2014nlo68cl"
+  name: "MMHT2014nnlo68cl"
   member: 0
 
 # Collinear FF set and member to be used for the generation of the
@@ -25,7 +25,7 @@ bstar: bstarmin
 
 # Perturbative order of the computation. 0: LL, 1: NLL, 2: NNLL, 3:
 # NNNLL, -1: NLL', -2: NNLL'
-PerturbativeOrder: 2
+PerturbativeOrder: 3
 
 # Initial and final scale-variation factors around mub = 2e^{-gamma_E}
 # / b and Q, respectively.
@@ -96,9 +96,5 @@ qToverQmax: 0.8
 # Generalised set of parameters to perform kinematic cuts on SIDIS
 # data.
 cutParam: [0.8, 0.7, 0.5]
-
-# Jet radius for DIS+jet
-JetR: 1
-
 
 
