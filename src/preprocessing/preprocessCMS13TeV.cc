@@ -118,7 +118,6 @@ namespace NangaParbat
             emit << YAML::EndSeq;
             emit << YAML::Key << "values" << YAML::Value;
             emit << YAML::BeginSeq;
-            int it = 0;
             for (auto const& v : yb["values"])
               {
                 // Now read PDF errors
@@ -146,7 +145,6 @@ namespace NangaParbat
                 emit << YAML::Key << "value" << YAML::Value << v["value"].as<double>();
                 // std::cout <<  v["value"].as<double>() << std::endl;
                 emit << YAML::EndMap;
-                it++;
               }
             emit << YAML::EndSeq;
             emit << YAML::EndMap;
@@ -181,7 +179,5 @@ namespace NangaParbat
       "  - {name: CMS_13TeV_y_0.8_1.2, file: CMS_13TeV_y_0.8_1.2.yaml}\n"
       "  - {name: CMS_13TeV_y_1.2_1.6, file: CMS_13TeV_y_1.2_1.6.yaml}\n"
       "  - {name: CMS_13TeV_y_1.6_2.4, file: CMS_13TeV_y_1.6_2.4.yaml}\n";
-
-
   }
 }

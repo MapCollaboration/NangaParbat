@@ -102,7 +102,6 @@ namespace NangaParbat
               emit << YAML::EndSeq;
               emit << YAML::Key << "values" << YAML::Value;
               emit << YAML::BeginSeq;
-              int it = 0;
               for (auto const& v : dv["values"])
                 {
                   std::string cerr = v["errors"][0]["symerror"].as<std::string>();
@@ -111,11 +110,9 @@ namespace NangaParbat
                   cerr.erase(std::remove(cerr.begin(), cerr.end(), '%'), cerr.end());
                   uerr.erase(std::remove(uerr.begin(), uerr.end(), '%'), uerr.end());
 
-
                   const double val = v["value"].as<double>();
                   const double unc = val * std::stod(uerr) / 100;
                   const double cor = std::stod(cerr) / 100;
-
 
                   // Now read PDF errors
                   getline(pdferr, line);
@@ -143,7 +140,6 @@ namespace NangaParbat
                   emit << YAML::EndSeq;
                   emit << YAML::Key << "value" << YAML::Value << val;
                   emit << YAML::EndMap;
-                  it++;
                 }
               emit << YAML::EndSeq;
               emit << YAML::EndMap;
