@@ -22,7 +22,7 @@ namespace NangaParbat
      * @param kincuts: the vector kinematic cuts
      * @param TrainingFrac: Training fraction
      * @param rng: GSL random number object
-     * @param NMin: Minimum number of points below which all points will be included in the training (default: 5)
+     * @param NMin: Minimum number of points below which all points will be included in the training (default: 10)
      */
     TrainingCut(DataHandler                                    const& dataset,
                 std::vector<std::shared_ptr<NangaParbat::Cut>> const& kincuts,
