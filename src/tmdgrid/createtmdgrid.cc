@@ -157,14 +157,30 @@ namespace NangaParbat
     // Strong coupling
     const auto Alphas = [&] (double const& mu) -> double{ return dist->alphasQ(mu); };
 
+    // Useful quantities for NP functions
+    int NPifunc = 0;
+
     // Get TMDs distributions
     std::function<apfel::Set<apfel::Distribution>(double const&, double const&, double const&)> Tmds;
     if (pf == "pdf")
-      Tmds = BuildTmdPDFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas,
-                          config["PerturbativeOrder"].as<int>(), config["TMDscales"]["Ci"].as<double>());
+      {
+        Tmds = BuildTmdPDFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas,
+                            config["PerturbativeOrder"].as<int>(), config["TMDscales"]["Ci"].as<double>());
+        NPifunc = 0;
+      }
+
+    else if (pf == "pdfbeam")
+      {
+        Tmds = BuildTmdPDFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas,
+                            config["PerturbativeOrder"].as<int>(), config["TMDscales"]["Ci"].as<double>());
+        NPifunc = 1;
+      }
     else if (pf == "ff")
-      Tmds = BuildTmdFFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas,
-                         config["PerturbativeOrder"].as<int>(), config["TMDscales"]["Ci"].as<double>());
+      {
+        Tmds = BuildTmdFFs(apfel::InitializeTmdObjects(g, Thresholds), CollDists, Alphas,
+                           config["PerturbativeOrder"].as<int>(), config["TMDscales"]["Ci"].as<double>());
+        NPifunc = 2;
+      }
     else
       throw std::runtime_error("[EmitTMDGrid]: Unknown distribution prefix.");
 
@@ -198,7 +214,7 @@ namespace NangaParbat
           const double bs = bstar(b, Q);
           apfel::Set<apfel::Distribution> tdist = Tmds(bs, Q, Q2);
           tdist.SetMap(cevb);
-          return [&] (double const& x) -> double{ return b * NPFunc->Evaluate(x, b, Q2, (pf == "pdf" ? 0 : 1)) / (pf == "pdf" ? 1 : x * x); } * tdist;
+          return [&] (double const& x) -> double{ return b * NPFunc->Evaluate(x, b, Q2, NPifunc / (pf.substr(0,3) == "pdf" ? 1 : x * x)); } * tdist;
         };
         for (int iqT = 0; iqT < (int) tdg.qToQg.size(); iqT++)
           {

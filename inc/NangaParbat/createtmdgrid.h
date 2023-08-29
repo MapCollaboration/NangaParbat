@@ -31,7 +31,7 @@ namespace NangaParbat
   ThreeDGrid Inter3DGrid(std::string const& pf)
   {
     ThreeDGrid grid{};
-    if (pf == "pdf")
+    if (pf.substr(0,3) == "pdf")
       {
         grid.Qg = std::vector<double>
         {
