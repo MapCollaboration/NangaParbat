@@ -101,6 +101,8 @@ Fit of the TMD PDFs of the proton to Drell-Yan data as published in [[JHEP 07 (2
 Simultaneous fit of the TMD PDFs of the proton and of the TMD FFs of ligh hadrons to Drell-Yan and SIDIS data as published in [[JHEP 10 (2022) 127](https://arxiv.org/pdf/2206.07598.pdf)]:
 
 - fit at [N3LL](https://mcerutti996.github.io/NangaParbat/results/MAPTMD22/N3LL/index.html).
+- fit at [NNLL](https://mcerutti996.github.io/NangaParbat/results/MAPTMD22/N2LL/index.html).
+- fit at [NLL](https://mcerutti996.github.io/NangaParbat/results/MAPTMD22/NLL/index.html).
 
 ### MAPTMD22Pion fit
 
