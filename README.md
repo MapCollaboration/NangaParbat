@@ -106,7 +106,7 @@ Simultaneous fit of the TMD PDFs of the proton and of the TMD FFs of ligh hadron
 
 Fit of the TMD PDFs of the pion to Drell-Yan data as published in [[Phys.Rev.D 107 (2023) 1, 014014](https://arxiv.org/pdf/2210.01733.pdf)]:
 
-- fit at [N3LL](https://vbertone.github.io/NangaParbat/results/MAPTMD22Pion/N3LL/index.html).
+- fit at [N3LL](https://mcerutti996.github.io/NangaParbat/results/MAPTMD22/N3LL/index.html).
 
 ## TMD grids
 
