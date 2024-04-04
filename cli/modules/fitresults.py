@@ -289,11 +289,11 @@ class fitresults:
             yaml.dump(param, ofilef, Dumper = yaml.RoundTripDumper)
             yaml.dump(self.parameters, ofilef, Dumper = yaml.RoundTripDumper, default_flow_style=True)
 
-        # Now the code ./run/PlotsTMDs is run with the appropriate input
+        # Now the code ./run/PlotTMDs is run with the appropriate input
         print(bcolours.ACTREPORT + "\nProducing TMD plots..." + bcolours.ENDC)
-        os.system(self.reportfolder + "/../../build/run/PlotTMDs " + self.reportfolder + "/../tables/configreport.yaml "
-                  + self.reportfolder + "/tmds" + dist + "_Q_" + str(Q) + "_x_" + str(x) + ".yaml " + dist + " " + str(ifl) + " " + str(Q) + " " + str(x)
-                  + " " + self.reportfolder + "/Parameters.yaml")
+        os.system(self.reportfolder + "/../../build/run/PlotTMDs " + self.reportfolder + "/../tables/configreport.yaml " 
+        + self.reportfolder + "/tmds" + dist + "_Q_" + str(Q) + "_x_" + str(x) + ".yaml " + dist + " " + str(ifl) + " " + str(Q) + " " + str(x))
+                            + " " + self.reportfolder + "/Parameters.yaml")
 
         # Finally the plot is produced and included in the report
         with open(self.reportfolder + "/tmds" + dist + "_Q_" + str(Q) + "_x_" + str(x) + ".yaml", "r") as fc:

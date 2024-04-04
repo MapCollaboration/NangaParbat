@@ -1,7 +1,7 @@
-![‎T-shirt2 ‎001](https://github.com/MapCollaboration/NangaParbat/assets/20536468/25e320f9-bb88-4f3c-9f48-df171a51c65d)
-
 ![alt text](https://github.com/vbertone/NangaParbat/raw/master/doc/NangaParbatPanoramic.png
  "Nanga Parbat")
+
+# Nanga Parbat: a TMD fitting framework
 
 Nanga Parbat is a fitting framework aimed at the determination of the
 non-perturbative component of TMD distributions.
@@ -100,17 +100,13 @@ Fit of the TMD PDFs of the proton to Drell-Yan data as published in [[JHEP 07 (2
 
 Simultaneous fit of the TMD PDFs of the proton and of the TMD FFs of ligh hadrons to Drell-Yan and SIDIS data as published in [[JHEP 10 (2022) 127](https://arxiv.org/pdf/2206.07598.pdf)]:
 
-- fit at [N3LL](https://mcerutti996.github.io/NangaParbat/results/MAPTMD22/N3LL/index.html).
-- fit at [NNLL](https://mcerutti996.github.io/NangaParbat/results/MAPTMD22/N2LL/index.html).
-- fit at [NLL](https://mcerutti996.github.io/NangaParbat/results/MAPTMD22/NLL/index.html).
-
-Interpolation tables to reproduce the fit at N3LL accuracy are stored [here](https://drive.google.com/drive/folders/1fy_ZZqKg0hdfamYCkD3-E7eQkZJvK0-9?usp=share_link).
+- fit at [N3LL](https://vbertone.github.io/NangaParbat/results/MAPTMD22/N3LL/index.html).
 
 ### MAPTMD22Pion fit
 
 Fit of the TMD PDFs of the pion to Drell-Yan data as published in [[Phys.Rev.D 107 (2023) 1, 014014](https://arxiv.org/pdf/2210.01733.pdf)]:
 
-- fit at [N3LL](https://mcerutti996.github.io/NangaParbat/results/PionMAPTMD22/N3LL/index.html).
+- fit at [N3LL](https://vbertone.github.io/NangaParbat/results/MAPTMD22Pion/N3LL/index.html).
 
 ## TMD grids
 

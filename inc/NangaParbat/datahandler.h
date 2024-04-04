@@ -1,6 +1,7 @@
-//
-// Author: Valerio Bertone: valerio.bertone@cern.ch
-//
+/*
+ * Authors: Valerio Bertone: valerio.bertone@cern.ch
+ *          Chiara Bissolotti: chiara.bissolotti01@ateneopv.it
+ */
 
 #pragma once
 
@@ -26,12 +27,13 @@ namespace NangaParbat
     /**
      * @brief The process enumerator
      */
-    enum Process: int {UnknownProcess = -1, DY = 0, SIDIS = 1, SIA = 2, DIA = 3, JetSIDIS = 4, pDIS = 5};
+    enum Process: int {UnknownProcess = -1, DY = 0, SIDIS = 1, SIA = 2, DIA = 3, JetSIDIS = 4, pDIS = 5, DIS = 6, Sum_rules = 7, pSIDIS = 8};
 
     /**
      * @brief The observable enumerator
      */
-    enum Observable: int {UnknownObservable = -1, dsigma_dxdydz = 0, dsigma_dxdQdz = 1, multiplicity = 2, F_uut = 3, g1 = 4};
+    enum Observable: int {UnknownObservable = -1, dsigma_dxdydz = 0, dsigma_dxdQdz = 1, multiplicity = 2, F_uut = 3, g1 = 4, NC_red_cs = 5, CC_red_cs = 6,    
+                          g1_F1 = 7, a3 = 8, a8 = 9, A1H = 10, aSigma = 11, aV = 12, aV3 = 13, aV8 = 14};
 
     /**
      * @brief Structure containing the kinematic information of one
@@ -162,7 +164,7 @@ namespace NangaParbat
 
     /**
      * @brief Function that returns the charge of the identified final
-     * state.
+     * state or of the lepton beam in the DIS case.
      */
     int GetCharge() const { return _charge; };
 

@@ -1,8 +1,10 @@
 set(cuts_source
   cut.cc
   zcut.cc
+  xcut.cc
   qcut.cc
   xzcut.cc
+  wcut.cc
   Trainingcut.cc
   cutfactory.cc
   )

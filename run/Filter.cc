@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
   // Create output folder
   mkdir(ProcessedDataPath.c_str(), ACCESSPERMS);
 
-  // Dataset file created during the filtering
+  // Dataset file created dunring the filtering
   std::ofstream fout(ProcessedDataPath + "/datasets.yaml");
 
   // Include on not PDF uncertainties

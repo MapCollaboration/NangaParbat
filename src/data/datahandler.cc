@@ -107,12 +107,12 @@ namespace NangaParbat
     _beam("PR"),
     _charge(0),
     _tagging({apfel::QuarkFlavour::TOTAL}),
-  _prefact(1),
-  _normalised(true),
-  _kin(DataHandler::Kinematics{}),
-  _labels({}),
-  _fluctuation(fluctuation),
-  _t0(t0)
+    _prefact(1),
+    _normalised(true),
+    _kin(DataHandler::Kinematics{}),
+    _labels({}),
+    _fluctuation(fluctuation),
+    _t0(t0)
   {
     // Retrieve kinematics
     for (auto const& dv : datafile["dependent_variables"])
@@ -139,6 +139,12 @@ namespace NangaParbat
                   _proc = DIA;
                 else if (ql["value"].as<std::string>() == "pDIS")
                   _proc = pDIS;
+                else if (ql["value"].as<std::string>() == "DIS")
+                  _proc = DIS;
+                else if (ql["value"].as<std::string>() == "Sum_rules")
+                  _proc = Sum_rules;
+                else if (ql["value"].as<std::string>() == "pSIDIS")
+                  _proc = pSIDIS;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown process.");
               }
@@ -158,6 +164,26 @@ namespace NangaParbat
                   _obs = F_uut;
                 else if (ql["value"].as<std::string>() == "g1")
                   _obs = g1;
+                else if (ql["value"].as<std::string>() == "g1_F1")
+                  _obs = g1_F1;
+                else if (ql["value"].as<std::string>() == "NC reduced dsigma/dxdQ2")
+                  _obs = NC_red_cs;
+                else if (ql["value"].as<std::string>() == "CC reduced dsigma/dxdQ2")
+                  _obs = CC_red_cs;
+                else if (ql["value"].as<std::string>() == "a3")
+                  _obs = a3;
+                else if (ql["value"].as<std::string>() == "a8")
+                  _obs = a8;
+                else if (ql["value"].as<std::string>() == "A1H")
+                  _obs = A1H;
+                else if (ql["value"].as<std::string>() == "aSigma")
+                  _obs = aSigma;
+                else if (ql["value"].as<std::string>() == "aV")
+                  _obs = aV;
+                else if (ql["value"].as<std::string>() == "aV3")
+                  _obs = aV3;
+                else if (ql["value"].as<std::string>() == "aV8")
+                  _obs = aV8;
                 else
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown observable.");
               }
@@ -181,7 +207,7 @@ namespace NangaParbat
                   throw std::runtime_error("[DataHandler::DataHandler]: Unknown beam.");
               }
 
-            // Final state charge
+            // Final state charge (or charge of the lepton beam for DIS).
             if (ql["name"].as<std::string>() == "charge")
               _charge = ql["value"].as<int>();
 
@@ -341,9 +367,14 @@ namespace NangaParbat
           _kin.qTfact.push_back(1);
       }
 
+    // Check that the "Kinematics" has been properly filled in
+    if (_kin.empty())
+      throw std::runtime_error("[DataHandler::DataHandler]: _kin is empty. Probably one or more required keys are missing");
+
     // Check that the "DataHandler" has been properly filled in
     if (_proc == UnknownProcess || _kin.empty())
       throw std::runtime_error("[DataHandler::DataHandler]: Object not properly filled in. Probably one or more required keys are missing");
+
 
     // Check that the t0 vector is either empty or contains exactly
     // "_kin.ndata" elements.
@@ -620,6 +651,8 @@ namespace NangaParbat
       os << "- Process: double-inclusive annihilation\n";
     else if (DH._proc == DataHandler::Process::pDIS)
       os << "- Process: polarised DIS\n";
+    else if (DH._proc == DataHandler::Process::DIS)
+      os << "- Process: DIS\n";
     else
       os << "- Process: Unknown\n";
 
