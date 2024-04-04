@@ -21,7 +21,7 @@ namespace NangaParbat
 
     for (int i = 0; i < (int) bins.size(); i++)  
       {
-        double W2 = pow(apfel::ProtonMass, 2);
+        double W2 = 0;
         if (bins[i].Intx)
           if (bins[i].IntQ)
 	    W2 += pow(bins[i].Qmin, 2) * ( 1 / bins[i].xmax - 1 );
