@@ -23,7 +23,11 @@ int main(int argc, char* argv[])
   if (argc < 8 || strcmp(argv[1], "--help") == 0)
     {
       std::cout << "\nInvalid Parameters:" << std::endl;
-      std::cout << "Syntax: ./PlotTMDs <configuration file> <output file> <pdf/ff/pdfbeam/jet> <flavour ID> <Scale in GeV> <value of x> <parameters file>\n" << std::endl;
+<<<<<<< HEAD
+      std::cout << "Syntax: ./PlotTMDs <configuration file> <output file> <pdf/ff/jet> <flavour ID> <Scale in GeV> <value of x> <parameters file>\n" << std::endl;
+=======
+      std::cout << "Syntax: ./PlotTMDs <configuration file> <output file> <pdf/ff/pdfbeam> <flavour ID> <Scale in GeV> <value of x> <parameters file>\n" << std::endl;
+>>>>>>> f6bf6446 (Updating branch Pion)
       exit(-10);
     }
 
